@@ -14,3 +14,6 @@ cd $repo
 git add *
 git commit -am "Añadida entrada nueva"
 git push
+
+#Muestra el estado del repositorio
+git status
