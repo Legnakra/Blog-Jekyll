@@ -3,6 +3,7 @@
 jekyll="/home/maria/Documentos/Web-estática/_site/"
 repo="/home/maria/Documentos/Github/Blog-Jekyll"
 
+#Nos movemos al directorio del sitio web jekyll y lotransformamosen html
 cd $jekyll
 bundle exec jekyll build
 
