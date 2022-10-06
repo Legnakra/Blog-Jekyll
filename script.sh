@@ -1,6 +1,6 @@
 #!/bin/bash
 #Variables
-jekyll="/home/maria/Documentos/Web-estática/_site"
+jekyll="/home/maria/Documentos/Web-estática/_site/"
 repo="/home/maria/Documentos/Github/Blog-Jekyll"
 
 cd $jekyll
