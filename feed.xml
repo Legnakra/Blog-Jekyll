@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-06T11:12:21+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">SysMaria</title><subtitle>¡Hola! Soy María y esta es mi página web, donde iré subiendo a lo largo del 2º curso de ASIR todos o la gran mayoría de mis proyectos.</subtitle><entry><title type="html">Introducción a la programación Python</title><link href="http://localhost:4000/python/2022/09/29/inicio-python.html" rel="alternate" type="text/html" title="Introducción a la programación Python" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/python/2022/09/29/inicio-python</id><content type="html" xml:base="http://localhost:4000/python/2022/09/29/inicio-python.html">&lt;h2 id=&quot;ejercicio-1&quot;&gt;Ejercicio 1&lt;/h2&gt;
+&lt;p&gt;Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis&quot;&gt;Análisis:&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que leer una cantidad de millas marinas y calcular su valor en metros.
+Entrada: millas(entero).
+Salida: metros (entero).&lt;/p&gt;
+&lt;h3 id=&quot;diseño&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Leer distancia_millas (distancia_millas).
+2. Convertir millas marinas a metros (distancia_millas*1852).
+3. Mostrar el resultado.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Leer distancia_millas (distancia_millas).
+distancia_millas = float(input(&quot;Distancia en millas marinas: &quot;))
+
+2. Convertir millas marinas a metros (distancia_millas*1852).
+metros= distancia_millas*1852
+
+3. Mostrar el resultado en metros.
+print(&quot;La distancia en metros es de: &quot;,metros, &quot;metros&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-2&quot;&gt;Ejercicio 2&lt;/h2&gt;
+&lt;p&gt;Escribir un programa que pida al usuario su peso (en kg) y estatura (en metros), calcule el índice de masa corporal y lo almacene en una variable, e imprima por pantalla la frase “Tu índice de masa corporal es…” y el resultado.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-1&quot;&gt;Análisis:&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que calcular el IMC (índice de masa corporal) dados el peso (kg) y la estatura (m).
+Entrada: peso (entero), estatura (entero).
+Salida: imc (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-1&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;p&gt;1.Leer peso (peso) y estatura (estatura).
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+3.Mostrar el resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer peso (peso) y estatura (estatura).
+
+peso = input(&quot;¿Cuál es tu peso?(kg): &quot;)
+estatura = input(&quot;¿Cuál es tu estatura (metros): &quot;)
+
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+imc = round(float(peso)/float(estatura)**2,2)
+
+3.Mostrar el resultado.
+print(&quot;Tu índice de masa corporal es &quot; + str(imc))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-3&quot;&gt;Ejercicio 3&lt;/h2&gt;
+&lt;p&gt;Una juguetería tiene mucho éxito en dos de sus productos: payasos y muñecas. Suele hacer venta por correo y la empresa de logística les cobra por peso de cada paquete así que deben calcular el peso de los payasos y muñecas que saldrán en cada paquete a demanda. Cada payaso pesa 112 g y cada muñeca 75 g. Escribir un programa que lea el número de payasos y muñecas vendidos en el último pedido y calcule el peso total del paquete que será enviado. Además se nos pide el precio que se cobra por gramo, , y se nos mostrará el total de dinero que necesitamos para realizar el envío.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-2&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que calcular el peso del último pedido de payasos y muñecas, y el precio por gramo
+al realizar el envío.
+Entrada: payasos (real), muñecas (real), peso_payaso (real), peso_muñeca (real).
+Salida:peso_total (real), precio_envío (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-2&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;p&gt;1.Leer cantidad de payasos (payasos)
+2.Leer cantidad de muñecas (muñecas)
+3.Calcular el peso del pedido (peso_total = peso_payaso&lt;em&gt;payaso + peso_muñeca&lt;/em&gt;muñeca)
+4.Leer el precio del envío por gramo.
+5.Calcular precio del envío.
+6.Mostrar el resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+peso_payaso = 112
+peso_muñeca = 75
+
+1.Leer cantidad de payasos (payasos)
+payasos = int(input(&quot;Introduce el número de payasos a enviar: &quot;))
+
+2.Leer cantidad de muñecas (muñecas)
+muñecas = int(input(&quot;Introduce el número de muñecas a enviar: &quot;))
+
+3.Calcular el peso del pedido (peso_total = peso_payaso*payaso + peso_muñeca*muñeca)
+peso_total = peso_payaso * payasos + peso_muñeca * muñecas
+
+4.Leer el precio del envío por gramo.
+precio = float(input(&quot;El precio por gramo del envío es de: &quot;))
+
+5.Calcular precio del envío.
+precio_envio = peso_total * precio
+
+6.Mostrar el resultado.
+print(&quot;El precio total del envío es de: &quot;,precio_envio,&quot;€.&quot; )
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-4&quot;&gt;Ejercicio 4&lt;/h2&gt;
+&lt;p&gt;Diseñar el algoritmo correspondiente a un programa que pida el total de kilómetros recorridos, el precio de la gasolina (por litro), el consumo del coche (litros/100 km) y nos muestre la siguiente información:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;El total de litros de gasolina que ha gastado en el trayecto.&lt;/li&gt;
+  &lt;li&gt;¿Cuánto dinero te ha costado la gasolina?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;análisis-3&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema:Tenemos que calcular el consumo de un coche, el consumo en un recorrido con determinados kilómetros y el coste del trayecto.
+Entrada:kilometros_recorridos (entero), precio_gasolina (entero), consumo_coche (entero).
+Salida: total_litros (entero), consumo_gasolina (entero), gasto_gasolina (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-3&quot;&gt;Diseño&lt;/h3&gt;
+&lt;p&gt;1.Leer kilómetros totales recorridos.
+2.Leer precio gasolina.
+3.Leer consumo del coche.
+4.Calcular litros consumidos en el recorrido.
+5.Calcular coste de gasolina en el recorrido.
+6.Mostrar resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer kilómetros totales recorridos.
+kilometros_recorridos = float(input(&quot;Los kilómetros recorridos son: &quot;))
+
+2.Leer precio gasolina.
+precio_gasolina = float(input(&quot;El precio de la gasolina (por litro) es: &quot;))
+
+3.Leer consumo del coche.
+consumo_coche= float(input(&quot;El coche consume (litros/100km): &quot;))
+
+4.Calcular litros consumidos en el recorrido.
+consumo_gasolina =consumo_coche / 100 * kilometros_recorridos
+print(&quot;El coche ha gastado en &quot;,kilometros_recorridos,&quot; un total de&quot;,consumo_gasolina,&quot;litros de gasolina.&quot;)
+
+5.Calcular coste de gasolina en el recorrido.
+gasto_gasolina = consumo_gasolina*precio_gasolina
+
+6.Mostrar resultado.
+print(&quot;El gasto total de gasolina es de: &quot;,gasto_gasolina,&quot;€.&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;ejercicio-5&quot;&gt;Ejercicio 5&lt;/h1&gt;
+&lt;p&gt;Suponiendo que una paella se puede cocinar exclusivamente con arroz y gambas, y que para cada cuatro personas se utiliza medio kilo de arroz y un cuarto de kilo de gambas, escribir un programa que pida por pantalla el número de comensales para la paella, el precio por kilo de los ingredientes y muestre las cantidades de los ingredientes necesarios y el coste de la misma.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-4&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema:Te pide el número de comensales para calcular el precio por kilo de los ingredientes para una paella, muestre las cantidades y el coste de la misma.
+Entrada: comensales (real), cantidad_arroz (entero), cantidad_gambas (entero), precio_gamba(entero),precio_arroz(entero).
+Salida:coste_paella (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-4&quot;&gt;Diseño&lt;/h3&gt;
+&lt;p&gt;1.Leer el número de comensales.
+2.Calcular ingredientes necesarios para la paella.
+3.Leer precios del arroz y las gambas.
+4.Calcular el coste total de la paella.
+5.Mostrar resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer el número de comensales.
+comensales = float(input(&quot;El número total de comensales es: &quot;))
+
+2.Calcular ingredientes necesarios para la paella.
+cantidad_arroz= comensales* 0.5/4
+cantidad_gambas=comensales* 0.25/4
+print(&quot;Vamos a necesitar &quot;,cantidad_arroz, &quot;gramos de arroz.&quot;)
+print(&quot;Vamos a necesitar &quot;,cantidad_gambas, &quot;gramos de gambas.&quot;)
+
+3.Leer precios del arroz y las gambas.
+precio_arroz= float(input(&quot;El precio del arroz(kg) es de: &quot;))
+precio_gamba= float(input(&quot;El precio de las gambas(kg) es de: &quot;))
+
+4.Calcular el coste total de la paella.
+coste_paella= (cantidad_arroz*precio_arroz)+(cantidad_gambas*precio_gamba)
+
+5.Mostrar resultado.
+print(&quot;La paella cuesta: &quot;,coste_paella, &quot;€.&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name></name></author><category term="python" /><summary type="html">Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.</summary></entry><entry><title type="html">Crear un sitio web estático con Jekyll</title><link href="http://localhost:4000/jekyll/2022/09/29/origen.html" rel="alternate" type="text/html" title="Crear un sitio web estático con Jekyll" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/jekyll/2022/09/29/origen</id><content type="html" xml:base="http://localhost:4000/jekyll/2022/09/29/origen.html">&lt;p&gt;En este post hablaremos de como crear un sitio web estático con &lt;strong&gt;Jekyll&lt;/strong&gt;, un generador de sitios web estáticos.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://jekyllrb.com/img/jekyll-og.png&quot; alt=&quot;Jekyll&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ventajas-y-desventajas&quot;&gt;Ventajas y desventajas.&lt;/h2&gt;
+&lt;p&gt;En primer lugar, este tipo de sitios no requieren un hosting con soporte, ya que está compuesto de archivos HTML, CSS, y JavaScript.&lt;/p&gt;
+
+&lt;p&gt;Otras ventajas que nos encontramos es su velocodad de carga y el ahorro de costos del hosting, ya que existen servicios gratuitos para ello.&lt;/p&gt;
+
+&lt;p&gt;En cuanto a desventajas, nos encontramos que no podemos editar o crear en línea, e incluso no es posible la creación de usuarios.&lt;/p&gt;
+
+&lt;h2 id=&quot;preparando-el-escenario&quot;&gt;Preparando el escenario&lt;/h2&gt;
+&lt;p&gt;Para ello, vamos a realizar la instalación tanto de &lt;strong&gt;Jekyll&lt;/strong&gt; y de &lt;strong&gt;Ruby&lt;/strong&gt; de la siguiente manera:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ apt install jekyll
+$ apt install jekyll bundler
+$ apt install ruby
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Creamos el directorio, en el que vamos a alojar nuestra web estática&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir /directorio/web
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Y ejecutamos dentro del directorio web el comando necesario para crear nuestro sitio web estático:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ jekyll new sitio-jekyll
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Al ejecutar el comando, se nos creará el directorio &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sitio-jekyll&lt;/code&gt; con la siguiente estructura:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sitio-jekyll/
+  _posts/
+    2022-09-29-welcome-to-jekyll.markdown
+  _config.yml
+  about.md
+  Gemfile
+  index.md
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;para-qué-sirve-lo-que-hemos-creado&quot;&gt;¿Para qué sirve lo que hemos creado?&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts/&lt;/code&gt;: En este directorio se almacenarán los artículos por orden cronológico de nuestro sitio web.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;: En dicho fichero encontraremos las configuraciones que controlarán la forma en la que se generará la web y los artículos.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;: Este fichero aloja las definiciones de las dependencias o librerías adicionales de &lt;strong&gt;Ruby&lt;/strong&gt; que necesitaremos para crear el sitio web (lo que sería el &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;requirements.txt&lt;/code&gt;de &lt;strong&gt;Python&lt;/strong&gt;).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.md&lt;/code&gt;: Los ficheros que componen el contenido de las páginas y los artículos tienen la extensión &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;markdown&lt;/code&gt;, y luego es &lt;strong&gt;Jekyll&lt;/strong&gt; es que se encargade transformar el código &lt;strong&gt;HTML&lt;/strong&gt; a la hora de la compilación.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ejecutando-el-sitio&quot;&gt;Ejecutando el sitio&lt;/h2&gt;
+&lt;p&gt;Para esto, ejecutaremos en la terminal lo siguiente:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cd /directorio/web/sitio-jekyll
+$ bundle exec jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Tras esto, podremos ver el sitio generado en nuestro navegador, de forma local a la dirección &lt;em&gt;http://localhost:4000/&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusión&quot;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, &lt;strong&gt;CSS&lt;/strong&gt;, etc… de forma rápida, sin costes y de forma eficaz.&lt;/p&gt;</content><author><name></name></author><category term="jekyll" /><summary type="html">En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.</summary></entry><entry><title type="html">Bienvenid@</title><link href="http://localhost:4000/beinvenida/2022/09/29/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Bienvenid@" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/beinvenida/2022/09/29/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/beinvenida/2022/09/29/welcome-to-jekyll.html">&lt;p&gt;Bienvenidos SysMaria, mi pequeño blog.&lt;/p&gt;
+
+&lt;p&gt;Soy Diplomada en Magisterio con la especialidad de Música y violín.&lt;/p&gt;
+
+&lt;p&gt;Siempre me ha llamado la atención el mundo de la tecnología, he «cacharreado» con cualquier aparatejo que caía en mis manos. Después de una larga temporada luchando por una plaza, conseguí entrar en Administración de Sistemas Informáticos en Red (ASIR) en el I.E.S. Gonzalo Nazareno de Dos Hermanas (Sevilla).&lt;/p&gt;
+
+&lt;p&gt;Y este será mi espacio, en el que expondré mis prácticas y mis pequeños proyectos personales.&lt;/p&gt;
+
+&lt;p&gt;En mi perfil de &lt;a href=&quot;https://github.com/Legnakra&quot;&gt;GitHub&lt;/a&gt; tengo subidos proyectos del primer año e iré añadiendo los de este curso.&lt;/p&gt;</content><author><name></name></author><category term="beinvenida" /><summary type="html">Bienvenidos SysMaria, mi pequeño blog.</summary></entry></feed>
