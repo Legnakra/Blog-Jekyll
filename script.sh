@@ -7,7 +7,8 @@ cd $jekyll
 bundle exec jekyll build
 
 #Función actualizar
-rsync -rvcm --delete $jekyll $repo
+#rsync -rvcm --delete $jekyll $repo
+cp $jekyll $repo
 
 #Sincronizamos con github
 cd $repo
