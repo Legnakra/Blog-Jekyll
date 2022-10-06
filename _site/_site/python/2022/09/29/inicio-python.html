@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- load bootstrap -->
+  <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+  <script src="/assets/js/bootstrap.bundle.min.js"></script>
+
+  <!-- user -->
+  
+    <link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">
+  
+  <link rel="stylesheet" href="/assets/css/open-color.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <script src="/assets/js/main.js"></script>
+
+  <!-- font awesome -->
+  <script async src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
+
+  <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="SysMaria" />
+  <!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Introducción a la programación Python | SysMaria</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Introducción a la programación Python" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros." />
+<meta property="og:description" content="Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros." />
+<link rel="canonical" href="/python/2022/09/29/inicio-python.html" />
+<meta property="og:url" content="/python/2022/09/29/inicio-python.html" />
+<meta property="og:site_name" content="SysMaria" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-09-29T17:45:16+02:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Introducción a la programación Python" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-09-29T17:45:16+02:00","datePublished":"2022-09-29T17:45:16+02:00","description":"Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.","headline":"Introducción a la programación Python","mainEntityOfPage":{"@type":"WebPage","@id":"/python/2022/09/29/inicio-python.html"},"url":"/python/2022/09/29/inicio-python.html"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  
+
+</head>
+
+  <body>
+    <div id="main" class="container">
+
+      <nav class="navbar navbar-expand-lg fixed-top navbar-light py-4" id="menu">
+
+  <!-- BRAND LOGO OR NAME -->
+  <a class="navbar-brand top" id="site-logo" href="/">
+    
+      SysMaria
+    
+  </a>
+  
+  <!-- NAVIGATION -->
+  
+</nav>
+
+
+      <main>
+        <!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="/assets/js/adjustAnchorLink.js"></script>
+<script src="/assets/js/liveTOCScroll.js"></script>
+
+<div class="post-body">
+  <div class="row post-header">
+    <div class="col">
+      <h1 class="post-title text-center">Introducción a la programación Python</h1>
+      <div class="post-meta text-center">
+
+        
+
+        
+        <time class="post-metadata" datetime="2022-09-29T17:45:16+02:00" itemprop="datePublished">
+          Sep 29, 2022
+        </time>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <!-- START COL WITH TOC -->
+    <div class="col-sm-2 pt-3">
+      <div class="toc-div py-3">
+  
+  <ul class="toc"><li><a href="#ejercicio-1">Ejercicio 1</a><ul><li><a href="#análisis">Análisis:</a></li><li><a href="#diseño">Diseño:</a></li></ul></li><li><a href="#ejercicio-2">Ejercicio 2</a><ul><li><a href="#análisis-1">Análisis:</a></li><li><a href="#diseño-1">Diseño:</a></li></ul></li><li><a href="#ejercicio-3">Ejercicio 3</a><ul><li><a href="#análisis-2">Análisis</a></li><li><a href="#diseño-2">Diseño:</a></li></ul></li><li><a href="#ejercicio-4">Ejercicio 4</a><ul><li><a href="#análisis-3">Análisis</a></li><li><a href="#diseño-3">Diseño</a></li><li><a href="#análisis-4">Análisis</a></li><li><a href="#diseño-4">Diseño</a></li></ul></li></ul>
+
+</div>
+
+    </div>
+
+    <!-- MAIN POST -->
+    <div class="col-sm-10 post p-4">
+        <h2 id="ejercicio-1">Ejercicio 1</h2>
+<p>Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.</p>
+
+<h3 id="análisis">Análisis:</h3>
+<p>Problema: Tenemos que leer una cantidad de millas marinas y calcular su valor en metros.
+Entrada: millas(entero).
+Salida: metros (entero).</p>
+<h3 id="diseño">Diseño:</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Leer distancia_millas (distancia_millas).
+2. Convertir millas marinas a metros (distancia_millas*1852).
+3. Mostrar el resultado.
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Leer distancia_millas (distancia_millas).
+distancia_millas = float(input("Distancia en millas marinas: "))
+
+2. Convertir millas marinas a metros (distancia_millas*1852).
+metros= distancia_millas*1852
+
+3. Mostrar el resultado en metros.
+print("La distancia en metros es de: ",metros, "metros")
+</code></pre></div></div>
+
+<h2 id="ejercicio-2">Ejercicio 2</h2>
+<p>Escribir un programa que pida al usuario su peso (en kg) y estatura (en metros), calcule el índice de masa corporal y lo almacene en una variable, e imprima por pantalla la frase “Tu índice de masa corporal es…” y el resultado.</p>
+
+<h3 id="análisis-1">Análisis:</h3>
+<p>Problema: Tenemos que calcular el IMC (índice de masa corporal) dados el peso (kg) y la estatura (m).
+Entrada: peso (entero), estatura (entero).
+Salida: imc (entero).</p>
+
+<h3 id="diseño-1">Diseño:</h3>
+<p>1.Leer peso (peso) y estatura (estatura).
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+3.Mostrar el resultado.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.Leer peso (peso) y estatura (estatura).
+
+peso = input("¿Cuál es tu peso?(kg): ")
+estatura = input("¿Cuál es tu estatura (metros): ")
+
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+imc = round(float(peso)/float(estatura)**2,2)
+
+3.Mostrar el resultado.
+print("Tu índice de masa corporal es " + str(imc))
+</code></pre></div></div>
+
+<h2 id="ejercicio-3">Ejercicio 3</h2>
+<p>Una juguetería tiene mucho éxito en dos de sus productos: payasos y muñecas. Suele hacer venta por correo y la empresa de logística les cobra por peso de cada paquete así que deben calcular el peso de los payasos y muñecas que saldrán en cada paquete a demanda. Cada payaso pesa 112 g y cada muñeca 75 g. Escribir un programa que lea el número de payasos y muñecas vendidos en el último pedido y calcule el peso total del paquete que será enviado. Además se nos pide el precio que se cobra por gramo, , y se nos mostrará el total de dinero que necesitamos para realizar el envío.</p>
+
+<h3 id="análisis-2">Análisis</h3>
+<p>Problema: Tenemos que calcular el peso del último pedido de payasos y muñecas, y el precio por gramo
+al realizar el envío.
+Entrada: payasos (real), muñecas (real), peso_payaso (real), peso_muñeca (real).
+Salida:peso_total (real), precio_envío (entero).</p>
+
+<h3 id="diseño-2">Diseño:</h3>
+<p>1.Leer cantidad de payasos (payasos)
+2.Leer cantidad de muñecas (muñecas)
+3.Calcular el peso del pedido (peso_total = peso_payaso<em>payaso + peso_muñeca</em>muñeca)
+4.Leer el precio del envío por gramo.
+5.Calcular precio del envío.
+6.Mostrar el resultado.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+peso_payaso = 112
+peso_muñeca = 75
+
+1.Leer cantidad de payasos (payasos)
+payasos = int(input("Introduce el número de payasos a enviar: "))
+
+2.Leer cantidad de muñecas (muñecas)
+muñecas = int(input("Introduce el número de muñecas a enviar: "))
+
+3.Calcular el peso del pedido (peso_total = peso_payaso*payaso + peso_muñeca*muñeca)
+peso_total = peso_payaso * payasos + peso_muñeca * muñecas
+
+4.Leer el precio del envío por gramo.
+precio = float(input("El precio por gramo del envío es de: "))
+
+5.Calcular precio del envío.
+precio_envio = peso_total * precio
+
+6.Mostrar el resultado.
+print("El precio total del envío es de: ",precio_envio,"€." )
+</code></pre></div></div>
+
+<h2 id="ejercicio-4">Ejercicio 4</h2>
+<p>Diseñar el algoritmo correspondiente a un programa que pida el total de kilómetros recorridos, el precio de la gasolina (por litro), el consumo del coche (litros/100 km) y nos muestre la siguiente información:</p>
+<ul>
+  <li>El total de litros de gasolina que ha gastado en el trayecto.</li>
+  <li>¿Cuánto dinero te ha costado la gasolina?</li>
+</ul>
+
+<h3 id="análisis-3">Análisis</h3>
+<p>Problema:Tenemos que calcular el consumo de un coche, el consumo en un recorrido con determinados kilómetros y el coste del trayecto.
+Entrada:kilometros_recorridos (entero), precio_gasolina (entero), consumo_coche (entero).
+Salida: total_litros (entero), consumo_gasolina (entero), gasto_gasolina (entero).</p>
+
+<h3 id="diseño-3">Diseño</h3>
+<p>1.Leer kilómetros totales recorridos.
+2.Leer precio gasolina.
+3.Leer consumo del coche.
+4.Calcular litros consumidos en el recorrido.
+5.Calcular coste de gasolina en el recorrido.
+6.Mostrar resultado.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.Leer kilómetros totales recorridos.
+kilometros_recorridos = float(input("Los kilómetros recorridos son: "))
+
+2.Leer precio gasolina.
+precio_gasolina = float(input("El precio de la gasolina (por litro) es: "))
+
+3.Leer consumo del coche.
+consumo_coche= float(input("El coche consume (litros/100km): "))
+
+4.Calcular litros consumidos en el recorrido.
+consumo_gasolina =consumo_coche / 100 * kilometros_recorridos
+print("El coche ha gastado en ",kilometros_recorridos," un total de",consumo_gasolina,"litros de gasolina.")
+
+5.Calcular coste de gasolina en el recorrido.
+gasto_gasolina = consumo_gasolina*precio_gasolina
+
+6.Mostrar resultado.
+print("El gasto total de gasolina es de: ",gasto_gasolina,"€.")
+</code></pre></div></div>
+
+<h1 id="ejercicio-5">Ejercicio 5</h1>
+<p>Suponiendo que una paella se puede cocinar exclusivamente con arroz y gambas, y que para cada cuatro personas se utiliza medio kilo de arroz y un cuarto de kilo de gambas, escribir un programa que pida por pantalla el número de comensales para la paella, el precio por kilo de los ingredientes y muestre las cantidades de los ingredientes necesarios y el coste de la misma.</p>
+
+<h3 id="análisis-4">Análisis</h3>
+<p>Problema:Te pide el número de comensales para calcular el precio por kilo de los ingredientes para una paella, muestre las cantidades y el coste de la misma.
+Entrada: comensales (real), cantidad_arroz (entero), cantidad_gambas (entero), precio_gamba(entero),precio_arroz(entero).
+Salida:coste_paella (entero).</p>
+
+<h3 id="diseño-4">Diseño</h3>
+<p>1.Leer el número de comensales.
+2.Calcular ingredientes necesarios para la paella.
+3.Leer precios del arroz y las gambas.
+4.Calcular el coste total de la paella.
+5.Mostrar resultado.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.Leer el número de comensales.
+comensales = float(input("El número total de comensales es: "))
+
+2.Calcular ingredientes necesarios para la paella.
+cantidad_arroz= comensales* 0.5/4
+cantidad_gambas=comensales* 0.25/4
+print("Vamos a necesitar ",cantidad_arroz, "gramos de arroz.")
+print("Vamos a necesitar ",cantidad_gambas, "gramos de gambas.")
+
+3.Leer precios del arroz y las gambas.
+precio_arroz= float(input("El precio del arroz(kg) es de: "))
+precio_gamba= float(input("El precio de las gambas(kg) es de: "))
+
+4.Calcular el coste total de la paella.
+coste_paella= (cantidad_arroz*precio_arroz)+(cantidad_gambas*precio_gamba)
+
+5.Mostrar resultado.
+print("La paella cuesta: ",coste_paella, "€.")
+</code></pre></div></div>
+
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center pt-5">
+    <h2>More</h2>
+  </div>
+
+  <div class="row pt-5">
+    <div class="col-sm-6">
+      <div class="card info-card sticky-div h-100">
+
+  <div class="card-body">
+
+    <h3 class="card-title text-center">Recent Posts</h3>
+  </div>
+    <ul class="list-group list-group-flush">
+      
+        <li class="list-group-item">
+          <time datetime="2022-09-29T17:45:16+02:00">Oct 6, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/redes/2022/10/06/conexion.html">Conectándonos al mundo</a>
+        </li>
+      
+        <li class="list-group-item">
+          <time datetime="2022-09-29T17:45:16+02:00">Sep 29, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/beinvenida/2022/09/29/welcome-to-jekyll.html">Bienvenid@</a>
+        </li>
+      
+        <li class="list-group-item">
+          <time datetime="2022-09-29T17:45:16+02:00">Sep 29, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/jekyll/2022/09/29/origen.html">Crear un sitio web estático con Jekyll</a>
+        </li>
+      
+        <li class="list-group-item">
+          <time datetime="2022-09-29T17:45:16+02:00">Sep 29, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/python/2022/09/29/inicio-python.html">Introducción a la programación Python</a>
+        </li>
+      
+    </ul>
+  <div class="card-body">
+  </div>
+</div>
+
+    </div>
+    <div class="col-sm-6">
+        <div class="card info-card sticky-div h-100">
+
+    <div class="card-body">
+
+      <h3 class="card-title text-center">Categories</h3>
+
+      
+        <div class="category-tags d-flex flex-wrap justify-content-center">
+          
+            
+            
+            
+            
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#python">
+              
+              
+                Python
+              
+            
+            </a>
+          
+            
+            
+            
+            
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#jekyll">
+              
+              
+                Jekyll
+              
+            
+            </a>
+          
+            
+            
+            
+            
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#beinvenida">
+              
+              
+                Beinvenida
+              
+            
+            </a>
+          
+            
+            
+            
+            
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#redes">
+              
+              
+                Redes
+              
+            
+            </a>
+          
+        </div>
+      
+    </div>
+  </div>
+    </div>
+  </div>
+
+  
+      
+</div>
+      </main>
+
+    </div>
+    <footer class="text-muted">
+  <div class="container">
+    <div class="row">
+      <div class="d-flex justify-content-center">
+        <div class="footer-element">
+        <p>&copy;2022 SysMaria</p>
+    
+</div>
+      </div>
+    </div>
+
+    
+
+    
+      <div class="row">
+        <div class="d-flex justify-content-center">
+           <p class="powered-by footer-element mt-3">
+    Powered by 
+    <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> & 
+    <a href="https://github.com/slee981/jekyll-theme-cadre" target="_blank">Cadre</a>
+</p>
+
+        </div>
+      </div>
+    
+  </div>
+</footer>
+
+
+
+    
+    
+    
+    
+    
+  </body>
+</html>
