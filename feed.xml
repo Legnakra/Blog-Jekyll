@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-11T22:52:32+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">SysMaria</title><subtitle>¡Hola! Soy María y esta es mi página web, donde iré subiendo a lo largo del 2º curso de ASIR todos o la gran mayoría de mis proyectos.</subtitle><author><name>María Jesús Alloza Rodrígues</name></author><entry><title type="html">Prueba: Introducción a la implantación de aplicaciones web</title><link href="http://localhost:4000/prueba/2022/10/10/prueba.html" rel="alternate" type="text/html" title="Prueba: Introducción a la implantación de aplicaciones web" /><published>2022-10-10T13:11:16+02:00</published><updated>2022-10-10T13:11:16+02:00</updated><id>http://localhost:4000/prueba/2022/10/10/prueba</id><content type="html" xml:base="http://localhost:4000/prueba/2022/10/10/prueba.html">&lt;h2 id=&quot;nombre-completo&quot;&gt;Nombre completo:&lt;/h2&gt;
+&lt;p&gt;María Jesús Alloza Rodríguez&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://img2.freepng.es/20171220/kre/linux-logo-png-5a3a1fe7d94070.02257309151375869588993545.jpg&quot; alt=&quot;imagen&quot; /&gt;&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="prueba" /><summary type="html">Nombre completo: María Jesús Alloza Rodríguez</summary></entry><entry><title type="html">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</title><link href="http://localhost:4000/seguridad/2022/10/10/payload.html" rel="alternate" type="text/html" title="¿Qué diferencia hay entre exploit, vulnerabilidad y payload?" /><published>2022-10-10T10:40:32+02:00</published><updated>2022-10-10T10:40:32+02:00</updated><id>http://localhost:4000/seguridad/2022/10/10/payload</id><content type="html" xml:base="http://localhost:4000/seguridad/2022/10/10/payload.html">&lt;p&gt;En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://img.freepik.com/vector-premium/banner-tecnologia-digital-seguridad-abstracta_43778-429.jpg?w=900&quot; alt=&quot;Banner&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Debemos tener en cuenta que estos términos son utilizados principalmente cuando realizamos pruebas de penetración o ejercicios de hacking ético. 
+¿En qué parte del hacking podemos encontrarnos con estos términos?
+Lo vemos en la fase de explotación, es decir, una vez que conocemos las características del sistema que tienen las máquinas a las que queremos acceder, podemos investigar si existen vulnerabilidades para esos sistemas, y en el caso afirmativo, (que de costumbre es que sí) sería el momento de buscar algún exploit para romper dicha vulnerabilidad.&lt;/p&gt;
+
+&lt;p&gt;Pero vamos a ver cada uno de ellos y como se interrelacionan&lt;/p&gt;
+
+&lt;h2 id=&quot;qué-es-un-exploit&quot;&gt;¿Qué es un exploit?&lt;/h2&gt;
+
+&lt;p&gt;Un exploit es la herramienta(software) con la cual el hacker aprovechará para comprometer, romper y explotar una vulnerabilidad de seguridad del sistema para sus propios fines.&lt;/p&gt;
+
+&lt;p&gt;Esto sucede ya que algunos fabricantes suelen tener fallas de seguridad en sus productos, como por el ejemplo el exploit de día cero, denominado así cuando el desarrollador del producto desconoce de una vulnerabilidad que solo el ciberdelincuente conoce.&lt;/p&gt;
+
+&lt;p&gt;Los ciberdelincuentes aplican ingeniería inversa para analizar toda la programación de dicho sistema, de este modo pueden detectar algún error de código y explotarlo.&lt;/p&gt;
+
+&lt;h3 id=&quot;tipos&quot;&gt;Tipos&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Exploit remoto&lt;/strong&gt;:
+Se realizan mediante una conexión víctima con el atacante, todo mediante una red de comunicaciones.
+Por ejemplo, una conexión por internet, por lo general este tipo de ataque suele hacerse mediante el envío y la instalación del software malicioso en el dispositivo.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://assets.website-files.com/5ff66329429d880392f6cba2/61c43d47dccfe68a303551d4_exploit%20Preview.png&quot; alt=&quot;Exploit&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Exploit local&lt;/strong&gt;:
+La principal diferencia con el anterior tipo es que se necesita acceso al sistema antes de efectuar un ataque de explotación. Se necesita burlar al sistema para escalar privilegios en el sistema, donde el ciberdelincuente podría controlar al final todo el sistema.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Exploit en cliente&lt;/strong&gt;:
+Para realizar este tipo de ataques suele influir mucho el phishing para poder comprometer la máquina víctima con un exploit.
+Esto se realiza principalmente en las estaciones de trabajo de una organización atacando los softwares de ofimática mediante envío de malware por correos electrónicos.
+La mayoría de veces suele ser un éxito, ya que algunos cortafuegos o antivirus dan por alto estos ataques, de este modo los ciberdelincuentes empiezan a escalar privilegios hasta obtener el control total del sistema, aquí podemos llegar a la conclusión de que las víctimas dan el acceso.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Un claro ejemplo explot fue el llamado Eternal Blue, que se aprovechó de la vulnerabilidad en el protocolo SMB en la versión 1, que estaba presente en todos los sistemas operativos de windows, desde su versión 95 al 10. Es capaz de brindarnos control total de una máquina, otorgando la capacidad de ejecutar código a nivel administrador.&lt;/p&gt;
+
+&lt;h2 id=&quot;qué-es-la-vulnerabilidad&quot;&gt;¿Qué es la vulnerabilidad?&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://netcloudengineering.com/wp-content/uploads/2017/06/vulnerabilidades-ciberseguridad.jpg&quot; alt=&quot;vulnerabilidad&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Una vulnerabilidad  es una debilidad o un error en el código de un sistema que puede ser explotado para obtener acceso no autorizado o realizar acciones no autorizadas en un sistema informático comprometer la seguridad permitiendo a los atacantes ejecutar código, acceder a la memoria de un sistema, instalar malware y robar, destruir o modificar datos confidenciales.&lt;/p&gt;
+
+&lt;h3 id=&quot;ejemplos-de-vulnerabilidad&quot;&gt;Ejemplos de vulnerabilidad&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Autenticación rota&lt;/strong&gt;:
+En la autenticación rota, cada vez que un usuario inicia sesión en su cuenta, se crea una identificación de sesión, y esa identificación de sesión solo se permite para esa cuenta en particular. En caso de que la aplicación web no esté diseñada de forma segura, el atacante puede usar varias técnicas dadas:&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Relleno de credenciales&lt;/li&gt;
+      &lt;li&gt;Contraseñas sin cifrar&lt;/li&gt;
+      &lt;li&gt;Tiempos de espera de sesión mal configurados&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Inyección de SQL&lt;/strong&gt;:
+Es un tipo de vulnerabilidad en la que un atacante inserta su propio código en un sitio web con el fin acceder a datos protegidos o sensibles.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Secuencias de comandos entre sitios:&lt;/strong&gt;
+Son un tipo de vulnerabilidad de los sitios web, que permite que los atacantes coloquen secuencias de comandos maliciosas en páginas web.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://academy.avast.com/hs-fs/hubfs/What_is_scross-site_scripting-1.png?width=600&amp;amp;name=What_is_scross-site_scripting-1.png&quot; alt=&quot;Vulnerabilidad&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Falsificación de solicitudes entre sitios&lt;/strong&gt;:
+Es un ataque contra aplicaciones hospedadas en web en las que una aplicación web malintencionada puede influir en la interacción entre un explorador cliente y una aplicación web que confía en ese explorador.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Configuración incorrecta de seguridad&lt;/strong&gt;:
+Son controles de seguridad que se configuran incorrectamente o se dejan inseguros, lo que pone en riesgo sus sistemas y datos.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;qué-es-el-payload&quot;&gt;¿Qué es el payload?&lt;/h2&gt;
+
+&lt;p&gt;En informática, un payload es una carga de capacidad en un paquete o en otros medios de transmisión. Dicho término está arraigado en el mundo militar y a veces está asociado con la capacidad de código malicioso con el fin de dañar. Podemos encontrarnos con data payloads o malware payload. Del primero podemos decir que se produce cuando el dato es enviado por un destino de comunicación, y el segundo es un código malicioso que pretende hacer daño al objetivo señalado.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://esgeeks.com/media/2022/03/Concepto-payload-carga-útil.jpg&quot; alt=&quot;payload&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;ejemplos&quot;&gt;Ejemplos&lt;/h3&gt;
+
+&lt;p&gt;Un ejemplo de &lt;strong&gt;Data pyload&lt;/strong&gt; sería a través de un paquete IP. Este puede contener un payload con comandos emitidos por el último usuario, como una solicitud de un contenido web. Aunque, a menudo, consiste en transmitir datos por un servidor en respuesta a un usuario solicitante.  Los límites de los payloads en las PDUs (Protocol Data Unit) son con frecuencia especificados por un protocolo, y el tamaño máximo para un PDU individual raramente cambia.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://cdn-icons-png.flaticon.com/512/1995/1995756.png&quot; alt=&quot;icono&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;El tamaño máximo de payloads por paquetes de IP está limitado por el campo de longitud total (total length) en la cabecera del paquete IP; este campo tiene una longitud de 16 bits, lo que significa que el valor máximo posible es 2¹⁶ y el  valor más alto posible para la longitud del paquete es de 65535, menos del número de bytes que requiere un encabezado de paquete. El MTU para paquetes IP varía por el sistema y la red. La IP original estándar especifica que todos los hosts deben ser capaces de aceptar paquetes tan largos como sean de 576 bytes con los payload data de 512 bytes y los 64 de la cabecera. El valor predeterminado MTU actualmente aceptado para paquetes IPv4 es de 1500 bytes por la compatibilidad con los segmentos Ethernet.&lt;/p&gt;
+
+&lt;p&gt;En cuanto a un &lt;strong&gt;payload malicioso&lt;/strong&gt; (o malware payload) podemos poner como ejemplo todos aquellos correos electrónicos o incluso SMS que contienen un virus autorreplicante alojado en un enlace. Los atacantes eluden las defensas, mantienen la carga y atacan a la víctima. Esta vía, la de métodos de distribución comprobados, como los emails de suplantación de identidad y los gusanos, pueden adaptarse. Mientras no tenga límites específicos para la capacidad máxima de carga, los actores maliciosos intentarán mantenerlos en un tamaño razonable para evitar ser detectado por herramientas de detección de malware.&lt;/p&gt;
+
+&lt;p&gt;Casi ningún tipo de malware puede ser incorporado dentro de un payload con la ayuda de un generador de payload para crear un malware ejecutable. Una vez entregado y ejecutado, el proceso de distribución infecta al sistema objetivo, a menos que haya un sistema de detección de malware. Una carga útil puede contener cualquier tipo de malware, incluido el ransomware, el reclutamiento de botnets u otros tipos de virus o gusanos.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusión&quot;&gt;Conclusión&lt;/h2&gt;
+
+&lt;p&gt;Ya con este contexto, podemos decir que un exploit es un pequeño programa o un pedazo de código que se aprovecha o explota de una vulnerabilidad encontrada, mientras que un payload viene siendo esa acción que queremos hacer una vez que hemos explotado la vulnerabilidad.&lt;/p&gt;
+
+&lt;p&gt;Tanto el exploit como el payload son pedazos de código que funcionan en conjunto para un fin, que en este caso, sería explotar la vulnerabilidad encontrada.&lt;/p&gt;
+
+&lt;p&gt;Y también cabe decir que dentro del mundo del hacking, existen varias herramientas automatizadas, como lo es Metaexploit, que en la práctica nos ayudan a comprender mucho mejor como funciona este par de términos, ya que no necesariamente un exploit está amarrado a un payload y viceversa. Sino que un exploit puede usar varios payloads a fin de tener una shellcon privilegios, crear usuarios, etc.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="seguridad" /><summary type="html">En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.</summary></entry><entry><title type="html">Conectándonos al mundo</title><link href="http://localhost:4000/redes/2022/10/06/conexion.html" rel="alternate" type="text/html" title="Conectándonos al mundo" /><published>2022-10-06T20:39:42+02:00</published><updated>2022-10-06T20:39:42+02:00</updated><id>http://localhost:4000/redes/2022/10/06/conexion</id><content type="html" xml:base="http://localhost:4000/redes/2022/10/06/conexion.html">&lt;h2 id=&quot;trabajo-de-investigación-y-comparativa-de-las-conexiones-a-internet-ofrecidas-al-público-del-país-de-senegal&quot;&gt;Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://blog.mariatec.es/wp-content/uploads/2022/08/imagen_2022-08-26_113938024.png&quot; alt=&quot;Senegal&quot; /&gt;
+Se trata de un estado soberano de África Occidental, con una superficie total de 196.710 km2, siendo su gobierno una república semipresidencialista y que cuenta con catorce regiones, con más de 13 millones de habitantes, el 42% de ellos residentes en zonas rurales. Su idioma oficial es el francés, y su moneda oficial es el Franco CFA de África Occidental.&lt;/p&gt;
+
+&lt;h2 id=&quot;operadores-de-acceso-doméstico-en-senegal&quot;&gt;OPERADORES DE ACCESO DOMÉSTICO EN SENEGAL&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://blog.mariatec.es/wp-content/uploads/2022/08/image-205-1024x311.png&quot; alt=&quot;Tabla&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Debido a la no competencia de empresas de comunicaciones en Senegal, hay muy poca oferta y proveedores de telecomunicaciones. Uno de los afectados debido a ello son los cibercafés, dado que, desde finales de 2008, están en plena decadencia. Se vio un poco de luz cuando la empresa Sonatel comenzó el desarrollo e infraestructuración de banda ancha, pero de alto costo en sus inicios, y bajando sus precios de forma desorbitada y rápida. Esto permitió que muchísima población, desde estudiantes a vendedores ambulantes, pudiesen navegar desde sus propias casas.&lt;/p&gt;
+
+&lt;p&gt;Sonatel es una empresa del estado, debido a que conserva un alto porcentaje de las acciones de la misma, por lo que dificulta la expansión de nuevos proveedores debido a que este monopolio hace que las empresas que quieran entrar en el mercado de Senegal deban pasar por el ente, por lo
+que se crea una falsa competencia, que perjudica a un público que sigue esperando precios asequibles en lo referente a servicios de internet y telefonía fija, sobre todo en las zonas rurales, que como comenté al inicio, se trata del 42% de la población total del país.&lt;/p&gt;
+
+&lt;p&gt;Expresso rompió con este monopolio, pero solo en el ámbito de las comunicaciones móviles con el pretexto de ser el servicio más demandado por el público, por lo que no ha sido un “duro
+competidor” para Sonatel, único operador vigente a cargo de la demanda de telefonía fija, internet y comunicaciones internacionales. La población creyó que el monopolio llegaría a su fin, pero los pequeños proveedores no pueden ofrecer tarifas competitivas y deben aceptar las condiciones impuestas por Sonatel.&lt;/p&gt;
+
+&lt;p&gt;Y para más agravante, con la llegada de la crisis financiera mundial, muchas empresas que contrataban servicios TIC, han cancelado sus contratos, por lo que muchos proveedores se han visto obligados a cerrar al no alcanzar a cubrir los costos.&lt;/p&gt;
+
+&lt;h2 id=&quot;comparativa-con-españa&quot;&gt;COMPARATIVA CON ESPAÑA&lt;/h2&gt;
+
+&lt;p&gt;Actualmente existen en España, más de 20 compañías que ofrecen servicios de fibra, ADSL y tarifas de móviles dentro de todo el territorio español, sin contar con sus marcas low cost. Cada una de ellas ofrecen servicios tan variados como necesidades e infraestructuras según la demanda.&lt;/p&gt;
+
+&lt;p&gt;Las tarifas varían periódicamente, sin contar con la gran variedad de tarifas que tiene cada una. Todo esto es debido a la demanda y oferta por parte de los usuarios y cada compañía debe equiparse de estrategias de competencia y de esta manera ganar terreno dentro del mercado de las telecomunicaciones.&lt;/p&gt;
+
+&lt;p&gt;En España contamos con una variedad de cobertura muy amplia, dado que no en todo el panorama castellano disponen desde los mismos servicios. Nos encontramos con zonas rurales sin cobertura si quiera de fibra óptica o ADSL, en las que las compañías ofrecen líneas de internet satélite móvil.&lt;/p&gt;
+
+&lt;p&gt;Existen 4 grandes grupos en nuestro país, como lo son:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Grupo Movistar.
+Grupo Orange.
+Grupo Vodafone
+Grupo MásMóvil.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Cada vez son más las compañías que emergen dada a la apertura del mercado libre, por lo que los usuarios pueden beneficiarse de ofertas más baratas por parte de las compañías más competitivas, e incluso una lucha por una contraoferta, para mantener una cartera de clientes a un bajo coste para estos mismos, ofreciendo terminales, descuentos durante un período acotado, promociones para nuevos clientes recomendados por ya clientes, etc.&lt;/p&gt;
+
+&lt;p&gt;En nuestro país tenemos cobertura de fibra y móvil que, o bien usa su propia red o alquilan la red de otra compañía para su uso parcial o total y así poder ofrecer servicio en aquellas zonas donde no lo tengan de forma propia. En 2020 solo 5 operadores invirtieron para tener su red propia para no depender de otros operadores, como son Movistar, Orange, Vodafone, MásMóvil y Euskaltel (solo en el País Vasco).&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.mariatec.es/wp-content/uploads/2022/08/imagen_2022-08-26_114959861-1024x678.png&quot;&gt;Operadoras&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Como podemos ver en esta tabla, la oferta de servicios es variada, ya que las compañías ofrecen servicio de televisión con diferentes paquetes adheridos según la demanda del cliente. Una de ellas, Alterna, nos demuestra que incluso las empresas energéticas quieren introducirse en el mercado de las telecomunicaciones, o a la inversa como sucede con Yoigo.&lt;/p&gt;
+
+&lt;p&gt;Es tal la competencia entre compañías, que exactamente 3 semanas, la compañía rumana DIGI, está ofreciendo en ciudades como Madrid o Barcelona, fibra óptica de 10GB, por el precio de 30€ al mes, recientemente seguida del grupo French Telecom y de la mano de Orange, ofreciendo la misma velocidad en Madrid, Barcelona, Valencia, Zaragoza y Sevilla, por 10€ de sobre coste en sus tarifas de uso familiar y de empresa.&lt;/p&gt;
+
+&lt;p&gt;En el siguiente cuadro, podemos ver las diferentes combinaciones de fibra con líneas móviles que ofrecen las 3 compañías más caras de España. Estas compañías, además de ofrecer estos servicios, dentro de estos paquetes, incluyen terminales gratis y servicios como televisión digital, Netflix, HBO, suscripciones a Amazon Prime, DAZN y un largo etcétera de complementos de entretenimiento que se adapta a las necesidades e intereses de los usuarios.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://blog.mariatec.es/wp-content/uploads/2022/08/image-206-1024x518.png&quot;&gt;Operadores&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusión&quot;&gt;CONCLUSIÓN&lt;/h2&gt;
+
+&lt;p&gt;Finalmente, la evidencia que presentamos con anterioridad demuestra, que a pesar de que la población haga una demanda a su gobierno y a las empresas proveedoras, Senegal no cuenta con una infraestructura para una modernización de las TIC, a lo igual que las proveedoras tiene un acceso limitado para entrar en el mercado libre, gobernado por Sonatel, que es quien impone las tarificaciones a las nuevas empresas que quieran entrar en el mercado de telecomunicaciones en dicho país, teniendo una tasa de dispositivos móviles de sólo 0.1 por persona respecto a la media Europea, siendo esta de 1.2.&lt;/p&gt;
+
+&lt;p&gt;Sin embargo, en nuestro país podemos ver una amplia oferta tanto de tarifas como compañías, que se adaptan a las necesidades de los usuarios y compitiendo entre ellas para lograr tener mayor presencia a lo largo de todo el territorio español. Fibra, ADSL, internet satélite, móvil y una gran e infinita variedad que nos deja incluso confusos en la elección dada a sus continuos y prontos cambios de promociones y ofertas cada poco tiempo.&lt;/p&gt;
+
+&lt;p&gt;Por las razones que hemos mencionado con anterioridad, Senegal se encuentra en un punto en el que veía la luz a una modernización de las telecomunicaciones, pero han sido mermadas debido a numerosos inconvenientes, siendo uno de ellos la crisis financiera mundial o la poca competencia entre proveedores.&lt;/p&gt;
+
+&lt;p&gt;Una diferencia muy amplia, también nos la encontramos en ese 42% de la población senegalesa sin posibilidad de acceso a la red, y, sin embargo, en la España rural, se ofrecen redes satélites para que no exista esa aislación de comunicaciones, sea cual sea el punto geográfico en el que se encuentre la población.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="redes" /><summary type="html">Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.</summary></entry><entry><title type="html">Introducción a la programación Python</title><link href="http://localhost:4000/python/2022/09/29/inicio-python.html" rel="alternate" type="text/html" title="Introducción a la programación Python" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/python/2022/09/29/inicio-python</id><content type="html" xml:base="http://localhost:4000/python/2022/09/29/inicio-python.html">&lt;h2 id=&quot;ejercicio-1&quot;&gt;Ejercicio 1&lt;/h2&gt;
+&lt;p&gt;Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis&quot;&gt;Análisis:&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que leer una cantidad de millas marinas y calcular su valor en metros.
+Entrada: millas(entero).
+Salida: metros (entero).&lt;/p&gt;
+&lt;h3 id=&quot;diseño&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Leer distancia_millas (distancia_millas).
+2. Convertir millas marinas a metros (distancia_millas*1852).
+3. Mostrar el resultado.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Leer distancia_millas (distancia_millas).
+distancia_millas = float(input(&quot;Distancia en millas marinas: &quot;))
+
+2. Convertir millas marinas a metros (distancia_millas*1852).
+metros= distancia_millas*1852
+
+3. Mostrar el resultado en metros.
+print(&quot;La distancia en metros es de: &quot;,metros, &quot;metros&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-2&quot;&gt;Ejercicio 2&lt;/h2&gt;
+&lt;p&gt;Escribir un programa que pida al usuario su peso (en kg) y estatura (en metros), calcule el índice de masa corporal y lo almacene en una variable, e imprima por pantalla la frase “Tu índice de masa corporal es…” y el resultado.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-1&quot;&gt;Análisis:&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que calcular el IMC (índice de masa corporal) dados el peso (kg) y la estatura (m).
+Entrada: peso (entero), estatura (entero).
+Salida: imc (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-1&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;p&gt;1.Leer peso (peso) y estatura (estatura).
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+3.Mostrar el resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer peso (peso) y estatura (estatura).
+
+peso = input(&quot;¿Cuál es tu peso?(kg): &quot;)
+estatura = input(&quot;¿Cuál es tu estatura (metros): &quot;)
+
+2.Calcular el IMC (imc = peso/(estatura**2,2).
+imc = round(float(peso)/float(estatura)**2,2)
+
+3.Mostrar el resultado.
+print(&quot;Tu índice de masa corporal es &quot; + str(imc))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-3&quot;&gt;Ejercicio 3&lt;/h2&gt;
+&lt;p&gt;Una juguetería tiene mucho éxito en dos de sus productos: payasos y muñecas. Suele hacer venta por correo y la empresa de logística les cobra por peso de cada paquete así que deben calcular el peso de los payasos y muñecas que saldrán en cada paquete a demanda. Cada payaso pesa 112 g y cada muñeca 75 g. Escribir un programa que lea el número de payasos y muñecas vendidos en el último pedido y calcule el peso total del paquete que será enviado. Además se nos pide el precio que se cobra por gramo, , y se nos mostrará el total de dinero que necesitamos para realizar el envío.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-2&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema: Tenemos que calcular el peso del último pedido de payasos y muñecas, y el precio por gramo
+al realizar el envío.
+Entrada: payasos (real), muñecas (real), peso_payaso (real), peso_muñeca (real).
+Salida:peso_total (real), precio_envío (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-2&quot;&gt;Diseño:&lt;/h3&gt;
+&lt;p&gt;1.Leer cantidad de payasos (payasos)
+2.Leer cantidad de muñecas (muñecas)
+3.Calcular el peso del pedido (peso_total = peso_payaso&lt;em&gt;payaso + peso_muñeca&lt;/em&gt;muñeca)
+4.Leer el precio del envío por gramo.
+5.Calcular precio del envío.
+6.Mostrar el resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+peso_payaso = 112
+peso_muñeca = 75
+
+1.Leer cantidad de payasos (payasos)
+payasos = int(input(&quot;Introduce el número de payasos a enviar: &quot;))
+
+2.Leer cantidad de muñecas (muñecas)
+muñecas = int(input(&quot;Introduce el número de muñecas a enviar: &quot;))
+
+3.Calcular el peso del pedido (peso_total = peso_payaso*payaso + peso_muñeca*muñeca)
+peso_total = peso_payaso * payasos + peso_muñeca * muñecas
+
+4.Leer el precio del envío por gramo.
+precio = float(input(&quot;El precio por gramo del envío es de: &quot;))
+
+5.Calcular precio del envío.
+precio_envio = peso_total * precio
+
+6.Mostrar el resultado.
+print(&quot;El precio total del envío es de: &quot;,precio_envio,&quot;€.&quot; )
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ejercicio-4&quot;&gt;Ejercicio 4&lt;/h2&gt;
+&lt;p&gt;Diseñar el algoritmo correspondiente a un programa que pida el total de kilómetros recorridos, el precio de la gasolina (por litro), el consumo del coche (litros/100 km) y nos muestre la siguiente información:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;El total de litros de gasolina que ha gastado en el trayecto.&lt;/li&gt;
+  &lt;li&gt;¿Cuánto dinero te ha costado la gasolina?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;análisis-3&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema:Tenemos que calcular el consumo de un coche, el consumo en un recorrido con determinados kilómetros y el coste del trayecto.
+Entrada:kilometros_recorridos (entero), precio_gasolina (entero), consumo_coche (entero).
+Salida: total_litros (entero), consumo_gasolina (entero), gasto_gasolina (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-3&quot;&gt;Diseño&lt;/h3&gt;
+&lt;p&gt;1.Leer kilómetros totales recorridos.
+2.Leer precio gasolina.
+3.Leer consumo del coche.
+4.Calcular litros consumidos en el recorrido.
+5.Calcular coste de gasolina en el recorrido.
+6.Mostrar resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer kilómetros totales recorridos.
+kilometros_recorridos = float(input(&quot;Los kilómetros recorridos son: &quot;))
+
+2.Leer precio gasolina.
+precio_gasolina = float(input(&quot;El precio de la gasolina (por litro) es: &quot;))
+
+3.Leer consumo del coche.
+consumo_coche= float(input(&quot;El coche consume (litros/100km): &quot;))
+
+4.Calcular litros consumidos en el recorrido.
+consumo_gasolina =consumo_coche / 100 * kilometros_recorridos
+print(&quot;El coche ha gastado en &quot;,kilometros_recorridos,&quot; un total de&quot;,consumo_gasolina,&quot;litros de gasolina.&quot;)
+
+5.Calcular coste de gasolina en el recorrido.
+gasto_gasolina = consumo_gasolina*precio_gasolina
+
+6.Mostrar resultado.
+print(&quot;El gasto total de gasolina es de: &quot;,gasto_gasolina,&quot;€.&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;ejercicio-5&quot;&gt;Ejercicio 5&lt;/h1&gt;
+&lt;p&gt;Suponiendo que una paella se puede cocinar exclusivamente con arroz y gambas, y que para cada cuatro personas se utiliza medio kilo de arroz y un cuarto de kilo de gambas, escribir un programa que pida por pantalla el número de comensales para la paella, el precio por kilo de los ingredientes y muestre las cantidades de los ingredientes necesarios y el coste de la misma.&lt;/p&gt;
+
+&lt;h3 id=&quot;análisis-4&quot;&gt;Análisis&lt;/h3&gt;
+&lt;p&gt;Problema:Te pide el número de comensales para calcular el precio por kilo de los ingredientes para una paella, muestre las cantidades y el coste de la misma.
+Entrada: comensales (real), cantidad_arroz (entero), cantidad_gambas (entero), precio_gamba(entero),precio_arroz(entero).
+Salida:coste_paella (entero).&lt;/p&gt;
+
+&lt;h3 id=&quot;diseño-4&quot;&gt;Diseño&lt;/h3&gt;
+&lt;p&gt;1.Leer el número de comensales.
+2.Calcular ingredientes necesarios para la paella.
+3.Leer precios del arroz y las gambas.
+4.Calcular el coste total de la paella.
+5.Mostrar resultado.&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.Leer el número de comensales.
+comensales = float(input(&quot;El número total de comensales es: &quot;))
+
+2.Calcular ingredientes necesarios para la paella.
+cantidad_arroz= comensales* 0.5/4
+cantidad_gambas=comensales* 0.25/4
+print(&quot;Vamos a necesitar &quot;,cantidad_arroz, &quot;gramos de arroz.&quot;)
+print(&quot;Vamos a necesitar &quot;,cantidad_gambas, &quot;gramos de gambas.&quot;)
+
+3.Leer precios del arroz y las gambas.
+precio_arroz= float(input(&quot;El precio del arroz(kg) es de: &quot;))
+precio_gamba= float(input(&quot;El precio de las gambas(kg) es de: &quot;))
+
+4.Calcular el coste total de la paella.
+coste_paella= (cantidad_arroz*precio_arroz)+(cantidad_gambas*precio_gamba)
+
+5.Mostrar resultado.
+print(&quot;La paella cuesta: &quot;,coste_paella, &quot;€.&quot;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="python" /><summary type="html">Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.</summary></entry><entry><title type="html">Crear un sitio web estático con Jekyll</title><link href="http://localhost:4000/jekyll/2022/09/29/origen.html" rel="alternate" type="text/html" title="Crear un sitio web estático con Jekyll" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/jekyll/2022/09/29/origen</id><content type="html" xml:base="http://localhost:4000/jekyll/2022/09/29/origen.html">&lt;p&gt;En este post hablaremos de como crear un sitio web estático con &lt;strong&gt;Jekyll&lt;/strong&gt;, un generador de sitios web estáticos.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://jekyllrb.com/img/jekyll-og.png&quot; alt=&quot;Jekyll&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;ventajas-y-desventajas&quot;&gt;Ventajas y desventajas.&lt;/h2&gt;
+&lt;p&gt;En primer lugar, este tipo de sitios no requieren un hosting con soporte, ya que está compuesto de archivos HTML, CSS, y JavaScript.&lt;/p&gt;
+
+&lt;p&gt;Otras ventajas que nos encontramos es su velocodad de carga y el ahorro de costos del hosting, ya que existen servicios gratuitos para ello.&lt;/p&gt;
+
+&lt;p&gt;En cuanto a desventajas, nos encontramos que no podemos editar o crear en línea, e incluso no es posible la creación de usuarios.&lt;/p&gt;
+
+&lt;h2 id=&quot;preparando-el-escenario&quot;&gt;Preparando el escenario&lt;/h2&gt;
+&lt;p&gt;Para ello, vamos a realizar la instalación tanto de &lt;strong&gt;Jekyll&lt;/strong&gt; y de &lt;strong&gt;Ruby&lt;/strong&gt; de la siguiente manera:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ apt install jekyll
+$ apt install jekyll bundler
+$ apt install ruby
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Creamos el directorio, en el que vamos a alojar nuestra web estática&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mkdir /directorio/web
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Y ejecutamos dentro del directorio web el comando necesario para crear nuestro sitio web estático:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ jekyll new sitio-jekyll
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Al ejecutar el comando, se nos creará el directorio &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sitio-jekyll&lt;/code&gt; con la siguiente estructura:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sitio-jekyll/
+  _posts/
+    2022-09-29-welcome-to-jekyll.markdown
+  _config.yml
+  about.md
+  Gemfile
+  index.md
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;para-qué-sirve-lo-que-hemos-creado&quot;&gt;¿Para qué sirve lo que hemos creado?&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts/&lt;/code&gt;: En este directorio se almacenarán los artículos por orden cronológico de nuestro sitio web.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;: En dicho fichero encontraremos las configuraciones que controlarán la forma en la que se generará la web y los artículos.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;: Este fichero aloja las definiciones de las dependencias o librerías adicionales de &lt;strong&gt;Ruby&lt;/strong&gt; que necesitaremos para crear el sitio web (lo que sería el &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;requirements.txt&lt;/code&gt;de &lt;strong&gt;Python&lt;/strong&gt;).&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.md&lt;/code&gt;: Los ficheros que componen el contenido de las páginas y los artículos tienen la extensión &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;markdown&lt;/code&gt;, y luego es &lt;strong&gt;Jekyll&lt;/strong&gt; es que se encargade transformar el código &lt;strong&gt;HTML&lt;/strong&gt; a la hora de la compilación.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ejecutando-el-sitio&quot;&gt;Ejecutando el sitio&lt;/h2&gt;
+&lt;p&gt;Para esto, ejecutaremos en la terminal lo siguiente:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ cd /directorio/web/sitio-jekyll
+$ bundle exec jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Tras esto, podremos ver el sitio generado en nuestro navegador, de forma local a la dirección &lt;em&gt;http://localhost:4000/&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusión&quot;&gt;Conclusión&lt;/h2&gt;
+&lt;p&gt;A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, &lt;strong&gt;CSS&lt;/strong&gt;, etc… de forma rápida, sin costes y de forma eficaz.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="jekyll" /><summary type="html">En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.</summary></entry><entry><title type="html">Bienvenid@</title><link href="http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Bienvenid@" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll.html">&lt;p&gt;Bienvenidos SysMaria, mi pequeño blog.&lt;/p&gt;
+
+&lt;p&gt;Soy Diplomada en Magisterio con la especialidad de Música y violín.&lt;/p&gt;
+
+&lt;p&gt;Siempre me ha llamado la atención el mundo de la tecnología, he «cacharreado» con cualquier aparatejo que caía en mis manos. Después de una larga temporada luchando por una plaza, conseguí entrar en Administración de Sistemas Informáticos en Red (ASIR) en el I.E.S. Gonzalo Nazareno de Dos Hermanas (Sevilla).&lt;/p&gt;
+
+&lt;p&gt;Y este será mi espacio, en el que expondré mis prácticas y mis pequeños proyectos personales.&lt;/p&gt;
+
+&lt;p&gt;En mi perfil de &lt;a href=&quot;https://github.com/Legnakra&quot;&gt;GitHub&lt;/a&gt; tengo subidos proyectos del primer año e iré añadiendo los de este curso.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="bienvenida" /><summary type="html">Bienvenidos SysMaria, mi pequeño blog.</summary></entry></feed>
