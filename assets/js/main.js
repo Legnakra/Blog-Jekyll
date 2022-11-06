@@ -1,32 +1,58 @@
-// When the user scrolls down 80px from the top of the document, resize the navbar's padding and the logo's font size
-window.onscroll = () => scrollFunction();
+// Fix DOM matches function
+if (!Element.prototype.matches) {
+  Element.prototype.matches =
+    Element.prototype.matchesSelector ||
+    Element.prototype.mozMatchesSelector ||
+    Element.prototype.msMatchesSelector ||
+    Element.prototype.oMatchesSelector ||
+    Element.prototype.webkitMatchesSelector ||
+    function(s) {
+      var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+        i = matches.length;
+      while (--i >= 0 && matches.item(i) !== this) {}
+      return i > -1;
+    };
+}
 
-function scrollFunction() {
-  let menu = document.getElementById("menu");
-  let logo = document.getElementById("site-logo");
+// Get Scroll position
+function getScrollPos() {
+  var supportPageOffset = window.pageXOffset !== undefined;
+  var isCSS1Compat = ((document.compatMode || "") === "CSS1Compat");
 
-  // if you are scrolling
-  if (document.body.scrollTop > 80 || document.documentElement.scrollTop > 80) {
-    menu.style.borderBottom = "1px solid rgb(65, 65, 65)";
-    menu.style["boxShadow"] = "5px 10px 18px #888888";
-    menu.style["opacity"] = "0.95";
+  var x = supportPageOffset ? window.pageXOffset : isCSS1Compat ? document.documentElement.scrollLeft : document.body.scrollLeft;
+  var y = supportPageOffset ? window.pageYOffset : isCSS1Compat ? document.documentElement.scrollTop : document.body.scrollTop;
 
-    // find and replace the navbar padding 
-    // if scrolling, smaller vertical padding 
-    menu.className = menu.className.replace(/py-\d/, 'py-3');
-    logo.className = logo.className.replace(/top/, 'scrolling');
+  return { x: x, y: y };
+}
+
+var _scrollTimer = [];
+
+// Smooth scroll
+function smoothScrollTo(y, time) {
+  time = time == undefined ? 500 : time;
+
+  var scrollPos = getScrollPos();
+  var count = 60;
+  var length = (y - scrollPos.y);
+
+  function easeInOut(k) {
+    return .5 * (Math.sin((k - .5) * Math.PI) + 1);
   }
 
-  // if you are not scrolling
-  else {
-    menu.style["boxShadow"] = "none";
-    menu.style.borderBottom = "none";
-    menu.style["opacity"] = "1";
+  for (var i = _scrollTimer.length - 1; i >= 0; i--) {
+    clearTimeout(_scrollTimer[i]);
+  }
 
-    // find and replace the navbar padding 
-    // if scrolling, larger vertical padding 
-    menu.className = menu.className.replace(/py-\d/, 'py-4');
-    logo.className = logo.className.replace(/scrolling/, 'top');
+  for (var i = 0; i <= count; i++) {
+    (function() {
+      var cur = i;
+      _scrollTimer[cur] = setTimeout(function() {
+        window.scrollTo(
+          scrollPos.x,
+          scrollPos.y + length * easeInOut(cur/count)
+        );
+      }, (time / count) * cur);
+    })();
   }
 }
 
