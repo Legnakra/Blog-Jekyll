@@ -19,24 +19,24 @@
   <!-- font awesome -->
   <script async src="https://use.fontawesome.com/releases/v5.0.12/js/all.js"></script>
 
-  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="SysMaria" />
+  <link type="application/atom+xml" rel="alternate" href="/feed.xml" title="SysMaria" />
   <!-- Begin Jekyll SEO tag v2.8.0 -->
 <title>Compilar dos2unix partiendo del código fuente | SysMaria</title>
-<meta name="generator" content="Jekyll v4.2.2" />
+<meta name="generator" content="Jekyll v3.9.2" />
 <meta property="og:title" content="Compilar dos2unix partiendo del código fuente" />
-<meta name="author" content="María Jesús Alloza Rodríguez" />
+<meta name="author" content="María Jesús Alloza Rodrígues" />
 <meta property="og:locale" content="en_US" />
 <meta name="description" content="Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker." />
 <meta property="og:description" content="Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker." />
-<link rel="canonical" href="http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html" />
-<meta property="og:url" content="http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html" />
+<link rel="canonical" href="/aso/2022/10/12/compilacion-paquete-makefile.html" />
+<meta property="og:url" content="/aso/2022/10/12/compilacion-paquete-makefile.html" />
 <meta property="og:site_name" content="SysMaria" />
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2022-10-12T11:17:16+02:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="Compilar dos2unix partiendo del código fuente" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"María Jesús Alloza Rodríguez"},"dateModified":"2022-10-12T11:17:16+02:00","datePublished":"2022-10-12T11:17:16+02:00","description":"Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.","headline":"Compilar dos2unix partiendo del código fuente","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html"},"url":"http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"María Jesús Alloza Rodrígues"},"dateModified":"2022-10-12T11:17:16+02:00","datePublished":"2022-10-12T11:17:16+02:00","description":"Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.","headline":"Compilar dos2unix partiendo del código fuente","mainEntityOfPage":{"@type":"WebPage","@id":"/aso/2022/10/12/compilacion-paquete-makefile.html"},"url":"/aso/2022/10/12/compilacion-paquete-makefile.html"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -57,26 +57,6 @@
   </a>
   
   <!-- NAVIGATION -->
-  
-    
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
-      <div class="navbar-nav">
-      
-        
-        <a class="nav-item nav-link " href="/index.html">Inicio</a>
-      
-        
-        <a class="nav-item nav-link " href="/categories.html">Categorias</a>
-      
-        
-        <a class="nav-item nav-link " href="/archive.html">Archivo</a>
-      
-      </div>
-    </div>
   
 </nav>
 
@@ -111,7 +91,7 @@
     <div class="col-sm-2 pt-3">
       <div class="toc-div py-3">
   
-  <ul class="toc"><li><a href="#pasos-de-instalación">Pasos de instalación</a></li><li><a href="#pasos-de-desinstalación">Pasos de desinstalación</a></li></ul>
+  <ul class="toc"><li><a href="#pasos-de-instalación">Pasos de instalación</a></li><li><a href="#pasos-de-instalación-1">Pasos de instalación</a></li></ul>
 
 </div>
 
@@ -141,9 +121,9 @@
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -xv dos2unix_7.4.1.orig.tar.gz
 </code></pre></div></div>
 
-<p><img src="/assets/images/Makefile/paso1.png" alt="paso1" /></p>
+<p><img src="/images/Makefile/paso1" alt="paso1" /></p>
 
-<p><img src="/assets/images/Makefile/paso2.png" alt="paso2" /></p>
+<p><img src="/images/Makefile/paso2" alt="paso2" /></p>
 
 <ol>
   <li>Nos dirigimos al directorio que hemos descomprimido y ejecutamos lo siguiente:</li>
@@ -153,7 +133,7 @@
 make
 </code></pre></div></div>
 
-<p><img src="/assets/images/Makefile/paso2-3.png" alt="paso2-2" /></p>
+<p><img src="/images/Makefile/paso2-2" alt="paso2-2" /></p>
 
 <ol>
   <li>Realizamos la instalación con la entrada del comando:</li>
@@ -162,7 +142,7 @@ make
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make install
 </code></pre></div></div>
 
-<p><img src="/assets/images/Makefile/paso3.png" alt="paso3" /></p>
+<p><img src="/images/Makefile/paso3" alt="paso3" /></p>
 
 <ol>
   <li>Realizamos la comprobación de que el paquete se ha instalado correctamente.</li>
@@ -172,11 +152,11 @@ make
 whereis dos2unix
 </code></pre></div></div>
 
-<p><img src="/assets/images/Makefile/paso4.png" alt="paso4" /></p>
+<p><img src="/images/Makefile/paso4" alt="paso4" /></p>
 
-<p><img src="/assets/images/Makefile/paso5.png" alt="paso5" /></p>
+<p><img src="/images/Makefile/paso5" alt="paso5" /></p>
 
-<h2 id="pasos-de-desinstalación">Pasos de desinstalación</h2>
+<h2 id="pasos-de-instalación-1">Pasos de instalación</h2>
 
 <p>Para realizar una desinstalación limpia del paquete deberemos realizar los siguientes pasos</p>
 
@@ -188,7 +168,7 @@ ls
   </li>
 </ol>
 
-<p><img src="/assets/images/Makefile/paso5-2.png" alt="paso5-2" /></p>
+<p><img src="/images/Makefile/paso5-2" alt="paso5-2" /></p>
 
 <ol>
   <li>Desde allí, ejecutamos lo siguiente en nuestra consola y se realizará una desinstalación limpia.</li>
@@ -197,7 +177,7 @@ ls
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo make uninstall
 </code></pre></div></div>
 
-<p><img src="/assets/images/Makefile/paso6.png" alt="paso6" /></p>
+<p><img src="/images/Makefile/paso6" alt="paso6" /></p>
 
 <ol>
   <li>Comprobamos que ciertamente, el paquete ha sido desinstalado de nuestra maquina.
@@ -207,7 +187,7 @@ apt policy dos2unix
   </li>
 </ol>
 
-<p><img src="/assets/images/Makefile/paso7.png" alt="paso7" /></p>
+<p><img src="/images/Makefile/paso7" alt="paso7" /></p>
 
     </div>
   </div>
@@ -222,14 +202,26 @@ apt policy dos2unix
 
   <div class="card-body">
 
-    <h3 class="card-title text-center">Entradas recientes</h3>
+    <h3 class="card-title text-center">Recent Posts</h3>
   </div>
     <ul class="list-group list-group-flush">
+      
+        <li class="list-group-item">
+          <time datetime="2022-10-12T11:17:16+02:00">Nov 6, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html">Virtualización en Linux</a>
+        </li>
       
         <li class="list-group-item">
           <time datetime="2022-10-12T11:17:16+02:00">Oct 12, 2022</time> 
           &raquo;
           <a class="card-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html">Compilar dos2unix partiendo del código fuente</a>
+        </li>
+      
+        <li class="list-group-item">
+          <time datetime="2022-10-12T11:17:16+02:00">Oct 10, 2022</time> 
+          &raquo;
+          <a class="card-link" href="/prueba/2022/10/10/prueba.html">Prueba: Introducción a la implantación de aplicaciones web</a>
         </li>
       
         <li class="list-group-item">
@@ -244,18 +236,6 @@ apt policy dos2unix
           <a class="card-link" href="/redes/2022/10/06/conexion.html">Conectándonos al mundo</a>
         </li>
       
-        <li class="list-group-item">
-          <time datetime="2022-10-12T11:17:16+02:00">Sep 29, 2022</time> 
-          &raquo;
-          <a class="card-link" href="/bienvenida/2022/09/29/welcome-to-jekyll.html">Bienvenid@</a>
-        </li>
-      
-        <li class="list-group-item">
-          <time datetime="2022-10-12T11:17:16+02:00">Sep 29, 2022</time> 
-          &raquo;
-          <a class="card-link" href="/jekyll/2022/09/29/origen.html">Crear un sitio web estático con Jekyll</a>
-        </li>
-      
     </ul>
   <div class="card-body">
   </div>
@@ -267,7 +247,7 @@ apt policy dos2unix
 
     <div class="card-body">
 
-      <h3 class="card-title text-center">Categorias</h3>
+      <h3 class="card-title text-center">Categories</h3>
 
       
         <div class="category-tags d-flex flex-wrap justify-content-center">
@@ -336,10 +316,34 @@ apt policy dos2unix
             
             
             
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#prueba">
+              
+              
+                Prueba
+              
+            
+            </a>
+          
+            
+            
+            
+            
             <a class="card-link my-2 py-2 px-3" href="/categories.html#aso">
               
               
                 Aso
+              
+            
+            </a>
+          
+            
+            
+            
+            
+            <a class="card-link my-2 py-2 px-3" href="/categories.html#hlc-sri">
+              
+              
+                Hlc+sri
               
             
             </a>
@@ -368,27 +372,6 @@ apt policy dos2unix
       </div>
     </div>
 
-    
-      <div class="row">
-        <div class="d-flex justify-content-center">
-          <div class="footer-element">
-    
-        <a class="social-icon" href="mailto:mariajesus.alloza@outlook.es" target="_blank">
-            <i class="fa-hover fas fa-envelope" title="Email"></i>
-        </a>
-    
-        <a class="social-icon" href="https://twitter.com/marixusa" target="_blank">
-            <i class="fa-hover fab fa-twitter" title="Twitter"></i>
-        </a>
-    
-        <a class="social-icon" href="https://github.com/Legnakra" target="_blank">
-            <i class="fa-hover fab fa-github" title="GitHub"></i>
-        </a>
-    
-</div>
-
-        </div>
-      </div>
     
 
     

@@ -1,4 +1,186 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-10-12T12:03:08+02:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">SysMaria</title><subtitle>¡Hola! Soy María y esta es mi página web, donde iré subiendo a lo largo del 2º curso de ASIR todos o la gran mayoría de mis proyectos.</subtitle><author><name>María Jesús Alloza Rodríguez</name></author><entry><title type="html">Compilar dos2unix partiendo del código fuente</title><link href="http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html" rel="alternate" type="text/html" title="Compilar dos2unix partiendo del código fuente" /><published>2022-10-12T11:17:16+02:00</published><updated>2022-10-12T11:17:16+02:00</updated><id>http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile</id><content type="html" xml:base="http://localhost:4000/aso/2022/10/12/compilacion-paquete-makefile.html">&lt;p&gt;Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-06T14:14:41+01:00</updated><id>/feed.xml</id><title type="html">SysMaria</title><subtitle>¡Hola! Soy María y esta es mi página web, donde iré subiendo a lo largo del 2º curso de ASIR todos o la gran mayoría de mis proyectos.</subtitle><author><name>María Jesús Alloza Rodrígues</name></author><entry><title type="html">Virtualización en Linux</title><link href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" rel="alternate" type="text/html" title="Virtualización en Linux" /><published>2022-11-06T13:11:32+01:00</published><updated>2022-11-06T13:11:32+01:00</updated><id>/hlc+sri/2022/11/06/virtualizaci%C3%B3n</id><content type="html" xml:base="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html">&lt;h1 id=&quot;virtualización&quot;&gt;Virtualización&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://www.cisga.es/wp-content/uploads/2016/11/banner_computo.jpg&quot; alt=&quot;Banner&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;¿Qué es la virtualización?
+    &lt;ul&gt;
+      &lt;li&gt;Nos permite ejecutar más de un sistema virtual, y múltiples sistemas operativos y aplicaciones, en un solo servidor, aumentando el rendimiento del hardware disponible e incrementando el tiempo de procesamiento de un equipo, ya que habitualmente se desaprovecha gran parte.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Para qué se utiliza la virtualización?
+    &lt;ul&gt;
+      &lt;li&gt;Aislamiento e independencia de servicios y contenidos.&lt;/li&gt;
+      &lt;li&gt;Laboratorio de pruebas.&lt;/li&gt;
+      &lt;li&gt;Virtualización de arquitecturas de las que no se dispone.&lt;/li&gt;
+      &lt;li&gt;Creación de clúster de máquinas y sistemas distribuidos.&lt;/li&gt;
+      &lt;li&gt;Herramientas de aprendizajes&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Ventajas de la virtualización:
+    &lt;ul&gt;
+      &lt;li&gt;Aumenta la seguridad.&lt;/li&gt;
+      &lt;li&gt;Reduce los costes.&lt;/li&gt;
+      &lt;li&gt;Mayor aprovechamiento de los recursos.&lt;/li&gt;
+      &lt;li&gt;Migración en vivo.&lt;/li&gt;
+      &lt;li&gt;Ahorro energético.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Desventajas de la virtualización:
+    &lt;ul&gt;
+      &lt;li&gt;Rendimento.&lt;/li&gt;
+      &lt;li&gt;Muchos sistemas dependen de un solo equipo.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Conceptos de virtualización
+    &lt;ul&gt;
+      &lt;li&gt;HOST: Es el equipo que ejecuta el sistema operativo y las aplicaciones.&lt;/li&gt;
+      &lt;li&gt;GUEST: Es el sistema operativo virtualizado.&lt;/li&gt;
+      &lt;li&gt;Hypervisor: Es el software que permite la virtualización.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Tipos de virtualización
+    &lt;ul&gt;
+      &lt;li&gt;Emulación: imita la arquitectura de un sistema al completo. Rendimiento bajo. Ejemplo: QEMU.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Virtualización de hardware: simula un hardware suficiente para permitir que un sistema operativo se ejecute de forma aislada. Rendimiento medio. Hipervisor de tipo 1. Ejemplo: VMware.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Virtualización completa: El hipervisor simula un hardware suficiente para permitir que un sistema operativo no adaptado se ejecute de forma aislada. HyperVisor de tipo 2. Ejemplo: VirtualBox.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Virtualización parcial: El hipervisor ofrece un interfaz especial para acceder a los recursos. Ejemplo: Xen.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Virtualización ligera: también llamada virtualización basada en contenedores. Sobre el núcleo del sistema operativo se ejecuta una capa de virtualización que permite que existan múltiples instancias aisladas de espacios de usuario (contenedor). Ejemplo: Docker.&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Tipos:
+        &lt;ul&gt;
+          &lt;li&gt;Contenedores de Sistemas: El uso que se hace de ellos es muy similar al que hacemos sobre una máquina virtual: se accede a ellos (normalmente por ssh), se instalan servicios, se actualizan, ejecutan un conjunto de procesos, . . . Ejemplo: LXC(Linux Container).&lt;/li&gt;
+          &lt;li&gt;Contenedores de Aplicación: Se suelen usar para el despliegue de aplicaciones web Ejemplo: Docker, Podman, . . .&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;¿Qué es un QEMU?
+    &lt;ul&gt;
+      &lt;li&gt;Es un emulador genérico y de código abierto de máquinas virtuales, permitiendo ejecutar sistemas operativos de una determinada arquitectura en una máquina con otra arquitectura distinta.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Que es KVM?
+    &lt;ul&gt;
+      &lt;li&gt;Es un hipervisor de tipo 1 que permite la virtualización de hardware completo. Es un módulo del núcleo de Linux que que contienen las extensiones de virtualización Intel VT o AMD-V.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Qué es un Libvirt?
+    &lt;ul&gt;
+      &lt;li&gt;Es una biblioteca de software que proporciona una API para la gestión de máquinas virtuales, redes, almacenamiento, etc. Es una capa de abstracción que permite la gestión de máquinas virtuales independientemente del hipervisor que se utilice.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Mecanismos de conexión a Libvirto
+    &lt;ul&gt;
+      &lt;li&gt;Local no provolegiado: Se conecta a través de un socket Unix. &lt;em&gt;qemu:///session&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;Remoto: Se conecta a través de un socket Unix. &lt;em&gt;qemu+ssh://user@host/system&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;Acceso local privilegiado: Se acceden a las máquinas virtuales del sistema. &lt;em&gt;qemu:///session&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Aplicaciones para usar Libvirt
+    &lt;ul&gt;
+      &lt;li&gt;virsh: Interfaz de línea de comandos. &lt;em&gt;virsh -c qemu:///session&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;virt-manager: Es una interfaz gráfica para la gestión de máquinas virtuales. &lt;em&gt;virt-manager -c qemu:///session&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;virtinst: Es una herramienta para la creación de máquinas virtuales. &lt;em&gt;virt-install -c qemu:///session&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;virt-viewer: Es una herramienta para la gestión de máquinas virtuales. &lt;em&gt;virt-viewer -c qemu:///session&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;gnome-boxes: Es una herramienta para la gestión de máquinas virtuales. &lt;em&gt;gnome-boxes -c qemu:///session&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Qué es LXC?
+    &lt;ul&gt;
+      &lt;li&gt;Es un sistema de contenedores de Linux que permite la creación y gestión de contenedores de Linux. Es un sistema de virtualización ligera que permite la creación de contenedores de Linux.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Qué componentes tiene LXC?
+    &lt;ul&gt;
+      &lt;li&gt;Grupos de control de cgroups: Es un subsistema del núcleo de Linux que permite la gestión de recursos de un grupo de procesos.&lt;/li&gt;
+      &lt;li&gt;Espacio de nombres namespaces que proporcionan un punto de vista diferente a un proceso (interfaces de red, procesos, usuarios, etc.).&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿A qué pertenecen los contenedores de LXC?
+    &lt;ul&gt;
+      &lt;li&gt;A los contenedores de sistemas. Su gestión y ciclo de vida es similar al de una máquina virtual tradicional. Está mantenido por Canonical y
+la página oficial es linuxcontainers.org.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;¿Qué es LXD?
+    &lt;ul&gt;
+      &lt;li&gt;Es una herramienta de gestión de los contenedores y máquinas virtuales del sistema operativo Linux, desarrollada por Canonical.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;comandos&quot;&gt;COMANDOS&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Comandos de virsh
+    &lt;ul&gt;
+      &lt;li&gt;virsh list: Lista las máquinas virtuales.&lt;/li&gt;
+      &lt;li&gt;virsh list –all: Lista todas las máquinas virtuales.&lt;/li&gt;
+      &lt;li&gt;virsh start &lt;nombre&gt;: Inicia una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh shutdown &lt;nombre&gt;: Apaga una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh destroy &lt;nombre&gt;: Apaga una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh undefine &lt;nombre&gt;: Elimina una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh define &lt;nombre&gt;: Crea una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh edit &lt;nombre&gt;: Edita una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh domifaddr &lt;nombre&gt;: Muestra la dirección IP de una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh domiflist &lt;nombre&gt;: Muestra las interfaces de red de una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh dominfo &lt;nombre&gt;: Muestra información de una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh domxml &lt;nombre&gt;: Muestra el XML de una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh dumpxml &lt;nombre&gt;: Muestra el XML de una máquina virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-list: Lista las redes virtuales.&lt;/li&gt;
+      &lt;li&gt;virsh net-start &lt;nombre&gt;: Inicia una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-destroy &lt;nombre&gt;: Apaga una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-undefine &lt;nombre&gt;: Elimina una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-define &lt;nombre&gt;: Crea una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-edit &lt;nombre&gt;: Edita una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-dumpxml &lt;nombre&gt;: Muestra el XML de una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-info &lt;nombre&gt;: Muestra información de una red virtual.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-autostart &lt;nombre&gt;: Inicia una red virtual al arrancar el sistema.&lt;/nombre&gt;&lt;/li&gt;
+      &lt;li&gt;virsh net-autostart –disable &lt;nombre&gt;: No inicia una red virtual al arrancar el sistema.&lt;/nombre&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Comandos de virt-manager
+    &lt;ul&gt;
+      &lt;li&gt;virt-manager: Inicia la interfaz gráfica de gestión de máquinas virtuales.&lt;/li&gt;
+      &lt;li&gt;virt-install: Crea una máquina virtual.&lt;/li&gt;
+      &lt;li&gt;virt-viewer: Gestiona una máquina virtual.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Comandos de LXC
+    &lt;ul&gt;
+      &lt;li&gt;lxc-list: Lista los contenedores.&lt;/li&gt;
+      &lt;li&gt;lxc-start: Inicia un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-stop: Apaga un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-destroy: Elimina un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-create: Crea un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-attach: Accede a un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-console: Accede a la consola de un contenedor.&lt;/li&gt;
+      &lt;li&gt;lxc-info: Muestra información de un contenedor.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Comandos virt
+    &lt;ul&gt;
+      &lt;li&gt;virt-clone: Clona una máquina virtual.&lt;/li&gt;
+      &lt;li&gt;virt-install: Crea una máquina virtual.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="HLC+SRI" /><summary type="html">Virtualización</summary></entry><entry><title type="html">Compilar dos2unix partiendo del código fuente</title><link href="/aso/2022/10/12/compilacion-paquete-makefile.html" rel="alternate" type="text/html" title="Compilar dos2unix partiendo del código fuente" /><published>2022-10-12T11:17:16+02:00</published><updated>2022-10-12T11:17:16+02:00</updated><id>/aso/2022/10/12/compilacion-paquete-makefile</id><content type="html" xml:base="/aso/2022/10/12/compilacion-paquete-makefile.html">&lt;p&gt;Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.&lt;/p&gt;
 
 &lt;p&gt;El comando que he seleccionado es dos2unix, un comando que convierte un archivo de texto DOS a formato UNIX.&lt;/p&gt;
 
@@ -20,9 +202,9 @@
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;tar -xv dos2unix_7.4.1.orig.tar.gz
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso1.png&quot; alt=&quot;paso1&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso1&quot; alt=&quot;paso1&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso2.png&quot; alt=&quot;paso2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso2&quot; alt=&quot;paso2&quot; /&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Nos dirigimos al directorio que hemos descomprimido y ejecutamos lo siguiente:&lt;/li&gt;
@@ -32,7 +214,7 @@
 make
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso2-3.png&quot; alt=&quot;paso2-2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso2-2&quot; alt=&quot;paso2-2&quot; /&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Realizamos la instalación con la entrada del comando:&lt;/li&gt;
@@ -41,7 +223,7 @@ make
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;make install
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso3.png&quot; alt=&quot;paso3&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso3&quot; alt=&quot;paso3&quot; /&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Realizamos la comprobación de que el paquete se ha instalado correctamente.&lt;/li&gt;
@@ -51,11 +233,11 @@ make
 whereis dos2unix
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso4.png&quot; alt=&quot;paso4&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso4&quot; alt=&quot;paso4&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso5.png&quot; alt=&quot;paso5&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso5&quot; alt=&quot;paso5&quot; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;pasos-de-desinstalación&quot;&gt;Pasos de desinstalación&lt;/h2&gt;
+&lt;h2 id=&quot;pasos-de-instalación-1&quot;&gt;Pasos de instalación&lt;/h2&gt;
 
 &lt;p&gt;Para realizar una desinstalación limpia del paquete deberemos realizar los siguientes pasos&lt;/p&gt;
 
@@ -67,7 +249,7 @@ ls
   &lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso5-2.png&quot; alt=&quot;paso5-2&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso5-2&quot; alt=&quot;paso5-2&quot; /&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Desde allí, ejecutamos lo siguiente en nuestra consola y se realizará una desinstalación limpia.&lt;/li&gt;
@@ -76,7 +258,7 @@ ls
 &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo make uninstall
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso6.png&quot; alt=&quot;paso6&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso6&quot; alt=&quot;paso6&quot; /&gt;&lt;/p&gt;
 
 &lt;ol&gt;
   &lt;li&gt;Comprobamos que ciertamente, el paquete ha sido desinstalado de nuestra maquina.
@@ -86,7 +268,10 @@ apt policy dos2unix
   &lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;img src=&quot;/assets/images/Makefile/paso7.png&quot; alt=&quot;paso7&quot; /&gt;&lt;/p&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="ASO" /><summary type="html">Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.</summary></entry><entry><title type="html">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</title><link href="http://localhost:4000/seguridad/2022/10/10/payload.html" rel="alternate" type="text/html" title="¿Qué diferencia hay entre exploit, vulnerabilidad y payload?" /><published>2022-10-10T10:40:32+02:00</published><updated>2022-10-10T10:40:32+02:00</updated><id>http://localhost:4000/seguridad/2022/10/10/payload</id><content type="html" xml:base="http://localhost:4000/seguridad/2022/10/10/payload.html">&lt;p&gt;En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;/images/Makefile/paso7&quot; alt=&quot;paso7&quot; /&gt;&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="ASO" /><summary type="html">Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.</summary></entry><entry><title type="html">Prueba: Introducción a la implantación de aplicaciones web</title><link href="/prueba/2022/10/10/prueba.html" rel="alternate" type="text/html" title="Prueba: Introducción a la implantación de aplicaciones web" /><published>2022-10-10T13:11:16+02:00</published><updated>2022-10-10T13:11:16+02:00</updated><id>/prueba/2022/10/10/prueba</id><content type="html" xml:base="/prueba/2022/10/10/prueba.html">&lt;h2 id=&quot;nombre-completo&quot;&gt;Nombre completo:&lt;/h2&gt;
+&lt;p&gt;María Jesús Alloza Rodríguez&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://img2.freepng.es/20171220/kre/linux-logo-png-5a3a1fe7d94070.02257309151375869588993545.jpg&quot; alt=&quot;imagen&quot; /&gt;&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="prueba" /><summary type="html">Nombre completo: María Jesús Alloza Rodríguez</summary></entry><entry><title type="html">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</title><link href="/seguridad/2022/10/10/payload.html" rel="alternate" type="text/html" title="¿Qué diferencia hay entre exploit, vulnerabilidad y payload?" /><published>2022-10-10T10:40:32+02:00</published><updated>2022-10-10T10:40:32+02:00</updated><id>/seguridad/2022/10/10/payload</id><content type="html" xml:base="/seguridad/2022/10/10/payload.html">&lt;p&gt;En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://img.freepik.com/vector-premium/banner-tecnologia-digital-seguridad-abstracta_43778-429.jpg?w=900&quot; alt=&quot;Banner&quot; /&gt;&lt;/p&gt;
 
@@ -195,7 +380,7 @@ Son controles de seguridad que se configuran incorrectamente o se dejan inseguro
 
 &lt;p&gt;Tanto el exploit como el payload son pedazos de código que funcionan en conjunto para un fin, que en este caso, sería explotar la vulnerabilidad encontrada.&lt;/p&gt;
 
-&lt;p&gt;Y también cabe decir que dentro del mundo del hacking, existen varias herramientas automatizadas, como lo es Metaexploit, que en la práctica nos ayudan a comprender mucho mejor como funciona este par de términos, ya que no necesariamente un exploit está amarrado a un payload y viceversa. Sino que un exploit puede usar varios payloads a fin de tener una shellcon privilegios, crear usuarios, etc.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="seguridad" /><summary type="html">En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.</summary></entry><entry><title type="html">Conectándonos al mundo</title><link href="http://localhost:4000/redes/2022/10/06/conexion.html" rel="alternate" type="text/html" title="Conectándonos al mundo" /><published>2022-10-06T20:39:42+02:00</published><updated>2022-10-06T20:39:42+02:00</updated><id>http://localhost:4000/redes/2022/10/06/conexion</id><content type="html" xml:base="http://localhost:4000/redes/2022/10/06/conexion.html">&lt;h2 id=&quot;trabajo-de-investigación-y-comparativa-de-las-conexiones-a-internet-ofrecidas-al-público-del-país-de-senegal&quot;&gt;Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.&lt;/h2&gt;
+&lt;p&gt;Y también cabe decir que dentro del mundo del hacking, existen varias herramientas automatizadas, como lo es Metaexploit, que en la práctica nos ayudan a comprender mucho mejor como funciona este par de términos, ya que no necesariamente un exploit está amarrado a un payload y viceversa. Sino que un exploit puede usar varios payloads a fin de tener una shellcon privilegios, crear usuarios, etc.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="seguridad" /><summary type="html">En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.</summary></entry><entry><title type="html">Conectándonos al mundo</title><link href="/redes/2022/10/06/conexion.html" rel="alternate" type="text/html" title="Conectándonos al mundo" /><published>2022-10-06T20:39:42+02:00</published><updated>2022-10-06T20:39:42+02:00</updated><id>/redes/2022/10/06/conexion</id><content type="html" xml:base="/redes/2022/10/06/conexion.html">&lt;h2 id=&quot;trabajo-de-investigación-y-comparativa-de-las-conexiones-a-internet-ofrecidas-al-público-del-país-de-senegal&quot;&gt;Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.&lt;/h2&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://blog.mariatec.es/wp-content/uploads/2022/08/imagen_2022-08-26_113938024.png&quot; alt=&quot;Senegal&quot; /&gt;
 Se trata de un estado soberano de África Occidental, con una superficie total de 196.710 km2, siendo su gobierno una república semipresidencialista y que cuenta con catorce regiones, con más de 13 millones de habitantes, el 42% de ellos residentes en zonas rurales. Su idioma oficial es el francés, y su moneda oficial es el Franco CFA de África Occidental.&lt;/p&gt;
@@ -252,7 +437,7 @@ Grupo MásMóvil.
 
 &lt;p&gt;Por las razones que hemos mencionado con anterioridad, Senegal se encuentra en un punto en el que veía la luz a una modernización de las telecomunicaciones, pero han sido mermadas debido a numerosos inconvenientes, siendo uno de ellos la crisis financiera mundial o la poca competencia entre proveedores.&lt;/p&gt;
 
-&lt;p&gt;Una diferencia muy amplia, también nos la encontramos en ese 42% de la población senegalesa sin posibilidad de acceso a la red, y, sin embargo, en la España rural, se ofrecen redes satélites para que no exista esa aislación de comunicaciones, sea cual sea el punto geográfico en el que se encuentre la población.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="redes" /><summary type="html">Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.</summary></entry><entry><title type="html">Introducción a la programación Python</title><link href="http://localhost:4000/python/2022/09/29/inicio-python.html" rel="alternate" type="text/html" title="Introducción a la programación Python" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/python/2022/09/29/inicio-python</id><content type="html" xml:base="http://localhost:4000/python/2022/09/29/inicio-python.html">&lt;h2 id=&quot;ejercicio-1&quot;&gt;Ejercicio 1&lt;/h2&gt;
+&lt;p&gt;Una diferencia muy amplia, también nos la encontramos en ese 42% de la población senegalesa sin posibilidad de acceso a la red, y, sin embargo, en la España rural, se ofrecen redes satélites para que no exista esa aislación de comunicaciones, sea cual sea el punto geográfico en el que se encuentre la población.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="redes" /><summary type="html">Trabajo de investigación y comparativa de las conexiones a internet ofrecidas al público del país de Senegal.</summary></entry><entry><title type="html">Introducción a la programación Python</title><link href="/python/2022/09/29/inicio-python.html" rel="alternate" type="text/html" title="Introducción a la programación Python" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/python/2022/09/29/inicio-python</id><content type="html" xml:base="/python/2022/09/29/inicio-python.html">&lt;h2 id=&quot;ejercicio-1&quot;&gt;Ejercicio 1&lt;/h2&gt;
 &lt;p&gt;Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.&lt;/p&gt;
 
 &lt;h3 id=&quot;análisis&quot;&gt;Análisis:&lt;/h3&gt;
@@ -413,7 +598,7 @@ coste_paella= (cantidad_arroz*precio_arroz)+(cantidad_gambas*precio_gamba)
 
 5.Mostrar resultado.
 print(&quot;La paella cuesta: &quot;,coste_paella, &quot;€.&quot;)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="python" /><summary type="html">Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.</summary></entry><entry><title type="html">Crear un sitio web estático con Jekyll</title><link href="http://localhost:4000/jekyll/2022/09/29/origen.html" rel="alternate" type="text/html" title="Crear un sitio web estático con Jekyll" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/jekyll/2022/09/29/origen</id><content type="html" xml:base="http://localhost:4000/jekyll/2022/09/29/origen.html">&lt;p&gt;En este post hablaremos de como crear un sitio web estático con &lt;strong&gt;Jekyll&lt;/strong&gt;, un generador de sitios web estáticos.&lt;/p&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="python" /><summary type="html">Ejercicio 1 Diseñar el algoritmo correspondiente a un programa que lea el valor correspondiente a una distancia en millas marinas y las escriba expresadas en metros.</summary></entry><entry><title type="html">Crear un sitio web estático con Jekyll</title><link href="/jekyll/2022/09/29/origen.html" rel="alternate" type="text/html" title="Crear un sitio web estático con Jekyll" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/jekyll/2022/09/29/origen</id><content type="html" xml:base="/jekyll/2022/09/29/origen.html">&lt;p&gt;En este post hablaremos de como crear un sitio web estático con &lt;strong&gt;Jekyll&lt;/strong&gt;, un generador de sitios web estáticos.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://jekyllrb.com/img/jekyll-og.png&quot; alt=&quot;Jekyll&quot; /&gt;&lt;/p&gt;
 
@@ -467,7 +652,7 @@ $ bundle exec jekyll serve
 &lt;p&gt;Tras esto, podremos ver el sitio generado en nuestro navegador, de forma local a la dirección &lt;em&gt;http://localhost:4000/&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;conclusión&quot;&gt;Conclusión&lt;/h2&gt;
-&lt;p&gt;A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, &lt;strong&gt;CSS&lt;/strong&gt;, etc… de forma rápida, sin costes y de forma eficaz.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="jekyll" /><summary type="html">En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.</summary></entry><entry><title type="html">Bienvenid@</title><link href="http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Bienvenid@" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/bienvenida/2022/09/29/welcome-to-jekyll.html">&lt;p&gt;Bienvenidos SysMaria, mi pequeño blog.&lt;/p&gt;
+&lt;p&gt;A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, &lt;strong&gt;CSS&lt;/strong&gt;, etc… de forma rápida, sin costes y de forma eficaz.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="jekyll" /><summary type="html">En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.</summary></entry><entry><title type="html">Bienvenid@</title><link href="/bienvenida/2022/09/29/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Bienvenid@" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/bienvenida/2022/09/29/welcome-to-jekyll</id><content type="html" xml:base="/bienvenida/2022/09/29/welcome-to-jekyll.html">&lt;p&gt;Bienvenidos SysMaria, mi pequeño blog.&lt;/p&gt;
 
 &lt;p&gt;Soy Diplomada en Magisterio con la especialidad de Música y violín.&lt;/p&gt;
 
@@ -475,4 +660,4 @@ $ bundle exec jekyll serve
 
 &lt;p&gt;Y este será mi espacio, en el que expondré mis prácticas y mis pequeños proyectos personales.&lt;/p&gt;
 
-&lt;p&gt;En mi perfil de &lt;a href=&quot;https://github.com/Legnakra&quot;&gt;GitHub&lt;/a&gt; tengo subidos proyectos del primer año e iré añadiendo los de este curso.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodríguez</name></author><category term="bienvenida" /><summary type="html">Bienvenidos SysMaria, mi pequeño blog.</summary></entry></feed>
+&lt;p&gt;En mi perfil de &lt;a href=&quot;https://github.com/Legnakra&quot;&gt;GitHub&lt;/a&gt; tengo subidos proyectos del primer año e iré añadiendo los de este curso.&lt;/p&gt;</content><author><name>María Jesús Alloza Rodrígues</name></author><category term="bienvenida" /><summary type="html">Bienvenidos SysMaria, mi pequeño blog.</summary></entry></feed>
