@@ -1,4 +1,254 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-06T16:56:53+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Virtualización en Linux</title><link href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" rel="alternate" type="text/html" title="Virtualización en Linux" /><published>2022-11-06T13:11:32+01:00</published><updated>2022-11-06T13:11:32+01:00</updated><id>/hlc+sri/2022/11/06/virtualizaci%C3%B3n</id><content type="html" xml:base="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html"><![CDATA[<h1 id="virtualización">Virtualización</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-08T18:14:09+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
+
+<p>Apache es un servidor web que se puede utilizar como proxy inverso. En este artículo se explica cómo configurar Apache para que actúe como proxy inverso.</p>
+
+<h2 id="configuración">Configuración</h2>
+
+<p>Lo primero que haremos será aplicar el <a href="https://fp.josedomingo.org/sri2223/3_http/files/ejercicio_proxy.zip">escenario</a> donde encontraremos:</p>
+
+<ul>
+  <li>Un escenario vagrant con dos máquinas virtuales:
+    <ul>
+      <li>Una máquina proxy conectada al exterior y a una red interna.</li>
+      <li>Una máquina servidorweb conectada a la red interna.</li>
+    </ul>
+  </li>
+  <li>Una receta ansible para configurar las dos máquinas virtuales del escenario anterior.</li>
+</ul>
+
+<p>Lo siguiente será instalar apache en la máquina proxy y configurarla para acceder a las páginas web de la máquina servidorweb. La primera URL es www.app1.org y la segunda es www.app2.org.</p>
+
+<p>Activaremos el módulo proxy y proxy_http de apache:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2enmod proxy
+a2enmod proxy_http
+</code></pre></div></div>
+
+<p>Y reiniciaremos el servidor web:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
+</code></pre></div></div>
+
+<p>Ahora crearemos un archivo de configuración para cada una de las aplicaciones que queremos que se sirvan a través de apache. En este caso, crearemos dos archivos de configuración: app1.conf y app2.conf. Estos archivos de configuración se guardarán en la ruta /etc/apache2/sites-available.</p>
+
+<p>El contenido de app1.conf será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
+        ServerName www.app1.org
+        ProxyPass               /       "http://interno.example1.org"
+        ProxyPassReverse        /       "http://interno.example1.org"
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>Y el contenido de app2.conf será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
+        ServerName www.app2.org
+        ProxyPass               /       "http://interno.example2.org"
+        ProxyPassReverse        /       "http://interno.example2.org"
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>Ahora activaremos los archivos de configuración de las aplicaciones:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite app1.conf
+a2ensite app2.conf
+</code></pre></div></div>
+
+<p>Y reiniciaremos el servidor web:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
+</code></pre></div></div>
+
+<p>Ahora configuraremos el archivo /etc/hosts de la máquina host para que resuelva los nombres de las aplicaciones a las direcciones IP de las máquinas servidorweb. El contenido del archivo /etc/hosts será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org
+</code></pre></div></div>
+
+<p>Ahora configuraremos el archivo /etc/hosts de las máquinas servidorweb para que resuelva los nombres de las aplicaciones a las direcciones IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>10.0.0.6 interno.example1.org interno.example2.org
+</code></pre></div></div>
+
+<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
+
+<p><img src="/assets/images/proxy/1.png" alt="1" /></p>
+
+<p><img src="/assets/images/proxy/2.png" alt="2" /></p>
+
+<h2 id="creamos-un-virtualhost-para-las-dos-aplicaciones">Creamos un virtualhost para las dos aplicaciones</h2>
+
+<p>En vez de crear un virtualhost para cada aplicación, podemos crear un virtualhost para las dos aplicaciones. El contenido del archivo servidor.conf será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
+    ServerName www.servidor.org
+    &lt;Location "/app1"&gt;
+        ProxyPass           "http://interno.example1.org"
+        ProxyPassReverse    "http://interno.example1.org"
+    &lt;/Location&gt;
+    &lt;Location "/app2"&gt;
+        ProxyPass           "http://interno.example2.org"
+        ProxyPassReverse    "http://interno.example2.org"
+    &lt;/Location&gt;
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>Ahora activaremos el archivo de configuración de la aplicación:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite servidor.conf
+</code></pre></div></div>
+
+<p>Y reiniciaremos el servidor web:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
+</code></pre></div></div>
+
+<p>Cambiaremos el contenido del archivo /etc/hosts de la máquina host para que resuelva el nombre de la aplicación a la dirección IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org www.servidor.org
+</code></pre></div></div>
+
+<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
+
+<p><img src="/assets/images/proxy/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/proxy/4.png" alt="4" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
+<p>Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.</p>
+
+<h2 id="introducción-a-github">Introducción a GitHub</h2>
+
+<ol>
+  <li>
+    <p>Creamos un repositorio en GitHub</p>
+
+    <p><img src="/assets/images/github/1.png" alt="1" /></p>
+
+    <p><img src="/assets/images/github/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Clonamos el repositorio en nuestro ordenador</p>
+
+    <p><img src="/assets/images/github/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Creamos un archivo en nuestro ordenador</p>
+
+    <p><img src="/assets/images/github/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Subimos el archivo al repositorio</p>
+
+    <p><img src="/assets/images/github/5.png" alt="5" /></p>
+
+    <p><img src="/assets/images/github/6.png" alt="6" /></p>
+  </li>
+</ol>
+
+<h2 id="introducción-a-markdown">Introducción a Markdown</h2>
+
+<p>Markdown es un lenguaje de texto que nos permite escribir de forma sencilla y rápida, y que se convierte en HTML. Es un lenguaje muy utilizado en la creación de blogs, ya que permite escribir de forma rápida y sencilla, y que se convierte en HTML.</p>
+
+<pre>
+Aprender la *sintaxis básica* del **lenguaje de marcas** `Markdown` para estructura la información en nuestro documentos.
+
+Para ello, hemos creado este fichero de la siguiente manera:
+`touch markdown.md`
+`nano markdown.md`
+
+Con este lenguaje de marcas podemos usar:
+* Titulo principal.
+* Subtítulo.
+* Párrafos.
+* Listas (ordenadas y desordenadas) como esta y la siguiente.
+
+1. Título.
+2. SUbtítulo.
+3. Párrafos.
+4. Listas.
+
+También podemos incluir un enlace, a una página externa [Debian](https://www.debian.org/index.es.html) o a otro fichero Markdown [aqui](README.md)
+
+Podemos visualizar una imagen
+
+![Icono Markdown](markdown.png)
+
+Y también tablas.
+| Elemento | Sintaxis |
+| ----------- | ----------- |
+| Título | #h1 |
+| Código | `code` |
+| Enlace | \[titulo]\(enlace) |
+</pre>
+
+<p>En mi <a href="https://github.com/Legnakra/Prueba-MariaJesus/blob/main/markdown.md">repositorio</a> podéis encontrar el resultado de este fichero.</p>
+
+<h2 id="ramas-y-uniones">Ramas y uniones</h2>
+
+<p>Las ramas son una forma de trabajar en paralelo en un proyecto, y que nos permite trabajar en diferentes versiones de un mismo proyecto. Las ramas se crean a partir de la rama principal, y se pueden fusionar con la rama principal cuando se considera que la rama ya está lista para ser integrada en el proyecto.</p>
+
+<p>Para crear una rama, podemos hacerlo desde la interfaz de GitHub, o desde la terminal. En mi caso, he creado una rama desde la terminal, y he fusionado la rama con la rama principal.</p>
+
+<ol>
+  <li>
+    <p>Creamos una rama que se llame primera en tu local, y ejecuta la instrucción necesaria para comprobar que se ha creado.</p>
+
+    <p><img src="/assets/images/github/7.png" alt="7" /></p>
+  </li>
+  <li>Creamos un nuevo fichero en esta rama y fusiónalo con la principal. ¿Se ha producido conflicto?
+    <ul>
+      <li>Si, dado que las ramas independientes han editado el mismo fichero, se han realizado una serie de commits que github no puede decidir cuál es la versión que debe elegir y nos alerta de que debemos resolverlo.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Borramos la rama primera.</p>
+
+    <p><img src="/assets/images/github/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p>Creamos una rama que se llame segunda, y modifica un fichero en ella para producir un conflicto al unirlo a la rama principal.</p>
+
+    <p><img src="/assets/images/github/9.png" alt="9" /></p>
+  </li>
+  <li>
+    <p>Solucionamos el conflicto que has creado en el punto anterior y sincronizamos la rama segunda en el remoto.</p>
+
+    <p><img src="/assets/images/github/10.png" alt="10" /></p>
+
+    <p><img src="/assets/images/github/11.png" alt="11" /></p>
+  </li>
+</ol>
+
+<h2 id="cómo-colaborar-en-un-proyecto-de-software-libre-qué-es-un-pull-request-pr">¿Cómo colaborar en un proyecto de software libre? ¿Qué es un Pull Request (PR)?</h2>
+
+<p>Un Pull Request es una petición de extracción que se realiza a un repositorio de GitHub, y que se utiliza para solicitar que los cambios que se han realizado en una rama sean revisados y fusionados con la rama principal. Los Pull Request se utilizan para colaborar en proyectos de software libre, y para que los desarrolladores puedan revisar los cambios que se han realizado en el código.</p>
+
+<ol>
+  <li>
+    <p>Nos dirigimos al repositorio en el que queremos hacer el PR, realizamos un fork del mismo.</p>
+
+    <p><code>
+ git clone git@github.com:Legnakra/prueba-pr-asir.git
+ </code></p>
+  </li>
+  <li>
+    <p>Tomamos el enlace de clonación por vía ssh y lo clonamos en nuestra máquina local. Como para este taller hemos clonado el repositorio de prueba de pr, el comando sería:</p>
+
+    <p><img src="/assets/images/github/12.png" alt="12" /></p>
+  </li>
+  <li>
+    <p>Creamos la nueva rama en la que vamos a realizar los cambios (en mi caso la he llamado maria). Una vez en ella, realizamos los cambios de la siguiente manera:</p>
+
+    <p><code>
+ nano mjar.md
+ git add mjar.md
+ nano README.md
+ git commit -am "Ficheros modificados" 
+ </code></p>
+
+    <p><img src="/assets/images/github/13.png" alt="13" /></p>
+  </li>
+  <li>
+    <p>Actualizamos los cambios.</p>
+
+    <p><code>
+ git push origin maria
+ </code></p>
+
+    <p><img src="/assets/images/github/14.png" alt="14" /></p>
+  </li>
+  <li>
+    <p>Y por último, nos dirigimos al repositorio original para solicitar el Pull Request a su propietario y esperamos su validación de cambios, como podemos ver <a href="https://github.com/Legnakra/prueba-pr-asir/tree/main">aquí</a>.</p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="python" /><summary type="html"><![CDATA[¿Qué es GitHub? Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.]]></summary></entry><entry><title type="html">Virtualización en Linux</title><link href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" rel="alternate" type="text/html" title="Virtualización en Linux" /><published>2022-11-06T13:11:32+01:00</published><updated>2022-11-06T13:11:32+01:00</updated><id>/hlc+sri/2022/11/06/virtualizaci%C3%B3n</id><content type="html" xml:base="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html"><![CDATA[<h1 id="virtualización">Virtualización</h1>
 
 <ol>
   <li>¿Qué es la virtualización?
@@ -599,4 +849,120 @@ $ bundle exec jekyll serve
 
 <p>Y este será mi espacio, en el que expondré mis prácticas y mis pequeños proyectos personales.</p>
 
-<p>En mi perfil de <a href="https://github.com/Legnakra">GitHub</a> tengo subidos proyectos del primer año e iré añadiendo los de este curso.</p>]]></content><author><name></name></author><category term="bienvenida" /><summary type="html"><![CDATA[Bienvenidos SysMaria, mi pequeño blog.]]></summary></entry></feed>
+<p>En mi perfil de <a href="https://github.com/Legnakra">GitHub</a> tengo subidos proyectos del primer año e iré añadiendo los de este curso.</p>]]></content><author><name></name></author><category term="bienvenida" /><summary type="html"><![CDATA[Bienvenidos SysMaria, mi pequeño blog.]]></summary></entry><entry><title type="html">Infraestructura como código</title><link href="/sri/2022/09/29/infraestructura.html" rel="alternate" type="text/html" title="Infraestructura como código" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/sri/2022/09/29/infraestructura</id><content type="html" xml:base="/sri/2022/09/29/infraestructura.html"><![CDATA[<h2 id="ansible">Ansible</h2>
+<h3 id="playbook-sencillo">Playbook sencillo</h3>
+
+<p>Vamos a realizar un pequeño ejemplo de cómo podemos automatizar la instalación de un servidor web en un servidor remoto. Para ello, vamos a utilizar Ansible.</p>
+
+<ol>
+  <li>
+    <p>Creamos <em>site.yml</em>.</p>
+
+    <p><code></code></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> - hosts: all
+     become: true
+     tasks:
+
+ # Actualizamos paquetes
+ - name: Actualizamos el sistema
+   apt: update_cache=yes upgrade=yes
+
+ # Instalar paquetes
+ - name: "Instalar paquetes con apt"
+   apt: # Aquí tienes que poner lo necesario para instalar git y apache2
+    pkg:
+     - git
+     - apache2
+
+   # Copia un fichero a la máquina remota
+ - name: "Copiar fichero a la máquina remota"
+   copy:
+     src: files/foo.txt
+     dest: /etc
+     owner: root
+     group: root
+     mode: '0644'
+
+   # Copia un template a un fichero
+ - name: "Copiar un template a un fichero de la máquina remota"
+   template: 
+     src: template/index.j2
+     dest: /var/www/html/index.html
+     owner: www-data
+     group: www-data
+     mode: 0644
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos <em>hosts</em>.
+ <code></code></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> all:
+         children:
+
+           servidores:
+
+             hosts:
+
+               ansible-client: 
+
+                 ansible_ssh_host: 192.168.122.120 
+
+                 ansible_ssh_user: ansible
+
+                 ansible_ssh_private_key_file: /home/maria/.ssh/id_rsa
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos <em>index.j2</em>.
+ <code></code></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     &lt;html lang="es"&gt;
+     &lt;head&gt;
+       &lt;meta charset="utf-8"&gt;
+       &lt;title&gt;Prueba Ansible&lt;/title&gt; 
+     &lt;/head&gt;
+
+     &lt;body&gt;
+       &lt;h1&gt;Gathering Facts&lt;/h1&gt;
+       &lt;p&gt;Este ordenador se llama: &lt;/p&gt;
+       &lt;p&gt;SO:   &lt;/p&gt;
+       &lt;h1&gt;Variables declaradas por el usuario a nivel de grupo&lt;/h1&gt;
+       &lt;p&gt;Nombre de la bd: &lt;/p&gt;
+       &lt;p&gt;Usuario de la bd: &lt;/p&gt;
+       &lt;h1&gt;Variables declaradas por el usuario a nivel de nodo&lt;/h1&gt;
+       &lt;p&gt;IP: &lt;/p&gt;
+     &lt;/body&gt;
+     &lt;/html&gt;
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ejectuamos el playbook.
+ <code></code></p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ansible-playbook site.yml -i hosts
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/vag-ans/1.png" alt="1" /></p>
+  </li>
+  <li>¿Cómo se llama la propiedad que permite que las tareas que ya se han realizado no se vuelvan a ejecutar?
+    <ul>
+      <li>Idempotencia</li>
+    </ul>
+  </li>
+  <li>
+    <p>Captura de pantalla del fichero foo.txt del servidor configurado.</p>
+
+    <p><img src="/assets/images/vag-ans/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Cuando accedemos a la IP del servidor, nos muestra la página web que hemos creado.</p>
+
+    <p><img src="/assets/images/vag-ans/3.png" alt="3" /></p>
+  </li>
+</ol>
+
+<p>Si queréis el playbook completo, lo tenéis en mi <a href="https://github.com/Legnakra/taller_ansible_vagrant/tree/main/Taller1">repositorio</a>.</p>
+
+<h3 id="playbook-con-roles">Playbook con roles</h3>]]></content><author><name></name></author><category term="sri" /><summary type="html"><![CDATA[Ansible Playbook sencillo]]></summary></entry></feed>
