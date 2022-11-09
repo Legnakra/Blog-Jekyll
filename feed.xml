@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-08T18:31:37+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-09T17:54:38+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
 
 <p>Apache es un servidor web que se puede utilizar como proxy inverso. En este artículo se explica cómo configurar Apache para que actúe como proxy inverso.</p>
 
@@ -101,7 +101,41 @@ a2ensite app2.conf
 
 <p><img src="/assets/images/proxy/3.png" alt="3" /></p>
 
-<p><img src="/assets/images/proxy/4.png" alt="4" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
+<p><img src="/assets/images/proxy/4.png" alt="4" /></p>
+
+<h2 id="modificaciones">Modificaciones</h2>
+
+<p>En el primer escenario, hemos configurado http://www.app1.org/directorio para que se sirva a través de la máquina proxy. Ahora vamos a modificarlo quitando la directiva ProxyPassReverse. El contenido del archivo app1.conf será el siguiente:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
+        ServerName www.app1.org
+        ProxyPass               /       "http://interno.example1.org"
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>Si realizamos una petición HEAD con curl, veremos que cambia Location de la respuesta:</p>
+
+<p><img src="/assets/images/proxy/5.png" alt="5" /></p>
+
+<p><img src="/assets/images/proxy/6.png" alt="6" /></p>
+
+<p>Si ponemos de nuevo la directiva ProxyPassReverse, y queremos comprobar que redirección se realiza, podemos comprobarlo en la cabecera de Location de la respuesta:</p>
+
+<p><img src="/assets/images/proxy/7.png" alt="7" /></p>
+
+<p><img src="/assets/images/proxy/8.png" alt="8" /></p>
+
+<p>Como podemos ver en las siguientes imágenes, también sucede con el virtualhost <em>servidor.conf</em>.</p>
+
+<p>(antes de quitar ProxyPassReverse)
+<img src="/assets/images/proxy/9.png" alt="9" /></p>
+
+<p><img src="/assets/images/proxy/10.png" alt="10" /></p>
+
+<p>(despues de quitar ProxyPassReverse)</p>
+
+<p><img src="/assets/images/proxy/11.png" alt="11" /></p>
+
+<p><img src="/assets/images/proxy/12.png" alt="12" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
 <p>Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.</p>
 
 <h2 id="introducción-a-github">Introducción a GitHub</h2>
