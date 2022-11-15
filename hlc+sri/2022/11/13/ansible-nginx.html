@@ -744,12 +744,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <p>Si lo que queremos es que nginx redireccione a otra página, debemos añadir la siguiente línea en el fichero de configuración del virtualhost:</p>
 
-    <div class="language-plaintext highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> ```bash
- server {
-     rewrite ^/$ /principal redirect;
- }
- ```
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>    server <span class="o">{</span>
+     rewrite ^/<span class="nv">$ </span>/principal redirect<span class="p">;</span>
+
+     location / <span class="o">{</span>
+         try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+         autoindex off<span class="p">;</span>
+         disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/nginx/4.png" alt="4"></p>
@@ -757,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p><img src="/assets/images/nginx/5.png" alt="5"></p>
   </li>
   <li>
-    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
+    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y no se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
 
     <ul>
       <li>
@@ -773,9 +777,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Mundo"</span> <span class="o">&gt;</span> /srv/doc/doc1.txt
-  <span class="nb">ln</span> <span class="nt">-s</span> /srv/doc/doc1.txt /srv/www/pagina1/principal/documentos/doc1.txt
 </code></pre></div>        </div>
-        <p>En mi</p>
       </li>
       <li>
         <p>Modificamos el fichero <em>pagina1.conf</em> para que liste los ficheros del directorio <em>/srv/doc</em>.</p>
@@ -824,7 +826,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Tras todas las modificaciones, el fichero <em>pagina1.conf</em> quedaría de la siguiente forma:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>erver <span class="o">{</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
     listen 80<span class="p">;</span>
         root /srv/www/pagina1<span class="p">;</span>
         index index.php index.html index.htm index.nginx-debian.html<span class="p">;</span>
@@ -836,7 +838,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
         access_log /var/log/nginx/access_pagina1.log<span class="p">;</span>
 
         location / <span class="o">{</span>
-                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+            try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+            autoindex off<span class="p">;</span>
+            disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
         <span class="o">}</span>
        location /principal/documentos <span class="o">{</span>
             autoindex on<span class="p">;</span>
@@ -910,10 +914,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/prueba/2022/10/10/prueba.html" title="">Prueba: Introducción a la implantación de aplicaciones web</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="">Apache como proxy inverso</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="">Instalación de ngix con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="">Infraestructura como código</a></li>
+<li><a class="post-link" href="/bienvenida/2022/09/29/welcome-to-jekyll.html" title="">Bienvenid@</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

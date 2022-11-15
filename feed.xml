@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-15T10:02:11+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Instalación de ngix con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de ngix con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-15T16:40:23+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Instalación de ngix con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de ngix con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
 
 <h2 id="descripción-del-escenario">Descripción del escenario</h2>
 
@@ -51,11 +51,15 @@
 
     <p>Si lo que queremos es que nginx redireccione a otra página, debemos añadir la siguiente línea en el fichero de configuración del virtualhost:</p>
 
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- server {
-     rewrite ^/$ /principal redirect;
- }
- ```
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    server <span class="o">{</span>
+     rewrite ^/<span class="nv">$ </span>/principal redirect<span class="p">;</span>
+
+     location / <span class="o">{</span>
+         try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+         autoindex off<span class="p">;</span>
+         disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/nginx/4.png" alt="4" /></p>
@@ -63,7 +67,7 @@
     <p><img src="/assets/images/nginx/5.png" alt="5" /></p>
   </li>
   <li>
-    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
+    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y no se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
 
     <ul>
       <li>
@@ -77,9 +81,7 @@
         <p>Creamos un fichero en el directorio <em>/srv/doc</em> y lo enlazamos simbólicamente en el directorio <em>/srv/www/pagina1.org/principal/documentos</em>.</p>
 
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Mundo"</span> <span class="o">&gt;</span> /srv/doc/doc1.txt
-  <span class="nb">ln</span> <span class="nt">-s</span> /srv/doc/doc1.txt /srv/www/pagina1/principal/documentos/doc1.txt
 </code></pre></div>        </div>
-        <p>En mi</p>
       </li>
       <li>
         <p>Modificamos el fichero <em>pagina1.conf</em> para que liste los ficheros del directorio <em>/srv/doc</em>.</p>
@@ -125,7 +127,7 @@
 
 <p>Tras todas las modificaciones, el fichero <em>pagina1.conf</em> quedaría de la siguiente forma:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>erver <span class="o">{</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
     listen 80<span class="p">;</span>
         root /srv/www/pagina1<span class="p">;</span>
         index index.php index.html index.htm index.nginx-debian.html<span class="p">;</span>
@@ -137,7 +139,9 @@
         access_log /var/log/nginx/access_pagina1.log<span class="p">;</span>
 
         location / <span class="o">{</span>
-                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+            try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+            autoindex off<span class="p">;</span>
+            disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
         <span class="o">}</span>
        location /principal/documentos <span class="o">{</span>
             autoindex on<span class="p">;</span>
