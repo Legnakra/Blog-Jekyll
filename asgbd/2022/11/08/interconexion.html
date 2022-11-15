@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Interconexiones de servidores | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Interconexiones de servidores">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.">
+<meta property="og:description" content="En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.">
+<link rel="canonical" href="/asgbd/2022/11/08/interconexion.html">
+<meta property="og:url" content="/asgbd/2022/11/08/interconexion.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-11-08T13:11:32+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Interconexiones de servidores">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-08T13:11:32+01:00","datePublished":"2022-11-08T13:11:32+01:00","description":"En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.","headline":"Interconexiones de servidores","mainEntityOfPage":{"@type":"WebPage","@id":"/asgbd/2022/11/08/interconexion.html"},"url":"/asgbd/2022/11/08/interconexion.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIES</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/interconexion.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/interconexion.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Interconexiones de servidores</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-11-08T13:11:32+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 8, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.</p>
+
+<p>Decir que para realizar esta documentación las versiones de software que se han utilizado son las siguientes:</p>
+<ul>
+  <li>Debian 11</li>
+  <li>Oracle 19c</li>
+  <li>PostgreSQL 13</li>
+</ul>
+
+<h2 id="interconexión-entre-dos-servidores-con-oracle-19c">Interconexión entre dos servidores con Oracle 19c</h2>
+
+<p><img src="/assets/images/interconexion/oracle.png" alt="oracle"></p>
+
+<p>En esta primera parte vamos a realizar una interconexión entre dos servidores con Oracle 19c. Para ello vamos a utilizar el servicio de bases de datos Oracle 19c que tenemos instalado y vamos a crear en cada máquina un usuario, <code class="language-plaintext highlighter-rouge">maria1</code> la máquina <code class="language-plaintext highlighter-rouge">oracle1</code> y <code class="language-plaintext highlighter-rouge">maria2</code> en la máquina <code class="language-plaintext highlighter-rouge">oracle2</code>.</p>
+
+<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>oracle1: 192.168.122.189
+<span class="nt">---</span>
+oracle2: 192.168.122.179
+</code></pre></div></div>
+<p>A continuación, vamos conectarnos con el usuario administrador de oracle en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus / as sysdba
+SQL&gt; create user maria1 identified by admin<span class="p">;</span>
+SQL&gt; grant connect, resource to maria1<span class="p">;</span>
+SQL&gt; unlimit tablespace to maria1<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/1.png" alt="1"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus / as sysdba
+SQL&gt; create user maria2 identified by admin<span class="p">;</span>
+SQL&gt; grant connect, resource to maria2<span class="p">;</span>
+SQL&gt; unlimit tablespace to maria2<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/2.png" alt="2"></p>
+
+<p>Ya creados los usuarios, también deberemos comprobar que el servicio de escucha de la base de datos está activo en cada una de las máquinas. Para ello, en cada una de las máquinas, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl status
+</code></pre></div></div>
+<p>Para asegurarnos de que el servicio está activo, debemos ver la siguiente salida:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tnsping &lt;ip&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/3.png" alt="3"></p>
+
+<p><img src="/assets/images/interconexion/4.png" alt="4"></p>
+
+<p>En el caso de que nos aparezca desactivado, lo activamos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl start
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/5.png" alt="5"></p>
+
+<h3 id="enrutamos-los-servidores">Enrutamos los servidores</h3>
+
+<p>En este paso, vamos a añadirle una entrada a la tabla de enrutamiento de cada una de las máquinas, para que sepan cómo llegar al otro servidor. Para ello, en cada una de las máquinas, modificaremos el fichero tnsnames.ora, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">$ORACLE_HOME/network/admin/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+ORACLE2 <span class="o">=</span>
+    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
+        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.179<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
+        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
+            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
+            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
+        <span class="o">)</span>
+    <span class="o">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/6.png" alt="6"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+ORACLE1 <span class="o">=</span>
+    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
+        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.189<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
+        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
+            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
+            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
+        <span class="o">)</span>
+    <span class="o">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/7.png" alt="7"></p>
+
+<h3 id="creamos-la-base-de-datos">Creamos la base de datos</h3>
+
+<p>Ahora vamos a crear una base de datos en cada una de las máquinas. Para las comprobaciones he optado por el esquema SCOTT, que podéis encontrar <a href="www.github.com/oracle/db-sample-schemas">aquí</a>. La única diferencia, es que el servidor oracle2 no tendrá la tabla empleados, ya que la vamos a crear en el servidor oracle1.</p>
+
+<h3 id="creamos-los-enlaces">Creamos los enlaces</h3>
+
+<p>Ambos servidores ya tienen la base de datos creada, ahora vamos a crear los enlaces entre ellos. Para ello, en la máquina oracle1, vamos a crear el enlace con el usuario maria1 y en la máquina oracle2, vamos a crear el enlace con el usuario maria2.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus maria1/admin
+SQL&gt; CREATE DATABASE LINK interconexion2 CONNECT TO maria2 IDENTIFIED BY admin USING <span class="s1">'ORACLE2'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/8.png" alt="8"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus maria2/admin
+SQL&gt; CREATE DATABASE LINK interconexion1 CONNECT TO maria1 IDENTIFIED BY admin USING <span class="s1">'ORACLE1'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/9.png" alt="9"></p>
+
+<h3 id="comprobamos-la-conexión">Comprobamos la conexión</h3>
+
+<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle2, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus maria1/admin
+SQL&gt; SELECT <span class="k">*</span> FROM dept@interconexion2 WHERE dname <span class="o">=</span> <span class="s1">'SALES'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/10.png" alt="10"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus maria2/admin
+SQL&gt; SELECT <span class="k">*</span> FROM emp@interconexion1 WHERE deptno <span class="o">=</span> 20<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/11.png" alt="11"></p>
+
+<h2 id="interconexión-entre-dos-servidores-con-postgresql">Interconexión entre dos servidores con postgresql</h2>
+
+<p><img src="/assets/images/interconexion/postgresql.png" alt="postgresql"></p>
+
+<p>Ahora le toca el turno a postgresql. Para realizar la interconexión entre dos servidores, vamos a utilizar el mismo esquema que en el caso de oracle, es decir, vamos a crear una base de datos en cada uno de los servidores y vamos a crear un enlace entre ellos.</p>
+
+<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria: 192.168.122.167
+<span class="nt">---</span>
+oracle: 192.168.122.189
+</code></pre></div></div>
+
+<h3 id="creamos-la-base-de-datos-1">Creamos la base de datos</h3>
+<p>En este caso voy a utilizar el esquema scott de postgresql, que podéis encontrar <a href="">aquí</a>, para de esa forma hacer las mismas consultas que en el caso de oracle.</p>
+
+<h3 id="creamos-los-usuarios">Creamos los usuarios</h3>
+<p>A continuación, vamos conectarnos con el usuario administrador de postgres en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria2 WITH PASSWORD 'admin';</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott2 TO maria2;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria2;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
+EXIT<span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
+<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria1 WITH PASSWORD 'admin';</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott TO maria1;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria1;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
+EXIT<span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="creamos-los-enlaces-1">Creamos los enlaces</h3>
+
+<p>Antes de realizar los enlaces entre las dos máquinas, debemos de cerciorarnos de que el puerto 5432 está abierto en las dos máquinas. Para ello, vamos a comprobar con elsiguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>5432
+</code></pre></div></div>
+
+<p>Si no está abierto, lo abrimos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw allow 5432/tcp
+</code></pre></div></div>
+
+<p>Ahora vamos a crear los enlaces entre las dos máquinas. Para ello realizaremos los siguientes pasos:</p>
+
+<ol>
+  <li>Nos conectamos como usuario postgres.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+</code></pre></div>    </div>
+  </li>
+  <li>Nos conectamos a la base de datos:
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott2</span>
+<span class="nt">---</span>
+<span class="c"># oracle</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott</span>
+</code></pre></div>    </div>
+  </li>
+  <li>En las dos máquinas realizamos el mismo comando:
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE EXTENSION dblink;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Comprobamos que los links están realizados:
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># \dx</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="comprobamos-la-conexión-1">Comprobamos la conexión</h3>
+
+<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">$ </span>psql <span class="nt">-U</span> maria2 <span class="nt">-d</span> scott2
+<span class="nv">scott2</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.189 port=5432 user=maria1 password=admin dbname=scott', 'SELECT * FROM emp WHERE deptno = 20') as t1 (empno int, ename varchar(10), job varchar(9), mgr int, hiredate date, sal numeric(7,2), comm numeric(7,2), deptno int);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/12.png" alt="12"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
+<span class="nv">$ </span>psql <span class="nt">-U</span> maria1 <span class="nt">-d</span> scott
+<span class="nv">scott</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.167 port=5432 user=maria2 password=admin dbname=scott2', 'SELECT * FROM dept WHERE deptno = 30') as t2 (deptno int, dname varchar(14), loc varchar(13));</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/13.png" alt="13"></p>
+
+<blockquote>
+  <p><strong>Nota:</strong> En el caso de posgresql, a diferencia de ORACLE, es necesario que a la hora de realizar la consulta, se especifique el formato de salida de la misma, ya que si no, dará error.</p>
+</blockquote>
+
+<p><img src="/assets/images/interconexion/14.png" alt="14"></p>
+
+<h2 id="interconexión-entre-un-servidor-oracle-y-un-servidor-postgresql">Interconexión entre un servidor Oracle y un servidor Postgresql</h2>
+
+<p><img src="/assets/images/interconexion/oracle-postgresql.png" alt="postgresql-oracle"></p>
+
+<p>Para finalizar, vamos a realizar una interconexión entre un servidor oracle y un servidor postgresql. Para ello, vamos a utilizar el mismo esquema que en los casos anteriores, es decir, vamos a reutilizar las bases de datos que hemos creado en los casos anteriores.</p>
+
+<p>En la máquina <code class="language-plaintext highlighter-rouge">maria</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.167</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott2</code> con la tabla <code class="language-plaintext highlighter-rouge">dept</code> y en la máquina <code class="language-plaintext highlighter-rouge">oracle</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.189</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott</code> con la tabla <code class="language-plaintext highlighter-rouge">emp</code>.</p>
+
+<h3 id="creamos-los-enlaces-2">Creamos los enlaces</h3>
+
+<p>Realmente, ambas máquinas ya están configuradas para acceder a ellas de forma remota, ya que en el caso de oracle, hemos creado un usuario remoto y en el caso de postgresql, hemos abierto el puerto 5432. Pero, siendo dos gestores de bases de datos diferentes, vamos a realizar los enlaces de forma diferente.</p>
+
+<h4 id="conectándonos-de-oracle-a-postgresql">Conectándonos de Oracle a Postgresql</h4>
+
+<p>Para que la interconexión entre estos gestores de bases de datos sea posible, debemos de tener instalado el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> en la máquina oracle. Para ello, vamos a realizar los siguientes pasos:</p>
+
+<ol>
+  <li>Nos conectamos como usuario root.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su
+</code></pre></div>    </div>
+  </li>
+  <li>Actualizamos la lista de paquetes.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get update
+</code></pre></div>    </div>
+  </li>
+  <li>Instalamos el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> y <code class="language-plaintext highlighter-rouge">unixODCB</code>.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>odbc-postgresql unixodbc
+</code></pre></div>    </div>
+  </li>
+  <li>Comprobamos que el paquete se ha instalado correctamente.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dpkg <span class="nt">-l</span> | <span class="nb">grep </span>postgresql-odbc
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p><img src="/assets/images/interconexion/15.png" alt="15"></p>
+
+<ol>
+  <li>Creamos el archivo de configuración de odbc.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbc.ini
+</code></pre></div>    </div>
+  </li>
+  <li>Añadimos la siguiente configuración:
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="o">[</span>PSQLORCL]
+Debug <span class="o">=</span> 0
+CommLog <span class="o">=</span> 0
+ReadOnly <span class="o">=</span> 0
+Driver <span class="o">=</span> PostgreSQL
+Servername <span class="o">=</span> 192.168.122.172
+Username <span class="o">=</span> maria2
+Password <span class="o">=</span> admin
+Port <span class="o">=</span> 5432
+Database <span class="o">=</span> scott2
+Trace <span class="o">=</span> 0
+TraceFile <span class="o">=</span> /tmp/sql.log
+</code></pre></div>    </div>
+  </li>
+  <li>Creamos el archivo de configuración de odbcinst.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbcinst.ini
+</code></pre></div>    </div>
+  </li>
+  <li>Añadimos la siguiente configuración:
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="o">[</span>PostgreSQL]
+Description     <span class="o">=</span> ODBC <span class="k">for </span>PostgreSQL
+Driver          <span class="o">=</span> psqlodbcw.so
+Setup           <span class="o">=</span> libodbcpsqlS.so
+Driver64        <span class="o">=</span> psqlodbcw.so
+Setup64         <span class="o">=</span> libodbcpsqlS.so
+FileUsage       <span class="o">=</span> 1
+</code></pre></div>    </div>
+  </li>
+  <li>Reiniciamos el servicio odbc.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>service odbc restart
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Una vez finalizada la configuración, vamos a realizar la conexión entre los dos servidores y comprobar que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>isql <span class="nt">-v</span> PSQLORCL maria2 admin
+</code></pre></div></div>
+
+<p>Y realizamos una consulta simple para comprobar que funciona correctamente.</p>
+
+<p><img src="/assets/images/interconexion/16.png" alt="16"></p>
+
+<p>Realizamos el link de la base de datos pero esta vez desde Oracle, pero para ello, debemos realizar las siguientes modificaciones:</p>
+
+<ol>
+  <li>Creatermos el fichero <em>initPSQLORCL.ora</em> dentro de $ORACLE_HOME/network/admin.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/initPSQLORCL.ora
+</code></pre></div>    </div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>HS_FDS_CONNECT_INFO <span class="o">=</span> PSQLU
+HS_FDS_TRACE_LEVEL <span class="o">=</span> DEBUG
+HS_FDS_SHAREABLE_NAME <span class="o">=</span> /usr/lib64/psqlodbcw.so
+HS_LANGUAGE <span class="o">=</span> AMERICAN_AMERICA.WE8ISO8859P1
+<span class="nb">set </span><span class="nv">ODBCINI</span><span class="o">=</span>/etc/odbc.ini
+<span class="nb">set </span><span class="nv">ODBCSYSINI</span><span class="o">=</span>/etc
+</code></pre></div>    </div>
+  </li>
+  <li>Lo siquiente que modificaremos, añadiendo lo descrito, será el fichero <em>listener.ora</em>.
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/listener.ora
+</code></pre></div>    </div>
+    <p>```bash
+LISTENER =
+ (DESCRIPTION_LIST =
+     (DESCRIPTION =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.122.189)(PORT = 1521))
+         (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+     )
+ )</p>
+  </li>
+</ol>
+
+<p>SID_LIST_LISTENER =
+    (SID_LIST =
+        (SID_DESC =
+            (SID_NAME = PSQLORCL)
+            (ORACLE_HOME=/opt/oracle/product/19c/dbhome_1)
+            (PROGRAM=dg4odbc)
+        )
+    )</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+3. Modicicamos tambien el fichero *tnsnames.ora*.
+```bash
+PSQLORCL =
+    (DESCRIPTION=
+        (ADDRESS=(PROTOCOL=tcp)(HOST=192.168.122.189)(PORT=1521))
+        (CONNECT_DATA=(SID=PSQLORCL))
+        (HS=OK)
+    )
+</code></pre></div></div>
+
+<ol>
+  <li>Reiniciamos el servicio de oracle.
+```bash
+$ service oracle restart</li>
+</ol>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hlc+sri/2022/11/08/proxy.html" title="Apache como proxy inverso">Apache como proxy inverso</a><a class="next" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Instalación de ngix con PHP con vagrant y ansible">Instalación de ngix con PHP con...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/bienvenida/2022/09/29/welcome-to-jekyll.html" title="Instalación de ngix con PHP con vagrant y ansible">Bienvenid@</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Instalación de ngix con PHP con vagrant y ansible">Crear un sitio web estático con Jekyll</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Instalación de ngix con PHP con vagrant y ansible">Infraestructura como código</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Instalación de ngix con PHP con vagrant y ansible">Virtualización en Linux</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,4 +1,203 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-09T17:54:38+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-15T09:40:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Instalación de ngix con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de ngix con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
+
+<h2 id="descripción-del-escenario">Descripción del escenario</h2>
+
+<ol>
+  <li>Vamos a utilizar como base la receta de ansible de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> y la vamos a modificarla para añadirle las siguientes funcionalidades:
+    <ul>
+      <li>Instalamos los servicios (con roles diferenciados).</li>
+      <li>Copiamos un index en el DocumentRoot y un info.php.</li>
+    </ul>
+  </li>
+</ol>
+
+<ul>
+  <li>La receta de ansible debe desactivar los virtualhost que tengamos definidos en otra lista.</li>
+</ul>
+
+<ol>
+  <li>Configuramos sobre una máquina virtual, un servidor ngix con PHP con dos virtualhost:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">www.pagina1.org</code>, cuyo <em>DocumentRoot</em> es <code class="language-plaintext highlighter-rouge">/srv/www/pagina1.org</code>.</li>
+      <li><code class="language-plaintext highlighter-rouge">www.pagina2.org</code>, cuyo <em>DocumentRoot</em> es <code class="language-plaintext highlighter-rouge">/srv/www/pagina2.org</code>.</li>
+    </ul>
+  </li>
+  <li>Una vez configurada la receta, debemos configurar de forma manual las siguientes características:
+    <ul>
+      <li>Cuando accedamos a <code class="language-plaintext highlighter-rouge">www.pagina1.org</code> se redireccionará a <code class="language-plaintext highlighter-rouge">www.pagina2.org/principal</code>. No se permitirá ver la lista de ficheros.</li>
+      <li>Cuando accedamos a `www.pagina1.org/principal se debe mostrar una página web estática.</li>
+      <li>Si accedemos a la página <code class="language-plaintext highlighter-rouge">www.pagina2.org/principal/documentos</code> se visualizarán los documentos que tengamos en <code class="language-plaintext highlighter-rouge">/srv/doc</code>. Y se permitirá el listado y el seguimiento de enlaces simbólicos.</li>
+      <li>Limitaremos el accero a <code class="language-plaintext highlighter-rouge">www.pagina1.org/principal/secreto</code> con autenticación básica.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="la-receta-de-ansible">La receta de ansible</h2>
+
+<p>Ya ejecutada la receta, y habiendo cambiando el fichero <em>hosts</em> para que apunte a la máquina virtual, podemos comprobar que tenemos instalado el servidor nginx con PHP. Y vamos a realizar las siguientes comprobaciones:</p>
+
+<ol>
+  <li>
+    <p>Los virtualhost que tenemos definidos en la receta de ansible, están creados y funcionando correctamente.</p>
+
+    <p><img src="/assets/images/nginx/1.png" alt="1" /></p>
+
+    <p><img src="/assets/images/nginx/2.png" alt="2" /></p>
+
+    <p><img src="/assets/images/nginx/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Comprobamos que al acceder a <em>www.pagina1.org</em> se produce la redirección a <em>www.pagina1.org/principal</em>.</p>
+
+    <p>Si lo que queremos es que nginx redireccione a otra página, debemos añadir la siguiente línea en el fichero de configuración del virtualhost:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ server {
+     rewrite ^/$ /principal redirect;
+ }
+ ```
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/nginx/4.png" alt="4" /></p>
+
+    <p><img src="/assets/images/nginx/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
+
+    <ul>
+      <li>
+        <p>Creamos el directorio y le cambiamos los permisos:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir</span> /srv/doc
+  <span class="nb">chown </span>www-data:www-data /srv/doc
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos un fichero en el directorio <em>/srv/doc</em> y lo enlazamos simbólicamente en el directorio <em>/srv/www/pagina1.org/principal/documentos</em>.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Mundo"</span> <span class="o">&gt;</span> /srv/doc/doc1.txt
+  <span class="nb">ln</span> <span class="nt">-s</span> /srv/doc/doc1.txt /srv/www/pagina1/principal/documentos/doc1.txt
+</code></pre></div>        </div>
+        <p>En mi</p>
+      </li>
+      <li>
+        <p>Modificamos el fichero <em>pagina1.conf</em> para que liste los ficheros del directorio <em>/srv/doc</em>.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  location /principal/documentos <span class="o">{</span>
+      <span class="nb">alias</span> /srv/doc<span class="p">;</span>
+      autoindex on<span class="p">;</span>
+  <span class="o">}</span>
+</code></pre></div>        </div>
+        <p><img src="/assets/images/nginx/6.png" alt="6" /></p>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/nginx/7.png" alt="7" /></p>
+
+    <p><img src="/assets/images/nginx/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p>Limitaremos el acceso a <em>www.pagina1.org/secreto</em> en nginx con autenticación básica.</p>
+
+    <ul>
+      <li>
+        <p>Creamos un fichero <em>.htpasswd</em> con el usuario y la contraseña que queramos dentro de */secreto.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  htpasswd <span class="nt">-c</span> <span class="nt">-b</span> <span class="nt">-B</span> /srv/www/pagina1/secreto/.htpasswd maria admin
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Modificamos el fichero <em>pagina1.conf</em> para que se aplique la autenticación básica y accederemos al index de <em>www.pagina1.com/secreto</em>.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  location /secreto <span class="o">{</span>
+      auth_basic <span class="s2">"Acceso restringido"</span><span class="p">;</span>
+      auth_basic_user_file /srv/www/pagina1/secreto/.htpasswd<span class="p">;</span>
+  <span class="o">}</span>
+</code></pre></div>        </div>
+        <p><img src="/assets/images/nginx/9.png" alt="9" /></p>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/nginx/10.png" alt="10" /></p>
+  </li>
+</ol>
+
+<p>Tras todas las modificaciones, el fichero <em>pagina1.conf</em> quedaría de la siguiente forma:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>erver <span class="o">{</span>
+    listen 80<span class="p">;</span>
+        root /srv/www/pagina1<span class="p">;</span>
+        index index.php index.html index.htm index.nginx-debian.html<span class="p">;</span>
+        server_name pagina1.org www.pagina1.org<span class="p">;</span>
+
+        rewrite ^/<span class="nv">$ </span>/principal redirect<span class="p">;</span>
+
+        error_log /var/log/nginx/error_pagina1.log<span class="p">;</span>
+        access_log /var/log/nginx/access_pagina1.log<span class="p">;</span>
+
+        location / <span class="o">{</span>
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+       location /principal/documentos <span class="o">{</span>
+            autoindex on<span class="p">;</span>
+            <span class="nb">alias</span> /srv/doc<span class="p">;</span>
+        <span class="o">}</span>
+
+        location /secreto <span class="o">{</span>
+            try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+            auth_basic <span class="s2">"Acceso restringido"</span><span class="p">;</span>
+            auth_basic_user_file /srv/www/pagina1/secreto/.htpasswd<span class="p">;</span>
+        <span class="o">}</span>
+
+        location ~ <span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
+                include snippets/fastcgi-php.conf<span class="p">;</span>
+                fastcgi_pass unix:/var/run/php/php7.4-fpm.sock<span class="p">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="para-finalizar">Para finalizar</h2>
+
+<p>Como podemos ver el virtualhost <em>www.pagina2.org</em> está activo.</p>
+
+<p><img src="/assets/images/nginx/11.png" alt="11" /></p>
+
+<p>Pero, vamos a cambiar la receta de ansible para desactivar el acceso a la página <em>www.pagina2.org</em> de la siguiente manera:</p>
+
+<ol>
+  <li>
+    <p>Vamosa modificar el <em>all.yaml</em> para que se desactive.</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">del_virtualhost</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">pagina2</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>En el <em>main.yaml</em> vamos a añadir la siguiente tarea:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Delete vhost pagina2</span>
+   <span class="na">file</span><span class="pi">:</span>
+     <span class="na">path</span><span class="pi">:</span> <span class="s">/etc/nginx/sites-enabled/.conf</span>
+     <span class="na">state</span><span class="pi">:</span> <span class="s">absent</span>
+   <span class="na">with_items</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="s2">"</span><span class="s">"</span>
+   <span class="na">notify</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="s">restart nginx</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ejecutamos la receta de ansible.</p>
+
+    <p><img src="/assets/images/nginx/12.png" alt="12" /></p>
+
+    <p><img src="/assets/images/nginx/13.png" alt="13" /></p>
+  </li>
+</ol>
+
+<p>Y como podemos ver, el virtualhost <em>www.pagina2.org</em> ya no está activo.</p>
+
+<p>La receta de ansible la podemos encontrar en el siguiente <a href="https://github.com/Legnakra/Nginx-Ansible">repositorio</a>.</p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[En esta entrada vamos a realizar una variante de este post en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.]]></summary></entry><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
 
 <p>Apache es un servidor web que se puede utilizar como proxy inverso. En este artículo se explica cómo configurar Apache para que actúe como proxy inverso.</p>
 
@@ -135,7 +334,371 @@ a2ensite app2.conf
 
 <p><img src="/assets/images/proxy/11.png" alt="11" /></p>
 
-<p><img src="/assets/images/proxy/12.png" alt="12" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
+<p><img src="/assets/images/proxy/12.png" alt="12" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Interconexiones de servidores</title><link href="/asgbd/2022/11/08/interconexion.html" rel="alternate" type="text/html" title="Interconexiones de servidores" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/asgbd/2022/11/08/interconexion</id><content type="html" xml:base="/asgbd/2022/11/08/interconexion.html"><![CDATA[<p>En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.</p>
+
+<p>Decir que para realizar esta documentación las versiones de software que se han utilizado son las siguientes:</p>
+<ul>
+  <li>Debian 11</li>
+  <li>Oracle 19c</li>
+  <li>PostgreSQL 13</li>
+</ul>
+
+<h2 id="interconexión-entre-dos-servidores-con-oracle-19c">Interconexión entre dos servidores con Oracle 19c</h2>
+
+<p><img src="/assets/images/interconexion/oracle.png" alt="oracle" /></p>
+
+<p>En esta primera parte vamos a realizar una interconexión entre dos servidores con Oracle 19c. Para ello vamos a utilizar el servicio de bases de datos Oracle 19c que tenemos instalado y vamos a crear en cada máquina un usuario, <code class="language-plaintext highlighter-rouge">maria1</code> la máquina <code class="language-plaintext highlighter-rouge">oracle1</code> y <code class="language-plaintext highlighter-rouge">maria2</code> en la máquina <code class="language-plaintext highlighter-rouge">oracle2</code>.</p>
+
+<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>oracle1: 192.168.122.189
+<span class="nt">---</span>
+oracle2: 192.168.122.179
+</code></pre></div></div>
+<p>A continuación, vamos conectarnos con el usuario administrador de oracle en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus / as sysdba
+SQL&gt; create user maria1 identified by admin<span class="p">;</span>
+SQL&gt; grant connect, resource to maria1<span class="p">;</span>
+SQL&gt; unlimit tablespace to maria1<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/1.png" alt="1" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus / as sysdba
+SQL&gt; create user maria2 identified by admin<span class="p">;</span>
+SQL&gt; grant connect, resource to maria2<span class="p">;</span>
+SQL&gt; unlimit tablespace to maria2<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/2.png" alt="2" /></p>
+
+<p>Ya creados los usuarios, también deberemos comprobar que el servicio de escucha de la base de datos está activo en cada una de las máquinas. Para ello, en cada una de las máquinas, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl status
+</code></pre></div></div>
+<p>Para asegurarnos de que el servicio está activo, debemos ver la siguiente salida:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tnsping &lt;ip&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/interconexion/4.png" alt="4" /></p>
+
+<p>En el caso de que nos aparezca desactivado, lo activamos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl start
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/5.png" alt="5" /></p>
+
+<h3 id="enrutamos-los-servidores">Enrutamos los servidores</h3>
+
+<p>En este paso, vamos a añadirle una entrada a la tabla de enrutamiento de cada una de las máquinas, para que sepan cómo llegar al otro servidor. Para ello, en cada una de las máquinas, modificaremos el fichero tnsnames.ora, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">$ORACLE_HOME/network/admin/</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+ORACLE2 <span class="o">=</span>
+    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
+        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.179<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
+        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
+            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
+            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
+        <span class="o">)</span>
+    <span class="o">)</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/6.png" alt="6" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+ORACLE1 <span class="o">=</span>
+    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
+        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.189<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
+        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
+            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
+            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
+        <span class="o">)</span>
+    <span class="o">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/7.png" alt="7" /></p>
+
+<h3 id="creamos-la-base-de-datos">Creamos la base de datos</h3>
+
+<p>Ahora vamos a crear una base de datos en cada una de las máquinas. Para las comprobaciones he optado por el esquema SCOTT, que podéis encontrar <a href="www.github.com/oracle/db-sample-schemas">aquí</a>. La única diferencia, es que el servidor oracle2 no tendrá la tabla empleados, ya que la vamos a crear en el servidor oracle1.</p>
+
+<h3 id="creamos-los-enlaces">Creamos los enlaces</h3>
+
+<p>Ambos servidores ya tienen la base de datos creada, ahora vamos a crear los enlaces entre ellos. Para ello, en la máquina oracle1, vamos a crear el enlace con el usuario maria1 y en la máquina oracle2, vamos a crear el enlace con el usuario maria2.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus maria1/admin
+SQL&gt; CREATE DATABASE LINK interconexion2 CONNECT TO maria2 IDENTIFIED BY admin USING <span class="s1">'ORACLE2'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/8.png" alt="8" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus maria2/admin
+SQL&gt; CREATE DATABASE LINK interconexion1 CONNECT TO maria1 IDENTIFIED BY admin USING <span class="s1">'ORACLE1'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/9.png" alt="9" /></p>
+
+<h3 id="comprobamos-la-conexión">Comprobamos la conexión</h3>
+
+<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle2, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
+<span class="nv">$ </span>sqlplus maria1/admin
+SQL&gt; SELECT <span class="k">*</span> FROM dept@interconexion2 WHERE dname <span class="o">=</span> <span class="s1">'SALES'</span><span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/10.png" alt="10" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
+<span class="nv">$ </span>sqlplus maria2/admin
+SQL&gt; SELECT <span class="k">*</span> FROM emp@interconexion1 WHERE deptno <span class="o">=</span> 20<span class="p">;</span>
+SQL&gt; <span class="nb">exit</span>
+</code></pre></div></div>
+<p><img src="/assets/images/interconexion/11.png" alt="11" /></p>
+
+<h2 id="interconexión-entre-dos-servidores-con-postgresql">Interconexión entre dos servidores con postgresql</h2>
+
+<p><img src="/assets/images/interconexion/postgresql.png" alt="postgresql" /></p>
+
+<p>Ahora le toca el turno a postgresql. Para realizar la interconexión entre dos servidores, vamos a utilizar el mismo esquema que en el caso de oracle, es decir, vamos a crear una base de datos en cada uno de los servidores y vamos a crear un enlace entre ellos.</p>
+
+<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria: 192.168.122.167
+<span class="nt">---</span>
+oracle: 192.168.122.189
+</code></pre></div></div>
+
+<h3 id="creamos-la-base-de-datos-1">Creamos la base de datos</h3>
+<p>En este caso voy a utilizar el esquema scott de postgresql, que podéis encontrar <a href="">aquí</a>, para de esa forma hacer las mismas consultas que en el caso de oracle.</p>
+
+<h3 id="creamos-los-usuarios">Creamos los usuarios</h3>
+<p>A continuación, vamos conectarnos con el usuario administrador de postgres en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria2 WITH PASSWORD 'admin';</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott2 TO maria2;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria2;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
+EXIT<span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
+<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria1 WITH PASSWORD 'admin';</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott TO maria1;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria1;</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
+EXIT<span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="creamos-los-enlaces-1">Creamos los enlaces</h3>
+
+<p>Antes de realizar los enlaces entre las dos máquinas, debemos de cerciorarnos de que el puerto 5432 está abierto en las dos máquinas. Para ello, vamos a comprobar con elsiguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>5432
+</code></pre></div></div>
+
+<p>Si no está abierto, lo abrimos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw allow 5432/tcp
+</code></pre></div></div>
+
+<p>Ahora vamos a crear los enlaces entre las dos máquinas. Para ello realizaremos los siguientes pasos:</p>
+
+<ol>
+  <li>Nos conectamos como usuario postgres.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
+</code></pre></div>    </div>
+  </li>
+  <li>Nos conectamos a la base de datos:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott2</span>
+<span class="nt">---</span>
+<span class="c"># oracle</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott</span>
+</code></pre></div>    </div>
+  </li>
+  <li>En las dos máquinas realizamos el mismo comando:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE EXTENSION dblink;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Comprobamos que los links están realizados:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># \dx</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="comprobamos-la-conexión-1">Comprobamos la conexión</h3>
+
+<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
+<span class="nv">$ </span>psql <span class="nt">-U</span> maria2 <span class="nt">-d</span> scott2
+<span class="nv">scott2</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.189 port=5432 user=maria1 password=admin dbname=scott', 'SELECT * FROM emp WHERE deptno = 20') as t1 (empno int, ename varchar(10), job varchar(9), mgr int, hiredate date, sal numeric(7,2), comm numeric(7,2), deptno int);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/12.png" alt="12" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
+<span class="nv">$ </span>psql <span class="nt">-U</span> maria1 <span class="nt">-d</span> scott
+<span class="nv">scott</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.167 port=5432 user=maria2 password=admin dbname=scott2', 'SELECT * FROM dept WHERE deptno = 30') as t2 (deptno int, dname varchar(14), loc varchar(13));</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/13.png" alt="13" /></p>
+
+<blockquote>
+  <p><strong>Nota:</strong> En el caso de posgresql, a diferencia de ORACLE, es necesario que a la hora de realizar la consulta, se especifique el formato de salida de la misma, ya que si no, dará error.</p>
+</blockquote>
+
+<p><img src="/assets/images/interconexion/14.png" alt="14" /></p>
+
+<h2 id="interconexión-entre-un-servidor-oracle-y-un-servidor-postgresql">Interconexión entre un servidor Oracle y un servidor Postgresql</h2>
+
+<p><img src="/assets/images/interconexion/oracle-postgresql.png" alt="postgresql-oracle" /></p>
+
+<p>Para finalizar, vamos a realizar una interconexión entre un servidor oracle y un servidor postgresql. Para ello, vamos a utilizar el mismo esquema que en los casos anteriores, es decir, vamos a reutilizar las bases de datos que hemos creado en los casos anteriores.</p>
+
+<p>En la máquina <code class="language-plaintext highlighter-rouge">maria</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.167</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott2</code> con la tabla <code class="language-plaintext highlighter-rouge">dept</code> y en la máquina <code class="language-plaintext highlighter-rouge">oracle</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.189</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott</code> con la tabla <code class="language-plaintext highlighter-rouge">emp</code>.</p>
+
+<h3 id="creamos-los-enlaces-2">Creamos los enlaces</h3>
+
+<p>Realmente, ambas máquinas ya están configuradas para acceder a ellas de forma remota, ya que en el caso de oracle, hemos creado un usuario remoto y en el caso de postgresql, hemos abierto el puerto 5432. Pero, siendo dos gestores de bases de datos diferentes, vamos a realizar los enlaces de forma diferente.</p>
+
+<h4 id="conectándonos-de-oracle-a-postgresql">Conectándonos de Oracle a Postgresql</h4>
+
+<p>Para que la interconexión entre estos gestores de bases de datos sea posible, debemos de tener instalado el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> en la máquina oracle. Para ello, vamos a realizar los siguientes pasos:</p>
+
+<ol>
+  <li>Nos conectamos como usuario root.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su
+</code></pre></div>    </div>
+  </li>
+  <li>Actualizamos la lista de paquetes.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get update
+</code></pre></div>    </div>
+  </li>
+  <li>Instalamos el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> y <code class="language-plaintext highlighter-rouge">unixODCB</code>.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>odbc-postgresql unixodbc
+</code></pre></div>    </div>
+  </li>
+  <li>Comprobamos que el paquete se ha instalado correctamente.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dpkg <span class="nt">-l</span> | <span class="nb">grep </span>postgresql-odbc
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p><img src="/assets/images/interconexion/15.png" alt="15" /></p>
+
+<ol>
+  <li>Creamos el archivo de configuración de odbc.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbc.ini
+</code></pre></div>    </div>
+  </li>
+  <li>Añadimos la siguiente configuración:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>PSQLORCL]
+Debug <span class="o">=</span> 0
+CommLog <span class="o">=</span> 0
+ReadOnly <span class="o">=</span> 0
+Driver <span class="o">=</span> PostgreSQL
+Servername <span class="o">=</span> 192.168.122.172
+Username <span class="o">=</span> maria2
+Password <span class="o">=</span> admin
+Port <span class="o">=</span> 5432
+Database <span class="o">=</span> scott2
+Trace <span class="o">=</span> 0
+TraceFile <span class="o">=</span> /tmp/sql.log
+</code></pre></div>    </div>
+  </li>
+  <li>Creamos el archivo de configuración de odbcinst.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbcinst.ini
+</code></pre></div>    </div>
+  </li>
+  <li>Añadimos la siguiente configuración:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>PostgreSQL]
+Description     <span class="o">=</span> ODBC <span class="k">for </span>PostgreSQL
+Driver          <span class="o">=</span> psqlodbcw.so
+Setup           <span class="o">=</span> libodbcpsqlS.so
+Driver64        <span class="o">=</span> psqlodbcw.so
+Setup64         <span class="o">=</span> libodbcpsqlS.so
+FileUsage       <span class="o">=</span> 1
+</code></pre></div>    </div>
+  </li>
+  <li>Reiniciamos el servicio odbc.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>service odbc restart
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>Una vez finalizada la configuración, vamos a realizar la conexión entre los dos servidores y comprobar que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>isql <span class="nt">-v</span> PSQLORCL maria2 admin
+</code></pre></div></div>
+
+<p>Y realizamos una consulta simple para comprobar que funciona correctamente.</p>
+
+<p><img src="/assets/images/interconexion/16.png" alt="16" /></p>
+
+<p>Realizamos el link de la base de datos pero esta vez desde Oracle, pero para ello, debemos realizar las siguientes modificaciones:</p>
+
+<ol>
+  <li>Creatermos el fichero <em>initPSQLORCL.ora</em> dentro de $ORACLE_HOME/network/admin.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/initPSQLORCL.ora
+</code></pre></div>    </div>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HS_FDS_CONNECT_INFO <span class="o">=</span> PSQLU
+HS_FDS_TRACE_LEVEL <span class="o">=</span> DEBUG
+HS_FDS_SHAREABLE_NAME <span class="o">=</span> /usr/lib64/psqlodbcw.so
+HS_LANGUAGE <span class="o">=</span> AMERICAN_AMERICA.WE8ISO8859P1
+<span class="nb">set </span><span class="nv">ODBCINI</span><span class="o">=</span>/etc/odbc.ini
+<span class="nb">set </span><span class="nv">ODBCSYSINI</span><span class="o">=</span>/etc
+</code></pre></div>    </div>
+  </li>
+  <li>Lo siquiente que modificaremos, añadiendo lo descrito, será el fichero <em>listener.ora</em>.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/listener.ora
+</code></pre></div>    </div>
+    <p>```bash
+LISTENER =
+ (DESCRIPTION_LIST =
+     (DESCRIPTION =
+         (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.122.189)(PORT = 1521))
+         (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
+     )
+ )</p>
+  </li>
+</ol>
+
+<p>SID_LIST_LISTENER =
+    (SID_LIST =
+        (SID_DESC =
+            (SID_NAME = PSQLORCL)
+            (ORACLE_HOME=/opt/oracle/product/19c/dbhome_1)
+            (PROGRAM=dg4odbc)
+        )
+    )</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+3. Modicicamos tambien el fichero *tnsnames.ora*.
+```bash
+PSQLORCL =
+    (DESCRIPTION=
+        (ADDRESS=(PROTOCOL=tcp)(HOST=192.168.122.189)(PORT=1521))
+        (CONNECT_DATA=(SID=PSQLORCL))
+        (HS=OK)
+    )
+</code></pre></div></div>
+
+<ol>
+  <li>Reiniciamos el servicio de oracle.
+```bash
+$ service oracle restart</li>
+</ol>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
 <p>Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.</p>
 
 <h2 id="introducción-a-github">Introducción a GitHub</h2>
@@ -875,128 +1438,4 @@ $ bundle exec jekyll serve
 <p>Tras esto, podremos ver el sitio generado en nuestro navegador, de forma local a la dirección <em>http://localhost:4000/</em></p>
 
 <h2 id="conclusión">Conclusión</h2>
-<p>A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, <strong>CSS</strong>, etc… de forma rápida, sin costes y de forma eficaz.</p>]]></content><author><name></name></author><category term="jekyll" /><summary type="html"><![CDATA[En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.]]></summary></entry><entry><title type="html">Bienvenid@</title><link href="/bienvenida/2022/09/29/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Bienvenid@" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/bienvenida/2022/09/29/welcome-to-jekyll</id><content type="html" xml:base="/bienvenida/2022/09/29/welcome-to-jekyll.html"><![CDATA[<p>Bienvenidos SysMaria, mi pequeño blog.</p>
-
-<p>Soy Diplomada en Magisterio con la especialidad de Música y violín.</p>
-
-<p>Siempre me ha llamado la atención el mundo de la tecnología, he «cacharreado» con cualquier aparatejo que caía en mis manos. Después de una larga temporada luchando por una plaza, conseguí entrar en Administración de Sistemas Informáticos en Red (ASIR) en el I.E.S. Gonzalo Nazareno de Dos Hermanas (Sevilla).</p>
-
-<p>Y este será mi espacio, en el que expondré mis prácticas y mis pequeños proyectos personales.</p>
-
-<p>En mi perfil de <a href="https://github.com/Legnakra">GitHub</a> tengo subidos proyectos del primer año e iré añadiendo los de este curso.</p>]]></content><author><name></name></author><category term="bienvenida" /><summary type="html"><![CDATA[Bienvenidos SysMaria, mi pequeño blog.]]></summary></entry><entry><title type="html">Infraestructura como código</title><link href="/sri/2022/09/29/infraestructura.html" rel="alternate" type="text/html" title="Infraestructura como código" /><published>2022-09-29T17:45:16+02:00</published><updated>2022-09-29T17:45:16+02:00</updated><id>/sri/2022/09/29/infraestructura</id><content type="html" xml:base="/sri/2022/09/29/infraestructura.html"><![CDATA[<h2 id="ansible">Ansible</h2>
-<h3 id="playbook-sencillo">Playbook sencillo</h3>
-
-<p>Vamos a realizar un pequeño ejemplo de cómo podemos automatizar la instalación de un servidor web en un servidor remoto. Para ello, vamos a utilizar Ansible.</p>
-
-<ol>
-  <li>
-    <p>Creamos <em>site.yml</em>.</p>
-
-    <p><code></code></p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> - hosts: all
-     become: true
-     tasks:
-
- # Actualizamos paquetes
- - name: Actualizamos el sistema
-   apt: update_cache=yes upgrade=yes
-
- # Instalar paquetes
- - name: "Instalar paquetes con apt"
-   apt: # Aquí tienes que poner lo necesario para instalar git y apache2
-    pkg:
-     - git
-     - apache2
-
-   # Copia un fichero a la máquina remota
- - name: "Copiar fichero a la máquina remota"
-   copy:
-     src: files/foo.txt
-     dest: /etc
-     owner: root
-     group: root
-     mode: '0644'
-
-   # Copia un template a un fichero
- - name: "Copiar un template a un fichero de la máquina remota"
-   template: 
-     src: template/index.j2
-     dest: /var/www/html/index.html
-     owner: www-data
-     group: www-data
-     mode: 0644
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos <em>hosts</em>.
- <code></code></p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> all:
-         children:
-
-           servidores:
-
-             hosts:
-
-               ansible-client: 
-
-                 ansible_ssh_host: 192.168.122.120 
-
-                 ansible_ssh_user: ansible
-
-                 ansible_ssh_private_key_file: /home/maria/.ssh/id_rsa
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos <em>index.j2</em>.
- <code></code></p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     &lt;html lang="es"&gt;
-     &lt;head&gt;
-       &lt;meta charset="utf-8"&gt;
-       &lt;title&gt;Prueba Ansible&lt;/title&gt; 
-     &lt;/head&gt;
-
-     &lt;body&gt;
-       &lt;h1&gt;Gathering Facts&lt;/h1&gt;
-       &lt;p&gt;Este ordenador se llama: &lt;/p&gt;
-       &lt;p&gt;SO:   &lt;/p&gt;
-       &lt;h1&gt;Variables declaradas por el usuario a nivel de grupo&lt;/h1&gt;
-       &lt;p&gt;Nombre de la bd: &lt;/p&gt;
-       &lt;p&gt;Usuario de la bd: &lt;/p&gt;
-       &lt;h1&gt;Variables declaradas por el usuario a nivel de nodo&lt;/h1&gt;
-       &lt;p&gt;IP: &lt;/p&gt;
-     &lt;/body&gt;
-     &lt;/html&gt;
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Ejectuamos el playbook.
- <code></code></p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ansible-playbook site.yml -i hosts
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/vag-ans/1.png" alt="1" /></p>
-  </li>
-  <li>¿Cómo se llama la propiedad que permite que las tareas que ya se han realizado no se vuelvan a ejecutar?
-    <ul>
-      <li>Idempotencia</li>
-    </ul>
-  </li>
-  <li>
-    <p>Captura de pantalla del fichero foo.txt del servidor configurado.</p>
-
-    <p><img src="/assets/images/vag-ans/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Cuando accedemos a la IP del servidor, nos muestra la página web que hemos creado.</p>
-
-    <p><img src="/assets/images/vag-ans/3.png" alt="3" /></p>
-  </li>
-</ol>
-
-<p>Si queréis el playbook completo, lo tenéis en mi <a href="https://github.com/Legnakra/taller_ansible_vagrant/tree/main/Taller1">repositorio</a>.</p>
-
-<h3 id="playbook-con-roles">Playbook con roles</h3>]]></content><author><name></name></author><category term="sri" /><summary type="html"><![CDATA[Ansible Playbook sencillo]]></summary></entry></feed>
+<p>A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, <strong>CSS</strong>, etc… de forma rápida, sin costes y de forma eficaz.</p>]]></content><author><name></name></author><category term="jekyll" /><summary type="html"><![CDATA[En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.]]></summary></entry></feed>
