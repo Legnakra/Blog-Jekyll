@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Crear un sitio web estático con Jekyll | sysmaria</title>
+<title>Migración CentOS | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Crear un sitio web estático con Jekyll">
+<meta property="og:title" content="Migración CentOS">
 <meta property="og:locale" content="en_US">
-<meta name="description" content="En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.">
-<meta property="og:description" content="En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.">
-<link rel="canonical" href="/jekyll/2022/09/29/origen.html">
-<meta property="og:url" content="/jekyll/2022/09/29/origen.html">
+<meta name="description" content="Descripción">
+<meta property="og:description" content="Descripción">
+<link rel="canonical" href="/aso/2022/11/16/centOS.html">
+<meta property="og:url" content="/aso/2022/11/16/centOS.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2022-09-29T17:45:16+02:00">
+<meta property="article:published_time" content="2022-11-16T16:17:03+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Crear un sitio web estático con Jekyll">
+<meta property="twitter:title" content="Migración CentOS">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-09-29T17:45:16+02:00","datePublished":"2022-09-29T17:45:16+02:00","description":"En este post hablaremos de como crear un sitio web estático con Jekyll, un generador de sitios web estáticos.","headline":"Crear un sitio web estático con Jekyll","mainEntityOfPage":{"@type":"WebPage","@id":"/jekyll/2022/09/29/origen.html"},"url":"/jekyll/2022/09/29/origen.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-16T16:17:03+01:00","datePublished":"2022-11-16T16:17:03+01:00","description":"Descripción","headline":"Migración CentOS","mainEntityOfPage":{"@type":"WebPage","@id":"/aso/2022/11/16/centOS.html"},"url":"/aso/2022/11/16/centOS.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-<header class="site-header " role="banner">
+<header class="site-header site-header-transparent" role="banner">
 
   <div class="wrapper">
     <div class="site-header-inner">
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     var documentElement = document.documentElement;
 
     function storeScrollData() {
-      var y = getScrollPos().y;var scrollStatus = "";
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
 
       if (y <= 0) {
         scrollStatus = "top";
@@ -447,7 +447,60 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-<script>
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/kernel.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/kernel.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Migración CentOS</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-11-16T16:17:03+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 16, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
   function hashLocate(hashValue) {
     hashValue = hashValue.replace(/^.*#h-/, '');
     hashValue = decodeURIComponent(hashValue);
@@ -632,128 +685,83 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-<header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Crear un sitio web estático con Jekyll</h1>
-  <h2 class="post-subtitle"></h2>
-
-  <p class="post-meta">
-    <time class="dt-published" datetime="2022-09-29T17:45:16+02:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Sep 29, 2022
-    </time>
-
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
-  </p></header>
 <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
     <div class="post-content e-content" itemprop="articleBody">
 
-      <p>En este post hablaremos de como crear un sitio web estático con <strong>Jekyll</strong>, un generador de sitios web estáticos.</p>
+      <h2 id="descripción">Descripción</h2>
 
-<p><img src="https://jekyllrb.com/img/jekyll-og.png" alt="Jekyll"></p>
+<p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
 
-<h2 id="ventajas-y-desventajas">Ventajas y desventajas.</h2>
-<p>En primer lugar, este tipo de sitios no requieren un hosting con soporte, ya que está compuesto de archivos HTML, CSS, y JavaScript.</p>
+<p>En la presente práctica, analiza posibles versiones candidatas y opciones desplegadas para la migración de tus servidores CentOS.</p>
 
-<p>Otras ventajas que nos encontramos es su velocodad de carga y el ahorro de costos del hosting, ya que existen servicios gratuitos para ello.</p>
+<p>El espectro es amplio:</p>
 
-<p>En cuanto a desventajas, nos encontramos que no podemos editar o crear en línea, e incluso no es posible la creación de usuarios.</p>
+<p>Cambiar el rumbo a una nueva distribución, debian, opensuse, slakware, etc.</p>
 
-<h2 id="preparando-el-escenario">Preparando el escenario</h2>
-<p>Para ello, vamos a realizar la instalación tanto de <strong>Jekyll</strong> y de <strong>Ruby</strong> de la siguiente manera:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ apt install jekyll
-$ apt install jekyll bundler
-$ apt install ruby
-</code></pre></div></div>
+<p>Soluciones aportadas por Red Hat: Red Hat Enterprise Linux, CentOS Stream.</p>
 
-<p>Creamos el directorio, en el que vamos a alojar nuestra web estática</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mkdir /directorio/web
-</code></pre></div></div>
+<p>Solución aportada por Oracle Linux</p>
 
-<p>Y ejecutamos dentro del directorio web el comando necesario para crear nuestro sitio web estático:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ jekyll new sitio-jekyll
-</code></pre></div></div>
+<p>Nuevas distribuciones surgidas para paliar el hueco dejado:</p>
 
-<p>Al ejecutar el comando, se nos creará el directorio <code class="language-plaintext highlighter-rouge">sitio-jekyll</code> con la siguiente estructura:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sitio-jekyll/
-  _posts/
-    2022-09-29-welcome-to-jekyll.markdown
-  _config.yml
-  about.md
-  Gemfile
-  index.md
-</code></pre></div></div>
-
-<h2 id="para-qué-sirve-lo-que-hemos-creado">¿Para qué sirve lo que hemos creado?</h2>
 <ul>
-  <li>
-<code class="language-plaintext highlighter-rouge">_posts/</code>: En este directorio se almacenarán los artículos por orden cronológico de nuestro sitio web.</li>
-  <li>
-<code class="language-plaintext highlighter-rouge">_config.yml</code>: En dicho fichero encontraremos las configuraciones que controlarán la forma en la que se generará la web y los artículos.</li>
-  <li>
-<code class="language-plaintext highlighter-rouge">Gemfile</code>: Este fichero aloja las definiciones de las dependencias o librerías adicionales de <strong>Ruby</strong> que necesitaremos para crear el sitio web (lo que sería el <code class="language-plaintext highlighter-rouge">requirements.txt</code>de <strong>Python</strong>).</li>
-  <li>
-<code class="language-plaintext highlighter-rouge">.md</code>: Los ficheros que componen el contenido de las páginas y los artículos tienen la extensión <code class="language-plaintext highlighter-rouge">markdown</code>, y luego es <strong>Jekyll</strong> es que se encargade transformar el código <strong>HTML</strong> a la hora de la compilación.</li>
+  <li>AlmaLinux</li>
+  <li>Rocky Linux</li>
+  <li>VZLinux</li>
+  <li>euroLinux</li>
 </ul>
 
-<h2 id="ejecutando-el-sitio">Ejecutando el sitio</h2>
-<p>Para esto, ejecutaremos en la terminal lo siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ cd /directorio/web/sitio-jekyll
-$ bundle exec jekyll serve
-</code></pre></div></div>
+<h2 id="ejercicios">Ejercicios</h2>
 
-<p>Tras esto, podremos ver el sitio generado en nuestro navegador, de forma local a la dirección <em>http://localhost:4000/</em></p>
+<h3 id="analiza-el-desencadenante-de-la-retirada-de-centos-8-del-mercado-qué-opinión-tienes-al-respecto">Analiza el desencadenante de la retirada de centOS 8 del mercado. ¿Qué opinión tienes al respecto?</h3>
 
-<h2 id="conclusión">Conclusión</h2>
-<p>A partir de ciertas herramientas, podemos desplegar una página web de forma estática, con estilo, <strong>CSS</strong>, etc… de forma rápida, sin costes y de forma eficaz.</p>
+<p>CentOS es un acrónimo para <em>Community Enterprise Operating System</em> y está totalmente reconstruido por Red Hat Enterprise Linux. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad.</p>
+
+<p>Uno de los ejecutivos de Red Hat dijo que CentOS estaba destruyendo las ventas de RHEL. Esto es cierto, pero no es culpa de CentOS. CentOS es una distribución de Linux empresarial gratuita que se basa en RHEL. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad. Los desarrolladores y las empresas que son buenos en Linux y no quieren pagar las tarifas de soporte de RHEL siempre seleccionaron CentOS para ahorrar dinero y obtener un software de clase empresarial. Sin embargo, el viaje gratis ha terminado. Red Hat anunció que CentOS Linux 8, como una reconstrucción de RHEL 8, finalizará en 2021. CentOS Stream continúa después de esa fecha, sirviendo como la rama upstream (desarrollo) de Red Hat Enterprise Linux.</p>
+
+<p>Debido a un cambio de enfoque de CentOS Linux, anunciaron que CentOS Linux 8 se retirará el 31 de diciembre de 2021. Esto significa que no habrá más actualizaciones de seguridad o correcciones de errores para CentOS Linux 8 después de esa fecha. Esto también significa que CentOS Linux 8 no se convertirá en una versión de soporte a largo plazo (LTS) como CentOS Linux 7. Por lo tanto, los usuarios de CentOS Linux 8 deben migrar a CentOS Stream o a una nueva distribución de Linux.</p>
+
+<p>Algunos de los usuarios, y con total normalidad, estaban en desacuerdo pero como es lógico, Red Hat tiene que hacer lo que tiene que hacer. Es cierto que la comunicación de tal hecho se hizo de una forma rápida e intempesta. Pero, como usuarios también debemos sopesar todo lo que CentOS nos ha aportado y a qué costo.</p>
+
+<p>En mi opinión es un paso en falso por parte de Red Hat, ya que CentOS era ysadi principalmente para pruebas que luego eran volcadas y migradas a RHEL. Como todo en las empresas, se busca una rentabilidad y un beneficio, y en este caso, Red Hat ha decidido que no es rentable mantener CentOS. Es cierto que podemos optar a una suscripción de RHEL por cuenta propia, pero no es lo mismo que tener una distribución gratuita y de código abierto. En el caso en el que una empresa tenga más de un desarrollador, esta tendría que lidiar con cuentas adicionales para ello.</p>
+
+<p>Por eso, y desde mi punto de vista, creo que la mejor optativa podría ser Oracle Linux.</p>
+
+<ol>
+  <li>Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</li>
+</ol>
+
+<p>Para poder acceder a la descarga de RHEL, es necesario tener una cuenta en Red Hat. Para ello, se debe acceder a la página de Red Hat y registrarse. Una vez hecho esto, se puede acceder a la descarga de RHEL.</p>
+
+<p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
+
+<ol>
+  <li>
+    <p>Descarga la iso de CentOS Stream y evalúa el producto.</p>
+  </li>
+  <li>
+    <p>Descarga iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</p>
+  </li>
+  <li>
+    <p>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</p>
+  </li>
+</ol>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/python/2022/09/29/inicio-python.html" title="Introducción a la programación Python">Introducción a la programación Python</a><a class="next" href="/bienvenida/2022/09/29/welcome-to-jekyll.html" title="Bienvenid@">Bienvenid@</a>
+<a class="previous" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Instalación de nginx con PHP con vagrant y ansible">Instalación de nginx con PHP con...</a><a class="next" href="/aso/2022/11/16/kernel.html" title="Compilación de un kernel a medida">Compilación de un kernel a medida...</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Bienvenid@">Introducción a la programación Python</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/centOS.html" title="Bienvenid@">Migración CentOS</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Bienvenid@">Apache como proxy inverso</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="Bienvenid@">Compilación de un kernel a medida</a></li>
+        <li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Compilación de un kernel a medida">Crear un sitio web estático con Jekyll</a></li>
+<li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="Compilación de un kernel a medida">Compilación de un kernel a medida</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Compilación de un kernel a medida">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="Compilación de un kernel a medida">Introducción a GitHub</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

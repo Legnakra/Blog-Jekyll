@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-19T12:37:06+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-19T12:40:20+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
 
 <p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
 
@@ -154,7 +154,64 @@ maria@maria-debian:~ ip route
   <li>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
 </ol>
 
-<p><img src="/assets/images/openstack/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Compilación de un kernel a medida</title><link href="/aso/2022/11/16/kernel.html" rel="alternate" type="text/html" title="Compilación de un kernel a medida" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/kernel</id><content type="html" xml:base="/aso/2022/11/16/kernel.html"><![CDATA[<h2 id="qué-es-un-kernel">¿Qué es un kernel?</h2>
+<p><img src="/assets/images/openstack/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+
+<p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
+
+<p>En la presente práctica, analiza posibles versiones candidatas y opciones desplegadas para la migración de tus servidores CentOS.</p>
+
+<p>El espectro es amplio:</p>
+
+<p>Cambiar el rumbo a una nueva distribución, debian, opensuse, slakware, etc.</p>
+
+<p>Soluciones aportadas por Red Hat: Red Hat Enterprise Linux, CentOS Stream.</p>
+
+<p>Solución aportada por Oracle Linux</p>
+
+<p>Nuevas distribuciones surgidas para paliar el hueco dejado:</p>
+
+<ul>
+  <li>AlmaLinux</li>
+  <li>Rocky Linux</li>
+  <li>VZLinux</li>
+  <li>euroLinux</li>
+</ul>
+
+<h2 id="ejercicios">Ejercicios</h2>
+
+<h3 id="analiza-el-desencadenante-de-la-retirada-de-centos-8-del-mercado-qué-opinión-tienes-al-respecto">Analiza el desencadenante de la retirada de centOS 8 del mercado. ¿Qué opinión tienes al respecto?</h3>
+
+<p>CentOS es un acrónimo para <em>Community Enterprise Operating System</em> y está totalmente reconstruido por Red Hat Enterprise Linux. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad.</p>
+
+<p>Uno de los ejecutivos de Red Hat dijo que CentOS estaba destruyendo las ventas de RHEL. Esto es cierto, pero no es culpa de CentOS. CentOS es una distribución de Linux empresarial gratuita que se basa en RHEL. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad. Los desarrolladores y las empresas que son buenos en Linux y no quieren pagar las tarifas de soporte de RHEL siempre seleccionaron CentOS para ahorrar dinero y obtener un software de clase empresarial. Sin embargo, el viaje gratis ha terminado. Red Hat anunció que CentOS Linux 8, como una reconstrucción de RHEL 8, finalizará en 2021. CentOS Stream continúa después de esa fecha, sirviendo como la rama upstream (desarrollo) de Red Hat Enterprise Linux.</p>
+
+<p>Debido a un cambio de enfoque de CentOS Linux, anunciaron que CentOS Linux 8 se retirará el 31 de diciembre de 2021. Esto significa que no habrá más actualizaciones de seguridad o correcciones de errores para CentOS Linux 8 después de esa fecha. Esto también significa que CentOS Linux 8 no se convertirá en una versión de soporte a largo plazo (LTS) como CentOS Linux 7. Por lo tanto, los usuarios de CentOS Linux 8 deben migrar a CentOS Stream o a una nueva distribución de Linux.</p>
+
+<p>Algunos de los usuarios, y con total normalidad, estaban en desacuerdo pero como es lógico, Red Hat tiene que hacer lo que tiene que hacer. Es cierto que la comunicación de tal hecho se hizo de una forma rápida e intempesta. Pero, como usuarios también debemos sopesar todo lo que CentOS nos ha aportado y a qué costo.</p>
+
+<p>En mi opinión es un paso en falso por parte de Red Hat, ya que CentOS era ysadi principalmente para pruebas que luego eran volcadas y migradas a RHEL. Como todo en las empresas, se busca una rentabilidad y un beneficio, y en este caso, Red Hat ha decidido que no es rentable mantener CentOS. Es cierto que podemos optar a una suscripción de RHEL por cuenta propia, pero no es lo mismo que tener una distribución gratuita y de código abierto. En el caso en el que una empresa tenga más de un desarrollador, esta tendría que lidiar con cuentas adicionales para ello.</p>
+
+<p>Por eso, y desde mi punto de vista, creo que la mejor optativa podría ser Oracle Linux.</p>
+
+<ol>
+  <li>Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</li>
+</ol>
+
+<p>Para poder acceder a la descarga de RHEL, es necesario tener una cuenta en Red Hat. Para ello, se debe acceder a la página de Red Hat y registrarse. Una vez hecho esto, se puede acceder a la descarga de RHEL.</p>
+
+<p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
+
+<ol>
+  <li>
+    <p>Descarga la iso de CentOS Stream y evalúa el producto.</p>
+  </li>
+  <li>
+    <p>Descarga iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</p>
+  </li>
+  <li>
+    <p>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Compilación de un kernel a medida</title><link href="/aso/2022/11/16/kernel.html" rel="alternate" type="text/html" title="Compilación de un kernel a medida" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/kernel</id><content type="html" xml:base="/aso/2022/11/16/kernel.html"><![CDATA[<h2 id="qué-es-un-kernel">¿Qué es un kernel?</h2>
 
 <p>Un kernel es el núcleo de un sistema operativo. Es el encargado de gestionar los recursos del sistema, como la memoria, los procesos, los dispositivos de entrada y salida, etc. Es el primer programa que se ejecuta cuando se enciende el ordenador.</p>
 
@@ -374,66 +431,7 @@ Its output will be used to detect bootable binaries on them and create menu boot
 
 <p>También debo aclarar que realice una reducción mínima del kernel, pero por incompatibilidad con mi tarjeta gráfica, no pude hacerlo funcionar. Sin embargo en otra máquina virtual, con una tarjeta gráfica compatible, si que pude hacerlo funcionar.</p>
 
-<p><img src="/assets/images/kernel/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[¿Qué es un kernel?]]></summary></entry><entry><title type="html">Centos</title><link href="/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Centos" /><published>2022-11-16T00:00:00+01:00</published><updated>2022-11-16T00:00:00+01:00</updated><id>/2022/11/16/centOS</id><content type="html" xml:base="/2022/11/16/centOS.html"><![CDATA[<h1 id="migración-centos">Migración CentOS</h1>
-
-<h2 id="descripción">Descripción</h2>
-
-<p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
-
-<p>En la presente práctica, analiza posibles versiones candidatas y opciones desplegadas para la migración de tus servidores CentOS.</p>
-
-<p>El espectro es amplio:</p>
-
-<p>Cambiar el rumbo a una nueva distribución, debian, opensuse, slakware, etc.</p>
-
-<p>Soluciones aportadas por Red Hat: Red Hat Enterprise Linux, CentOS Stream.</p>
-
-<p>Solución aportada por Oracle Linux</p>
-
-<p>Nuevas distribuciones surgidas para paliar el hueco dejado:</p>
-
-<ul>
-  <li>AlmaLinux</li>
-  <li>Rocky Linux</li>
-  <li>VZLinux</li>
-  <li>euroLinux</li>
-</ul>
-
-<h2 id="ejercicios">Ejercicios</h2>
-
-<h3 id="analiza-el-desencadenante-de-la-retirada-de-centos-8-del-mercado-qué-opinión-tienes-al-respecto">Analiza el desencadenante de la retirada de centOS 8 del mercado. ¿Qué opinión tienes al respecto?</h3>
-
-<p>CentOS es un acrónimo para <em>Community Enterprise Operating System</em> y está totalmente reconstruido por Red Hat Enterprise Linux. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad.</p>
-
-<p>Uno de los ejecutivos de Red Hat dijo que CentOS estaba destruyendo las ventas de RHEL. Esto es cierto, pero no es culpa de CentOS. CentOS es una distribución de Linux empresarial gratuita que se basa en RHEL. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad. Los desarrolladores y las empresas que son buenos en Linux y no quieren pagar las tarifas de soporte de RHEL siempre seleccionaron CentOS para ahorrar dinero y obtener un software de clase empresarial. Sin embargo, el viaje gratis ha terminado. Red Hat anunció que CentOS Linux 8, como una reconstrucción de RHEL 8, finalizará en 2021. CentOS Stream continúa después de esa fecha, sirviendo como la rama upstream (desarrollo) de Red Hat Enterprise Linux.</p>
-
-<p>Debido a un cambio de enfoque de CentOS Linux, anunciaron que CentOS Linux 8 se retirará el 31 de diciembre de 2021. Esto significa que no habrá más actualizaciones de seguridad o correcciones de errores para CentOS Linux 8 después de esa fecha. Esto también significa que CentOS Linux 8 no se convertirá en una versión de soporte a largo plazo (LTS) como CentOS Linux 7. Por lo tanto, los usuarios de CentOS Linux 8 deben migrar a CentOS Stream o a una nueva distribución de Linux.</p>
-
-<p>Algunos de los usuarios, y con total normalidad, estaban en desacuerdo pero como es lógico, Red Hat tiene que hacer lo que tiene que hacer. Es cierto que la comunicación de tal hecho se hizo de una forma rápida e intempesta. Pero, como usuarios también debemos sopesar todo lo que CentOS nos ha aportado y a qué costo.</p>
-
-<p>En mi opinión es un paso en falso por parte de Red Hat, ya que CentOS era ysadi principalmente para pruebas que luego eran volcadas y migradas a RHEL. Como todo en las empresas, se busca una rentabilidad y un beneficio, y en este caso, Red Hat ha decidido que no es rentable mantener CentOS. Es cierto que podemos optar a una suscripción de RHEL por cuenta propia, pero no es lo mismo que tener una distribución gratuita y de código abierto. En el caso en el que una empresa tenga más de un desarrollador, esta tendría que lidiar con cuentas adicionales para ello.</p>
-
-<p>Por eso, y desde mi punto de vista, creo que la mejor optativa podría ser Oracle Linux.</p>
-
-<ol>
-  <li>Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</li>
-</ol>
-
-<p>Para poder acceder a la descarga de RHEL, es necesario tener una cuenta en Red Hat. Para ello, se debe acceder a la página de Red Hat y registrarse. Una vez hecho esto, se puede acceder a la descarga de RHEL.</p>
-
-<p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
-
-<ol>
-  <li>
-    <p>Descarga la iso de CentOS Stream y evalúa el producto.</p>
-  </li>
-  <li>
-    <p>Descarga iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</p>
-  </li>
-  <li>
-    <p>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</p>
-  </li>
-</ol>]]></content><author><name></name></author><summary type="html"><![CDATA[Migración CentOS]]></summary></entry><entry><title type="html">Instalación de nginx con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de nginx con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
+<p><img src="/assets/images/kernel/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[¿Qué es un kernel?]]></summary></entry><entry><title type="html">Instalación de nginx con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de nginx con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
 
 <h2 id="descripción-del-escenario">Descripción del escenario</h2>
 
