@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-19T12:42:19+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-20T19:21:42+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
 
 <p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
 
@@ -1027,15 +1027,6 @@ EXIT<span class="p">;</span>
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>odbc-postgresql unixodbc
 </code></pre></div>    </div>
   </li>
-  <li>Comprobamos que el paquete se ha instalado correctamente.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>dpkg <span class="nt">-l</span> | <span class="nb">grep </span>postgresql-odbc
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/assets/images/interconexion/15.png" alt="15" /></p>
-
-<ol>
   <li>Creamos el archivo de configuración de odbc.
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbc.ini
 </code></pre></div>    </div>
@@ -1077,7 +1068,7 @@ FileUsage       <span class="o">=</span> 1
 
 <p>Una vez finalizada la configuración, vamos a realizar la conexión entre los dos servidores y comprobar que funciona correctamente.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>isql <span class="nt">-v</span> PSQLORCL maria2 admin
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>isql <span class="nt">-v</span> PSQLORCL
 </code></pre></div></div>
 
 <p>Y realizamos una consulta simple para comprobar que funciona correctamente.</p>
@@ -1101,41 +1092,133 @@ HS_LANGUAGE <span class="o">=</span> AMERICAN_AMERICA.WE8ISO8859P1
   <li>Lo siquiente que modificaremos, añadiendo lo descrito, será el fichero <em>listener.ora</em>.
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/listener.ora
 </code></pre></div>    </div>
-    <p>```bash
-LISTENER =
- (DESCRIPTION_LIST =
-     (DESCRIPTION =
-         (ADDRESS = (PROTOCOL = TCP)(HOST = 192.168.122.189)(PORT = 1521))
-         (ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1521))
-     )
- )</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> LISTENER <span class="o">=</span>
+     <span class="o">(</span>DESCRIPTION_LIST <span class="o">=</span>
+         <span class="o">(</span>DESCRIPTION <span class="o">=</span>
+             <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.189<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
+             <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> IPC<span class="o">)(</span>KEY <span class="o">=</span> EXTPROC1521<span class="o">))</span>
+         <span class="o">)</span>
+     <span class="o">)</span>
+
+ SID_LIST_LISTENER <span class="o">=</span>
+     <span class="o">(</span>SID_LIST <span class="o">=</span>
+         <span class="o">(</span>SID_DESC <span class="o">=</span>
+             <span class="o">(</span>SID_NAME <span class="o">=</span> PSQLORCL<span class="o">)</span>
+             <span class="o">(</span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/oracle/product/19c/dbhome_1<span class="o">)</span>
+             <span class="o">(</span><span class="nv">PROGRAM</span><span class="o">=</span>dg4odbc<span class="o">)</span>
+         <span class="o">)</span>
+     <span class="o">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Modicicamos tambien el fichero <em>tnsnames.ora</em>.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PSQLORCL <span class="o">=</span>
+ <span class="o">(</span><span class="nv">DESCRIPTION</span><span class="o">=</span>
+     <span class="o">(</span><span class="nv">ADDRESS</span><span class="o">=(</span><span class="nv">PROTOCOL</span><span class="o">=</span>tcp<span class="o">)(</span><span class="nv">HOST</span><span class="o">=</span>192.168.122.189<span class="o">)(</span><span class="nv">PORT</span><span class="o">=</span>1521<span class="o">))</span>
+     <span class="o">(</span><span class="nv">CONNECT_DATA</span><span class="o">=(</span><span class="nv">SID</span><span class="o">=</span>PSQLORCL<span class="o">))</span>
+     <span class="o">(</span><span class="nv">HS</span><span class="o">=</span>OK<span class="o">)</span>
+ <span class="o">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Reiniciamos el servicio de oracle.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>service oracle restart
+</code></pre></div>    </div>
   </li>
 </ol>
 
-<p>SID_LIST_LISTENER =
-    (SID_LIST =
-        (SID_DESC =
-            (SID_NAME = PSQLORCL)
-            (ORACLE_HOME=/opt/oracle/product/19c/dbhome_1)
-            (PROGRAM=dg4odbc)
-        )
-    )</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-3. Modicicamos tambien el fichero *tnsnames.ora*.
-```bash
-PSQLORCL =
-    (DESCRIPTION=
-        (ADDRESS=(PROTOCOL=tcp)(HOST=192.168.122.189)(PORT=1521))
-        (CONNECT_DATA=(SID=PSQLORCL))
-        (HS=OK)
-    )
+<p>Y como podemos comprobar, la conexión funciona correctamente. En la imagen de a continuación podemos ver que se lista la tabla que sí existe en la base de datos de postgres, es decir, la tabla dept.</p>
+
+<p><img src="/assets/images/interconexion/17.png" alt="17" /></p>
+
+<h2 id="interconexión-entre-un-servidor-postgresql-y-un-servidor-oracle">Interconexión entre un servidor Postgresql y un servidor Oracle</h2>
+
+<p>Para que los dos servidores puedan realizar la interconexión, haremos uso de <code class="language-plaintext highlighter-rouge">oracle_fdw</code>. Para ello instalaremos los siguientes paquetes:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>postgresql-server-dev-all libaio1 build-essential
 </code></pre></div></div>
 
-<ol>
-  <li>Reiniciamos el servicio de oracle.
-```bash
-$ service oracle restart</li>
-</ol>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
+<p>Una vez instalados los paquetes, vamos a descargarnos a través de wget los paquetes de Oracle Instant Client. Loguearemos con el usuario postgres y descargaremos los paquetes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
+wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sdk-linux.x64-21.1.0.0.0.zip
+wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sqlplus-linux.x64-21.1.0.0.0.zip
+</code></pre></div></div>
+
+<p>Descomprimimos los paquetes e introducimos las variables de entorno necesarias para no tener que usar el comando <code class="language-plaintext highlighter-rouge">export</code> cada vez que queramos usar los paquetes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/var/lib/postgresql/instantclient_21_1
+postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:<span class="nv">$ORACLE_HOME</span>
+postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$ORACLE_HOME</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/18.png" alt="18" /></p>
+
+<p>Comprobamos que se han hecho correctamente las variables de entorno.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span>which sqlplus
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/19.png" alt="19" /></p>
+
+<p>Y como podemos ver enla siguiente imagen, podemos conectarnos a la base de datos de Oracle.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span>sqlplus maria1/admin@192.168.122.189/ORCLCDB
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/20.png" alt="20" /></p>
+
+<p>Una vez comprobado que todo funciona correctamente, vamos a instalar el paquete de <code class="language-plaintext highlighter-rouge">oracle_fdw</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/laurenz/oracle_fdw/archive/refs/tags/ORACLE_FDW_2_3_0.zip
+unzip ORACLE_FDW_2_3_0.zip
+<span class="nb">mv </span>oracle_fdw-ORACLE_FDW_2_3_0/ oracle_fdw
+<span class="nb">cd </span>oracle_fdw
+make
+make <span class="nb">install</span>
+</code></pre></div></div>
+
+<p>Y una vez instalado, vamos a entrar en la base de datos y crearemos la extensión, pero nos salta el siguiente error:</p>
+
+<p><img src="/assets/images/interconexion/21.png" alt="21" /></p>
+
+<p>Para solucionarlo, crearemos el fichero <code class="language-plaintext highlighter-rouge">/etc/ls.so.conf.d/oracle.conf</code> y añadiremos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/var/lib/postgresql/instantclient_21_1
+/usr/share/postgresql/13/extension
+</code></pre></div></div>
+
+<h3 id="creamos-los-enlaces-3">Creamos los enlaces</h3>
+
+<p>Creamos los vínculos a las librerías de los directorio que hemos descrito en el fichero anterior y reiniciamos el servicio de postgresql. Tras ello creamos la extensión y lo comprobamos con <code class="language-plaintext highlighter-rouge">\dx</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldconfig
+service postgresql restart
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/22.png" alt="22" /></p>
+
+<p>Creamos un nuevo esquema, y una vez creado, definimos el servidor remoto de Oracle y el mapeo de usuario para que nuestro usuario alojado en PostgreSQL pueda acceder en las tablas del servidor Oracle.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE SCHEMA oracle<span class="p">;</span>
+create server oracle foreign data wrapper oracle_fdw options <span class="o">(</span>dbserver <span class="s1">'//192.168.122.189/ORCLCDB'</span><span class="o">)</span><span class="p">;</span>
+
+create user mapping <span class="k">for </span>maria2 server oracle options <span class="o">(</span>user <span class="s1">'maria1'</span>, password <span class="s1">'admin'</span><span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/23.png" alt="23" /></p>
+
+<p>Salimos de la base de datos y nos conectamos con el usuario que hemos creado con anterioridad.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-h</span> localhost <span class="nt">-U</span> maria2 <span class="nt">-d</span> scott2
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/24.png" alt="24" /></p>
+
+<h3 id="conectándonos-de-oracle-a-postgresql-1">Conectándonos de Oracle a Postgresql</h3>
+
+<p>Como podemos ver en la siguiente imagen, podemos acceder a las tablas de la base de datos de PostgreSQL desde Oracle.</p>
+
+<p><img src="/assets/images/interconexion/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
 <p>Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.</p>
 
 <h2 id="introducción-a-github">Introducción a GitHub</h2>
