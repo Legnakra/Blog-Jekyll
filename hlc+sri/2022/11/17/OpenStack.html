@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 6 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
   </p></header>
 </div>
     </div>
@@ -779,41 +779,90 @@ maria@maria-debian:~ ip route
 <p>En esta sección vamos a ver cómo crear una red en OpenStack. Los siguientes pasos los vamos hacer con el cliente de OpenStack, y entraremos en Horizon para comprobar que, efectivamente, se ha creado correctamente.</p>
 
 <ol>
-  <li>Vamos a crear una red llamada <code class="language-plaintext highlighter-rouge">red-externa</code> y una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">192.168.0.0/24</code>. Crearemos también un router y conectaremos ambas redes a este router.</li>
-</ol>
+  <li>
+    <p>Vamos a crear una red llamada <code class="language-plaintext highlighter-rouge">red-externa</code> y una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">192.168.0.0/24</code>. Crearemos también un router y conectaremos ambas redes a este router.</p>
 
-<p><img src="/assets/images/openstack/1.png" alt="1"></p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack network create red-externa
+ openstack subnet create <span class="nt">--network</span> red-externa <span class="nt">--subnet-range</span> 192.168.0.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 192.168.0.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-externa
+</code></pre></div>    </div>
 
-<ol>
+    <p><img src="/assets/images/openstack/1.png" alt="1"></p>
+
+    <p>Crearemos también un router y conectaremos ambas redes a este router.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack router create router-externo
+ openstack router add subnet router-externo subred-externa
+ openstack router <span class="nb">set </span>router-externo <span class="nt">--external-gateway</span> ext-net
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/2.png" alt="2"></p>
+  </li>
   <li>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred, pero ¿podremos aignarle una IP flotante?
     <ul>
       <li>Si, podemos asignarle una IP flotante, pero no podremos acceder a ella desde fuera de la red local del centro.</li>
     </ul>
+
+    <p>¿Por qué?</p>
+    <ul>
+      <li>Porque no hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
+ <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
+ <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--network</span><span class="o">=</span>red-externa <span class="se">\</span>
+ maquina-router
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/3.png" alt="3"></p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
+ 172.22.200.161
+ openstack server add floating ip maquina-router 172.22.200.161
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/4.png" alt="4"></p>
   </li>
-</ol>
+  <li>
+    <p>Creamos una nueva red llamada <code class="language-plaintext highlighter-rouge">red-interna</code> con una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">10.0.100.0/24</code>.</p>
 
-<p>¿Por qué?</p>
-<ul>
-  <li>Porque no hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
-</ul>
-
-<p><img src="/assets/images/openstack/2.png" alt="2"></p>
-
-<ol>
-  <li>Creamos una nueva red llamada <code class="language-plaintext highlighter-rouge">red-interna</code> con una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">10.0.100.0/24</code>.</li>
-</ol>
-
-<p><img src="/assets/images/openstack/3.png" alt="3"></p>
-
-<ol>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack network create red-interna
+ openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.2 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
+</code></pre></div>    </div>
+    <p><img src="/assets/images/openstack/5.png" alt="5"></p>
+  </li>
   <li>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</li>
 </ol>
 
-<p><img src="/assets/images/openstack/4.png" alt="4"></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add network maquina-router red-interna 
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![6](/assets/images/openstack/6.png)
+</code></pre></div></div>
 
 <ol>
-  <li>Creamos una nueva instancia llamada <code class="language-plaintext highlighter-rouge">maquina-cliente</code> y la conectamos a la red que hemos llamado <code class="language-plaintext highlighter-rouge">red-interna</code>. Usando los puertos de red, le asignaremos la IP <code class="language-plaintext highlighter-rouge">10.0.100.200</code> y comprobamos si su puerta de enlace es la <code class="language-plaintext highlighter-rouge">máquina-router</code>.</li>
+  <li>
+    <p>Creamos una nueva instancia llamada <code class="language-plaintext highlighter-rouge">maquina-cliente</code> y la conectamos a la red que hemos llamado <code class="language-plaintext highlighter-rouge">red-interna</code>. Usando los puertos de red, le asignaremos la IP <code class="language-plaintext highlighter-rouge">10.0.100.200</code> y comprobamos si su puerta de enlace es la <code class="language-plaintext highlighter-rouge">máquina-router</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
+ <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
+ <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--network</span><span class="o">=</span>red-interna <span class="se">\</span>
+ <span class="nt">--nic</span> net-id<span class="o">=</span>red-interna,v4-fixed-ip<span class="o">=</span>10.0.100.200 <span class="se">\</span>
+ maquina-cliente
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/7.png" alt="7"></p>
+  </li>
 </ol>
+
+<p>```bash</p>
 
 <p>¿Podremos assignarle a esta instancia una IP flotante?</p>
 <ul>
@@ -825,27 +874,18 @@ maria@maria-debian:~ ip route
   <li>Porque hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
 </ul>
 
-<p><img src="/assets/images/openstack/5.png" alt="5"></p>
-
 <ol>
-  <li>Ya montado todo este escenario, camos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</li>
+  <li>
+    <p>Ya montado todo este escenario, camos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
+  </li>
+  <li>
+    <p>Ahora comprobaremos que el cliente tiene acceso a internet e instalaremos un servidor web en la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
+  </li>
+  <li>
+    <p>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
+  </li>
 </ol>
 
-<p><img src="/assets/images/openstack/6.png" alt="6"></p>
-
-<ol>
-  <li>Ahora comprobaremos que el cliente tiene acceso a internet e instalaremos un servidor web en la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
-</ol>
-
-<p><img src="/assets/images/openstack/7.png" alt="7"></p>
-
-<p><img src="/assets/images/openstack/8.png" alt="8"></p>
-
-<ol>
-  <li>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
-</ol>
-
-<p><img src="/assets/images/openstack/9.png" alt="9"></p>
 
 
     </div>
@@ -857,10 +897,10 @@ maria@maria-debian:~ ip route
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="">Compilación de un kernel a medida</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="">Apache como proxy inverso</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="">Virtualización en Linux</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="">Cloud Computing IaaS. OpenStack</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="">Instalación de nginx con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
+<li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="">Compilar dos2unix partiendo del código fuente</a></li>
+<li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="">Compilación de un kernel a medida</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
