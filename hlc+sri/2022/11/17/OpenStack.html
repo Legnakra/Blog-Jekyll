@@ -806,13 +806,14 @@ maria@maria-debian:~ ip route
 
     <p>¿Por qué?</p>
     <ul>
-      <li>Porque no hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
+      <li>Porque no está abierto el puerto 22 de la vpn.</li>
     </ul>
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
  <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--key-name</span> pass <span class="se">\</span>
  <span class="nt">--network</span><span class="o">=</span>red-externa <span class="se">\</span>
  maquina-router
 </code></pre></div>    </div>
@@ -821,8 +822,8 @@ maria@maria-debian:~ ip route
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
- 172.22.200.161
- openstack server add floating ip maquina-router 172.22.200.161
+ 172.22.200.9
+ openstack server add floating ip maquina-router 172.22.200.9
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/openstack/4.png" alt="4"></p>
@@ -834,16 +835,15 @@ maria@maria-debian:~ ip route
 <div class="highlight"><pre class="highlight"><code> openstack network create red-interna
  openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.2 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
 </code></pre></div>    </div>
-    <p><img src="/assets/images/openstack/5.png" alt="5"></p>
   </li>
   <li>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</li>
 </ol>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add network maquina-router red-interna 
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 mi-port
+openstack server add port maquina-router mi-port
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![6](/assets/images/openstack/6.png)
-</code></pre></div></div>
+<p><img src="/assets/images/openstack/5.png" alt="5"></p>
 
 <ol>
   <li>
@@ -853,37 +853,43 @@ maria@maria-debian:~ ip route
 <div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
  <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--key-name</span> pass <span class="se">\</span>
  <span class="nt">--network</span><span class="o">=</span>red-interna <span class="se">\</span>
  <span class="nt">--nic</span> net-id<span class="o">=</span>red-interna,v4-fixed-ip<span class="o">=</span>10.0.100.200 <span class="se">\</span>
  maquina-cliente
 </code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/7.png" alt="7"></p>
   </li>
 </ol>
 
-<p>```bash</p>
-
 <p>¿Podremos assignarle a esta instancia una IP flotante?</p>
 <ul>
-  <li>Si, podemos asignarle una IP flotante y además, podremos acceder a ella desde fuera de la red local del centro.</li>
+  <li>No,</li>
 </ul>
+
+<p>ConflictException: 409: Client Error for url: http://172.22.123.100:9696/v2.0/floatingips/692bb1f9-2cbe-4b68-af29-16171308135d, Cannot associate floating IP 172.22.201.213 (692bb1f9-2cbe-4b68-af29-16171308135d) with port de16bc76-71c4-4afb-b6d5-b09bd5cab441 using fixed IP 192.168.0.12, as that fixed IP already has a floating IP on external network 2ebd4d15-00e3-44c6-a9a7-aeebef5f6540.</p>
 
 <p>¿Por qué?</p>
-<ul>
-  <li>Porque hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
-</ul>
 
 <ol>
-  <li>
-    <p>Ya montado todo este escenario, camos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
-  </li>
-  <li>
-    <p>Ahora comprobaremos que el cliente tiene acceso a internet e instalaremos un servidor web en la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
-  </li>
-  <li>
-    <p>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
-  </li>
+  <li>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server remove security group maquina-router default
+openstack server remove security group maquina-cliente default
+openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> mi-port
+</code></pre></div></div>
+
+<p><img src="/assets/images/openstack/6.png" alt="6"></p>
+
+<ol>
+  <li>Configuramos la instancia <code class="language-plaintext highlighter-rouge">maquina-router</code> para que funcione como <code class="language-plaintext highlighter-rouge">router-nat</code>. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add security group maquina-router default
+</code></pre></div></div>
+
+<ol>
+  <li>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
 </ol>
 
 
@@ -892,15 +898,15 @@ maria@maria-debian:~ ip route
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/aso/2022/11/16/kernel.html" title="Compilación de un kernel a medida">Compilación de un kernel a medida...</a><span></span>
+<a class="previous" href="/aso/2022/11/16/kernel.html" title="Compilación de un kernel a medida">Compilación de un kernel a medida...</a><a class="next" href="/iaw/2022/11/17/migracion.html" title="Instalación y migración de una aplicación web PHP">Instalación y migración de una aplicación...</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="">Instalación de nginx con PHP con vagrant y ansible</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="">Compilar dos2unix partiendo del código fuente</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="">Compilación de un kernel a medida</a></li>
+        <li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Instalación y migración de una aplicación web PHP">Instalación y migración de una aplicación web PHP</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Instalación y migración de una aplicación web PHP">Instalación de nginx con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Instalación y migración de una aplicación web PHP">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="Instalación y migración de una aplicación web PHP">Introducción a GitHub</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

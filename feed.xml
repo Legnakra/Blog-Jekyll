@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-24T16:15:48+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-27T15:34:28+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
 
 <p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
 
@@ -113,12 +113,13 @@ maria@maria-debian:~ ip route
 
     <p>¿Por qué?</p>
     <ul>
-      <li>Porque no hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
+      <li>Porque no está abierto el puerto 22 de la vpn.</li>
     </ul>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
  <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--key-name</span> pass <span class="se">\</span>
  <span class="nt">--network</span><span class="o">=</span>red-externa <span class="se">\</span>
  maquina-router
 </code></pre></div>    </div>
@@ -126,8 +127,8 @@ maria@maria-debian:~ ip route
     <p><img src="/assets/images/openstack/3.png" alt="3" /></p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
- 172.22.200.161
- openstack server add floating ip maquina-router 172.22.200.161
+ 172.22.200.9
+ openstack server add floating ip maquina-router 172.22.200.9
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/openstack/4.png" alt="4" /></p>
@@ -138,16 +139,15 @@ maria@maria-debian:~ ip route
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create red-interna
  openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.2 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
 </code></pre></div>    </div>
-    <p><img src="/assets/images/openstack/5.png" alt="5" /></p>
   </li>
   <li>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</li>
 </ol>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add network maquina-router red-interna 
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 mi-port
+openstack server add port maquina-router mi-port
 </code></pre></div></div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>![6](/assets/images/openstack/6.png)
-</code></pre></div></div>
+<p><img src="/assets/images/openstack/5.png" alt="5" /></p>
 
 <ol>
   <li>
@@ -156,38 +156,788 @@ maria@maria-debian:~ ip route
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
  <span class="nt">--security-group</span> default <span class="se">\</span>
+ <span class="nt">--key-name</span> pass <span class="se">\</span>
  <span class="nt">--network</span><span class="o">=</span>red-interna <span class="se">\</span>
  <span class="nt">--nic</span> net-id<span class="o">=</span>red-interna,v4-fixed-ip<span class="o">=</span>10.0.100.200 <span class="se">\</span>
  maquina-cliente
 </code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/7.png" alt="7" /></p>
   </li>
 </ol>
 
-<p>```bash</p>
-
 <p>¿Podremos assignarle a esta instancia una IP flotante?</p>
 <ul>
-  <li>Si, podemos asignarle una IP flotante y además, podremos acceder a ella desde fuera de la red local del centro.</li>
+  <li>No,</li>
 </ul>
 
+<p>ConflictException: 409: Client Error for url: http://172.22.123.100:9696/v2.0/floatingips/692bb1f9-2cbe-4b68-af29-16171308135d, Cannot associate floating IP 172.22.201.213 (692bb1f9-2cbe-4b68-af29-16171308135d) with port de16bc76-71c4-4afb-b6d5-b09bd5cab441 using fixed IP 192.168.0.12, as that fixed IP already has a floating IP on external network 2ebd4d15-00e3-44c6-a9a7-aeebef5f6540.</p>
+
 <p>¿Por qué?</p>
+
+<ol>
+  <li>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server remove security group maquina-router default
+openstack server remove security group maquina-cliente default
+openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> mi-port
+</code></pre></div></div>
+
+<p><img src="/assets/images/openstack/6.png" alt="6" /></p>
+
+<ol>
+  <li>Configuramos la instancia <code class="language-plaintext highlighter-rouge">maquina-router</code> para que funcione como <code class="language-plaintext highlighter-rouge">router-nat</code>. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add security group maquina-router default
+</code></pre></div></div>
+
+<ol>
+  <li>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Instalación y migración de una aplicación web PHP</title><link href="/iaw/2022/11/17/migracion.html" rel="alternate" type="text/html" title="Instalación y migración de una aplicación web PHP" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/iaw/2022/11/17/migracion</id><content type="html" xml:base="/iaw/2022/11/17/migracion.html"><![CDATA[<h2 id="instalación-previa">Instalación previa</h2>
+
+<p>Para poder realizar la instalación de la aplicación web, vamos a necesitar una serie de herramientas y servicios que vamos a instalar en el servidor. Pero primero lo realizaremos en un escenario local para poder realizar las pruebas necesarias.</p>
+
+<p>El escenario contará con dos máquinas:</p>
 <ul>
-  <li>Porque hemos creado una regla de encaminamiento en el router para que pueda acceder a la red externa.</li>
+  <li>Servidor web: conectada a una red pública.</li>
+  <li>Servidor de base de datos: conectado a una red privada, conectada a la máquina anterior.</li>
 </ul>
+
+<h3 id="creamos-el-lamp">Creamos el LAMP</h3>
+
+<p>Una pila LAMP es un conjunto de software libre que proporciona una plataforma de servidor web. Está formado por los siguientes componentes:</p>
+
+<ul>
+  <li>Debian-like Linux: sistema operativo.</li>
+  <li>Apache: servidor web.</li>
+  <li>MySQL: sistema de gestión de bases de datos.</li>
+  <li>PHP: lenguaje de programación.</li>
+</ul>
+
+<p>Para crear el LAMP, vamos a utilizar una máquina virtual con Debian 11 Bullseye. Para ello, vamos a utilizar vmware:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> apache2
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> mariadb-server
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> php
+</code></pre></div></div>
+
+<h4 id="modulos-php">Modulos PHP</h4>
+<p>Para que las herramientas que instalaremos funcionen correctamente, vamos a instalar una serie de módulos PHP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>php-imagick php7.4-common php7.4-curl php7.4-gd php7.4-imap php7.4-intl php7.4-json php7.4-ldap php7.4-mbstring php7.4-mysql php7.4-xml php7.4-zip
+</code></pre></div></div>
+
+<h4 id="configuración-mariadb">Configuración mariadb</h4>
+<p>En cuanto a mysql, se recomienda retirar ajustes predeterminados que son poco seguros y bloquearán el acceso a la base de datos. Para ello, vamos a ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mysql_secure_installation
+</code></pre></div></div>
+
+<p>Creamos la base de datos para Nextcloud:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+CREATE DATABASE owncloud<span class="p">;</span>
+CREATE USER <span class="s1">'maria1'</span>@<span class="s1">'10.0.100.1'</span><span class="p">;</span>
+GRANT ALL PRIVILEGES ON owncloud.<span class="k">*</span> TO <span class="s1">'maria1'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
+FLUSH PRIVILEGES<span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="owncloud">OWNCLOUD</h3>
+
+<p><img src="/assets/images/migracion/owncloud.png" alt="owncloud" /></p>
+
+<p>Owncloud es un servidor de archivos que permite el <strong>almacenamiento</strong>, la colaboración y el uso compartido seguros. Es conveniente almacenar archivos en la nube, por lo que están disponibles en cualquier dispositivo y se pueden compartir con unos pocos clics.</p>
+
+<p>Ayuda a los usuarios a recuperar su soberanía digital. También proporciona muchas funciones convenientes, pero también almacena archivos de forma segura y eficiente. No hay puertas traseras, puedes comprobarlo. Los usuarios pueden instalar ownCloud ellos mismos o alquilar una instancia administrada.</p>
+
+<h4 id="descargamos-owncloud">Descargamos Owncloud</h4>
+
+<p>Descargamos la aplicación web desde la página oficial de Nextcloud:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://download.owncloud.com/server/stable/owncloud-complete-latest.zip
+</code></pre></div></div>
+<p>Y la descomprimimos en el directorio <code class="language-plaintext highlighter-rouge">/var/www/</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>unzip owncloud-complete-latest.zip /var/www/
+</code></pre></div></div>
+
+<h4 id="creamos-el-virtualhost-para-la-aplicación-web">Creamos el virtualhost para la aplicación web</h4>
+
+<p>Creamos el virtualhost en el fichero <code class="language-plaintext highlighter-rouge">/etc/apache2/sites-available/owncloud.conf</code> con el siguiente contenido:</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">&lt;</span><span class="nl">VirtualHost</span><span class="sr"> *:80</span><span class="p">&gt;
+</span>    <span class="nc">ServerName</span> www.maria.org
+    <span class="nc">ServerAlias</span> maria.org
+    <span class="nc">DocumentRoot</span> /var/www/owncloud
+    <span class="nc">ErrorLog</span> /var/log/apache2/cms-error.log
+    <span class="nc">CustomLog</span> /var/log/apache2/cms-access.log combined
+<span class="p">&lt;/</span><span class="nl">VirtualHost</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/migracion/1.png" alt="1" /></p>
+
+<p>Y lo activamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>a2ensite owncloud.conf
+</code></pre></div></div>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-owncloud">Modificamos el fichero de configuración de owncloud</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/owncloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocb5j2nyqboj'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'0+8FRHWahLRZ/Gv9OlXNLB8alnnPop'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'X/kjusk8xkH7PHSmSb+T9LjlfKZgeTvqVsHoJ3l56CmdbiLM'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.maria.org'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/data'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.maria.org'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'10.11.0.6'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'owncloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'allow_user_to_change_mail_address'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'logtimezone'</span> <span class="o">=&gt;</span> <span class="s1">'UTC'</span>,
+  <span class="s1">'apps_paths'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/apps'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">false</span>,
+    <span class="o">)</span>,
+    1 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/apps-external'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps-external'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+    <span class="o">)</span>,
+  <span class="o">)</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="reiniciamos-el-servicio-apache">Reiniciamos el servicio apache</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart apache2
+</code></pre></div></div>
+
+<p>Y modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para añadir la IP de la máquina y el nombre de dominio:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nano /etc/hosts
+<span class="nt">---</span>
+<span class="o">[</span>IP de la máquina] maria.org  www.maria.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/migracion/2.png" alt="2" /></p>
+
+<p>Comprobamos que la aplicación web funciona correctamente:</p>
+
+<p><img src="/assets/images/migracion/3.png" alt="3" /></p>
+
+<p>Y en mi caso he instalado módulos de galería y música para poder probarlos:</p>
+
+<p><img src="/assets/images/migracion/4.png" alt="4" /></p>
+
+<h3 id="nextcloud">NEXTCLOUD</h3>
+
+<p><img src="/assets/images/migracion/nextcloud.png" alt="nextcloud" /></p>
+
+<p>Nextcloud es un software de código abierto, desarrollado por primera vez en 2016, que le permite ejecutar un servicio de almacenamiento en la nube personal. Tiene características que son comparables a otros servicios como Dropbox.</p>
+
+<p>El software del servidor Nextcloud se puede instalar de forma gratuita en Linux, y el software del cliente se puede instalar en computadoras con Windows, OS X o Linux. Las aplicaciones móviles también están disponibles para Android e iOS.</p>
+
+<h4 id="descargamos-nextcloud">Descargamos Nextcloud</h4>
+
+<p>Descargamos la aplicación web desde la página oficial de Nextcloud:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>wget https://download.nextcloud.com/server/releases/nextcloud-22.0.2.zip
+</code></pre></div></div>
+
+<h4 id="creamos-el-virtualhost-para-la-aplicación-web-1">Creamos el virtualhost para la aplicación web</h4>
+
+<p>Creamos el virtualhost en el fichero <code class="language-plaintext highlighter-rouge">/etc/apache2/sites-available/owncloud.conf</code> con el siguiente contenido:</p>
+
+<div class="language-apache highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">&lt;</span><span class="nl">VirtualHost</span><span class="sr"> *:80</span><span class="p">&gt;
+</span>    <span class="nc">ServerName</span> www.cloud.maria.org
+    <span class="nc">ServerAlias</span> cloud.maria.org
+    <span class="nc">DocumentRoot</span> /var/www/cms/nextcloud
+    <span class="nc">ErrorLog</span> /var/log/apache2/cms-error.log
+    <span class="nc">CustomLog</span> /var/log/apache2/cms-access.log combined
+<span class="p">&lt;/</span><span class="nl">VirtualHost</span><span class="p">&gt;
+</span></code></pre></div></div>
+
+<p><img src="/assets/images/migracion/5.png" alt="5" /></p>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-nextcloud">Modificamos el fichero de configuración de Nextcloud</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/cms/nextcloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocg57xu3tev6'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'z3kK/NjSDcqfrEvfLi6PoZAbnL4gYk'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'OswK3Xxvl7YzGtVbtpf/brvT/niZD4NIziidcWtWG5nqd/ny'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span>
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.maria.org'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'cloud.maria.org'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/cms/nextcloud/data'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'20.0.2.2'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.maria.org'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'nextcloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbport'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="reiniciamos-el-servicio-apache-1">Reiniciamos el servicio apache</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart apache2
+</code></pre></div></div>
+
+<p>Ya no es necesario modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> ya que lo hemos hecho en el anterior virtualhost.</p>
+
+<p>Comprobamos que la aplicación web funciona correctamente:</p>
+
+<p><img src="/assets/images/migracion/6.png" alt="6" /></p>
+
+<h2 id="preparando-la-migración">Preparando la migración</h2>
+
+<ol>
+  <li>Realizamos una copia de seguridad de la base de datos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#nextcloud</span>
+mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> maria <span class="nt">-p</span> nextcloud <span class="o">&gt;</span> db_backup_nextcloud<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+<span class="nt">---</span>
+<span class="c">#owncloud</span>
+mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> maria1 <span class="nt">-p</span> ouncloud <span class="o">&gt;</span> db_backup_owncloud<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+</code></pre></div></div>
+
+<ol>
+  <li>Comprimimos el directorio de la copia de la base de datos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zip <span class="nt">-r</span> owncloud owncloud
+zip <span class="nt">-r</span> nextcloud nextcloud
+</code></pre></div></div>
+
+<ol>
+  <li>Copiamos los ficheros de las aplicaciones web y las copias de seguridad de las bases de datos a la nueva máquina.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#aplicaciones web</span>
+scp <span class="nt">-r</span> owncloud.zip nextcloud.zip maria@asir.mariatec.es:/home/maria
+<span class="c">#copias de seguridad de las bases de datos</span>
+scp <span class="nt">-r</span> db_backup_nextcloud20221123_220950.sql maria@mariatec.es:/home/maria
+scp <span class="nt">-r</span> db_backup_owncloud20221123_220959.sql maria@mariatec.es:/home/maria
+</code></pre></div></div>
+
+<ol>
+  <li>Creamos la base de datos en el nuevo servidor.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">nextcloud</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'localhost'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">nextcloud</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'localhost'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'****'</span><span class="p">;</span>
+<span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+<span class="c1">---</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">owncloud</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'maria1'</span><span class="o">@</span><span class="s1">'localhost'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">owncloud</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria1'</span><span class="o">@</span><span class="s1">'localhost'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'****'</span><span class="p">;</span>
+<span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Realizamos la restauración de la base de datos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql <span class="nt">-u</span> maria <span class="nt">--password</span><span class="o">=</span><span class="k">****</span> nextcloud &lt; db_backup_nextcloud20221123_220950.sql
+mysql <span class="nt">-u</span> maria1 <span class="nt">--password</span><span class="o">=</span><span class="k">****</span> owncloud &lt; db_backup_owncloud20221123_220959.sql
+</code></pre></div></div>
+
+<ol>
+  <li>Descomprimimos los ficheros de las aplicaciones web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip owncloud.zip <span class="nt">-d</span> /var/www/
+unzip nextcloud.zip <span class="nt">-d</span> /var/www/
+</code></pre></div></div>
+
+<h2 id="migración-de-ambas-aplicaciones-a-un-mismo-virtualhost">Migración de ambas aplicaciones a un mismo virtualhost</h2>
+
+<p>La migración es un proceso que consiste en pasar de un sistema a otro, en este caso, de un servidor a otro. Para ello, vamos a realizar una serie de pasos que nos permitirán realizar la migración de la aplicación web.</p>
+
+<p>En este caso, vamos a realizar la migración, pero vamos a realizarlo en un LEMP. Pero, ¿que es un LEMP? Para simplificar, es exactamente lo mismo que un LAMP, pero con Nginx en lugar de Apache.</p>
+
+<h3 id="preparando-el-nuevo-servidor">Preparando el nuevo servidor</h3>
+
+<p>Instalamos el LEMP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> nginx
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> mariadb-server
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> php
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Nota:</strong> A veces, cuando instalamos php no debería de instalarse apache2, pero en ocasiones, si que lo hace. Si es así, lo desinstalamos o lo deshabilitamos.</p>
+</blockquote>
+
+<h3 id="nextcloud-1">Nextcloud</h3>
+
+<p><img src="/assets/images/migracion/nextcloud.png" alt="nextcloud" /></p>
+
+<ul>
+  <li>Primero crearemos el fichero para configurar el virtualhost en el servidor web. Lo haremos de forma en la que podamos acceder a través de <code class="language-plaintext highlighter-rouge">www.maria.es/cloud</code>.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/nginx/sites-available/nextcloud.conf
+</code></pre></div></div>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+        <span class="kn">listen</span> <span class="s">[::]:80</span><span class="p">;</span>
+
+        <span class="kn">server_name</span> <span class="s">www.mariatec.es</span><span class="p">;</span>
+
+        <span class="kn">root</span> <span class="n">/var/www</span><span class="p">;</span>
+
+        <span class="kn">index</span> <span class="s">index.html</span> <span class="s">index.htm</span> <span class="s">index.php</span><span class="p">;</span>
+
+        <span class="kn">location</span> <span class="p">=</span><span class="n">/</span> <span class="p">{</span>
+                <span class="kn">return</span> <span class="mi">301</span> <span class="nv">$scheme</span><span class="p">:</span><span class="n">//www.mariatec.es/cloud</span><span class="p">;</span>
+                <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="nv">$uri</span><span class="n">/</span> <span class="p">=</span><span class="mi">404</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kn">location</span> <span class="s">@rewrite</span> <span class="p">{</span>
+                <span class="kn">rewrite</span> <span class="s">^/(.*)</span>$ <span class="n">/index.php?q=</span><span class="nv">$1</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kn">location</span> <span class="p">~</span> <span class="sr">\.php$</span> <span class="p">{</span>
+                <span class="kn">include</span> <span class="nc">snippets/fastcgi-php</span><span class="s">.conf</span><span class="p">;</span>
+                <span class="kn">fastcgi_pass</span> <span class="s">unix:/run/php/php7.4-fpm.sock</span><span class="p">;</span>
+        <span class="p">}</span>
+
+	<span class="kn">location</span> <span class="p">=</span> <span class="n">/robots.txt</span> <span class="p">{</span>
+                <span class="kn">allow</span> <span class="s">all</span><span class="p">;</span>
+                <span class="kn">log_not_found</span> <span class="no">off</span><span class="p">;</span>
+                <span class="kn">access_log</span> <span class="no">off</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="kn">location</span> <span class="n">/.well-known</span> <span class="p">{</span>
+                <span class="kn">rewrite</span> <span class="s">^/</span><span class="err">\</span><span class="s">.well-known/host-meta</span><span class="err">\</span><span class="s">.json</span>  <span class="n">/cloud/public.php?service=host-meta-json</span>    <span class="s">last</span><span class="p">;</span>
+                <span class="kn">rewrite</span> <span class="s">^/</span><span class="err">\</span><span class="s">.well-known/host-meta</span>        <span class="n">/cloud/public.php?service=host-meta</span>         <span class="s">last</span><span class="p">;</span>
+                <span class="kn">rewrite</span> <span class="s">^/</span><span class="err">\</span><span class="s">.well-known/webfinger</span>        <span class="n">/cloud/public.php?service=webfinger</span>         <span class="s">last</span><span class="p">;</span>
+                <span class="kn">rewrite</span> <span class="s">^/</span><span class="err">\</span><span class="s">.well-known/nodeinfo</span>         <span class="n">/cloud/public.php?service=nodeinfo</span>          <span class="s">last</span><span class="p">;</span>
+
+                <span class="kn">location</span> <span class="p">=</span> <span class="n">/.well-known/carddav</span>   <span class="p">{</span> <span class="kn">return</span> <span class="mi">301</span> <span class="n">/cloud/remote.php/dav/</span><span class="p">;</span> <span class="p">}</span>
+                <span class="kn">location</span> <span class="p">=</span> <span class="n">/.well-known/caldav</span>    <span class="p">{</span> <span class="kn">return</span> <span class="mi">301</span> <span class="n">/cloud/remote.php/dav/</span><span class="p">;</span> <span class="p">}</span>
+
+                <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="nv">$uri</span><span class="n">/</span> <span class="p">=</span><span class="mi">404</span><span class="p">;</span>
+        <span class="p">}</span>
+
+<span class="c1">#Nextcloud Configuration</span>
+
+        <span class="kn">location</span> <span class="s">^~</span> <span class="n">/cloud</span> <span class="p">{</span>
+                <span class="kn">client_max_body_size</span> <span class="mi">512M</span><span class="p">;</span>
+                <span class="kn">fastcgi_buffers</span> <span class="mi">64</span> <span class="mi">4K</span><span class="p">;</span>
+
+                <span class="kn">gzip</span> <span class="no">on</span><span class="p">;</span>
+                <span class="kn">gzip_vary</span> <span class="no">on</span><span class="p">;</span>
+                <span class="kn">gzip_comp_level</span> <span class="mi">4</span><span class="p">;</span>
+                <span class="kn">gzip_min_length</span> <span class="mi">256</span><span class="p">;</span>
+                <span class="kn">gzip_proxied</span> <span class="s">expired</span> <span class="s">no-cache</span> <span class="s">no-store</span> <span class="s">private</span> <span class="s">no_last_modified</span> <span class="s">no_etag</span> <span class="s">auth</span><span class="p">;</span>
+                <span class="kn">gzip_types</span> <span class="nc">application/atom</span><span class="s">+xml</span> <span class="nc">application/javascript</span> <span class="nc">application/json</span> <span class="nc">application/ld</span><span class="s">+json</span> <span class="nc">application/manifest</span><span class="s">+json</span> <span class="nc">application/rss</span><span class="s">+xml</span> <span class="nc">application/vnd</span><span class="s">.geo+json</span> <span class="nc">application/vnd</span><span class="s">.ms-fontobject</span> <span class="s">a</span>$
+
+                <span class="s">add_header</span> <span class="s">Referrer-Policy</span>                      <span class="s">"no-referrer"</span>   <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-Content-Type-Options</span>               <span class="s">"nosniff"</span>       <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-Download-Options</span>                   <span class="s">"noopen"</span>        <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-Frame-Options</span>                      <span class="s">"SAMEORIGIN"</span>    <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-Permitted-Cross-Domain-Policies</span>    <span class="s">"none"</span>          <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-Robots-Tag</span>                         <span class="s">"none"</span>          <span class="s">always</span><span class="p">;</span>
+                <span class="kn">add_header</span> <span class="s">X-XSS-Protection</span>                     <span class="s">"1</span><span class="p">;</span> <span class="kn">mode=block"</span> <span class="s">always</span><span class="p">;</span>
+
+                <span class="kn">fastcgi_hide_header</span> <span class="s">X-ed-By</span><span class="p">;</span>
+                <span class="kn">index</span> <span class="s">index.php</span> <span class="s">index.html</span> <span class="n">/cloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+
+                <span class="kn">expires</span> <span class="mi">1m</span><span class="p">;</span>
+
+        	<span class="kn">location</span> <span class="p">=</span> <span class="n">/cloud</span> <span class="p">{</span>
+            		<span class="kn">if</span> <span class="s">(</span> <span class="nv">$http_user_agent</span> <span class="p">~</span> <span class="sr">^DavClnt</span> <span class="s">)</span> <span class="p">{</span>
+                		<span class="kn">return</span> <span class="mi">302</span> <span class="n">/cloud/remote.php/webdav/</span><span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="p">}</span>
+        	<span class="p">}</span>
+
+        	<span class="kn">location</span> <span class="p">~</span> <span class="sr">^/cloud/(?:build|tests|config|lib|3rdparty|templates|data)(?:$|/)</span>    <span class="p">{</span> <span class="kn">return</span> <span class="mi">404</span><span class="p">;</span> <span class="p">}</span>
+        	<span class="kn">location</span> <span class="p">~</span> <span class="sr">^/cloud/(?:\.|autotest|occ|issue|indie|db_|console)</span>                <span class="p">{</span> <span class="kn">return</span> <span class="mi">404</span><span class="p">;</span> <span class="p">}</span>
+
+        	<span class="kn">location</span> <span class="p">~</span> <span class="sr">\.php(?:$|/)</span> <span class="p">{</span>
+            		<span class="kn">fastcgi_split_path_info</span> <span class="s">^(.+?</span><span class="err">\</span><span class="s">.php)(/.*)</span>$<span class="p">;</span>
+           		<span class="kn">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		<span class="kn">try_files</span> <span class="nv">$fastcgi_script_name</span> <span class="p">=</span><span class="mi">404</span><span class="p">;</span>
+
+            		<span class="kn">include</span> <span class="s">fastcgi_params</span><span class="p">;</span>
+            		<span class="kn">fastcgi_param</span> <span class="s">SCRIPT_FILENAME</span> <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		<span class="kn">fastcgi_param</span> <span class="s">PATH_INFO</span> <span class="nv">$path_info</span><span class="p">;</span>
+
+            		<span class="kn">fastcgi_param</span> <span class="s">modHeadersAvailable</span> <span class="s">true</span><span class="p">;</span>
+            		<span class="kn">fastcgi_param</span> <span class="s">front_controller_active</span> <span class="s">true</span><span class="p">;</span>
+            		<span class="kn">fastcgi_pass</span> <span class="s">unix:/run/php/php7.4-fpm.sock</span><span class="p">;</span>
+
+            		<span class="kn">fastcgi_intercept_errors</span> <span class="no">on</span><span class="p">;</span>
+            		<span class="kn">fastcgi_request_buffering</span> <span class="no">off</span><span class="p">;</span>
+        	<span class="p">}</span>
+
+        	<span class="kn">location</span> <span class="p">~</span> <span class="sr">\.(?:css|js|svg|gif)$</span> <span class="p">{</span>
+            		<span class="kn">try_files</span> <span class="nv">$uri</span> <span class="n">/cloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+            		<span class="kn">expires</span> <span class="mi">6M</span><span class="p">;</span>
+            		<span class="kn">access_log</span> <span class="no">off</span><span class="p">;</span>
+        	<span class="p">}</span>
+
+        	<span class="kn">location</span> <span class="p">~</span> <span class="sr">\.woff2?$</span> <span class="p">{</span>
+            		<span class="kn">try_files</span> <span class="nv">$uri</span> <span class="n">/cloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+            		<span class="kn">expires</span> <span class="s">7d</span><span class="p">;</span>
+            		<span class="kn">access_log</span> <span class="no">off</span><span class="p">;</span>
+        	<span class="p">}</span>
+
+        	<span class="kn">location</span> <span class="n">/cloud</span> <span class="p">{</span>
+            		<span class="kn">try_files</span> <span class="nv">$uri</span> <span class="nv">$uri</span><span class="n">/</span> <span class="n">/cloud/index.php</span><span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="p">}</span>
+
+   	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-nextcloud-1">Modificamos el fichero de configuración de Nextcloud</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/cloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocg57xu3tev6'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'z3kK/NjSDcqfrEvfLi6PoZAbnL4gYk'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'OswK3Xxvl7YzGtVbtpf/brvT/niZD4NIziidcWtWG5nqd/ny'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span>
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'maria.es'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/cloud/data'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'20.0.2.2'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.mariatec.es/cloud'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'nextcloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbport'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
 
 <ol>
   <li>
-    <p>Ya montado todo este escenario, camos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
+    <p>Realizamos el enlace simbólico para activar el virtualhost.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
+</code></pre></div>    </div>
   </li>
   <li>
-    <p>Ahora comprobaremos que el cliente tiene acceso a internet e instalaremos un servidor web en la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
+    <p>Reiniciamos el servicio de nginx.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span><span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>    </div>
   </li>
   <li>
-    <p>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</p>
+    <p>Y comprobamos que todo funciona correctamente.</p>
+
+    <p><a href="www.mariatec.es/cloud">www.mariatec.es/cloud</a></p>
+
+    <p><img src="/assets/images/migracion/7.png" alt="7" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+</ol>
+
+<h3 id="owncloud-1">Owncloud</h3>
+
+<p><img src="/assets/images/migracion/owncloud.png" alt="nextcloud" /></p>
+<h4 id="configuramos-de-nuevo-el-virtualhost">Configuramos de nuevo el virtualhost</h4>
+
+<p>Esta vez lo vamos a configurar para que Owncloud esté disponible en la ruta <code class="language-plaintext highlighter-rouge">/portal</code>. Al acceder a <a href="www.mariatec.es">www.mariatec.es</a> nos redirigirá a <a href="www.mariatec.es/portal">www.mariatec.es/portal</a>.</p>
+
+<p>El fichero de configuración de nginx quedaría de la siguiente forma:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Default server configuration</span>
+<span class="c">#</span>
+server <span class="o">{</span>
+        listen 80<span class="p">;</span>
+        listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+        server_name www.mariatec.es<span class="p">;</span>
+
+        root /var/www<span class="p">;</span>
+
+        index index.html index.htm index.php<span class="p">;</span>
+
+        location <span class="o">=</span>/ <span class="o">{</span>
+                <span class="k">return </span>301 <span class="nv">$scheme</span>://www.mariatec.es/portal<span class="p">;</span>
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+        location @rewrite <span class="o">{</span>
+                rewrite ^/<span class="o">(</span>.<span class="k">*</span><span class="o">)</span><span class="nv">$ </span>/index.php?q<span class="o">=</span><span class="nv">$1</span><span class="p">;</span>
+        <span class="o">}</span>
+
+        location ~ <span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
+                include snippets/fastcgi-php.conf<span class="p">;</span>
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+        <span class="o">}</span>
+
+	location <span class="o">=</span> /robots.txt <span class="o">{</span>
+                allow all<span class="p">;</span>
+                log_not_found off<span class="p">;</span>
+                access_log off<span class="p">;</span>
+        <span class="o">}</span>
+
+        location /.well-known <span class="o">{</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta<span class="se">\.</span>json  /cloud/public.php?service<span class="o">=</span>host-meta-json    last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta        /cloud/public.php?service<span class="o">=</span>host-meta         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/webfinger        /cloud/public.php?service<span class="o">=</span>webfinger         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/nodeinfo         /cloud/public.php?service<span class="o">=</span>nodeinfo          last<span class="p">;</span>
+
+                location <span class="o">=</span> /.well-known/carddav   <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+                location <span class="o">=</span> /.well-known/caldav    <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+<span class="c">#Nextcloud Configuration</span>
+
+        location ^~ /cloud <span class="o">{</span>
+                client_max_body_size 512M<span class="p">;</span>
+                fastcgi_buffers 64 4K<span class="p">;</span>
+
+                <span class="nb">gzip </span>on<span class="p">;</span>
+                gzip_vary on<span class="p">;</span>
+                gzip_comp_level 4<span class="p">;</span>
+                gzip_min_length 256<span class="p">;</span>
+                gzip_proxied expired no-cache no-store private no_last_modified no_etag auth<span class="p">;</span>
+                gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject a<span class="err">$</span>
+
+                add_header Referrer-Policy                      <span class="s2">"no-referrer"</span>   always<span class="p">;</span>
+                add_header X-Content-Type-Options               <span class="s2">"nosniff"</span>       always<span class="p">;</span>
+                add_header X-Download-Options                   <span class="s2">"noopen"</span>        always<span class="p">;</span>
+                add_header X-Frame-Options                      <span class="s2">"SAMEORIGIN"</span>    always<span class="p">;</span>
+                add_header X-Permitted-Cross-Domain-Policies    <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-Robots-Tag                         <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-XSS-Protection                     <span class="s2">"1; mode=block"</span> always<span class="p">;</span>
+
+                fastcgi_hide_header X-ed-By<span class="p">;</span>
+                index index.php index.html /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+
+                expires 1m<span class="p">;</span>
+
+        	location <span class="o">=</span> /cloud <span class="o">{</span>
+            		<span class="k">if</span> <span class="o">(</span> <span class="nv">$http_user_agent</span> ~ ^DavClnt <span class="o">)</span> <span class="o">{</span>
+                		<span class="k">return </span>302 /cloud/remote.php/webdav/<span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="o">}</span>
+        	<span class="o">}</span>
+
+        	location ~ ^/cloud/<span class="o">(</span>?:build|tests|config|lib|3rdparty|templates|data<span class="o">)(</span>?:<span class="nv">$|</span>/<span class="o">)</span>    <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+        	location ~ ^/cloud/<span class="o">(</span>?:<span class="se">\.</span>|autotest|occ|issue|indie|db_|console<span class="o">)</span>                <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>php<span class="o">(</span>?:<span class="nv">$|</span>/<span class="o">)</span> <span class="o">{</span>
+            		fastcgi_split_path_info ^<span class="o">(</span>.+?<span class="se">\.</span>php<span class="o">)(</span>/.<span class="k">*</span><span class="o">)</span><span class="nv">$;</span>
+           		<span class="nb">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		try_files <span class="nv">$fastcgi_script_name</span> <span class="o">=</span>404<span class="p">;</span>
+
+            		include fastcgi_params<span class="p">;</span>
+            		fastcgi_param SCRIPT_FILENAME <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		fastcgi_param PATH_INFO <span class="nv">$path_info</span><span class="p">;</span>
+
+            		fastcgi_param modHeadersAvailable <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_param front_controller_active <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+
+            		fastcgi_intercept_errors on<span class="p">;</span>
+            		fastcgi_request_buffering off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span><span class="o">(</span>?:css|js|svg|gif<span class="o">)</span><span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 6M<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>woff2?<span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 7d<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location /cloud <span class="o">{</span>
+            		try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="o">}</span>
+
+   	<span class="o">}</span>
+
+<span class="c">#OwnCloud Configuration</span>
+
+        location ^~ /portal <span class="o">{</span>
+                client_max_body_size 512M<span class="p">;</span>
+                fastcgi_buffers 64 4K<span class="p">;</span>
+
+                <span class="nb">gzip </span>on<span class="p">;</span>
+                gzip_vary on<span class="p">;</span>
+                gzip_comp_level 4<span class="p">;</span>
+                gzip_min_length 256<span class="p">;</span>
+                gzip_proxied expired no-cache no-store private no_last_modified no_etag auth<span class="p">;</span>
+                gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject a<span class="err">$</span>
+
+                add_header Referrer-Policy                      <span class="s2">"no-referrer"</span>   always<span class="p">;</span>
+                add_header X-Content-Type-Options               <span class="s2">"nosniff"</span>       always<span class="p">;</span>
+                add_header X-Download-Options                   <span class="s2">"noopen"</span>        always<span class="p">;</span>
+                add_header X-Frame-Options                      <span class="s2">"SAMEORIGIN"</span>    always<span class="p">;</span>
+                add_header X-Permitted-Cross-Domain-Policies    <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-Robots-Tag                         <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-XSS-Protection                     <span class="s2">"1; mode=block"</span> always<span class="p">;</span>
+
+                fastcgi_hide_header X-ed-By<span class="p">;</span>
+                index index.php index.html /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+
+                expires 1m<span class="p">;</span>
+
+        	location <span class="o">=</span> /portal <span class="o">{</span>
+            		<span class="k">if</span> <span class="o">(</span> <span class="nv">$http_user_agent</span> ~ ^DavClnt <span class="o">)</span> <span class="o">{</span>
+                		<span class="k">return </span>302 /portal/remote.php/webdav/<span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="o">}</span>
+        	<span class="o">}</span>
+
+        	location ~ ^/portal/<span class="o">(</span>?:build|tests|config|lib|3rdparty|templates|data<span class="o">)(</span>?:<span class="nv">$|</span>/<span class="o">)</span>    <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+        	location ~ ^/portal/<span class="o">(</span>?:<span class="se">\.</span>|autotest|occ|issue|indie|db_|console<span class="o">)</span>                <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>php<span class="o">(</span>?:<span class="nv">$|</span>/<span class="o">)</span> <span class="o">{</span>
+            		fastcgi_split_path_info ^<span class="o">(</span>.+?<span class="se">\.</span>php<span class="o">)(</span>/.<span class="k">*</span><span class="o">)</span><span class="nv">$;</span>
+           		<span class="nb">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		try_files <span class="nv">$fastcgi_script_name</span> <span class="o">=</span>404<span class="p">;</span>
+
+            		include fastcgi_params<span class="p">;</span>
+            		fastcgi_param SCRIPT_FILENAME <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		fastcgi_param PATH_INFO <span class="nv">$path_info</span><span class="p">;</span>
+
+            		fastcgi_param modHeadersAvailable <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_param front_controller_active <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+
+            		fastcgi_intercept_errors on<span class="p">;</span>
+            		fastcgi_request_buffering off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span><span class="o">(</span>?:css|js|svg|gif<span class="o">)</span><span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 6M<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>woff2?<span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 7d<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location /portal <span class="o">{</span>
+            		try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="o">}</span>
+
+   	<span class="o">}</span>
+
+
+<span class="o">}</span>
+</code></pre></div></div>
+<h4 id="modificamos-el-fichero-de-configuración-de-owncloud-1">Modificamos el fichero de configuración de Owncloud</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/portal/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocb5j2nyqboj'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'0+8FRHWahLRZ/Gv9OlXNLB8alnnPop'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'X/kjusk8xkH7PHSmSb+T9LjlfKZgeTvqVsHoJ3l56CmdbiLM'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'0.0.0.0'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'mariatec.es/portal'</span>,
+    2 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es/portal'</span>,
+    3 <span class="o">=&gt;</span> <span class="s1">'mariatec.es'</span>,
+    4 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/data'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.mariatec.es/portal'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'10.11.0.6'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'owncloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'localhost'</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'maria1'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'admin'</span>,
+  <span class="s1">'allow_user_to_change_mail_address'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'logtimezone'</span> <span class="o">=&gt;</span> <span class="s1">'UTC'</span>,
+  <span class="s1">'apps_paths'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/apps'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">false</span>,
+    <span class="o">)</span>,
+    1 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/apps-external'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps-external'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+    <span class="o">)</span>,
+  <span class="o">)</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="reiniciamos-servicios">Reiniciamos servicios</h4>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart nginx
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl restart mariadb
+</code></pre></div></div>
+
+<p>Y comprobamos que todo funciona correctamente.</p>
+
+<p><a href="www.mariatec.es/">www.mariatec.es/</a></p>
+
+<p><img src="/assets/images/migracion/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 
 <p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
 
@@ -1666,7 +2416,4 @@ apt policy dos2unix
   </li>
 </ol>
 
-<p><img src="/images/Makefile/paso7" alt="paso7" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.]]></summary></entry><entry><title type="html">Prueba: Introducción a la implantación de aplicaciones web</title><link href="/prueba/2022/10/10/prueba.html" rel="alternate" type="text/html" title="Prueba: Introducción a la implantación de aplicaciones web" /><published>2022-10-10T13:11:16+02:00</published><updated>2022-10-10T13:11:16+02:00</updated><id>/prueba/2022/10/10/prueba</id><content type="html" xml:base="/prueba/2022/10/10/prueba.html"><![CDATA[<h2 id="nombre-completo">Nombre completo:</h2>
-<p>María Jesús Alloza Rodríguez</p>
-
-<p><img src="https://img2.freepng.es/20171220/kre/linux-logo-png-5a3a1fe7d94070.02257309151375869588993545.jpg" alt="imagen" /></p>]]></content><author><name></name></author><category term="prueba" /><summary type="html"><![CDATA[Nombre completo: María Jesús Alloza Rodríguez]]></summary></entry></feed>
+<p><img src="/images/Makefile/paso7" alt="paso7" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.]]></summary></entry></feed>
