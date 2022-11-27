@@ -1,4 +1,98 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-27T15:34:28+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-27T17:51:10+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+
+<p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
+
+<h2 id="cómo-funciona">¿Cómo funciona?</h2>
+
+<p>A grandes rasgos los pasos de una conexión a una web con certificado SSL serían los siguientes.</p>
+
+<ol>
+  <li>Un usuario, mediante su navegador se conecta al sitio web</li>
+  <li>El navegador solicita al servidor web una identificación.</li>
+  <li>El servidor web envía al navegador una copia de su certificado SSL.</li>
+  <li>El navegador comprueba si el certificado SSL es confiable. Si el certificado es correcto se envía un mensaje al servidor web.</li>
+  <li>El servidor web devuelve un acuse de recibo firmado digitalmente y se inicia una conexión cifrada con SSL.</li>
+</ol>
+
+<h2 id="pruebas-de-demostración">Pruebas de demostración</h2>
+
+<ol>
+  <li>Primero debemos cercionarnos de que nuestro navegador tiene el certificado SSL instalado.</li>
+</ol>
+
+<p><img src="/assets/images/https/1.png" alt="1" /></p>
+
+<ol>
+  <li>¿Qué opción has elegido? ¿Qué pruebas realiza Let’s Encrypt para asegurar que somos los administrados del sitio web al elegir esa opción?
+    <ul>
+      <li>La opción que he elegido enmi caso es la de Wildcard. Esta opción es la que permite que el certificado sea válido para todos los subdominios de un dominio.</li>
+    </ul>
+  </li>
+</ol>
+
+<ul>
+  <li>Valida mediante una string generada de forma aleatoria por Let’s Encrypt y que se debe introducir como registro TXT en el dominio DNS bajo <code class="language-plaintext highlighter-rouge">_acme-challenge.mariatec.es</code>.
+Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si coindice, valida la propiedad del dominio.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>certbot <span class="nt">--server</span> https://acme-v02.api.letsencrypt.org/directory <span class="nt">-d</span> <span class="k">*</span>.mariatec.es <span class="nt">--manual</span> <span class="nt">--preferred-challenges</span> dns-01 certonly
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator manual, Installer None
+Requesting a certificate <span class="k">for</span> <span class="k">*</span>.mariatec.es
+Performing the following challenges:
+dns-01 challenge <span class="k">for </span>mariatec.es
+
+<span class="nt">-------------------------------------------------------------------------------</span>
+Please deploy a DNS TXT record under the name
+_acme-challenge.mariatec.es with the following value:
+
+<span class="k">*********************************************************</span>
+
+Before continuing, verify the record is deployed.
+<span class="nt">-------------------------------------------------------------------------------</span>
+Press Enter to Continue
+</code></pre></div></div>
+
+<ol>
+  <li>El fichero de configuración de nuestro sitio web debe tener la siguiente configuración:</li>
+</ol>
+
+<p><img src="/assets/images/https/2.png" alt="2" /></p>
+
+<ol>
+  <li>Vamos a configurar un crontab para que se renueve el certificado automáticamente cada tres meses. Para ello, debemos ejecutar el siguiente comando:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>crontab <span class="nt">-e</span>
+</code></pre></div></div>
+
+<p>Y al final del fichero añadimos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 0 27 <span class="k">*</span>/3 <span class="k">*</span> /etc/letsencrypt/certrenew.sh
+</code></pre></div></div>
+
+<p><img src="/assets/images/https/3.png" alt="3" /></p>
+
+<p>Con este cron, que se ejecutará cada 27 de cada 3 meses, se ejecutará el script que hemos creado para renovar el certificado. El script es el siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+certbot renew <span class="nt">--non-interactive</span> <span class="nt">--no-random-sleep-on-renew</span> <span class="nt">--cert-name</span> mariatec.es
+</code></pre></div></div>
+
+<p>Las opciones que están implementadas en el script son las siguientes:</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">--non-interactive</code>: Se realiza de formaautomática sin intervención del usuario, ya que es una tarea programada.</li>
+  <li><code class="language-plaintext highlighter-rouge">--no-random-sleep-on-renew</code>: Se evita que se produzca un retardo aleatorio entre 0 y 30 segundos antes de la renovación. Esto se debe a que let’s encrypt incluye un random wait entre renovaciones para evitar que, en caso de que un usuario se equivoque, se realicen muchas renovaciones en un corto periodo de tiempo. Por ello, con esta opción lo desabilitamos para que la renovación se realice de forma inmediata.</li>
+  <li><code class="language-plaintext highlighter-rouge">--cert-name mariatec.es</code>: Especifica el nombre del certificado que se va a renovar. Aunque hayamos pedido un wildcard, si nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/live/</code> veremos que se ha creado un directorio por cada subdominio que hemos solicitado. Por ello, debemos especificar el nombre del certificado que queremos renovar.</li>
+</ul>
+
+<h2 id="comprobación-de-la-configuración">Comprobación de la configuración</h2>
+
+<p>Como podemos ver en las siguientes capturas, la configuración se ha realizado correctamente y nuestro virtualhost esta configurado correctamente para que se pueda acceder a él mediante https.</p>
+
+<p><img src="/assets/images/https/4.png" alt="4" /></p>
+
+<p><img src="/assets/images/https/5.png" alt="5" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[¿Qué es un certificado SSL?]]></summary></entry><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
 
 <p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
 
@@ -937,7 +1031,11 @@ server <span class="o">{</span>
 
 <p><a href="www.mariatec.es/">www.mariatec.es/</a></p>
 
-<p><img src="/assets/images/migracion/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+<p><img src="/assets/images/migracion/8.png" alt="8" /></p>
+
+<h2 id="instalación-de-cliente-nextcloud-en-otro-cliente">Instalación de cliente Nextcloud en otro cliente</h2>
+
+<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 
 <p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
 
@@ -2328,92 +2426,4 @@ la página oficial es linuxcontainers.org.</li>
       <li>virt-install: Crea una máquina virtual.</li>
     </ul>
   </li>
-</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Virtualización]]></summary></entry><entry><title type="html">Compilar dos2unix partiendo del código fuente</title><link href="/aso/2022/10/12/compilacion-paquete-makefile.html" rel="alternate" type="text/html" title="Compilar dos2unix partiendo del código fuente" /><published>2022-10-12T11:17:16+02:00</published><updated>2022-10-12T11:17:16+02:00</updated><id>/aso/2022/10/12/compilacion-paquete-makefile</id><content type="html" xml:base="/aso/2022/10/12/compilacion-paquete-makefile.html"><![CDATA[<p>Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.</p>
-
-<p>El comando que he seleccionado es dos2unix, un comando que convierte un archivo de texto DOS a formato UNIX.</p>
-
-<h2 id="pasos-de-instalación">Pasos de instalación</h2>
-
-<ol>
-  <li>Nos descargamos el código fuente:
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt source dos2unix
-</code></pre></div>    </div>
-  </li>
-  <li>Descomprimimos el archivo con extension .orig.tar.xz.
-    <ul>
-      <li>x: Para extraer el archivo.</li>
-      <li>v: Para mostrar la descripción detallada del progreso de la compresión.</li>
-    </ul>
-  </li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -xv dos2unix_7.4.1.orig.tar.gz
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso1" alt="paso1" /></p>
-
-<p><img src="/images/Makefile/paso2" alt="paso2" /></p>
-
-<ol>
-  <li>Nos dirigimos al directorio que hemos descomprimido y ejecutamos lo siguiente:</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd dos2unix-7.4.1/
-make
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso2-2" alt="paso2-2" /></p>
-
-<ol>
-  <li>Realizamos la instalación con la entrada del comando:</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make install
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso3" alt="paso3" /></p>
-
-<ol>
-  <li>Realizamos la comprobación de que el paquete se ha instalado correctamente.</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dos2unix --version
-whereis dos2unix
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso4" alt="paso4" /></p>
-
-<p><img src="/images/Makefile/paso5" alt="paso5" /></p>
-
-<h2 id="pasos-de-instalación-1">Pasos de instalación</h2>
-
-<p>Para realizar una desinstalación limpia del paquete deberemos realizar los siguientes pasos</p>
-
-<ol>
-  <li>Nos dirigimos al directorio donde se encuentra nuestro fichero Makefile.
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd dos2unix-7.4.1/
-ls
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/images/Makefile/paso5-2" alt="paso5-2" /></p>
-
-<ol>
-  <li>Desde allí, ejecutamos lo siguiente en nuestra consola y se realizará una desinstalación limpia.</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo make uninstall
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso6" alt="paso6" /></p>
-
-<ol>
-  <li>Comprobamos que ciertamente, el paquete ha sido desinstalado de nuestra maquina.
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>whereis dos2unix
-apt policy dos2unix
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/images/Makefile/paso7" alt="paso7" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Virtualización]]></summary></entry></feed>

@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Compilar dos2unix partiendo del código fuente | sysmaria</title>
+<title>Configuración de HTTPS en nuestro VPS | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Compilar dos2unix partiendo del código fuente">
+<meta property="og:title" content="Configuración de HTTPS en nuestro VPS">
 <meta property="og:locale" content="en_US">
-<meta name="description" content="Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.">
-<meta property="og:description" content="Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.">
-<link rel="canonical" href="/aso/2022/10/12/compilacion-paquete-makefile.html">
-<meta property="og:url" content="/aso/2022/10/12/compilacion-paquete-makefile.html">
+<meta name="description" content="¿Qué es un certificado SSL?">
+<meta property="og:description" content="¿Qué es un certificado SSL?">
+<link rel="canonical" href="/iaw/2022/11/27/https.html">
+<meta property="og:url" content="/iaw/2022/11/27/https.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2022-10-12T11:17:16+02:00">
+<meta property="article:published_time" content="2022-11-27T10:25:52+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Compilar dos2unix partiendo del código fuente">
+<meta property="twitter:title" content="Configuración de HTTPS en nuestro VPS">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-10-12T11:17:16+02:00","datePublished":"2022-10-12T11:17:16+02:00","description":"Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.","headline":"Compilar dos2unix partiendo del código fuente","mainEntityOfPage":{"@type":"WebPage","@id":"/aso/2022/10/12/compilacion-paquete-makefile.html"},"url":"/aso/2022/10/12/compilacion-paquete-makefile.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-27T10:25:52+01:00","datePublished":"2022-11-27T10:25:52+01:00","description":"¿Qué es un certificado SSL?","headline":"Configuración de HTTPS en nuestro VPS","mainEntityOfPage":{"@type":"WebPage","@id":"/iaw/2022/11/27/https.html"},"url":"/iaw/2022/11/27/https.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -449,17 +449,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <section class="page-banner">
     <div class="page-banner-img">
-<div style="background-image: url(/assets/images/banners/code.jpg)"></div>
-        <img class="img-placeholder" src="/assets/images/banners/code.jpg">
+<div style="background-image: url(/assets/images/banners/https.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/https.png">
 </div>
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Compilar dos2unix partiendo del código fuente</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Configuración de HTTPS en nuestro VPS</h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
-    <time class="dt-published" datetime="2022-10-12T11:17:16+02:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 12, 2022
+    <time class="dt-published" datetime="2022-11-27T10:25:52+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 27, 2022
     </time>
 
     
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
   </p></header>
 </div>
     </div>
@@ -689,113 +689,119 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <div class="post-content e-content" itemprop="articleBody">
 
-      <p>Los lenguajes de programación compilados, no necesitan de un intérprete, si no que necesitan compiladores y linkers. Los lenguajes de programación compilados no requieren que exista un programa que los vaya leyendo, interprete, si no que, antes de ejecutarse, deben ser traducidos a un lenguaje que la máquina sea capaz de entender directamente, sin intermediarios. En ese proceso se llama al compilador y al enlazador o linker.</p>
+      <h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
-<p>El comando que he seleccionado es dos2unix, un comando que convierte un archivo de texto DOS a formato UNIX.</p>
+<p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
-<h2 id="pasos-de-instalación">Pasos de instalación</h2>
+<h2 id="cómo-funciona">¿Cómo funciona?</h2>
+
+<p>A grandes rasgos los pasos de una conexión a una web con certificado SSL serían los siguientes.</p>
 
 <ol>
-  <li>Nos descargamos el código fuente:
-    <div class="language-plaintext highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>apt source dos2unix
-</code></pre></div>    </div>
-  </li>
-  <li>Descomprimimos el archivo con extension .orig.tar.xz.
+  <li>Un usuario, mediante su navegador se conecta al sitio web</li>
+  <li>El navegador solicita al servidor web una identificación.</li>
+  <li>El servidor web envía al navegador una copia de su certificado SSL.</li>
+  <li>El navegador comprueba si el certificado SSL es confiable. Si el certificado es correcto se envía un mensaje al servidor web.</li>
+  <li>El servidor web devuelve un acuse de recibo firmado digitalmente y se inicia una conexión cifrada con SSL.</li>
+</ol>
+
+<h2 id="pruebas-de-demostración">Pruebas de demostración</h2>
+
+<ol>
+  <li>Primero debemos cercionarnos de que nuestro navegador tiene el certificado SSL instalado.</li>
+</ol>
+
+<p><img src="/assets/images/https/1.png" alt="1"></p>
+
+<ol>
+  <li>¿Qué opción has elegido? ¿Qué pruebas realiza Let’s Encrypt para asegurar que somos los administrados del sitio web al elegir esa opción?
     <ul>
-      <li>x: Para extraer el archivo.</li>
-      <li>v: Para mostrar la descripción detallada del progreso de la compresión.</li>
+      <li>La opción que he elegido enmi caso es la de Wildcard. Esta opción es la que permite que el certificado sea válido para todos los subdominios de un dominio.</li>
     </ul>
   </li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tar -xv dos2unix_7.4.1.orig.tar.gz
+<ul>
+  <li>Valida mediante una string generada de forma aleatoria por Let’s Encrypt y que se debe introducir como registro TXT en el dominio DNS bajo <code class="language-plaintext highlighter-rouge">_acme-challenge.mariatec.es</code>.
+Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si coindice, valida la propiedad del dominio.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>certbot <span class="nt">--server</span> https://acme-v02.api.letsencrypt.org/directory <span class="nt">-d</span> <span class="k">*</span>.mariatec.es <span class="nt">--manual</span> <span class="nt">--preferred-challenges</span> dns-01 certonly
+Saving debug log to /var/log/letsencrypt/letsencrypt.log
+Plugins selected: Authenticator manual, Installer None
+Requesting a certificate <span class="k">for</span> <span class="k">*</span>.mariatec.es
+Performing the following challenges:
+dns-01 challenge <span class="k">for </span>mariatec.es
+
+<span class="nt">-------------------------------------------------------------------------------</span>
+Please deploy a DNS TXT record under the name
+_acme-challenge.mariatec.es with the following value:
+
+<span class="k">*********************************************************</span>
+
+Before continuing, verify the record is deployed.
+<span class="nt">-------------------------------------------------------------------------------</span>
+Press Enter to Continue
 </code></pre></div></div>
 
-<p><img src="/images/Makefile/paso1" alt="paso1"></p>
-
-<p><img src="/images/Makefile/paso2" alt="paso2"></p>
-
 <ol>
-  <li>Nos dirigimos al directorio que hemos descomprimido y ejecutamos lo siguiente:</li>
+  <li>El fichero de configuración de nuestro sitio web debe tener la siguiente configuración:</li>
 </ol>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd dos2unix-7.4.1/
-make
+<p><img src="/assets/images/https/2.png" alt="2"></p>
+
+<ol>
+  <li>Vamos a configurar un crontab para que se renueve el certificado automáticamente cada tres meses. Para ello, debemos ejecutar el siguiente comando:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>crontab <span class="nt">-e</span>
 </code></pre></div></div>
 
-<p><img src="/images/Makefile/paso2-2" alt="paso2-2"></p>
+<p>Y al final del fichero añadimos la siguiente línea:</p>
 
-<ol>
-  <li>Realizamos la instalación con la entrada del comando:</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make install
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 0 27 <span class="k">*</span>/3 <span class="k">*</span> /etc/letsencrypt/certrenew.sh
 </code></pre></div></div>
 
-<p><img src="/images/Makefile/paso3" alt="paso3"></p>
+<p><img src="/assets/images/https/3.png" alt="3"></p>
 
-<ol>
-  <li>Realizamos la comprobación de que el paquete se ha instalado correctamente.</li>
-</ol>
+<p>Con este cron, que se ejecutará cada 27 de cada 3 meses, se ejecutará el script que hemos creado para renovar el certificado. El script es el siguiente:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dos2unix --version
-whereis dos2unix
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+certbot renew <span class="nt">--non-interactive</span> <span class="nt">--no-random-sleep-on-renew</span> <span class="nt">--cert-name</span> mariatec.es
 </code></pre></div></div>
 
-<p><img src="/images/Makefile/paso4" alt="paso4"></p>
+<p>Las opciones que están implementadas en el script son las siguientes:</p>
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">--non-interactive</code>: Se realiza de formaautomática sin intervención del usuario, ya que es una tarea programada.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">--no-random-sleep-on-renew</code>: Se evita que se produzca un retardo aleatorio entre 0 y 30 segundos antes de la renovación. Esto se debe a que let’s encrypt incluye un random wait entre renovaciones para evitar que, en caso de que un usuario se equivoque, se realicen muchas renovaciones en un corto periodo de tiempo. Por ello, con esta opción lo desabilitamos para que la renovación se realice de forma inmediata.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">--cert-name mariatec.es</code>: Especifica el nombre del certificado que se va a renovar. Aunque hayamos pedido un wildcard, si nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/live/</code> veremos que se ha creado un directorio por cada subdominio que hemos solicitado. Por ello, debemos especificar el nombre del certificado que queremos renovar.</li>
+</ul>
 
-<p><img src="/images/Makefile/paso5" alt="paso5"></p>
+<h2 id="comprobación-de-la-configuración">Comprobación de la configuración</h2>
 
-<h2 id="pasos-de-instalación-1">Pasos de instalación</h2>
+<p>Como podemos ver en las siguientes capturas, la configuración se ha realizado correctamente y nuestro virtualhost esta configurado correctamente para que se pueda acceder a él mediante https.</p>
 
-<p>Para realizar una desinstalación limpia del paquete deberemos realizar los siguientes pasos</p>
+<p><img src="/assets/images/https/4.png" alt="4"></p>
 
-<ol>
-  <li>Nos dirigimos al directorio donde se encuentra nuestro fichero Makefile.
-    <div class="language-plaintext highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>cd dos2unix-7.4.1/
-ls
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/images/Makefile/paso5-2" alt="paso5-2"></p>
-
-<ol>
-  <li>Desde allí, ejecutamos lo siguiente en nuestra consola y se realizará una desinstalación limpia.</li>
-</ol>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo make uninstall
-</code></pre></div></div>
-
-<p><img src="/images/Makefile/paso6" alt="paso6"></p>
-
-<ol>
-  <li>Comprobamos que ciertamente, el paquete ha sido desinstalado de nuestra maquina.
-    <div class="language-plaintext highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>whereis dos2unix
-apt policy dos2unix
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/images/Makefile/paso7" alt="paso7"></p>
+<p><img src="/assets/images/https/5.png" alt="5"></p>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/prueba/2022/10/10/prueba.html" title="Prueba: Introducción a la implantación de aplicaciones web">Prueba: Introducción a la implantación de...</a><a class="next" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Virtualización en Linux">Virtualización en Linux</a>
+<a class="previous" href="/iaw/2022/11/17/migracion.html" title="Instalación y migración de una aplicación web PHP">Instalación y migración de una aplicación...</a><span></span>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Virtualización en Linux">Instalación de nginx con PHP con vagrant y ansible</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="Virtualización en Linux">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Virtualización en Linux">Infraestructura como código</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Virtualización en Linux">Apache como proxy inverso</a></li>
+        <li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="">Introducción a GitHub</a></li>
+<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="">Infraestructura como código</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
