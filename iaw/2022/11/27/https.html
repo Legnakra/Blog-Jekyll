@@ -708,77 +708,79 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <h2 id="pruebas-de-demostración">Pruebas de demostración</h2>
 
 <ol>
-  <li>Primero debemos cercionarnos de que nuestro navegador tiene el certificado SSL instalado.</li>
-</ol>
+  <li>
+    <p>Primero debemos cercionarnos de que nuestro navegador tiene el certificado SSL instalado.</p>
 
-<p><img src="/assets/images/https/1.png" alt="1"></p>
-
-<ol>
+    <p><img src="/assets/images/https/1.png" alt="1"></p>
+  </li>
   <li>¿Qué opción has elegido? ¿Qué pruebas realiza Let’s Encrypt para asegurar que somos los administrados del sitio web al elegir esa opción?
     <ul>
-      <li>La opción que he elegido enmi caso es la de Wildcard. Esta opción es la que permite que el certificado sea válido para todos los subdominios de un dominio.</li>
+      <li>
+        <p>La opción que he elegido enmi caso es la de Wildcard. Esta opción es la que permite que el certificado sea válido para todos los subdominios de un dominio.</p>
+      </li>
+      <li>
+        <p>Valida mediante una string generada de forma aleatoria por Let’s Encrypt y que se debe introducir como registro TXT en el dominio DNS bajo <code class="language-plaintext highlighter-rouge">_acme-challenge.mariatec.es</code>.
+Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si coindice, valida la propiedad del dominio.</p>
+      </li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>certbot <span class="nt">--server</span> https://acme-v02.api.letsencrypt.org/directory <span class="nt">-d</span> <span class="k">*</span>.mariatec.es <span class="nt">--manual</span> <span class="nt">--preferred-challenges</span> dns-01 certonly
+ Saving debug log to /var/log/letsencrypt/letsencrypt.log
+ Plugins selected: Authenticator manual, Installer None
+ Requesting a certificate <span class="k">for</span> <span class="k">*</span>.mariatec.es
+ Performing the following challenges:
+ dns-01 challenge <span class="k">for </span>mariatec.es
+
+ <span class="nt">-------------------------------------------------------------------------------</span>
+ Please deploy a DNS TXT record under the name
+ _acme-challenge.mariatec.es with the following value:
+
+ <span class="k">*********************************************************</span>
+
+ Before continuing, verify the record is deployed.
+ <span class="nt">-------------------------------------------------------------------------------</span>
+ Press Enter to Continue
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>El fichero de configuración de nuestro sitio web debe tener la siguiente configuración:</p>
+
+    <p><img src="/assets/images/https/2.png" alt="2"></p>
+  </li>
+  <li>
+    <p>Vamos a configurar un crontab para que se renueve el certificado automáticamente cada tres meses. Para ello, debemos ejecutar el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>crontab <span class="nt">-e</span>
+</code></pre></div>    </div>
+
+    <p>Y al final del fichero añadimos la siguiente línea:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> 0 0 27 <span class="k">*</span>/3 <span class="k">*</span> /etc/letsencrypt/certrenew.sh
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/https/3.png" alt="3"></p>
+
+    <p>Con este cron, que se ejecutará cada 27 de cada 3 meses, se ejecutará el script que hemos creado para renovar el certificado. El script es el siguiente:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="c">#!/bin/bash</span>
+ certbot renew <span class="nt">--non-interactive</span> <span class="nt">--no-random-sleep-on-renew</span> <span class="nt">--cert-name</span> mariatec.es
+</code></pre></div>    </div>
+
+    <p>Las opciones que están implementadas en el script son las siguientes:</p>
+    <ul>
+      <li>
+<code class="language-plaintext highlighter-rouge">--non-interactive</code>: Se realiza de formaautomática sin intervención del usuario, ya que es una tarea programada.</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--no-random-sleep-on-renew</code>: Se evita que se produzca un retardo aleatorio entre 0 y 30 segundos antes de la renovación. Esto se debe a que let’s encrypt incluye un random wait entre renovaciones para evitar que, en caso de que un usuario se equivoque, se realicen muchas renovaciones en un corto periodo de tiempo. Por ello, con esta opción lo desabilitamos para que la renovación se realice de forma inmediata.</li>
+      <li>
+<code class="language-plaintext highlighter-rouge">--cert-name mariatec.es</code>: Especifica el nombre del certificado que se va a renovar. Aunque hayamos pedido un wildcard, si nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/live/</code> veremos que se ha creado un directorio por cada subdominio que hemos solicitado. Por ello, debemos especificar el nombre del certificado que queremos renovar.</li>
     </ul>
   </li>
 </ol>
-
-<ul>
-  <li>Valida mediante una string generada de forma aleatoria por Let’s Encrypt y que se debe introducir como registro TXT en el dominio DNS bajo <code class="language-plaintext highlighter-rouge">_acme-challenge.mariatec.es</code>.
-Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si coindice, valida la propiedad del dominio.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>certbot <span class="nt">--server</span> https://acme-v02.api.letsencrypt.org/directory <span class="nt">-d</span> <span class="k">*</span>.mariatec.es <span class="nt">--manual</span> <span class="nt">--preferred-challenges</span> dns-01 certonly
-Saving debug log to /var/log/letsencrypt/letsencrypt.log
-Plugins selected: Authenticator manual, Installer None
-Requesting a certificate <span class="k">for</span> <span class="k">*</span>.mariatec.es
-Performing the following challenges:
-dns-01 challenge <span class="k">for </span>mariatec.es
-
-<span class="nt">-------------------------------------------------------------------------------</span>
-Please deploy a DNS TXT record under the name
-_acme-challenge.mariatec.es with the following value:
-
-<span class="k">*********************************************************</span>
-
-Before continuing, verify the record is deployed.
-<span class="nt">-------------------------------------------------------------------------------</span>
-Press Enter to Continue
-</code></pre></div></div>
-
-<ol>
-  <li>El fichero de configuración de nuestro sitio web debe tener la siguiente configuración:</li>
-</ol>
-
-<p><img src="/assets/images/https/2.png" alt="2"></p>
-
-<ol>
-  <li>Vamos a configurar un crontab para que se renueve el certificado automáticamente cada tres meses. Para ello, debemos ejecutar el siguiente comando:</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@asir:~<span class="nv">$ </span><span class="nb">sudo </span>crontab <span class="nt">-e</span>
-</code></pre></div></div>
-
-<p>Y al final del fichero añadimos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0 0 27 <span class="k">*</span>/3 <span class="k">*</span> /etc/letsencrypt/certrenew.sh
-</code></pre></div></div>
-
-<p><img src="/assets/images/https/3.png" alt="3"></p>
-
-<p>Con este cron, que se ejecutará cada 27 de cada 3 meses, se ejecutará el script que hemos creado para renovar el certificado. El script es el siguiente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
-certbot renew <span class="nt">--non-interactive</span> <span class="nt">--no-random-sleep-on-renew</span> <span class="nt">--cert-name</span> mariatec.es
-</code></pre></div></div>
-
-<p>Las opciones que están implementadas en el script son las siguientes:</p>
-<ul>
-  <li>
-<code class="language-plaintext highlighter-rouge">--non-interactive</code>: Se realiza de formaautomática sin intervención del usuario, ya que es una tarea programada.</li>
-  <li>
-<code class="language-plaintext highlighter-rouge">--no-random-sleep-on-renew</code>: Se evita que se produzca un retardo aleatorio entre 0 y 30 segundos antes de la renovación. Esto se debe a que let’s encrypt incluye un random wait entre renovaciones para evitar que, en caso de que un usuario se equivoque, se realicen muchas renovaciones en un corto periodo de tiempo. Por ello, con esta opción lo desabilitamos para que la renovación se realice de forma inmediata.</li>
-  <li>
-<code class="language-plaintext highlighter-rouge">--cert-name mariatec.es</code>: Especifica el nombre del certificado que se va a renovar. Aunque hayamos pedido un wildcard, si nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/letsencrypt/live/</code> veremos que se ha creado un directorio por cada subdominio que hemos solicitado. Por ello, debemos especificar el nombre del certificado que queremos renovar.</li>
-</ul>
 
 <h2 id="comprobación-de-la-configuración">Comprobación de la configuración</h2>
 
@@ -799,9 +801,9 @@ certbot renew <span class="nt">--non-interactive</span> <span class="nt">--no-ra
       <div>Related Articles</div>
       <ul>
         <li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="">Introducción a la programación Python</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="">Infraestructura como código</a></li>
+<li><a class="post-link" href="/asgbd/2022/11/08/interconexion.html" title="">Interconexiones de servidores</a></li>
+<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="">Instalación y migración de una aplicación web PHP</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="">Crear un sitio web estático con Jekyll</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
