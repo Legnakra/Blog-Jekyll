@@ -801,7 +801,7 @@ maria@maria-debian:~ ip route
   </li>
   <li>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred, pero ¿podremos aignarle una IP flotante?
     <ul>
-      <li>Si, podemos asignarle una IP flotante, pero no podremos acceder a ella desde fuera de la red local del centro.</li>
+      <li>Si, porque está diractamente conectada con la red externa.</li>
     </ul>
 
     <p>¿Por qué?</p>
@@ -822,8 +822,8 @@ maria@maria-debian:~ ip route
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
- 172.22.200.9
- openstack server add floating ip maquina-router 172.22.200.9
+ 172.22.200.229
+ openstack server add floating ip maquina-router 172.22.200.229
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/openstack/4.png" alt="4"></p>
@@ -833,65 +833,58 @@ maria@maria-debian:~ ip route
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> openstack network create red-interna
- openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.2 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
+ openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
 </code></pre></div>    </div>
   </li>
-  <li>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</li>
-</ol>
+  <li>
+    <p>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 mi-port
-openstack server add port maquina-router mi-port
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 router-port
+ openstack server add port maquina-router router-port
+</code></pre></div>    </div>
 
-<p><img src="/assets/images/openstack/5.png" alt="5"></p>
-
-<ol>
+    <p><img src="/assets/images/openstack/5.png" alt="5"></p>
+  </li>
   <li>
     <p>Creamos una nueva instancia llamada <code class="language-plaintext highlighter-rouge">maquina-cliente</code> y la conectamos a la red que hemos llamado <code class="language-plaintext highlighter-rouge">red-interna</code>. Usando los puertos de red, le asignaremos la IP <code class="language-plaintext highlighter-rouge">10.0.100.200</code> y comprobamos si su puerta de enlace es la <code class="language-plaintext highlighter-rouge">máquina-router</code>.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
+<div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.200 cliente-port
+
+ openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
- <span class="nt">--security-group</span> default <span class="se">\</span>
  <span class="nt">--key-name</span> pass <span class="se">\</span>
  <span class="nt">--network</span><span class="o">=</span>red-interna <span class="se">\</span>
- <span class="nt">--nic</span> net-id<span class="o">=</span>red-interna,v4-fixed-ip<span class="o">=</span>10.0.100.200 <span class="se">\</span>
+ <span class="nt">--port</span> cliente-port <span class="se">\</span>
  maquina-cliente
 </code></pre></div>    </div>
+
+    <p>¿Podremos assignarle a esta instancia una IP flotante?¿Por qué?</p>
+    <ul>
+      <li>No, porque no está conectada directamente con la red externa.</li>
+    </ul>
   </li>
+  <li>
+    <p>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack server remove security group maquina-router default
+ openstack server remove security group maquina-cliente default
+ openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> mi-port
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configuramos la instancia maquina-router para que funcione como router-nat. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-i</span> ~/.ssh/pass debian@172.22.200.229
+ <span class="nt">---</span>
+ iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+</code></pre></div>    </div>
+  </li>
+  <li>Comprobamos del acceso al servidor web de la maquina-cliente desde el exterior.</li>
 </ol>
-
-<p>¿Podremos assignarle a esta instancia una IP flotante?</p>
-<ul>
-  <li>No,</li>
-</ul>
-
-<p>ConflictException: 409: Client Error for url: http://172.22.123.100:9696/v2.0/floatingips/692bb1f9-2cbe-4b68-af29-16171308135d, Cannot associate floating IP 172.22.201.213 (692bb1f9-2cbe-4b68-af29-16171308135d) with port de16bc76-71c4-4afb-b6d5-b09bd5cab441 using fixed IP 192.168.0.12, as that fixed IP already has a floating IP on external network 2ebd4d15-00e3-44c6-a9a7-aeebef5f6540.</p>
-
-<p>¿Por qué?</p>
-
-<ol>
-  <li>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server remove security group maquina-router default
-openstack server remove security group maquina-cliente default
-openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> mi-port
-</code></pre></div></div>
-
-<p><img src="/assets/images/openstack/6.png" alt="6"></p>
-
-<ol>
-  <li>Configuramos la instancia <code class="language-plaintext highlighter-rouge">maquina-router</code> para que funcione como <code class="language-plaintext highlighter-rouge">router-nat</code>. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server add security group maquina-router default
-</code></pre></div></div>
-
-<ol>
-  <li>Por último, comprobaremos que la <code class="language-plaintext highlighter-rouge">máquina-router</code> tiene acceso a internet y que podemos acceder desde el exterior a la <code class="language-plaintext highlighter-rouge">máquina-cliente</code>.</li>
-</ol>
-
 
 
     </div>
@@ -903,10 +896,10 @@ openstack port <span class="nb">set</span> <span class="nt">--disable-port-secur
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Instalación y migración de una aplicación web PHP">Infraestructura como código</a></li>
-<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Instalación y migración de una aplicación web PHP">Configuración de HTTPS en nuestro VPS</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Instalación y migración de una aplicación web PHP">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="Instalación y migración de una aplicación web PHP">Introducción a GitHub</a></li>
+        <li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Instalación y migración de una aplicación web PHP">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
+<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Instalación y migración de una aplicación web PHP">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Instalación y migración de una aplicación web PHP">Infraestructura como código</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Instalación y migración de una aplicación web PHP">Virtualización en Linux</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

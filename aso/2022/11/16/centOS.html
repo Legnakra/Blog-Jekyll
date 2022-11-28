@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
   </p></header>
 </div>
     </div>
@@ -712,8 +712,6 @@ document.addEventListener('DOMContentLoaded', function(event) {
   <li>euroLinux</li>
 </ul>
 
-<h2 id="ejercicios">Ejercicios</h2>
-
 <h3 id="analiza-el-desencadenante-de-la-retirada-de-centos-8-del-mercado-qué-opinión-tienes-al-respecto">Analiza el desencadenante de la retirada de centOS 8 del mercado. ¿Qué opinión tienes al respecto?</h3>
 
 <p>CentOS es un acrónimo para <em>Community Enterprise Operating System</em> y está totalmente reconstruido por Red Hat Enterprise Linux. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad.</p>
@@ -737,16 +735,74 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
 
 <ol>
-  <li>
-    <p>Descarga la iso de CentOS Stream y evalúa el producto.</p>
-  </li>
-  <li>
-    <p>Descarga iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</p>
-  </li>
-  <li>
-    <p>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</p>
-  </li>
+  <li>Descarga la iso de CentOS Stream y evalúa el producto.</li>
 </ol>
+
+<p>Para comenzar, debemos decir que CentOs Stream es una variante o clon de Red Hat y esta variante, rolling, es decir, que se actualiza constantemente, es la que se ha decidido mantener.</p>
+
+<p>Nos encontramos realmente ante un sistema que se encuentra entre Fedora y RedHat, aunque no hay nada oficial al respecto.</p>
+
+<p>A la hora de instalarlo, tendríamos que irnos a la página oficial de centos/centos-stream. Una vez allí, nos encontramos con la opción de descargar la iso de CentOS Stream. Una vez descargada, la instalación es muy sencilla, ya que es muy similar a la de CentOS 7.</p>
+
+<p><img src="/assets/images/centos/1.png" alt="1"></p>
+
+<p>El asistente de instalación es igual que el que nos podemos encontrar en CentOS 7 o Rocky.</p>
+
+<p>Una vez iniciado el sistema, ingresamos con nuestras credenciales y nos encontramos con un escritorio muy similar al de CentOS 7.</p>
+
+<p><img src="/assets/images/centos/2.png" alt="2"></p>
+
+<p>Dentro de las opciones de configuraciones nos encontramos las mismas que en CentOS 7, pero con algunas diferencias. Por ejemplo, en la opción de configuración de la red, nos encontramos con la opción de configurar la red con NetworkManager, pero también con la opción de configurarla con ifcfg.</p>
+
+<p>Al ser una instalación mínima, nos encontraremos con un escritorio muy básico, pero con la posibilidad de instalar los escritorios que queramos, a lo igual que las aplicaciones.</p>
+
+<p><img src="/assets/images/centos/3.png" alt="3"></p>
+
+<p>De momento no está pensado para administrar servidores, pero si que se puede usar para ello.</p>
+
+<ol>
+  <li>Descarga la iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</li>
+</ol>
+
+<p>Hace algo más de un año, llegó Rocky Linux y ha sido un éxito abrumador y aplastante. Primero la distribución estuvo disponible en las principales nubes públicas, y después llegó Rocky, un clon de RHEL 9.</p>
+
+<p>Es cierto que, igual que alguno de los ribales, se basa en CentOS Stream y que duplica las funcionalidades de RHEL, pero para mi la gran diferencia es que Rocky viene con Peridot, que es un sistema de compilación de código abierto.</p>
+
+<p>Al igual que el CentOS original, Rocky es un reemplazo directo gratuito para RHEL. En el momento de escribir este artículo, tiene disponible una instalación de versión candidata. Las imágenes están disponibles para los procesadores x86-64 y ARM. Para cada arquitectura, hay opciones “Mínimo”, “DVD” y “Arranque”. La definición de “Minimal” parece relativa porque pesa 1,73 GB.</p>
+
+<p>La instalación es similar a CentOS y prácticamente a cualquier otro programa de instalación de Linux. Lo guía a través de la configuración de la distribución del teclado, la partición de su disco duro y la selección de paquetes. Una peculiaridad extraña del proceso de instalación es que no configura automáticamente su conexión de red. Tienes que habilitarlo en el instalador.</p>
+
+<p>¿Por qué Rocky Linux?</p>
+
+<p>Al igual que CentOS, es una excelente manera de aprender sobre el ecosistema de Red Hat de forma práctica y gratuita, ya que muchos centros de datos ejecutan RHEL. Si está interesado en la computación científica, no solo las principales supercomputadoras ejecutan Linux, sino que la gran mayoría ejecuta RHEL o una distribución derivada de RHEL. Tal vez podamos ver estas supercomputadoras ejecutando Rocky Linux en el futuro.</p>
+
+<p>Hay una diferencia entre una estación de trabajo Linux y un servidor. La elección de una distribución puede afectar el rendimiento de su servidor hasta cierto punto. Y por eso es importante elegir la distribución de Linux adecuada para su servidor.</p>
+
+<ol>
+  <li>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</li>
+</ol>
+
+<p>La instalación de CentOS 7 es muy sencilla, ya que es muy similar a la de CentOS 6. En cuanto a ss herramientas,</p>
+
+<p>El menú del sistema funciona bien y también buscará por descripción. Ahora, las búsquedas genéricas funcionan, como por ejemplo, la palabra <strong>captura de pantalla</strong> evocará la aplicación correcta, Ksnapshot, en este caso.</p>
+
+<p><img src="/assets/images/centos/4.png" alt="4"></p>
+
+<p>En cuanto al hardware, no tenían unas vistas demasiado concisas y claras. La opción de conexión inalábrica, tanto de 2,4 GHz como de 5 GHz, de bluetooth, uso compartido de Samba en particiones NTFS, almacenamiento SSD local…está bastante bien, a decir verdad. De hecho, el sistema podría ser incluso un poco demasiado entusiasta al tratar de ser puntual.</p>
+
+<p>El instalador es idéntico al de Fedora 18. Pero la cuestión está en que es una distribuición que se parece más a Fedora 19, pero no es altamente diferenciador. De igual manera, el instalador queda lejos de ser intuitivo y simple y algo, que desde mi perspectiva debería de mejorarse.</p>
+
+<p>Es muy incómodo que la opción de <code class="language-plaintext highlighter-rouge">Hecho</code> esté en la parte superior de la ventana de configuración de la instalación, además de tener que presionarlo 2 veces dependiendo de la configuración de la que se trate. Por ejemplo, si se quiere instalar en un disco duro, se debe de presionar 2 veces la opción de <code class="language-plaintext highlighter-rouge">Hecho</code> para que se muestre la siguiente ventana.</p>
+
+<p>Otra cosa que no me gusta es que no se pueda instalar en un disco duro sin particionar, ya que el instalador no permite crear una partición nueva. Por lo tanto, si se quiere instalar en un disco duro sin particionar, se debe de crear una partición desde otro sistema operativo, como Windows, y después instalar CentOS 7.</p>
+
+<p>Después de eso, seleccionar las particiones deseadas a través de una configuración manual no es dificil, pero si confuso, por lo que a la hora de realizar un LVM es menos confuso realizarlo desde la terminal.</p>
+
+<p>Una cosa es segura y es que, además de sus problemas de instalación, es realmente estable y rápido. No se ha quedado estático ni se ha bloqueado.</p>
+
+<p>Como conclusión, es cierto que centos se lanzó al mercado muy pronto debido a todos su fallas inciales, demostrando tener un control de calidad poco estricto y pulcro. Esto hace que no se muestre como una distribución seria y profesional. Y dado que no puede tener ningún extra, su mérito como candidato de escritorio se reduce aún más.</p>
+
+<p>Su instalador es su talón de Aquíles, aparte de su gran falta de aplicaciones y herramientas por parte de terceros. Pero si es verdad que existe un gran potencial en esta distribución.</p>
 
 
     </div>
@@ -758,10 +814,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/aso/2022/11/16/centOS.html" title="Compilación de un kernel a medida">Migración CentOS</a></li>
-<li><a class="post-link" href="/asgbd/2022/11/08/interconexion.html" title="Compilación de un kernel a medida">Interconexiones de servidores</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Compilación de un kernel a medida">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Compilación de un kernel a medida">Configuración de HTTPS en nuestro VPS</a></li>
+        <li><a class="post-link" href="/bienvenida/2022/09/29/welcome-to-jekyll.html" title="Compilación de un kernel a medida">Bienvenid@</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Compilación de un kernel a medida">Crear un sitio web estático con Jekyll</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Compilación de un kernel a medida">Infraestructura como código</a></li>
+<li><a class="post-link" href="/prueba/2022/10/10/prueba.html" title="Compilación de un kernel a medida">Prueba: Introducción a la implantación de aplicaciones web</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
