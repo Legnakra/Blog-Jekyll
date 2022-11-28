@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-28T22:34:33+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-28T22:37:32+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1217,17 +1217,13 @@ openstack server add floating ip alfa
 
 <p>Por eso, y desde mi punto de vista, creo que la mejor optativa podría ser Oracle Linux.</p>
 
-<ol>
-  <li>Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</li>
-</ol>
+<h3 id="crea-una-cuenta-en-red-hat-y-descárgate-la-iso-de-red-hat-enterprise-linux-rhel-y-evalúa-el-producto-comenta-el-procedimiento-de-alta">Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</h3>
 
 <p>Para poder acceder a la descarga de RHEL, es necesario tener una cuenta en Red Hat. Para ello, se debe acceder a la página de Red Hat y registrarse. Una vez hecho esto, se puede acceder a la descarga de RHEL.</p>
 
 <p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
 
-<ol>
-  <li>Descarga la iso de CentOS Stream y evalúa el producto.</li>
-</ol>
+<h3 id="descargamos-la-iso-de-centos-stream-y-evalúa-el-producto">Descargamos la iso de CentOS Stream y evalúa el producto.</h3>
 
 <p>Para comenzar, debemos decir que CentOs Stream es una variante o clon de Red Hat y esta variante, rolling, es decir, que se actualiza constantemente, es la que se ha decidido mantener.</p>
 
@@ -1251,9 +1247,7 @@ openstack server add floating ip alfa
 
 <p>De momento no está pensado para administrar servidores, pero si que se puede usar para ello.</p>
 
-<ol>
-  <li>Descarga la iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</li>
-</ol>
+<h3 id="descargamos-la-iso-de-una-de-las-otras-distribuciones-candidatas-indica-criterios-para-la-elección-de-la-nueva-distribución-y-evalúa-el-producto">Descargamos la iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</h3>
 
 <p>Hace algo más de un año, llegó Rocky Linux y ha sido un éxito abrumador y aplastante. Primero la distribución estuvo disponible en las principales nubes públicas, y después llegó Rocky, un clon de RHEL 9.</p>
 
