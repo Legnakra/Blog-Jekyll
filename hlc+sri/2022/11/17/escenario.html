@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Apache como proxy inverso | sysmaria</title>
+<title>Escenario en OpenStack | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Apache como proxy inverso">
+<meta property="og:title" content="Escenario en OpenStack">
 <meta property="og:locale" content="en_US">
-<meta name="description" content="Apache como proxy inverso">
-<meta property="og:description" content="Apache como proxy inverso">
-<link rel="canonical" href="/hlc+sri/2022/11/08/proxy.html">
-<meta property="og:url" content="/hlc+sri/2022/11/08/proxy.html">
+<meta name="description" content="Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.">
+<meta property="og:description" content="Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.">
+<link rel="canonical" href="/hlc+sri/2022/11/17/escenario.html">
+<meta property="og:url" content="/hlc+sri/2022/11/17/escenario.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2022-11-08T13:11:32+01:00">
+<meta property="article:published_time" content="2022-11-17T08:17:50+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Apache como proxy inverso">
+<meta property="twitter:title" content="Escenario en OpenStack">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-08T13:11:32+01:00","datePublished":"2022-11-08T13:11:32+01:00","description":"Apache como proxy inverso","headline":"Apache como proxy inverso","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2022/11/08/proxy.html"},"url":"/hlc+sri/2022/11/08/proxy.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-17T08:17:50+01:00","datePublished":"2022-11-17T08:17:50+01:00","description":"Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.","headline":"Escenario en OpenStack","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2022/11/17/escenario.html"},"url":"/hlc+sri/2022/11/17/escenario.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -449,17 +449,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <section class="page-banner">
     <div class="page-banner-img">
-<div style="background-image: url(/assets/images/banners/apache.png)"></div>
-        <img class="img-placeholder" src="/assets/images/banners/apache.png">
+<div style="background-image: url(/assets/images/banners/openstack.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/openstack.png">
 </div>
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Apache como proxy inverso</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Escenario en OpenStack</h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
-    <time class="dt-published" datetime="2022-11-08T13:11:32+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 8, 2022
+    <time class="dt-published" datetime="2022-11-17T08:17:50+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 17, 2022
     </time>
 
     
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
   </p></header>
 </div>
     </div>
@@ -689,159 +689,183 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <div class="post-content e-content" itemprop="articleBody">
 
-      <h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
+      <h2 id="descripción">Descripción</h2>
+<p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
 
-<p>Apache es un servidor web que se puede utilizar como proxy inverso. En este artículo se explica cómo configurar Apache para que actúe como proxy inverso.</p>
+<p>Para nombrar las máquinas se va a utilizar <strong>alfa, bravo, charlie y delta</strong>, que son las primeras letras de un alfabeto que nació antes de la Primera Guerra Mundial en respuesta a los avances en la radio bidireccional compatible con la voz, para mejorar la comunicación en circuitos telefónicos de baja calidad y de larga distancia.</p>
 
-<h2 id="configuración">Configuración</h2>
-
-<p>Lo primero que haremos será aplicar el <a href="https://fp.josedomingo.org/sri2223/3_http/files/ejercicio_proxy.zip">escenario</a> donde encontraremos:</p>
+<p>Además el dominio será un subdominio de la forma tunombre.gonzalonazareno.org. De esta forma tendremos:</p>
 
 <ul>
-  <li>Un escenario vagrant con dos máquinas virtuales:
-    <ul>
-      <li>Una máquina proxy conectada al exterior y a una red interna.</li>
-      <li>Una máquina servidorweb conectada a la red interna.</li>
-    </ul>
-  </li>
-  <li>Una receta ansible para configurar las dos máquinas virtuales del escenario anterior.</li>
+  <li>Máquina 1: Instancia en OpenStack con Debian 11 Bullseye que se llama <code class="language-plaintext highlighter-rouge">alfa.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 2: Instancia en OpenStack con Rocky Linux 9 que se llama <code class="language-plaintext highlighter-rouge">bravo.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 3: Contenedor LXC con Ubuntu 20.04 que se llama <code class="language-plaintext highlighter-rouge">charlie.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 4: Contenedor LXC con Ubuntu 20.04 que se llama <code class="language-plaintext highlighter-rouge">delta.tunombre.gonzalonazareno.org</code>.</li>
 </ul>
 
-<p>Lo siguiente será instalar apache en la máquina proxy y configurarla para acceder a las páginas web de la máquina servidorweb. La primera URL es www.app1.org y la segunda es www.app2.org.</p>
+<p>La creación y configuración (conexión a las redes, creación de volumen, quitarle la seguridad alos puertos, …) de la <strong>máquina1 (alfa)</strong> la debes hacer con OSC. Lo demás lo puedes hacer con horizon.</p>
 
-<p>Activaremos el módulo proxy y proxy_http de apache:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2enmod proxy
-a2enmod proxy_http
+<h2 id="escenario">Escenario</h2>
+
+<p><img src="/assets/images/escenario.png" alt="Escenario"></p>
+
+<h2 id="instalación-de-las-instancias-en-openstack">Instalación de las instancias en OpenStack</h2>
+
+<ol>
+  <li>Creamos una red interna que se llame <strong>Red DMZ de tu_usuario</strong>, con las siguientes características:
+    <ul>
+      <li>Direccionamiento: <code class="language-plaintext highlighter-rouge">172.16.0.0/16</code>.</li>
+      <li>Con DHCP y DNS: <code class="language-plaintext highlighter-rouge">192.168.202.2</code>.</li>
+      <li>La puerta de enlace de los dispositivos conectados a esta red será el <code class="language-plaintext highlighter-rouge">172.16.0.1</code>.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> openstack network create Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus
+ openstack subnet create <span class="nt">--network</span> Red DMZ de mariajesus <span class="nt">--subnet-range</span> 172.16.0.0/16 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 172.16.0.0 <span class="nt">--dns-nameserver</span> 192.168.202.2 Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus
+</code></pre></div>    </div>
+  </li>
+  <li>Las dos instancias que vamos a crear se van a configurar con cloud-init de la siguiente manera:
+    <ul>
+      <li>Deben actualizar los paquetes de la distribución de la instancia.</li>
+      <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto en la configuración con cloud-init habrá que indicar el hostname y el FQDN.</li>
+      <li>Se crearán dos usuarios:
+        <ul>
+          <li>Un usuario sin privilegios. Se puede llamar como quieras (pero el nombre será el mismo en todas las máquinas) y accederás a las máquinas usando tu clave ssh privada.</li>
+          <li>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en las instancias para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</li>
+        </ul>
+      </li>
+      <li>Cambia la contraseña al usuario root.</li>
+    </ul>
+  </li>
+  <li>Creación de la <strong>máquina1</strong> (alfa):
+    <ul>
+      <li>Crea una instancia sobre un volumen de 30Gb, usando una imagen de <strong>Debian 11 Bullseye</strong>. Elige el sabor <code class="language-plaintext highlighter-rouge">vol.medium</code>. Y configuralá con <code class="language-plaintext highlighter-rouge">cloud-init</code> como se ha indicado anteriormente.</li>
+      <li>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
+<span class="nt">----</span>
+openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
+    <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
+    <span class="nt">--security-group</span> default <span class="se">\</span>
+    <span class="nt">--key-name</span> pass <span class="se">\</span>
+    <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
+    <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
+    alfa
+<span class="nt">----</span>
+openstack floating ip create ext-net
+openstack server add floating ip alfa 
 </code></pre></div></div>
 
-<p>Y reiniciaremos el servidor web:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
+<ol>
+  <li>Configuración de la máquina1 (alfa):
+    <ul>
+      <li>
+        <p>Conecta la instancia a tu Red DMZ, asígnale la dirección 172.16.0.1 para que sea la puerta de enlace las máquinas conectadas a esta red.</p>
 
-<p>Ahora crearemos un archivo de configuración para cada una de las aplicaciones que queremos que se sirvan a través de apache. En este caso, crearemos dos archivos de configuración: app1.conf y app2.conf. Estos archivos de configuración se guardarán en la ruta /etc/apache2/sites-available.</p>
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  openstack port create <span class="nt">--network</span> Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>172.16.0.1 alfa-port
+  openstack server add port alfa port-alfa
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Deshabilita la seguridad de los puertos en las dos interfaces de red para que funcione de manera adecuada el NAT.</p>
 
-<p>El contenido de app1.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app1.org
-        ProxyPass               /       "http://interno.example1.org"
-        ProxyPassReverse        /       "http://interno.example1.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port1 <span class="nt">--no-security-group</span>
+  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port2 <span class="nt">--no-security-group</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Configura de forma permanente la regla SNAT para que las máquinas de la Red DMZ tengan acceso a internet.</p>
 
-<p>Y el contenido de app2.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app2.org
-        ProxyPass               /       "http://interno.example2.org"
-        ProxyPassReverse        /       "http://interno.example2.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  openstack server add floating ip alfa
+  <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT 
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Creación de la máquina2 (bravo):
+    <ul>
+      <li>Está instancia se conectará a la red DMZ. Usando un puerto asigna a esta máquina la dirección 172.16.0.200.</li>
+      <li>
+        <p>Crea una instancia sobre un volumen de 30Gb, usando una imagen de Rocky Linux 9. Elige el sabor vol.normal. Y configurala con cloud-init como se ha indicado anteriormente.</p>
 
-<p>Ahora activaremos los archivos de configuración de las aplicaciones:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite app1.conf
-a2ensite app2.conf
-</code></pre></div></div>
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  openstack volume create <span class="nt">--image</span> <span class="s2">"Rocky Linux 9"</span> <span class="nt">--size</span> 30 vol.bravo
+  openstack port create <span class="nt">--network</span> Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>172.16.0.200 bravo-port 
+  <span class="nt">----</span>
+  openstack server create <span class="nt">--flavor</span> vol.normal <span class="se">\</span>
+  <span class="nt">--volume</span> vol.bravo <span class="se">\</span>
+  <span class="nt">--security-group</span> default <span class="se">\</span>
+  <span class="nt">--key-name</span> pass <span class="se">\</span>
+  <span class="nt">--port</span> bravo-port <span class="se">\</span>
+  <span class="nt">--user-data</span> config-bravo.yaml <span class="se">\</span>
+  bravo
+</code></pre></div>        </div>
+      </li>
+      <li>Deshabilita la seguridad de los puertos en la interfaz de red para que funcione de manera adecuada el NAT.</li>
+      <li>Comprueba que tiene acceso a internet. Si no tiene acceso a internet, no se han actualizado los paquetes con cloud-init, hazlo posteriormente.</li>
+    </ul>
+  </li>
+</ol>
 
-<p>Y reiniciaremos el servidor web:</p>
+<h2 id="instalación-de-los-contenedores-lxc">Instalación de los contenedores LXC</h2>
+<p>En <strong>maquina1</strong> vamos a crear dos contenedores en un red interna, para ello:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
-
-<p>Ahora configuraremos el archivo /etc/hosts de la máquina host para que resuelva los nombres de las aplicaciones a las direcciones IP de las máquinas servidorweb. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org
-</code></pre></div></div>
-
-<p>Ahora configuraremos el archivo /etc/hosts de las máquinas servidorweb para que resuelva los nombres de las aplicaciones a las direcciones IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>10.0.0.6 interno.example1.org interno.example2.org
-</code></pre></div></div>
-
-<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
-
-<p><img src="/assets/images/proxy/1.png" alt="1"></p>
-
-<p><img src="/assets/images/proxy/2.png" alt="2"></p>
-
-<h2 id="creamos-un-virtualhost-para-las-dos-aplicaciones">Creamos un virtualhost para las dos aplicaciones</h2>
-
-<p>En vez de crear un virtualhost para cada aplicación, podemos crear un virtualhost para las dos aplicaciones. El contenido del archivo servidor.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-    ServerName www.servidor.org
-    &lt;Location "/app1"&gt;
-        ProxyPass           "http://interno.example1.org"
-        ProxyPassReverse    "http://interno.example1.org"
-    &lt;/Location&gt;
-    &lt;Location "/app2"&gt;
-        ProxyPass           "http://interno.example2.org"
-        ProxyPassReverse    "http://interno.example2.org"
-    &lt;/Location&gt;
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Ahora activaremos el archivo de configuración de la aplicación:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite servidor.conf
-</code></pre></div></div>
-
-<p>Y reiniciaremos el servidor web:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
-
-<p>Cambiaremos el contenido del archivo /etc/hosts de la máquina host para que resuelva el nombre de la aplicación a la dirección IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org www.servidor.org
-</code></pre></div></div>
-
-<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
-
-<p><img src="/assets/images/proxy/3.png" alt="3"></p>
-
-<p><img src="/assets/images/proxy/4.png" alt="4"></p>
-
-<h2 id="modificaciones">Modificaciones</h2>
-
-<p>En el primer escenario, hemos configurado http://www.app1.org/directorio para que se sirva a través de la máquina proxy. Ahora vamos a modificarlo quitando la directiva ProxyPassReverse. El contenido del archivo app1.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app1.org
-        ProxyPass               /       "http://interno.example1.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Si realizamos una petición HEAD con curl, veremos que cambia Location de la respuesta:</p>
-
-<p><img src="/assets/images/proxy/5.png" alt="5"></p>
-
-<p><img src="/assets/images/proxy/6.png" alt="6"></p>
-
-<p>Si ponemos de nuevo la directiva ProxyPassReverse, y queremos comprobar que redirección se realiza, podemos comprobarlo en la cabecera de Location de la respuesta:</p>
-
-<p><img src="/assets/images/proxy/7.png" alt="7"></p>
-
-<p><img src="/assets/images/proxy/8.png" alt="8"></p>
-
-<p>Como podemos ver en las siguientes imágenes, también sucede con el virtualhost <em>servidor.conf</em>.</p>
-
-<p>(antes de quitar ProxyPassReverse)
-<img src="/assets/images/proxy/9.png" alt="9"></p>
-
-<p><img src="/assets/images/proxy/10.png" alt="10"></p>
-
-<p>(despues de quitar ProxyPassReverse)</p>
-
-<p><img src="/assets/images/proxy/11.png" alt="11"></p>
-
-<p><img src="/assets/images/proxy/12.png" alt="12"></p>
+<ol>
+  <li>
+    <p>Crea en <strong>máquina1 (alfa)</strong> un linux bridge llamado <code class="language-plaintext highlighter-rouge">br-intra</code> y asigna una dirección IP estática <code class="language-plaintext highlighter-rouge">192.168.0.1</code>. Esta será la IP de <strong>máquina1</strong> (alfa) conectada a este switch virtual y será la puerta de enlace de los contenedores.</p>
+  </li>
+  <li>
+    <p>Instala LXC y crea dos contenedores con la distribución <strong>Ubuntu 20.04</strong>. Estos contenedores serán la <strong>máquina3</strong> (charlie) y la <strong>máquina4</strong> (delta).</p>
+  </li>
+  <li>
+    <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
+  </li>
+  <li>
+    <p>Conecta los contenedores al bridge <code class="language-plaintext highlighter-rouge">br-intra</code> y configúralo de forma estática con las siguientes direcciones: <strong>máquina3</strong> (charlie) la <code class="language-plaintext highlighter-rouge">192.168.0.2</code> y <strong>máquina4</strong> (delta) la <code class="language-plaintext highlighter-rouge">192.168.0.3</code>.</p>
+  </li>
+  <li>
+    <p>Para que la red de OpenStack funcione de forma adecuada las imágenes que usamos tienen configurado la mtu (Unidad máxima de transferencia) a 1450 bytes. Tenemos que adecuar los contenedores a este tamaño de trama. Para ello introduce en la configuración de los contenedores la línea: <code class="language-plaintext highlighter-rouge">lxc.net.0.mtu = 1450</code>.</p>
+  </li>
+  <li>
+    <p>Configura los contenedores para que se auto inicien al reiniciar la instancia.</p>
+  </li>
+  <li>
+    <p>Los contenedores tendrán características parecidas a las instancias anteriormente:</p>
+    <ul>
+      <li>Debes actualizar los paquetes de la distribución instalada.</li>
+      <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto configura de manera adecuda el hostname y el FQDN.</li>
+      <li>Para acceder a los contenedores vamos a usar ssh.</li>
+      <li>Crea dos usuarios:
+        <ul>
+          <li>Un usuario sin privilegios. Se puede llamar como quieras (el nombre de usuario que usaste en las instancias) y accederás a los contenedores usando tu clave ssh privada.</li>
+          <li>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en los contenedores para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</li>
+        </ul>
+      </li>
+      <li>Cambia la contraseña al usuario <code class="language-plaintext highlighter-rouge">root</code>.</li>
+    </ul>
+  </li>
+</ol>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/python/2022/11/06/github.html" title="Introducción a GitHub">Introducción a GitHub</a><a class="next" href="/asgbd/2022/11/08/interconexion.html" title="Interconexiones de servidores">Interconexiones de servidores</a>
+<a class="previous" href="/iaw/2022/11/17/migracion.html" title="Instalación y migración de una aplicación web PHP">Instalación y migración de una aplicación...</a><a class="next" href="/iaw/2022/11/27/https.html" title="Configuración de HTTPS en nuestro VPS">Configuración de HTTPS en nuestro VPS...</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/bienvenida/2022/09/29/welcome-to-jekyll.html" title="Interconexiones de servidores">Bienvenid@</a></li>
-<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Interconexiones de servidores">Infraestructura como código</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Interconexiones de servidores">Cloud Computing IaaS. OpenStack</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Interconexiones de servidores">Apache como proxy inverso</a></li>
+        <li><a class="post-link" href="/asgbd/2022/11/08/interconexion.html" title="Configuración de HTTPS en nuestro VPS">Interconexiones de servidores</a></li>
+<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Configuración de HTTPS en nuestro VPS">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Configuración de HTTPS en nuestro VPS">Infraestructura como código</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="Configuración de HTTPS en nuestro VPS">Introducción a GitHub</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

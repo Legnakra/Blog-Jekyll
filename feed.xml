@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-28T18:09:59+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-28T22:34:33+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1024,7 +1024,163 @@ server <span class="o">{</span>
 
 <h2 id="instalación-de-cliente-nextcloud-en-otro-cliente">Instalación de cliente Nextcloud en otro cliente</h2>
 
-<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/11/17/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/escenario</id><content type="html" xml:base="/hlc+sri/2022/11/17/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+<p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
+
+<p>Para nombrar las máquinas se va a utilizar <strong>alfa, bravo, charlie y delta</strong>, que son las primeras letras de un alfabeto que nació antes de la Primera Guerra Mundial en respuesta a los avances en la radio bidireccional compatible con la voz, para mejorar la comunicación en circuitos telefónicos de baja calidad y de larga distancia.</p>
+
+<p>Además el dominio será un subdominio de la forma tunombre.gonzalonazareno.org. De esta forma tendremos:</p>
+
+<ul>
+  <li>Máquina 1: Instancia en OpenStack con Debian 11 Bullseye que se llama <code class="language-plaintext highlighter-rouge">alfa.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 2: Instancia en OpenStack con Rocky Linux 9 que se llama <code class="language-plaintext highlighter-rouge">bravo.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 3: Contenedor LXC con Ubuntu 20.04 que se llama <code class="language-plaintext highlighter-rouge">charlie.tunombre.gonzalonazareno.org</code>.</li>
+  <li>Máquina 4: Contenedor LXC con Ubuntu 20.04 que se llama <code class="language-plaintext highlighter-rouge">delta.tunombre.gonzalonazareno.org</code>.</li>
+</ul>
+
+<p>La creación y configuración (conexión a las redes, creación de volumen, quitarle la seguridad alos puertos, …) de la <strong>máquina1 (alfa)</strong> la debes hacer con OSC. Lo demás lo puedes hacer con horizon.</p>
+
+<h2 id="escenario">Escenario</h2>
+
+<p><img src="/assets/images/escenario.png" alt="Escenario" /></p>
+
+<h2 id="instalación-de-las-instancias-en-openstack">Instalación de las instancias en OpenStack</h2>
+
+<ol>
+  <li>Creamos una red interna que se llame <strong>Red DMZ de tu_usuario</strong>, con las siguientes características:
+    <ul>
+      <li>Direccionamiento: <code class="language-plaintext highlighter-rouge">172.16.0.0/16</code>.</li>
+      <li>Con DHCP y DNS: <code class="language-plaintext highlighter-rouge">192.168.202.2</code>.</li>
+      <li>La puerta de enlace de los dispositivos conectados a esta red será el <code class="language-plaintext highlighter-rouge">172.16.0.1</code>.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus
+ openstack subnet create <span class="nt">--network</span> Red DMZ de mariajesus <span class="nt">--subnet-range</span> 172.16.0.0/16 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 172.16.0.0 <span class="nt">--dns-nameserver</span> 192.168.202.2 Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus
+</code></pre></div>    </div>
+  </li>
+  <li>Las dos instancias que vamos a crear se van a configurar con cloud-init de la siguiente manera:
+    <ul>
+      <li>Deben actualizar los paquetes de la distribución de la instancia.</li>
+      <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto en la configuración con cloud-init habrá que indicar el hostname y el FQDN.</li>
+      <li>Se crearán dos usuarios:
+        <ul>
+          <li>Un usuario sin privilegios. Se puede llamar como quieras (pero el nombre será el mismo en todas las máquinas) y accederás a las máquinas usando tu clave ssh privada.</li>
+          <li>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en las instancias para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</li>
+        </ul>
+      </li>
+      <li>Cambia la contraseña al usuario root.</li>
+    </ul>
+  </li>
+  <li>Creación de la <strong>máquina1</strong> (alfa):
+    <ul>
+      <li>Crea una instancia sobre un volumen de 30Gb, usando una imagen de <strong>Debian 11 Bullseye</strong>. Elige el sabor <code class="language-plaintext highlighter-rouge">vol.medium</code>. Y configuralá con <code class="language-plaintext highlighter-rouge">cloud-init</code> como se ha indicado anteriormente.</li>
+      <li>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
+<span class="nt">----</span>
+openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
+    <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
+    <span class="nt">--security-group</span> default <span class="se">\</span>
+    <span class="nt">--key-name</span> pass <span class="se">\</span>
+    <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
+    <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
+    alfa
+<span class="nt">----</span>
+openstack floating ip create ext-net
+openstack server add floating ip alfa 
+</code></pre></div></div>
+
+<ol>
+  <li>Configuración de la máquina1 (alfa):
+    <ul>
+      <li>
+        <p>Conecta la instancia a tu Red DMZ, asígnale la dirección 172.16.0.1 para que sea la puerta de enlace las máquinas conectadas a esta red.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack port create <span class="nt">--network</span> Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>172.16.0.1 alfa-port
+  openstack server add port alfa port-alfa
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Deshabilita la seguridad de los puertos en las dos interfaces de red para que funcione de manera adecuada el NAT.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port1 <span class="nt">--no-security-group</span>
+  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port2 <span class="nt">--no-security-group</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Configura de forma permanente la regla SNAT para que las máquinas de la Red DMZ tengan acceso a internet.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack server add floating ip alfa
+  <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT 
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Creación de la máquina2 (bravo):
+    <ul>
+      <li>Está instancia se conectará a la red DMZ. Usando un puerto asigna a esta máquina la dirección 172.16.0.200.</li>
+      <li>
+        <p>Crea una instancia sobre un volumen de 30Gb, usando una imagen de Rocky Linux 9. Elige el sabor vol.normal. Y configurala con cloud-init como se ha indicado anteriormente.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack volume create <span class="nt">--image</span> <span class="s2">"Rocky Linux 9"</span> <span class="nt">--size</span> 30 vol.bravo
+  openstack port create <span class="nt">--network</span> Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>172.16.0.200 bravo-port 
+  <span class="nt">----</span>
+  openstack server create <span class="nt">--flavor</span> vol.normal <span class="se">\</span>
+  <span class="nt">--volume</span> vol.bravo <span class="se">\</span>
+  <span class="nt">--security-group</span> default <span class="se">\</span>
+  <span class="nt">--key-name</span> pass <span class="se">\</span>
+  <span class="nt">--port</span> bravo-port <span class="se">\</span>
+  <span class="nt">--user-data</span> config-bravo.yaml <span class="se">\</span>
+  bravo
+</code></pre></div>        </div>
+      </li>
+      <li>Deshabilita la seguridad de los puertos en la interfaz de red para que funcione de manera adecuada el NAT.</li>
+      <li>Comprueba que tiene acceso a internet. Si no tiene acceso a internet, no se han actualizado los paquetes con cloud-init, hazlo posteriormente.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="instalación-de-los-contenedores-lxc">Instalación de los contenedores LXC</h2>
+<p>En <strong>maquina1</strong> vamos a crear dos contenedores en un red interna, para ello:</p>
+
+<ol>
+  <li>
+    <p>Crea en <strong>máquina1 (alfa)</strong> un linux bridge llamado <code class="language-plaintext highlighter-rouge">br-intra</code> y asigna una dirección IP estática <code class="language-plaintext highlighter-rouge">192.168.0.1</code>. Esta será la IP de <strong>máquina1</strong> (alfa) conectada a este switch virtual y será la puerta de enlace de los contenedores.</p>
+  </li>
+  <li>
+    <p>Instala LXC y crea dos contenedores con la distribución <strong>Ubuntu 20.04</strong>. Estos contenedores serán la <strong>máquina3</strong> (charlie) y la <strong>máquina4</strong> (delta).</p>
+  </li>
+  <li>
+    <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
+  </li>
+  <li>
+    <p>Conecta los contenedores al bridge <code class="language-plaintext highlighter-rouge">br-intra</code> y configúralo de forma estática con las siguientes direcciones: <strong>máquina3</strong> (charlie) la <code class="language-plaintext highlighter-rouge">192.168.0.2</code> y <strong>máquina4</strong> (delta) la <code class="language-plaintext highlighter-rouge">192.168.0.3</code>.</p>
+  </li>
+  <li>
+    <p>Para que la red de OpenStack funcione de forma adecuada las imágenes que usamos tienen configurado la mtu (Unidad máxima de transferencia) a 1450 bytes. Tenemos que adecuar los contenedores a este tamaño de trama. Para ello introduce en la configuración de los contenedores la línea: <code class="language-plaintext highlighter-rouge">lxc.net.0.mtu = 1450</code>.</p>
+  </li>
+  <li>
+    <p>Configura los contenedores para que se auto inicien al reiniciar la instancia.</p>
+  </li>
+  <li>
+    <p>Los contenedores tendrán características parecidas a las instancias anteriormente:</p>
+    <ul>
+      <li>Debes actualizar los paquetes de la distribución instalada.</li>
+      <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto configura de manera adecuda el hostname y el FQDN.</li>
+      <li>Para acceder a los contenedores vamos a usar ssh.</li>
+      <li>Crea dos usuarios:
+        <ul>
+          <li>Un usuario sin privilegios. Se puede llamar como quieras (el nombre de usuario que usaste en las instancias) y accederás a los contenedores usando tu clave ssh privada.</li>
+          <li>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en los contenedores para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</li>
+        </ul>
+      </li>
+      <li>Cambia la contraseña al usuario <code class="language-plaintext highlighter-rouge">root</code>.</li>
+    </ul>
+  </li>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 
 <p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
 
@@ -1121,7 +1277,7 @@ server <span class="o">{</span>
 
 <p>El menú del sistema funciona bien y también buscará por descripción. Ahora, las búsquedas genéricas funcionan, como por ejemplo, la palabra <strong>captura de pantalla</strong> evocará la aplicación correcta, Ksnapshot, en este caso.</p>
 
-<p><img src="/assets/images/centos/4.png" alt="4" /></p>
+<p><img src="/assets/images/centos/4.jpeg" alt="4" /></p>
 
 <p>En cuanto al hardware, no tenían unas vistas demasiado concisas y claras. La opción de conexión inalábrica, tanto de 2,4 GHz como de 5 GHz, de bluetooth, uso compartido de Samba en particiones NTFS, almacenamiento SSD local…está bastante bien, a decir verdad. De hecho, el sistema podría ser incluso un poco demasiado entusiasta al tratar de ser puntual.</p>
 
@@ -2291,184 +2447,4 @@ Y también tablas.
   <li>
     <p>Y por último, nos dirigimos al repositorio original para solicitar el Pull Request a su propietario y esperamos su validación de cambios, como podemos ver <a href="https://github.com/Legnakra/prueba-pr-asir/tree/main">aquí</a>.</p>
   </li>
-</ol>]]></content><author><name></name></author><category term="python" /><summary type="html"><![CDATA[¿Qué es GitHub? Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.]]></summary></entry><entry><title type="html">Virtualización en Linux</title><link href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" rel="alternate" type="text/html" title="Virtualización en Linux" /><published>2022-11-06T13:11:32+01:00</published><updated>2022-11-06T13:11:32+01:00</updated><id>/hlc+sri/2022/11/06/virtualizaci%C3%B3n</id><content type="html" xml:base="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html"><![CDATA[<h1 id="virtualización">Virtualización</h1>
-
-<ol>
-  <li>¿Qué es la virtualización?
-    <ul>
-      <li>Nos permite ejecutar más de un sistema virtual, y múltiples sistemas operativos y aplicaciones, en un solo servidor, aumentando el rendimiento del hardware disponible e incrementando el tiempo de procesamiento de un equipo, ya que habitualmente se desaprovecha gran parte.</li>
-    </ul>
-  </li>
-  <li>¿Para qué se utiliza la virtualización?
-    <ul>
-      <li>Aislamiento e independencia de servicios y contenidos.</li>
-      <li>Laboratorio de pruebas.</li>
-      <li>Virtualización de arquitecturas de las que no se dispone.</li>
-      <li>Creación de clúster de máquinas y sistemas distribuidos.</li>
-      <li>Herramientas de aprendizajes</li>
-    </ul>
-  </li>
-  <li>Ventajas de la virtualización:
-    <ul>
-      <li>Aumenta la seguridad.</li>
-      <li>Reduce los costes.</li>
-      <li>Mayor aprovechamiento de los recursos.</li>
-      <li>Migración en vivo.</li>
-      <li>Ahorro energético.</li>
-    </ul>
-  </li>
-  <li>Desventajas de la virtualización:
-    <ul>
-      <li>Rendimento.</li>
-      <li>Muchos sistemas dependen de un solo equipo.</li>
-    </ul>
-  </li>
-  <li>Conceptos de virtualización
-    <ul>
-      <li>HOST: Es el equipo que ejecuta el sistema operativo y las aplicaciones.</li>
-      <li>GUEST: Es el sistema operativo virtualizado.</li>
-      <li>Hypervisor: Es el software que permite la virtualización.</li>
-    </ul>
-  </li>
-  <li>Tipos de virtualización
-    <ul>
-      <li>Emulación: imita la arquitectura de un sistema al completo. Rendimiento bajo. Ejemplo: QEMU.</li>
-    </ul>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Virtualización de hardware: simula un hardware suficiente para permitir que un sistema operativo se ejecute de forma aislada. Rendimiento medio. Hipervisor de tipo 1. Ejemplo: VMware.</p>
-  </li>
-  <li>
-    <p>Virtualización completa: El hipervisor simula un hardware suficiente para permitir que un sistema operativo no adaptado se ejecute de forma aislada. HyperVisor de tipo 2. Ejemplo: VirtualBox.</p>
-  </li>
-  <li>
-    <p>Virtualización parcial: El hipervisor ofrece un interfaz especial para acceder a los recursos. Ejemplo: Xen.</p>
-  </li>
-  <li>
-    <p>Virtualización ligera: también llamada virtualización basada en contenedores. Sobre el núcleo del sistema operativo se ejecuta una capa de virtualización que permite que existan múltiples instancias aisladas de espacios de usuario (contenedor). Ejemplo: Docker.</p>
-    <ul>
-      <li>Tipos:
-        <ul>
-          <li>Contenedores de Sistemas: El uso que se hace de ellos es muy similar al que hacemos sobre una máquina virtual: se accede a ellos (normalmente por ssh), se instalan servicios, se actualizan, ejecutan un conjunto de procesos, . . . Ejemplo: LXC(Linux Container).</li>
-          <li>Contenedores de Aplicación: Se suelen usar para el despliegue de aplicaciones web Ejemplo: Docker, Podman, . . .</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<ol>
-  <li>¿Qué es un QEMU?
-    <ul>
-      <li>Es un emulador genérico y de código abierto de máquinas virtuales, permitiendo ejecutar sistemas operativos de una determinada arquitectura en una máquina con otra arquitectura distinta.</li>
-    </ul>
-  </li>
-  <li>¿Que es KVM?
-    <ul>
-      <li>Es un hipervisor de tipo 1 que permite la virtualización de hardware completo. Es un módulo del núcleo de Linux que que contienen las extensiones de virtualización Intel VT o AMD-V.</li>
-    </ul>
-  </li>
-  <li>¿Qué es un Libvirt?
-    <ul>
-      <li>Es una biblioteca de software que proporciona una API para la gestión de máquinas virtuales, redes, almacenamiento, etc. Es una capa de abstracción que permite la gestión de máquinas virtuales independientemente del hipervisor que se utilice.</li>
-    </ul>
-  </li>
-  <li>Mecanismos de conexión a Libvirto
-    <ul>
-      <li>Local no provolegiado: Se conecta a través de un socket Unix. <em>qemu:///session</em></li>
-      <li>Remoto: Se conecta a través de un socket Unix. <em>qemu+ssh://user@host/system</em></li>
-      <li>Acceso local privilegiado: Se acceden a las máquinas virtuales del sistema. <em>qemu:///session</em></li>
-    </ul>
-  </li>
-  <li>Aplicaciones para usar Libvirt
-    <ul>
-      <li>virsh: Interfaz de línea de comandos. <em>virsh -c qemu:///session</em></li>
-      <li>virt-manager: Es una interfaz gráfica para la gestión de máquinas virtuales. <em>virt-manager -c qemu:///session</em></li>
-      <li>virtinst: Es una herramienta para la creación de máquinas virtuales. <em>virt-install -c qemu:///session</em></li>
-      <li>virt-viewer: Es una herramienta para la gestión de máquinas virtuales. <em>virt-viewer -c qemu:///session</em></li>
-      <li>gnome-boxes: Es una herramienta para la gestión de máquinas virtuales. <em>gnome-boxes -c qemu:///session</em></li>
-    </ul>
-  </li>
-  <li>¿Qué es LXC?
-    <ul>
-      <li>Es un sistema de contenedores de Linux que permite la creación y gestión de contenedores de Linux. Es un sistema de virtualización ligera que permite la creación de contenedores de Linux.</li>
-    </ul>
-  </li>
-  <li>¿Qué componentes tiene LXC?
-    <ul>
-      <li>Grupos de control de cgroups: Es un subsistema del núcleo de Linux que permite la gestión de recursos de un grupo de procesos.</li>
-      <li>Espacio de nombres namespaces que proporcionan un punto de vista diferente a un proceso (interfaces de red, procesos, usuarios, etc.).</li>
-    </ul>
-  </li>
-  <li>¿A qué pertenecen los contenedores de LXC?
-    <ul>
-      <li>A los contenedores de sistemas. Su gestión y ciclo de vida es similar al de una máquina virtual tradicional. Está mantenido por Canonical y
-la página oficial es linuxcontainers.org.</li>
-    </ul>
-  </li>
-  <li>¿Qué es LXD?
-    <ul>
-      <li>Es una herramienta de gestión de los contenedores y máquinas virtuales del sistema operativo Linux, desarrollada por Canonical.</li>
-    </ul>
-  </li>
-</ol>
-
-<h2 id="comandos">COMANDOS</h2>
-
-<ol>
-  <li>Comandos de virsh
-    <ul>
-      <li>virsh list: Lista las máquinas virtuales.</li>
-      <li>virsh list –all: Lista todas las máquinas virtuales.</li>
-      <li>virsh start <nombre>: Inicia una máquina virtual.</nombre></li>
-      <li>virsh shutdown <nombre>: Apaga una máquina virtual.</nombre></li>
-      <li>virsh destroy <nombre>: Apaga una máquina virtual.</nombre></li>
-      <li>virsh undefine <nombre>: Elimina una máquina virtual.</nombre></li>
-      <li>virsh define <nombre>: Crea una máquina virtual.</nombre></li>
-      <li>virsh edit <nombre>: Edita una máquina virtual.</nombre></li>
-      <li>virsh domifaddr <nombre>: Muestra la dirección IP de una máquina virtual.</nombre></li>
-      <li>virsh domiflist <nombre>: Muestra las interfaces de red de una máquina virtual.</nombre></li>
-      <li>virsh dominfo <nombre>: Muestra información de una máquina virtual.</nombre></li>
-      <li>virsh domxml <nombre>: Muestra el XML de una máquina virtual.</nombre></li>
-      <li>virsh dumpxml <nombre>: Muestra el XML de una máquina virtual.</nombre></li>
-      <li>virsh net-list: Lista las redes virtuales.</li>
-      <li>virsh net-start <nombre>: Inicia una red virtual.</nombre></li>
-      <li>virsh net-destroy <nombre>: Apaga una red virtual.</nombre></li>
-      <li>virsh net-undefine <nombre>: Elimina una red virtual.</nombre></li>
-      <li>virsh net-define <nombre>: Crea una red virtual.</nombre></li>
-      <li>virsh net-edit <nombre>: Edita una red virtual.</nombre></li>
-      <li>virsh net-dumpxml <nombre>: Muestra el XML de una red virtual.</nombre></li>
-      <li>virsh net-info <nombre>: Muestra información de una red virtual.</nombre></li>
-      <li>virsh net-autostart <nombre>: Inicia una red virtual al arrancar el sistema.</nombre></li>
-      <li>virsh net-autostart –disable <nombre>: No inicia una red virtual al arrancar el sistema.</nombre></li>
-    </ul>
-  </li>
-  <li>Comandos de virt-manager
-    <ul>
-      <li>virt-manager: Inicia la interfaz gráfica de gestión de máquinas virtuales.</li>
-      <li>virt-install: Crea una máquina virtual.</li>
-      <li>virt-viewer: Gestiona una máquina virtual.</li>
-    </ul>
-  </li>
-  <li>Comandos de LXC
-    <ul>
-      <li>lxc-list: Lista los contenedores.</li>
-      <li>lxc-start: Inicia un contenedor.</li>
-      <li>lxc-stop: Apaga un contenedor.</li>
-      <li>lxc-destroy: Elimina un contenedor.</li>
-      <li>lxc-create: Crea un contenedor.</li>
-      <li>lxc-attach: Accede a un contenedor.</li>
-      <li>lxc-console: Accede a la consola de un contenedor.</li>
-      <li>lxc-info: Muestra información de un contenedor.</li>
-    </ul>
-  </li>
-  <li>Comandos virt
-    <ul>
-      <li>virt-clone: Clona una máquina virtual.</li>
-      <li>virt-install: Crea una máquina virtual.</li>
-    </ul>
-  </li>
-</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Virtualización]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="python" /><summary type="html"><![CDATA[¿Qué es GitHub? Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.]]></summary></entry></feed>
