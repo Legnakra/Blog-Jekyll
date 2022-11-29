@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-28T22:37:32+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:40:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1024,7 +1024,340 @@ server <span class="o">{</span>
 
 <h2 id="instalación-de-cliente-nextcloud-en-otro-cliente">Instalación de cliente Nextcloud en otro cliente</h2>
 
-<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/11/17/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/escenario</id><content type="html" xml:base="/hlc+sri/2022/11/17/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="iaw" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Cifrado asimétrico con gpg y openssl</title><link href="/hlc+sri/2022/11/17/cripto.html" rel="alternate" type="text/html" title="Cifrado asimétrico con gpg y openssl" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/cripto</id><content type="html" xml:base="/hlc+sri/2022/11/17/cripto.html"><![CDATA[<h2 id="tarea-1-generación-de-claves">Tarea 1: Generación de claves</h2>
+
+<ol>
+  <li>Genera un par de claves (pública y privada). ¿En que directorio se guarda las claves de un usuario?
+    <ul>
+      <li>Al generar las claves nos pedirá:
+        <ul>
+          <li>Nombre.</li>
+          <li>Apellidos.</li>
+          <li>Correo electrónico.</li>
+        </ul>
+      </li>
+      <li>El comando con el que generaremos la clave es:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--gen-key</span>
+</code></pre></div>        </div>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  gpg <span class="o">(</span>GnuPG<span class="o">)</span> 2.2.27<span class="p">;</span> Copyright <span class="o">(</span>C<span class="o">)</span> 2021 Free Software Foundation, Inc.
+  This is free software: you are free to change and redistribute it.
+  There is NO WARRANTY, to the extent permitted by law.
+
+  Nota: Usa <span class="s2">"gpg --full-generate-key"</span> para el diálogo completo de generación de clave.
+
+  GnuPG debe construir un ID de usuario para identificar su clave.
+
+  Nombre y apellidos: Maria Jesus Alloza
+  Dirección de correo electrónico: mariajesus.alloza@outlook.es
+  Ha seleccionado este ID de usuario:
+      <span class="s2">"Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;"</span>
+
+  ¿Cambia <span class="o">(</span>N<span class="o">)</span>ombre, <span class="o">(</span>D<span class="o">)</span>irección o <span class="o">(</span>V<span class="o">)</span>ale/<span class="o">(</span>S<span class="o">)</span>alir? V
+  Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+  alguna otra tarea <span class="o">(</span>trabajar en otra ventana/consola, mover el ratón, usar
+  la red y los discos<span class="o">)</span> durante la generación de números primos. Esto da al
+  generador de números aleatorios mayor oportunidad de recoger suficiente
+  entropía.
+  Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+  alguna otra tarea <span class="o">(</span>trabajar en otra ventana/consola, mover el ratón, usar
+  la red y los discos<span class="o">)</span> durante la generación de números primos. Esto da al
+  generador de números aleatorios mayor oportunidad de recoger suficiente
+  entropía.
+  gpg: clave 75F8A403F54FF4B4 marcada como de confianza absoluta
+  gpg: creado el directorio <span class="s1">'/home/maria/.gnupg/openpgp-revocs.d'</span>
+  gpg: certificado de revocación guardado como <span class="s1">'/home/maria/.gnupg/openpgp-revocs.d/D7D76217F9DA9045296C1EBC75F8A403F54FF4B4.rev'</span>
+  claves pública y secreta creadas y firmadas.
+
+  pub   rsa3072 2022-11-29 <span class="o">[</span>SC] <span class="o">[</span>caduca: 2024-11-28]
+        D7D76217F9DA9045296C1EBC75F8A403F54FF4B4
+  uid                      Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;
+  sub   rsa3072 2022-11-29 <span class="o">[</span>E] <span class="o">[</span>caduca: 2024-11-28]
+
+</code></pre></div>        </div>
+      </li>
+      <li>El directorio donde se guardan las claves es:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ~/.gnupg
+  maria@maria-debian:~/.gnupg<span class="nv">$ </span><span class="nb">ls
+  </span>openpgp-revocs.d  private-keys-v1.d  pubring.kbx  pubring.kbx~  trustdb.gpg
+  maria@maria-debian:~/.gnupg<span class="nv">$ </span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Lista las claves públicas que tienes en tu almacén de claves. Explica los distintos datos que nos muestra. ¿Cómo deberías haber generado las claves para indicar, por ejemplo, que tenga un 1 mes de validez?
+    <ul>
+      <li>El comando que vamos a usar para listar las claves públicas es:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--list-keys</span>
+</code></pre></div>        </div>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@maria-debian:~/.gnupg<span class="nv">$ </span>gpg <span class="nt">--list-keys</span>
+  /home/maria/.gnupg/pubring.kbx
+  <span class="nt">------------------------------</span>
+  pub   rsa3072 2022-11-29 <span class="o">[</span>SC] <span class="o">[</span>caduca: 2024-11-28]
+  D7D76217F9DA9045296C1EBC75F8A403F54FF4B4
+  uid        <span class="o">[</span>  absoluta <span class="o">]</span> Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;
+  sub   rsa3072 2022-11-29 <span class="o">[</span>E] <span class="o">[</span>caduca: 2024-11-28]
+
+  maria@maria-debian:~/.gnupg<span class="nv">$ </span>
+</code></pre></div>        </div>
+      </li>
+      <li>Los datos que nos muestra son:
+        <ul>
+          <li><strong>pub</strong>: Indica que es una clave pública.</li>
+          <li><strong>uid</strong>: Identificador único de la clave.</li>
+          <li><strong>sub</strong>: Indica que es una clave pública secundaria.</li>
+        </ul>
+      </li>
+      <li>Para genetar las claves con un mes de validez, deberíamos haber usado el comando:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--full-gen-key</span>
+</code></pre></div>        </div>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@maria-debian:~/.gnupg<span class="nv">$ </span>gpg <span class="nt">--full-generate-key</span>
+  gpg <span class="o">(</span>GnuPG<span class="o">)</span> 2.2.27<span class="p">;</span> Copyright <span class="o">(</span>C<span class="o">)</span> 2021 Free Software Foundation, Inc.
+  This is free software: you are free to change and redistribute it.
+  There is NO WARRANTY, to the extent permitted by law.
+
+  Por favor seleccione tipo de clave deseado:
+     <span class="o">(</span>1<span class="o">)</span> RSA y RSA <span class="o">(</span>por defecto<span class="o">)</span>
+     <span class="o">(</span>2<span class="o">)</span> DSA y ElGamal
+     <span class="o">(</span>3<span class="o">)</span> DSA <span class="o">(</span>sólo firmar<span class="o">)</span>
+     <span class="o">(</span>4<span class="o">)</span> RSA <span class="o">(</span>sólo firmar<span class="o">)</span>
+    <span class="o">(</span>14<span class="o">)</span> Existing key from card
+  Su elección:
+  las claves RSA pueden tener entre 1024 y 4096 bits de longitud.
+  ¿De qué tamaño quiere la clave? <span class="o">(</span>3072<span class="o">)</span> 
+  El tamaño requerido es de 3072 bits
+  Por favor, especifique el período de validez de la clave.
+           0 <span class="o">=</span> la clave nunca caduca
+        &lt;n&gt;  <span class="o">=</span> la clave caduca en n días
+        &lt;n&gt;w <span class="o">=</span> la clave caduca en n semanas
+        &lt;n&gt;m <span class="o">=</span> la clave caduca en n meses
+        &lt;n&gt;y <span class="o">=</span> la clave caduca en n años
+  ¿Validez de la clave <span class="o">(</span>0<span class="o">)</span>? 1m
+  La clave caduca jue 29 dic 2022 10:49:56 CET
+  ¿Es correcto? <span class="o">(</span>s/n<span class="o">)</span> s
+
+  GnuPG debe construir un ID de usuario para identificar su clave.
+
+  Nombre y apellidos: Maria Jesus Alloza
+  Dirección de correo electrónico: mariajesus.alloza@outlook.es
+  Comentario: 
+  Ha seleccionado este ID de usuario:
+      <span class="s2">"Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;"</span>
+
+  ¿Cambia <span class="o">(</span>N<span class="o">)</span>ombre, <span class="o">(</span>C<span class="o">)</span>omentario, <span class="o">(</span>D<span class="o">)</span>irección o <span class="o">(</span>V<span class="o">)</span>ale/<span class="o">(</span>S<span class="o">)</span>alir? v
+  Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+  alguna otra tarea <span class="o">(</span>trabajar en otra ventana/consola, mover el ratón, usar
+  la red y los discos<span class="o">)</span> durante la generación de números primos. Esto da al
+  generador de números aleatorios mayor oportunidad de recoger suficiente
+  entropía.
+  Es necesario generar muchos bytes aleatorios. Es una buena idea realizar
+  alguna otra tarea <span class="o">(</span>trabajar en otra ventana/consola, mover el ratón, usar
+  la red y los discos<span class="o">)</span> durante la generación de números primos. Esto da al
+  generador de números aleatorios mayor oportunidad de recoger suficiente
+  entropía.
+  gpg: clave CA1C968B84D4B041 marcada como de confianza absoluta
+  gpg: certificado de revocación guardado como <span class="s1">'/home/maria/.gnupg/openpgp-revocs.d/57F9092579AC46D5B93972F7CA1C968B84D4B041.rev'</span>
+  claves pública y secreta creadas y firmadas.
+
+  pub   rsa3072 2022-11-29 <span class="o">[</span>SC] <span class="o">[</span>caduca: 2022-12-29]
+        57F9092579AC46D5B93972F7CA1C968B84D4B041
+  uid                      Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;
+  sub   rsa3072 2022-11-29 <span class="o">[</span>E] <span class="o">[</span>caduca: 2022-12-29]
+
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Lista las claves privadas de tu almacén de claves.</p>
+
+    <ul>
+      <li>
+        <p>Si listamos las claves, podremos ver la fecha de caducidad que tiene:</p>
+
+        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ```bash
+  maria@maria-debian:~/.gnupg$ gpg --list-key
+  /home/maria/.gnupg/pubring.kbx
+  ------------------------------
+  pub   rsa3072 2022-11-29 [SC] [caduca: 2024-11-28]
+        D7D76217F9DA9045296C1EBC75F8A403F54FF4B4
+  uid        [  absoluta ] Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;
+  sub   rsa3072 2022-11-29 [E] [caduca: 2024-11-28]
+
+  pub   rsa3072 2022-11-29 [SC] [caduca: 2022-12-29]
+        57F9092579AC46D5B93972F7CA1C968B84D4B041
+  uid        [  absoluta ] Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;
+  sub   rsa3072 2022-11-29 [E] [caduca: 2022-12-29]
+
+  ```
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="tarea-2-importar--exportar-clave-pública">Tarea 2: Importar / exportar clave pública</h2>
+
+<ol>
+  <li>
+    <p>Exporta tu clave pública en formato ASCII y guardalo en un archivo nombre_apellido.asc y envíalo al compañero con el que vas a hacer esta práctica.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--armor</span> <span class="nt">--export</span> <span class="nt">-a</span> <span class="s2">"Maria Jesus Alloza"</span> <span class="o">&gt;</span> mjar.asc
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Importa las claves públicas recibidas de vuestro compañero.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--import</span> jjas.asc
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Comprueba que las claves se han incluido correctamente en vuestro keyring.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--list-key</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="tarea-3-cifrado-asimétrico-con-claves-públicas">Tarea 3: Cifrado asimétrico con claves públicas</h2>
+
+<ol>
+  <li>
+    <p>Cifraremos un archivo cualquiera y lo remitiremos por email a uno de nuestros compañeros que nos proporcionó su clave pública.</p>
+
+    <ul>
+      <li>Creamos el fichero que vamos a cifrar:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian nano cifrar-mjar.txt
+  maria@debian <span class="nb">cat </span>cifrar-mjar.txt
+</code></pre></div>        </div>
+      </li>
+      <li>Ciframos el fichero:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--encrypt</span> <span class="nt">--recipient</span> githubemail1asir@gmail.com cifrar-mjar.txt
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Nuestro compañero, a su vez, nos remitirá un archivo cifrado para que nosotros lo descifremos.</p>
+
+    <ul>
+      <li>Nos descargamos el fichero ya cifrado de nuestro compañero y procedemos a descifrarlo:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@maria-debian:~/Descargas<span class="nv">$ </span>gpg <span class="nt">--output</span> descifrado.txt <span class="nt">-d</span> criptoarchivo.txt.gpg
+  gpg: cifrado con clave de 3072 bits RSA, ID AB63968A54C787E9, creada el 2022-11-29
+      <span class="s2">"Maria Jesus Alloza &lt;mariajesus.alloza@outlook.es&gt;"</span>
+  maria@maria-debian:~/Descargas<span class="nv">$ </span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Tanto nosotros como nuestro compañero comprobaremos que hemos podido descifrar los mensajes recibidos respectivamente.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian <span class="nb">cat </span>descifrado.txt
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Por último, enviaremos el documento cifrado a alguien que no estaba en la lista de destinatarios y comprobaremos que este usuario no podrá descifrar este archivo.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--encrypt</span> <span class="nt">--recipient</span> &lt;correo jjas&gt; cifrar.txt
+  maria@debian gpg <span class="nt">--output</span> descifrado.txt <span class="nt">-d</span> cifrar-mjar.gpg
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Para terminar, indica los comandos necesarios para borrar las claves públicas y privadas que posees.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> maria@debian gpg <span class="nt">--delete-key</span> <span class="s2">"maria"</span>
+ Se ha eliminado la clave pública <span class="k">*****************</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="tarea-4-exportar-clave-a-un-servidor-público-de-claves-pgp">Tarea 4: Exportar clave a un servidor público de claves PGP</h2>
+
+<ol>
+  <li>
+    <p>Genera la clave de revocación de tu clave pública para utilizarla en caso de que haya problemas.</p>
+
+    <ul>
+      <li>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--gen-revoke</span> maria
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Exporta tu clave pública al servidor pgp.rediris.es</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+  <li>
+    <p>Borra la clave pública de alguno de tus compañeros de clase e impórtala ahora del servidor público de rediris.</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="tarea-5-cifrado-asimétrico-con-openssl">Tarea 5: Cifrado asimétrico con openssl</h2>
+
+<ol>
+  <li>
+    <p>Genera un par de claves (pública y privada).</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+  <li>
+    <p>Envía tu clave pública a un compañero.</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+  <li>
+    <p>Utilizando la clave pública cifra un fichero de texto y envíalo a tu compañero.</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+  <li>
+    <p>Tu compañero te ha mandado un fichero cifrado, muestra el proceso para el descifrado.</p>
+
+    <ul>
+      <li></li>
+    </ul>
+  </li>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Tarea 1: Generación de claves]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/11/17/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/escenario</id><content type="html" xml:base="/hlc+sri/2022/11/17/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 <p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
 
 <p>Para nombrar las máquinas se va a utilizar <strong>alfa, bravo, charlie y delta</strong>, que son las primeras letras de un alfabeto que nació antes de la Primera Guerra Mundial en respuesta a los avances en la radio bidireccional compatible con la voz, para mejorar la comunicación en circuitos telefónicos de baja calidad y de larga distancia.</p>
@@ -1149,12 +1482,63 @@ openstack server add floating ip alfa
 <ol>
   <li>
     <p>Crea en <strong>máquina1 (alfa)</strong> un linux bridge llamado <code class="language-plaintext highlighter-rouge">br-intra</code> y asigna una dirección IP estática <code class="language-plaintext highlighter-rouge">192.168.0.1</code>. Esta será la IP de <strong>máquina1</strong> (alfa) conectada a este switch virtual y será la puerta de enlace de los contenedores.</p>
+
+    <ul>
+      <li>definimos el archivo br-intra.xml
+ ```xml</li>
+    </ul>
+    <network>
+ <name>br-intra</name>
+ <bridge name="br-intra" />
+ <forward />
+ <ip address="192.168.0.1" netmask="255.255.255.0">
+ </ip>
+ </network>
+    <p>```
+virsh net-define br-intra.xml
+virsh net-start br-intra
+virsh net-autostart br-intra</p>
   </li>
   <li>
     <p>Instala LXC y crea dos contenedores con la distribución <strong>Ubuntu 20.04</strong>. Estos contenedores serán la <strong>máquina3</strong> (charlie) y la <strong>máquina4</strong> (delta).</p>
+
+    <ul>
+      <li>sudo apt install lxc</li>
+      <li>creamos los contenedores
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> lxc-create <span class="nt">-n</span> charlie <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
+ lxc-create <span class="nt">-n</span> delta <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
     <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
+
+    <p>```bash
+         auto lo
+     iface lo inet loopback
+         dns-nameservers 192.168.202.2</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> auto ens3
+ iface ens3 inet dhcp
+
+ mtu 1450
+ post-up ip r del default &amp;&amp; ip r add default via 10.0.0.1
+ post-up iptables -t nat -A POSTROUTING -s 172.16.0.0/16 -o ens3 -j MASQUERADE
+ post-up iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o ens3 -j MASQUERADE
+
+ auto br-intra
+ iface br-intra inet static
+
+ mtu 1450
+ address 192.168.0.1
+ network 192.168.0.0
+ netmask 255.255.255.0
+ broadcast 192.168.0.255
+
+ bridge_ports br-intra
+ ```
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Conecta los contenedores al bridge <code class="language-plaintext highlighter-rouge">br-intra</code> y configúralo de forma estática con las siguientes direcciones: <strong>máquina3</strong> (charlie) la <code class="language-plaintext highlighter-rouge">192.168.0.2</code> y <strong>máquina4</strong> (delta) la <code class="language-plaintext highlighter-rouge">192.168.0.3</code>.</p>
@@ -1162,11 +1546,12 @@ openstack server add floating ip alfa
   <li>
     <p>Para que la red de OpenStack funcione de forma adecuada las imágenes que usamos tienen configurado la mtu (Unidad máxima de transferencia) a 1450 bytes. Tenemos que adecuar los contenedores a este tamaño de trama. Para ello introduce en la configuración de los contenedores la línea: <code class="language-plaintext highlighter-rouge">lxc.net.0.mtu = 1450</code>.</p>
   </li>
-  <li>
-    <p>Configura los contenedores para que se auto inicien al reiniciar la instancia.</p>
+  <li>Configura los contenedores para que se auto inicien al reiniciar la instancia.
+    <ul>
+      <li>configuramos los contenedores para que se auto inicien al reiniciar la instancia</li>
+    </ul>
   </li>
-  <li>
-    <p>Los contenedores tendrán características parecidas a las instancias anteriormente:</p>
+  <li>Los contenedores tendrán características parecidas a las instancias anteriormente:
     <ul>
       <li>Debes actualizar los paquetes de la distribución instalada.</li>
       <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto configura de manera adecuda el hostname y el FQDN.</li>
@@ -2294,151 +2679,4 @@ create user mapping <span class="k">for </span>maria2 server oracle options <spa
 
 <p>Como podemos ver en la siguiente imagen, podemos acceder a las tablas de la base de datos de PostgreSQL desde Oracle.</p>
 
-<p><img src="/assets/images/interconexion/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry><entry><title type="html">Introducción a GitHub</title><link href="/python/2022/11/06/github.html" rel="alternate" type="text/html" title="Introducción a GitHub" /><published>2022-11-06T16:45:16+01:00</published><updated>2022-11-06T16:45:16+01:00</updated><id>/python/2022/11/06/github</id><content type="html" xml:base="/python/2022/11/06/github.html"><![CDATA[<h2 id="qué-es-github">¿Qué es GitHub?</h2>
-<p>Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.</p>
-
-<h2 id="introducción-a-github">Introducción a GitHub</h2>
-
-<ol>
-  <li>
-    <p>Creamos un repositorio en GitHub</p>
-
-    <p><img src="/assets/images/github/1.png" alt="1" /></p>
-
-    <p><img src="/assets/images/github/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Clonamos el repositorio en nuestro ordenador</p>
-
-    <p><img src="/assets/images/github/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Creamos un archivo en nuestro ordenador</p>
-
-    <p><img src="/assets/images/github/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Subimos el archivo al repositorio</p>
-
-    <p><img src="/assets/images/github/5.png" alt="5" /></p>
-
-    <p><img src="/assets/images/github/6.png" alt="6" /></p>
-  </li>
-</ol>
-
-<h2 id="introducción-a-markdown">Introducción a Markdown</h2>
-
-<p>Markdown es un lenguaje de texto que nos permite escribir de forma sencilla y rápida, y que se convierte en HTML. Es un lenguaje muy utilizado en la creación de blogs, ya que permite escribir de forma rápida y sencilla, y que se convierte en HTML.</p>
-
-<pre>
-Aprender la *sintaxis básica* del **lenguaje de marcas** `Markdown` para estructura la información en nuestro documentos.
-
-Para ello, hemos creado este fichero de la siguiente manera:
-`touch markdown.md`
-`nano markdown.md`
-
-Con este lenguaje de marcas podemos usar:
-* Titulo principal.
-* Subtítulo.
-* Párrafos.
-* Listas (ordenadas y desordenadas) como esta y la siguiente.
-
-1. Título.
-2. SUbtítulo.
-3. Párrafos.
-4. Listas.
-
-También podemos incluir un enlace, a una página externa [Debian](https://www.debian.org/index.es.html) o a otro fichero Markdown [aqui](README.md)
-
-Podemos visualizar una imagen
-
-![Icono Markdown](markdown.png)
-
-Y también tablas.
-| Elemento | Sintaxis |
-| ----------- | ----------- |
-| Título | #h1 |
-| Código | `code` |
-| Enlace | \[titulo]\(enlace) |
-</pre>
-
-<p>En mi <a href="https://github.com/Legnakra/Prueba-MariaJesus/blob/main/markdown.md">repositorio</a> podéis encontrar el resultado de este fichero.</p>
-
-<h2 id="ramas-y-uniones">Ramas y uniones</h2>
-
-<p>Las ramas son una forma de trabajar en paralelo en un proyecto, y que nos permite trabajar en diferentes versiones de un mismo proyecto. Las ramas se crean a partir de la rama principal, y se pueden fusionar con la rama principal cuando se considera que la rama ya está lista para ser integrada en el proyecto.</p>
-
-<p>Para crear una rama, podemos hacerlo desde la interfaz de GitHub, o desde la terminal. En mi caso, he creado una rama desde la terminal, y he fusionado la rama con la rama principal.</p>
-
-<ol>
-  <li>
-    <p>Creamos una rama que se llame primera en tu local, y ejecuta la instrucción necesaria para comprobar que se ha creado.</p>
-
-    <p><img src="/assets/images/github/7.png" alt="7" /></p>
-  </li>
-  <li>Creamos un nuevo fichero en esta rama y fusiónalo con la principal. ¿Se ha producido conflicto?
-    <ul>
-      <li>Si, dado que las ramas independientes han editado el mismo fichero, se han realizado una serie de commits que github no puede decidir cuál es la versión que debe elegir y nos alerta de que debemos resolverlo.</li>
-    </ul>
-  </li>
-  <li>
-    <p>Borramos la rama primera.</p>
-
-    <p><img src="/assets/images/github/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Creamos una rama que se llame segunda, y modifica un fichero en ella para producir un conflicto al unirlo a la rama principal.</p>
-
-    <p><img src="/assets/images/github/9.png" alt="9" /></p>
-  </li>
-  <li>
-    <p>Solucionamos el conflicto que has creado en el punto anterior y sincronizamos la rama segunda en el remoto.</p>
-
-    <p><img src="/assets/images/github/10.png" alt="10" /></p>
-
-    <p><img src="/assets/images/github/11.png" alt="11" /></p>
-  </li>
-</ol>
-
-<h2 id="cómo-colaborar-en-un-proyecto-de-software-libre-qué-es-un-pull-request-pr">¿Cómo colaborar en un proyecto de software libre? ¿Qué es un Pull Request (PR)?</h2>
-
-<p>Un Pull Request es una petición de extracción que se realiza a un repositorio de GitHub, y que se utiliza para solicitar que los cambios que se han realizado en una rama sean revisados y fusionados con la rama principal. Los Pull Request se utilizan para colaborar en proyectos de software libre, y para que los desarrolladores puedan revisar los cambios que se han realizado en el código.</p>
-
-<ol>
-  <li>
-    <p>Nos dirigimos al repositorio en el que queremos hacer el PR, realizamos un fork del mismo.</p>
-
-    <p><code>
- git clone git@github.com:Legnakra/prueba-pr-asir.git
- </code></p>
-  </li>
-  <li>
-    <p>Tomamos el enlace de clonación por vía ssh y lo clonamos en nuestra máquina local. Como para este taller hemos clonado el repositorio de prueba de pr, el comando sería:</p>
-
-    <p><img src="/assets/images/github/12.png" alt="12" /></p>
-  </li>
-  <li>
-    <p>Creamos la nueva rama en la que vamos a realizar los cambios (en mi caso la he llamado maria). Una vez en ella, realizamos los cambios de la siguiente manera:</p>
-
-    <p><code>
- nano mjar.md
- git add mjar.md
- nano README.md
- git commit -am "Ficheros modificados" 
- </code></p>
-
-    <p><img src="/assets/images/github/13.png" alt="13" /></p>
-  </li>
-  <li>
-    <p>Actualizamos los cambios.</p>
-
-    <p><code>
- git push origin maria
- </code></p>
-
-    <p><img src="/assets/images/github/14.png" alt="14" /></p>
-  </li>
-  <li>
-    <p>Y por último, nos dirigimos al repositorio original para solicitar el Pull Request a su propietario y esperamos su validación de cambios, como podemos ver <a href="https://github.com/Legnakra/prueba-pr-asir/tree/main">aquí</a>.</p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="python" /><summary type="html"><![CDATA[¿Qué es GitHub? Github es un portal creado para alojar el código de las aplicaciones de cualquier desarrollador, y que fue comprada por Microsoft en junio del 2018. La plataforma está creada para que los desarrolladores suban el código de sus aplicaciones y herramientas, y que como usuario no sólo puedas descargarte la aplicación, sino también entrar a su perfil para leer sobre ella o colaborar con su desarrollo.]]></summary></entry></feed>
+<p><img src="/assets/images/interconexion/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry></feed>
