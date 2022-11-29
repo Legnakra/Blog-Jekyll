@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:42:20+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:45:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1439,15 +1439,35 @@ openstack server add floating ip alfa
       <li>
         <p>Deshabilita la seguridad de los puertos en las dos interfaces de red para que funcione de manera adecuada el NAT.</p>
 
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port1 <span class="nt">--no-security-group</span>
-  openstack server <span class="nb">set</span> <span class="nt">--port</span> alfa:port2 <span class="nt">--no-security-group</span>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack server remove security group alfa
+  openstack remove security group default alfa-port
 </code></pre></div>        </div>
       </li>
       <li>
         <p>Configura de forma permanente la regla SNAT para que las máquinas de la Red DMZ tengan acceso a internet.</p>
 
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack server add floating ip alfa
-  <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT 
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      auto lo
+  iface lo inet loopback
+      dns-nameservers 192.168.202.2
+
+  auto ens3
+  iface ens3 inet dhcp
+
+  mtu 1450
+  post-up ip r del default <span class="o">&amp;&amp;</span> ip r add default via 10.0.0.1
+  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 172.16.0.0/16 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+
+  auto br-intra
+  iface br-intra inet static
+
+  mtu 1450
+  address 192.168.0.1
+  network 192.168.0.0
+  netmask 255.255.255.0
+  broadcast 192.168.0.255
+
+  bridge_ports br-intra
 </code></pre></div>        </div>
       </li>
     </ul>
@@ -1513,32 +1533,6 @@ virsh net-autostart br-intra</p>
   </li>
   <li>
     <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
-
-    <p>```bash
-         auto lo
-     iface lo inet loopback
-         dns-nameservers 192.168.202.2</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> auto ens3
- iface ens3 inet dhcp
-
- mtu 1450
- post-up ip r del default &amp;&amp; ip r add default via 10.0.0.1
- post-up iptables -t nat -A POSTROUTING -s 172.16.0.0/16 -o ens3 -j MASQUERADE
- post-up iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o ens3 -j MASQUERADE
-
- auto br-intra
- iface br-intra inet static
-
- mtu 1450
- address 192.168.0.1
- network 192.168.0.0
- netmask 255.255.255.0
- broadcast 192.168.0.255
-
- bridge_ports br-intra
- ```
-</code></pre></div>    </div>
   </li>
   <li>
     <p>Conecta los contenedores al bridge <code class="language-plaintext highlighter-rouge">br-intra</code> y configúralo de forma estática con las siguientes direcciones: <strong>máquina3</strong> (charlie) la <code class="language-plaintext highlighter-rouge">192.168.0.2</code> y <strong>máquina4</strong> (delta) la <code class="language-plaintext highlighter-rouge">192.168.0.3</code>.</p>
