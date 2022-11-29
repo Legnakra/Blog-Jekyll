@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:40:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:42:20+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1484,18 +1484,18 @@ openstack server add floating ip alfa
     <p>Crea en <strong>máquina1 (alfa)</strong> un linux bridge llamado <code class="language-plaintext highlighter-rouge">br-intra</code> y asigna una dirección IP estática <code class="language-plaintext highlighter-rouge">192.168.0.1</code>. Esta será la IP de <strong>máquina1</strong> (alfa) conectada a este switch virtual y será la puerta de enlace de los contenedores.</p>
 
     <ul>
-      <li>definimos el archivo br-intra.xml
- ```xml</li>
+      <li>definimos el archivo br-intra.xml</li>
     </ul>
-    <network>
- <name>br-intra</name>
- <bridge name="br-intra" />
- <forward />
- <ip address="192.168.0.1" netmask="255.255.255.0">
- </ip>
- </network>
-    <p>```
-virsh net-define br-intra.xml
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;network&gt;</span>
+ <span class="nt">&lt;name&gt;</span>br-intra<span class="nt">&lt;/name&gt;</span>
+ <span class="nt">&lt;bridge</span> <span class="na">name=</span><span class="s">'br-intra'</span><span class="nt">/&gt;</span>
+ <span class="nt">&lt;forward/&gt;</span>
+ <span class="nt">&lt;ip</span> <span class="na">address=</span><span class="s">'192.168.0.1'</span> <span class="na">netmask=</span><span class="s">'255.255.255.0'</span><span class="nt">&gt;</span>
+ <span class="nt">&lt;/ip&gt;</span>
+ <span class="nt">&lt;/network&gt;</span>
+</code></pre></div>    </div>
+    <p>virsh net-define br-intra.xml
 virsh net-start br-intra
 virsh net-autostart br-intra</p>
   </li>
@@ -1504,12 +1504,12 @@ virsh net-autostart br-intra</p>
 
     <ul>
       <li>sudo apt install lxc</li>
-      <li>creamos los contenedores
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> lxc-create <span class="nt">-n</span> charlie <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
- lxc-create <span class="nt">-n</span> delta <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
-</code></pre></div>        </div>
-      </li>
+      <li>creamos los contenedores</li>
     </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> lxc-create <span class="nt">-n</span> charlie <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
+ lxc-create <span class="nt">-n</span> delta <span class="nt">-t</span> ubuntu <span class="nt">--</span> <span class="nt">-r</span> focal
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
