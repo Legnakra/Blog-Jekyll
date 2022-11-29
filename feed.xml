@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:45:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:50:02+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1407,26 +1407,54 @@ server <span class="o">{</span>
   <li>Creación de la <strong>máquina1</strong> (alfa):
     <ul>
       <li>Crea una instancia sobre un volumen de 30Gb, usando una imagen de <strong>Debian 11 Bullseye</strong>. Elige el sabor <code class="language-plaintext highlighter-rouge">vol.medium</code>. Y configuralá con <code class="language-plaintext highlighter-rouge">cloud-init</code> como se ha indicado anteriormente.</li>
-      <li>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</li>
+      <li>
+        <p>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
+  <span class="nt">----</span>
+  openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
+      <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
+      <span class="nt">--security-group</span> default <span class="se">\</span>
+      <span class="nt">--key-name</span> pass <span class="se">\</span>
+      <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
+      <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
+      alfa
+  <span class="nt">----</span>
+  openstack floating ip create ext-net
+  openstack server add floating ip alfa 
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Fichero config-alfa.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#cloud-config</span>
+  <span class="na">package_update</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">package_upgrade</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">preserve_hostname</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">fqdn</span><span class="pi">:</span> <span class="s">alfa.mariajesus.gonzalonazareno.org</span>
+  <span class="na">hostname</span><span class="pi">:</span> <span class="s">alfa</span>
+  <span class="c1"># Crear un usuario y añadir clave pública ssh</span>
+  <span class="na">users</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">profesor</span>
+      <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> 
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa AAAA************** jose@debian</span>
+        <span class="s">ssh-rsa AAAA************** rafa@eco</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">maria</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> <span class="s">debian</span>
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa *************************************************** maria@debian</span>
+  <span class="na">chpasswd</span><span class="pi">:</span>
+    <span class="na">list</span><span class="pi">:</span> <span class="pi">|</span>
+      <span class="s">root:AkfJE64jFke82</span>
+    <span class="na">expire</span><span class="pi">:</span> <span class="s">False</span>
+</code></pre></div>        </div>
+      </li>
     </ul>
   </li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
-<span class="nt">----</span>
-openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
-    <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
-    <span class="nt">--security-group</span> default <span class="se">\</span>
-    <span class="nt">--key-name</span> pass <span class="se">\</span>
-    <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
-    <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
-    alfa
-<span class="nt">----</span>
-openstack floating ip create ext-net
-openstack server add floating ip alfa 
-</code></pre></div></div>
-
-<ol>
   <li>Configuración de la máquina1 (alfa):
     <ul>
       <li>
@@ -1488,6 +1516,35 @@ openstack server add floating ip alfa
   <span class="nt">--port</span> bravo-port <span class="se">\</span>
   <span class="nt">--user-data</span> config-bravo.yaml <span class="se">\</span>
   bravo
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Fichero config-bravo.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#cloud-config</span>
+  <span class="na">package_update</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">package_upgrade</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">preserve_hostname</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">fqdn</span><span class="pi">:</span> <span class="s">alfa.mariajesus.gonzalonazareno.org</span>
+  <span class="na">hostname</span><span class="pi">:</span> <span class="s">alfa</span>
+  <span class="c1"># Crear un usuario y añadir clave pública ssh</span>
+  <span class="na">users</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">profesor</span>
+      <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> 
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa AAAA************** jose@debian</span>
+        <span class="s">ssh-rsa AAAA************** rafa@eco</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">maria</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> <span class="s">debian</span>
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa *************************************************** maria@debian</span>
+  <span class="na">chpasswd</span><span class="pi">:</span>
+    <span class="na">list</span><span class="pi">:</span> <span class="pi">|</span>
+      <span class="s">root:AkfJE64jFke82</span>
+    <span class="na">expire</span><span class="pi">:</span> <span class="s">False</span>
 </code></pre></div>        </div>
       </li>
       <li>Deshabilita la seguridad de los puertos en la interfaz de red para que funcione de manera adecuada el NAT.</li>

@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
   </p></header>
 </div>
     </div>
@@ -740,26 +740,56 @@ document.addEventListener('DOMContentLoaded', function(event) {
   <li>Creación de la <strong>máquina1</strong> (alfa):
     <ul>
       <li>Crea una instancia sobre un volumen de 30Gb, usando una imagen de <strong>Debian 11 Bullseye</strong>. Elige el sabor <code class="language-plaintext highlighter-rouge">vol.medium</code>. Y configuralá con <code class="language-plaintext highlighter-rouge">cloud-init</code> como se ha indicado anteriormente.</li>
-      <li>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</li>
+      <li>
+        <p>Está instancia estará conectada a tu red interna. Asigna a la instancia una IP flotante.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
+  <span class="nt">----</span>
+  openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
+      <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
+      <span class="nt">--security-group</span> default <span class="se">\</span>
+      <span class="nt">--key-name</span> pass <span class="se">\</span>
+      <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
+      <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
+      alfa
+  <span class="nt">----</span>
+  openstack floating ip create ext-net
+  openstack server add floating ip alfa 
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Fichero config-alfa.yaml</p>
+
+        <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="c1">#cloud-config</span>
+  <span class="na">package_update</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">package_upgrade</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">preserve_hostname</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">fqdn</span><span class="pi">:</span> <span class="s">alfa.mariajesus.gonzalonazareno.org</span>
+  <span class="na">hostname</span><span class="pi">:</span> <span class="s">alfa</span>
+  <span class="c1"># Crear un usuario y añadir clave pública ssh</span>
+  <span class="na">users</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">profesor</span>
+      <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> 
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa AAAA************** jose@debian</span>
+        <span class="s">ssh-rsa AAAA************** rafa@eco</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">maria</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> <span class="s">debian</span>
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa *************************************************** maria@debian</span>
+  <span class="na">chpasswd</span><span class="pi">:</span>
+    <span class="na">list</span><span class="pi">:</span> <span class="pi">|</span>
+      <span class="s">root:AkfJE64jFke82</span>
+    <span class="na">expire</span><span class="pi">:</span> <span class="s">False</span>
+</code></pre></div>        </div>
+      </li>
     </ul>
   </li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="nt">--size</span> 30 vol.alfa
-<span class="nt">----</span>
-openstack server create <span class="nt">--flavor</span> vol.medium <span class="se">\</span>
-    <span class="nt">--volume</span> vol.alfa <span class="se">\</span>
-    <span class="nt">--security-group</span> default <span class="se">\</span>
-    <span class="nt">--key-name</span> pass <span class="se">\</span>
-    <span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
-    <span class="nt">--user-data</span> config-alfa.yaml <span class="se">\</span>
-    alfa
-<span class="nt">----</span>
-openstack floating ip create ext-net
-openstack server add floating ip alfa 
-</code></pre></div></div>
-
-<ol>
   <li>Configuración de la máquina1 (alfa):
     <ul>
       <li>
@@ -825,6 +855,36 @@ openstack server add floating ip alfa
   <span class="nt">--port</span> bravo-port <span class="se">\</span>
   <span class="nt">--user-data</span> config-bravo.yaml <span class="se">\</span>
   bravo
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Fichero config-bravo.yaml</p>
+
+        <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="c1">#cloud-config</span>
+  <span class="na">package_update</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">package_upgrade</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">preserve_hostname</span><span class="pi">:</span> <span class="no">false</span>
+  <span class="na">fqdn</span><span class="pi">:</span> <span class="s">alfa.mariajesus.gonzalonazareno.org</span>
+  <span class="na">hostname</span><span class="pi">:</span> <span class="s">alfa</span>
+  <span class="c1"># Crear un usuario y añadir clave pública ssh</span>
+  <span class="na">users</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">profesor</span>
+      <span class="na">sudo</span><span class="pi">:</span> <span class="s">ALL=(ALL) NOPASSWD:ALL</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> 
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa AAAA************** jose@debian</span>
+        <span class="s">ssh-rsa AAAA************** rafa@eco</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">maria</span>
+      <span class="na">shell</span><span class="pi">:</span> <span class="s">/bin/bash</span>
+      <span class="na">passwd</span><span class="pi">:</span> <span class="s">debian</span>
+      <span class="na">ssh_authorized_keys</span><span class="pi">:</span>
+        <span class="s">ssh-rsa *************************************************** maria@debian</span>
+  <span class="na">chpasswd</span><span class="pi">:</span>
+    <span class="na">list</span><span class="pi">:</span> <span class="pi">|</span>
+      <span class="s">root:AkfJE64jFke82</span>
+    <span class="na">expire</span><span class="pi">:</span> <span class="s">False</span>
 </code></pre></div>        </div>
       </li>
       <li>Deshabilita la seguridad de los puertos en la interfaz de red para que funcione de manera adecuada el NAT.</li>
@@ -910,10 +970,10 @@ virsh net-autostart br-intra</p>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/sri/2022/09/29/infraestructura.html" title="Configuración de HTTPS en nuestro VPS">Infraestructura como código</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Configuración de HTTPS en nuestro VPS">Apache como proxy inverso</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Configuración de HTTPS en nuestro VPS">Instalación de nginx con PHP con vagrant y ansible</a></li>
 <li><a class="post-link" href="/asgbd/2022/11/08/interconexion.html" title="Configuración de HTTPS en nuestro VPS">Interconexiones de servidores</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/17/cripto.html" title="Configuración de HTTPS en nuestro VPS">Cifrado asimétrico con gpg y openssl </a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Configuración de HTTPS en nuestro VPS">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
+<li><a class="post-link" href="/prueba/2022/10/10/prueba.html" title="Configuración de HTTPS en nuestro VPS">Prueba: Introducción a la implantación de aplicaciones web</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
