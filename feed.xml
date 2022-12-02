@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-11-29T17:51:09+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-02T18:01:53+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -1215,8 +1215,9 @@ server <span class="o">{</span>
 
     <ul>
       <li>
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--import</span> jjas.asc
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--import</span> juan_jesus.asc
 </code></pre></div>        </div>
+        <p><img src="/assets/images/criptografia/1.png" alt="1" /></p>
       </li>
     </ul>
   </li>
@@ -1229,6 +1230,8 @@ server <span class="o">{</span>
 </code></pre></div>        </div>
       </li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/2.png" alt="2" /></p>
   </li>
 </ol>
 
@@ -1244,11 +1247,18 @@ server <span class="o">{</span>
   maria@debian <span class="nb">cat </span>cifrar-mjar.txt
 </code></pre></div>        </div>
       </li>
+    </ul>
+
+    <p><img src="/assets/images/criptografia/3.png" alt="3" /></p>
+
+    <ul>
       <li>Ciframos el fichero:
         <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--encrypt</span> <span class="nt">--recipient</span> githubemail1asir@gmail.com cifrar-mjar.txt
 </code></pre></div>        </div>
       </li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/4.png" alt="4" /></p>
   </li>
   <li>
     <p>Nuestro compañero, a su vez, nos remitirá un archivo cifrado para que nosotros lo descifremos.</p>
@@ -1268,10 +1278,12 @@ server <span class="o">{</span>
 
     <ul>
       <li>
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian <span class="nb">cat </span>descifrado.txt
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian <span class="nb">cat </span>descifrado-ipc.txt
 </code></pre></div>        </div>
       </li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/5.png" alt="5" /></p>
   </li>
   <li>
     <p>Por último, enviaremos el documento cifrado a alguien que no estaba en la lista de destinatarios y comprobaremos que este usuario no podrá descifrar este archivo.</p>
@@ -1294,6 +1306,8 @@ server <span class="o">{</span>
 </code></pre></div>        </div>
       </li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/6.png" alt="6" /></p>
   </li>
 </ol>
 
@@ -1305,24 +1319,30 @@ server <span class="o">{</span>
 
     <ul>
       <li>
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--gen-revoke</span> maria
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  maria@debian gpg <span class="nt">--gen-revoke</span> 57F9092579AC46D5B93972F7CA1C968B84D4B041
 </code></pre></div>        </div>
       </li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/7.png" alt="7" /></p>
   </li>
   <li>
     <p>Exporta tu clave pública al servidor pgp.rediris.es</p>
 
-    <ul>
-      <li></li>
-    </ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--send-key</span> 57F9092579AC46D5B93972F7CA1C968B84D4B041
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/criptografia/8.png" alt="8" /></p>
   </li>
   <li>
     <p>Borra la clave pública de alguno de tus compañeros de clase e impórtala ahora del servidor público de rediris.</p>
 
     <ul>
-      <li></li>
+      <li>gpg –delete-key “Ivan”</li>
+      <li>gpg –keyserver pgp.rediris.es –recv-keys 278C14EB1CE76FEF397C83058A550974B7DF5CB8</li>
     </ul>
+
+    <p><img src="/assets/images/criptografia/9.png" alt="9" /></p>
   </li>
 </ol>
 
@@ -1332,30 +1352,31 @@ server <span class="o">{</span>
   <li>
     <p>Genera un par de claves (pública y privada).</p>
 
-    <ul>
-      <li></li>
-    </ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openssl genrsa <span class="nt">-aes128</span> <span class="nt">-out</span> maria_jesus_ssl_key.pem 2048
+ openssl rsa <span class="nt">-in</span> maria-ssl.pem <span class="nt">-outform</span> PEM <span class="nt">-pubout</span> <span class="nt">-out</span> public-maria-ssl.pem
+</code></pre></div>    </div>
+    <p><img src="/assets/images/criptografia/10.png" alt="10" /></p>
   </li>
   <li>
     <p>Envía tu clave pública a un compañero.</p>
-
-    <ul>
-      <li></li>
-    </ul>
   </li>
   <li>
     <p>Utilizando la clave pública cifra un fichero de texto y envíalo a tu compañero.</p>
 
-    <ul>
-      <li></li>
-    </ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">echo</span> <span class="s2">"Hola, soy María Jesús, esto es mi archivo cifrado ssl"</span> <span class="o">&gt;</span> maria_jesus_criptoarchivossl.txt
+ openssl rsautl <span class="nt">-encrypt</span> <span class="nt">-inkey</span> juanje-ssl.pub.pem <span class="nt">-pubin</span> <span class="nt">-in</span> maria_jesus_criptoarchivossl.txt <span class="nt">-out</span> maria_jesus_criptoarchivossl.txt.enc
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/criptografia/11.png" alt="11" /></p>
   </li>
   <li>
     <p>Tu compañero te ha mandado un fichero cifrado, muestra el proceso para el descifrado.</p>
 
-    <ul>
-      <li></li>
-    </ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openssl rsautl <span class="nt">-decrypt</span> <span class="nt">-inkey</span> maria-ssl.pem <span class="nt">-in</span> criptoarchivossl-juanje.txt.enc <span class="nt">-out</span> prueba.txt
+ <span class="nb">cat </span>prueba.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/criptografia/12.png" alt="12" /></p>
   </li>
 </ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Tarea 1: Generación de claves]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/11/17/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/escenario</id><content type="html" xml:base="/hlc+sri/2022/11/17/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 <p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
