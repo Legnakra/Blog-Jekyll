@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-02T18:13:56+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-04T23:17:43+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -175,16 +175,85 @@ maria@maria-debian:~ ip route
 
 <p>Desde mi red local de casa, y una vez configurada la IP del interfaz tun0, podemos comprobar que podemos acceder a los equipos de la red local del centro.</p>
 
+<p><img src="/assets/images/openstack/tunel.png" alt="Tunel" /></p>
+
 <h2 id="gestión-de-redes-en-openstack">Gestión de redes en OpenStack</h2>
 
 <p>En esta sección vamos a ver cómo crear una red en OpenStack. Los siguientes pasos los vamos hacer con el cliente de OpenStack, y entraremos en Horizon para comprobar que, efectivamente, se ha creado correctamente.</p>
+
+<p><img src="/assets/images/openstack/Escenario.png" alt="Escenario" /></p>
 
 <ol>
   <li>
     <p>Vamos a crear una red llamada <code class="language-plaintext highlighter-rouge">red-externa</code> y una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">192.168.0.0/24</code>. Crearemos también un router y conectaremos ambas redes a este router.</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create red-externa
- openstack subnet create <span class="nt">--network</span> red-externa <span class="nt">--subnet-range</span> 192.168.0.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 192.168.0.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-externa
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +---------------------------+--------------------------------------+
+ | Field                     | Value                                |
+ +---------------------------+--------------------------------------+
+ | admin_state_up            | UP                                   |
+ | availability_zone_hints   |                                      |
+ | availability_zones        |                                      |
+ | created_at                | 2022-12-04T20:29:15Z                 |
+ | description               |                                      |
+ | dns_domain                | None                                 |
+ | <span class="nb">id</span>                        | 50f75d96-bc22-4ce6-aab5-fbfac98032cc |
+ | ipv4_address_scope        | None                                 |
+ | ipv6_address_scope        | None                                 |
+ | is_default                | False                                |
+ | is_vlan_transparent       | None                                 |
+ | mtu                       | 1450                                 |
+ | name                      | red-externa                          |
+ | port_security_enabled     | True                                 |
+ | project_id                | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | provider:network_type     | None                                 |
+ | provider:physical_network | None                                 |
+ | provider:segmentation_id  | None                                 |
+ | qos_policy_id             | None                                 |
+ | revision_number           | 1                                    |
+ | router:external           | Internal                             |
+ | segments                  | None                                 |
+ | shared                    | False                                |
+ | status                    | ACTIVE                               |
+ | subnets                   |                                      |
+ | tags                      |                                      |
+ | tenant_id                 | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | updated_at                | 2022-12-04T20:29:15Z                 |
+ +---------------------------+--------------------------------------+
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack subnet create <span class="nt">--network</span> red-externa <span class="nt">--subnet-range</span> 192.168.0.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 192.168.0.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-externa
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +----------------------+--------------------------------------+
+ | Field                | Value                                |
+ +----------------------+--------------------------------------+
+ | allocation_pools     | 192.168.0.2-192.168.0.254            |
+ | cidr                 | 192.168.0.0/24                       |
+ | created_at           | 2022-12-04T20:30:16Z                 |
+ | description          |                                      |
+ | dns_nameservers      | 192.168.202.2                        |
+ | dns_publish_fixed_ip | None                                 |
+ | enable_dhcp          | True                                 |
+ | gateway_ip           | 192.168.0.1                          |
+ | host_routes          |                                      |
+ | <span class="nb">id</span>                   | 77b06357-36d5-4aac-a06d-d048964939d5 |
+ | ip_version           | 4                                    |
+ | ipv6_address_mode    | None                                 |
+ | ipv6_ra_mode         | None                                 |
+ | name                 | subred-externa                       |
+ | network_id           | 50f75d96-bc22-4ce6-aab5-fbfac98032cc |
+ | project_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | revision_number      | 0                                    |
+ | segment_id           | None                                 |
+ | service_types        |                                      |
+ | subnetpool_id        | None                                 |
+ | tags                 |                                      |
+ | tenant_id            | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | updated_at           | 2022-12-04T20:30:16Z                 |
+ +----------------------+--------------------------------------+
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/openstack/1.png" alt="1" /></p>
@@ -192,91 +261,511 @@ maria@maria-debian:~ ip route
     <p>Crearemos también un router y conectaremos ambas redes a este router.</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack router create router-externo
- openstack router add subnet router-externo subred-externa
- openstack router <span class="nb">set </span>router-externo <span class="nt">--external-gateway</span> ext-net
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+--------------------------------------+
+ | Field                   | Value                                |
+ +-------------------------+--------------------------------------+
+ | admin_state_up          | UP                                   |
+ | availability_zone_hints |                                      |
+ | availability_zones      |                                      |
+ | created_at              | 2022-12-04T20:31:24Z                 |
+ | description             |                                      |
+ | enable_ndp_proxy        | None                                 |
+ | external_gateway_info   | null                                 |
+ | flavor_id               | None                                 |
+ | <span class="nb">id</span>                      | 430c756a-e261-4aee-bbe1-dbcc5982fa4b |
+ | name                    | router-externo                       |
+ | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | revision_number         | 1                                    |
+ | routes                  |                                      |
+ | status                  | ACTIVE                               |
+ | tags                    |                                      |
+ | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | updated_at              | 2022-12-04T20:31:24Z                 |
+ +-------------------------+--------------------------------------+
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/openstack/2.png" alt="2" /></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack router add subnet router-externo subred-externa
+ openstack router <span class="nb">set </span>router-externo <span class="nt">--external-gateway</span> ext-net
+</code></pre></div>    </div>
   </li>
-  <li>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred, pero ¿podremos aignarle una IP flotante?
+  <li>
+    <p>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred.</p>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Primero creamos el puerto con la IP fija:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-externa <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>192.168.0.10 puerto-externo
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------------------------+-----------------------------------------------------------------------------+
+| Field                   | Value                                                                       |
++-------------------------+-----------------------------------------------------------------------------+
+| admin_state_up          | UP                                                                          |
+| allowed_address_pairs   |                                                                             |
+| binding_host_id         | None                                                                        |
+| binding_profile         | None                                                                        |
+| binding_vif_details     | None                                                                        |
+| binding_vif_type        | None                                                                        |
+| binding_vnic_type       | normal                                                                      |
+| created_at              | 2022-12-04T20:33:10Z                                                        |
+| data_plane_status       | None                                                                        |
+| description             |                                                                             |
+| device_id               |                                                                             |
+| device_owner            |                                                                             |
+| device_profile          | None                                                                        |
+| dns_assignment          | None                                                                        |
+| dns_domain              | None                                                                        |
+| dns_name                | None                                                                        |
+| extra_dhcp_opts         |                                                                             |
+| fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'192.168.0.10'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'77b06357-36d5-4aac-a06d-d048964939d5'</span> |
+| <span class="nb">id</span>                      | 14cac4e6-0a06-44a2-9cd0-d0285c19981c                                        |
+| ip_allocation           | None                                                                        |
+| mac_address             | fa:16:3e:a8:c3:e0                                                           |
+| name                    | puerto-externo                                                              |
+| network_id              | 50f75d96-bc22-4ce6-aab5-fbfac98032cc                                        |
+| numa_affinity_policy    | None                                                                        |
+| port_security_enabled   | True                                                                        |
+| project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
+| propagate_uplink_status | None                                                                        |
+| qos_network_policy_id   | None                                                                        |
+| qos_policy_id           | None                                                                        |
+| resource_request        | None                                                                        |
+| revision_number         | 1                                                                           |
+| security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                        |
+| status                  | DOWN                                                                        |
+| tags                    |                                                                             |
+| tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
+| trunk_details           | None                                                                        |
+| updated_at              | 2022-12-04T20:33:10Z                                                        |
++-------------------------+-----------------------------------------------------------------------------+
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos la instancia y conectamos el puerto creado anteriormente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
+<span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
+<span class="nt">--security-group</span> default <span class="se">\</span>
+<span class="nt">--key-name</span> pass <span class="se">\</span>
+<span class="nt">--port</span> puerto-externo <span class="se">\</span>
+maquina-router
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-----------------------------+------------------------------------------------------------------+
+| Field                       | Value                                                            |
++-----------------------------+------------------------------------------------------------------+
+| OS-DCF:diskConfig           | MANUAL                                                           |
+| OS-EXT-AZ:availability_zone |                                                                  |
+| OS-EXT-STS:power_state      | NOSTATE                                                          |
+| OS-EXT-STS:task_state       | scheduling                                                       |
+| OS-EXT-STS:vm_state         | building                                                         |
+| OS-SRV-USG:launched_at      | None                                                             |
+| OS-SRV-USG:terminated_at    | None                                                             |
+| accessIPv4                  |                                                                  |
+| accessIPv6                  |                                                                  |
+| addresses                   |                                                                  |
+| adminPass                   | dBkgyGGPNFd8                                                     |
+| config_drive                |                                                                  |
+| created                     | 2022-12-04T20:34:38Z                                             |
+| flavor                      | m1.mini <span class="o">(</span>3<span class="o">)</span>                                                      |
+| hostId                      |                                                                  |
+| <span class="nb">id</span>                          | 109737f8-3b6f-4af8-93dd-f6e53977562e                             |
+| image                       | Debian 11 Bullseye <span class="o">(</span>6d992898-7e4f-44b9-a681-6dcf32d24a1f<span class="o">)</span>        |
+| key_name                    | pass                                                             |
+| name                        | maquina-router                                                   |
+| progress                    | 0                                                                |
+| project_id                  | 2aac00e135b84d868bd4cd6bca13cc5a                                 |
+| properties                  |                                                                  |
+| security_groups             | <span class="nv">name</span><span class="o">=</span><span class="s1">'ea2781f0-7c84-46b5-873c-a4986b14f232'</span>                      |
+| status                      | BUILD                                                            |
+| updated                     | 2022-12-04T20:34:38Z                                             |
+| user_id                     | 96a8e1784a38a07b78e6b0d2ac823603b2590a618dd18748ebd450bed2a376a9 |
+| volumes_attached            |                                                                  |
++-----------------------------+------------------------------------------------------------------+
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>¿Podremos aignarle una IP flotante?</p>
     <ul>
       <li>Si, porque está diractamente conectada con la red externa.</li>
     </ul>
 
-    <p>¿Por qué?</p>
-    <ul>
-      <li>Porque no está abierto el puerto 22 de la vpn.</li>
-    </ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
+    
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| created_at          | 2022-12-04T20:35:28Z                 |
+| description         |                                      |
+| dns_domain          | None                                 |
+| dns_name            | None                                 |
+| fixed_ip_address    | None                                 |
+| floating_ip_address | 172.22.201.223                       |
+| floating_network_id | 2ebd4d15-00e3-44c6-a9a7-aeebef5f6540 |
+| <span class="nb">id</span>                  | e7075044-807b-4a69-87df-efb96b237358 |
+| name                | 172.22.201.223                       |
+| port_details        | None                                 |
+| port_id             | None                                 |
+| project_id          | 2aac00e135b84d868bd4cd6bca13cc5a     |
+| qos_policy_id       | None                                 |
+| revision_number     | 0                                    |
+| router_id           | None                                 |
+| status              | DOWN                                 |
+| subnet_id           | None                                 |
+| tags                | <span class="o">[]</span>                                   |
+| tenant_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
+| updated_at          | 2022-12-04T20:35:28Z                 |
++---------------------+--------------------------------------+
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
- <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
- <span class="nt">--security-group</span> default <span class="se">\</span>
- <span class="nt">--key-name</span> pass <span class="se">\</span>
- <span class="nt">--network</span><span class="o">=</span>red-externa <span class="se">\</span>
- maquina-router
+openstack server add floating ip maquina-router 172.22.201.223
 </code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/3.png" alt="3" /></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
- 172.22.200.229
- openstack server add floating ip maquina-router 172.22.200.229
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/4.png" alt="4" /></p>
   </li>
+</ul>
+
+<ol>
   <li>
     <p>Creamos una nueva red llamada <code class="language-plaintext highlighter-rouge">red-interna</code> con una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">10.0.100.0/24</code>.</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create red-interna
- openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
 </code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +---------------------------+--------------------------------------+
+ | Field                     | Value                                |
+ +---------------------------+--------------------------------------+
+ | admin_state_up            | UP                                   |
+ | availability_zone_hints   |                                      |
+ | availability_zones        |                                      |
+ | created_at                | 2022-12-04T20:36:32Z                 |
+ | description               |                                      |
+ | dns_domain                | None                                 |
+ | <span class="nb">id</span>                        | 883c8952-21e8-48a1-8cf0-0418e8e592d7 |
+ | ipv4_address_scope        | None                                 |
+ | ipv6_address_scope        | None                                 |
+ | is_default                | False                                |
+ | is_vlan_transparent       | None                                 |
+ | mtu                       | 1450                                 |
+ | name                      | red-interna                          |
+ | port_security_enabled     | True                                 |
+ | project_id                | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | provider:network_type     | None                                 |
+ | provider:physical_network | None                                 |
+ | provider:segmentation_id  | None                                 |
+ | qos_policy_id             | None                                 |
+ | revision_number           | 1                                    |
+ | router:external           | Internal                             |
+ | segments                  | None                                 |
+ | shared                    | False                                |
+ | status                    | ACTIVE                               |
+ | subnets                   |                                      |
+ | tags                      |                                      |
+ | tenant_id                 | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | updated_at                | 2022-12-04T20:36:32Z                 |
+ +---------------------------+--------------------------------------+
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +----------------------+--------------------------------------+
+ | Field                | Value                                |
+ +----------------------+--------------------------------------+
+ | allocation_pools     | 10.0.100.2-10.0.100.254              |
+ | cidr                 | 10.0.100.0/24                        |
+ | created_at           | 2022-12-04T20:37:21Z                 |
+ | description          |                                      |
+ | dns_nameservers      | 192.168.202.2                        |
+ | dns_publish_fixed_ip | None                                 |
+ | enable_dhcp          | True                                 |
+ | gateway_ip           | 10.0.100.1                           |
+ | host_routes          |                                      |
+ | <span class="nb">id</span>                   | 2b25eec7-cb6c-4fa8-a06e-651ab5e13f09 |
+ | ip_version           | 4                                    |
+ | ipv6_address_mode    | None                                 |
+ | ipv6_ra_mode         | None                                 |
+ | name                 | subred-interna                       |
+ | network_id           | 883c8952-21e8-48a1-8cf0-0418e8e592d7 |
+ | project_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | revision_number      | 0                                    |
+ | segment_id           | None                                 |
+ | service_types        |                                      |
+ | subnetpool_id        | None                                 |
+ | tags                 |                                      |
+ | tenant_id            | 2aac00e135b84d868bd4cd6bca13cc5a     |
+ | updated_at           | 2022-12-04T20:37:21Z                 |
+ +----------------------+--------------------------------------+
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/3.png" alt="3" /></p>
   </li>
   <li>
     <p>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 router-port
- openstack server add port maquina-router router-port
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 puerto-interno
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/openstack/5.png" alt="5" /></p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+---------------------------------------------------------------------------+
+ | Field                   | Value                                                                     |
+ +-------------------------+---------------------------------------------------------------------------+
+ | admin_state_up          | UP                                                                        |
+ | allowed_address_pairs   |                                                                           |
+ | binding_host_id         | None                                                                      |
+ | binding_profile         | None                                                                      |
+ | binding_vif_details     | None                                                                      |
+ | binding_vif_type        | None                                                                      |
+ | binding_vnic_type       | normal                                                                    |
+ | created_at              | 2022-12-04T20:38:34Z                                                      |
+ | data_plane_status       | None                                                                      |
+ | description             |                                                                           |
+ | device_id               |                                                                           |
+ | device_owner            |                                                                           |
+ | device_profile          | None                                                                      |
+ | dns_assignment          | None                                                                      |
+ | dns_domain              | None                                                                      |
+ | dns_name                | None                                                                      |
+ | extra_dhcp_opts         |                                                                           |
+ | fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'10.0.100.1'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'2b25eec7-cb6c-4fa8-a06e-651ab5e13f09'</span> |
+ | <span class="nb">id</span>                      | f795c9c0-3a3d-4b64-800e-8f1833716b38                                      |
+ | ip_allocation           | None                                                                      |
+ | mac_address             | fa:16:3e:cd:a7:50                                                         |
+ | name                    | puerto-interno                                                            |
+ | network_id              | 883c8952-21e8-48a1-8cf0-0418e8e592d7                                      |
+ | numa_affinity_policy    | None                                                                      |
+ | port_security_enabled   | True                                                                      |
+ | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                          |
+ | propagate_uplink_status | None                                                                      |
+ | qos_network_policy_id   | None                                                                      |
+ | qos_policy_id           | None                                                                      |
+ | resource_request        | None                                                                      |
+ | revision_number         | 1                                                                         |
+ | security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                      |
+ | status                  | DOWN                                                                      |
+ | tags                    |                                                                           |
+ | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                          |
+ | trunk_details           | None                                                                      |
+ | updated_at              | 2022-12-04T20:38:34Z                                                      |
+ +-------------------------+---------------------------------------------------------------------------+
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server add port maquina-router puerto-interno
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Creamos una nueva instancia llamada <code class="language-plaintext highlighter-rouge">maquina-cliente</code> y la conectamos a la red que hemos llamado <code class="language-plaintext highlighter-rouge">red-interna</code>. Usando los puertos de red, le asignaremos la IP <code class="language-plaintext highlighter-rouge">10.0.100.200</code> y comprobamos si su puerta de enlace es la <code class="language-plaintext highlighter-rouge">máquina-router</code>.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.200 cliente-port
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.200 puerto-cliente
+</code></pre></div>    </div>
 
- openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+-----------------------------------------------------------------------------+
+ | Field                   | Value                                                                       |
+ +-------------------------+-----------------------------------------------------------------------------+
+ | admin_state_up          | UP                                                                          |
+ | allowed_address_pairs   |                                                                             |
+ | binding_host_id         | None                                                                        |
+ | binding_profile         | None                                                                        |
+ | binding_vif_details     | None                                                                        |
+ | binding_vif_type        | None                                                                        |
+ | binding_vnic_type       | normal                                                                      |
+ | created_at              | 2022-12-04T20:39:42Z                                                        |
+ | data_plane_status       | None                                                                        |
+ | description             |                                                                             |
+ | device_id               |                                                                             |
+ | device_owner            |                                                                             |
+ | device_profile          | None                                                                        |
+ | dns_assignment          | None                                                                        |
+ | dns_domain              | None                                                                        |
+ | dns_name                | None                                                                        |
+ | extra_dhcp_opts         |                                                                             |
+ | fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'10.0.100.200'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'2b25eec7-cb6c-4fa8-a06e-651ab5e13f09'</span> |
+ | <span class="nb">id</span>                      | f790d187-3a17-4eb6-ac68-0a93275927b0                                        |
+ | ip_allocation           | None                                                                        |
+ | mac_address             | fa:16:3e:a8:d9:6a                                                           |
+ | name                    | puerto-cliente                                                              |
+ | network_id              | 883c8952-21e8-48a1-8cf0-0418e8e592d7                                        |
+ | numa_affinity_policy    | None                                                                        |
+ | port_security_enabled   | True                                                                        |
+ | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
+ | propagate_uplink_status | None                                                                        |
+ | qos_network_policy_id   | None                                                                        |
+ | qos_policy_id           | None                                                                        |
+ | resource_request        | None                                                                        |
+ | revision_number         | 1                                                                           |
+ | security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                        |
+ | status                  | DOWN                                                                        |
+ | tags                    |                                                                             |
+ | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
+ | trunk_details           | None                                                                        |
+ | updated_at              | 2022-12-04T20:39:42Z                                                        |
+ +-------------------------+-----------------------------------------------------------------------------+
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
  <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
  <span class="nt">--key-name</span> pass <span class="se">\</span>
- <span class="nt">--network</span><span class="o">=</span>red-interna <span class="se">\</span>
- <span class="nt">--port</span> cliente-port <span class="se">\</span>
+ <span class="nt">--port</span> puerto-cliente <span class="se">\</span>
  maquina-cliente
 </code></pre></div>    </div>
 
-    <p>¿Podremos assignarle a esta instancia una IP flotante?¿Por qué?</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-----------------------------+------------------------------------------------------------------+
+ | Field                       | Value                                                            |
+ +-----------------------------+------------------------------------------------------------------+
+ | OS-DCF:diskConfig           | MANUAL                                                           |
+ | OS-EXT-AZ:availability_zone |                                                                  |
+ | OS-EXT-STS:power_state      | NOSTATE                                                          |
+ | OS-EXT-STS:task_state       | scheduling                                                       |
+ | OS-EXT-STS:vm_state         | building                                                         |
+ | OS-SRV-USG:launched_at      | None                                                             |
+ | OS-SRV-USG:terminated_at    | None                                                             |
+ | accessIPv4                  |                                                                  |
+ | accessIPv6                  |                                                                  |
+ | addresses                   |                                                                  |
+ | adminPass                   | 24fYKvf2iM5g                                                     |
+ | config_drive                |                                                                  |
+ | created                     | 2022-12-04T20:40:48Z                                             |
+ | flavor                      | m1.mini <span class="o">(</span>3<span class="o">)</span>                                                      |
+ | hostId                      |                                                                  |
+ | <span class="nb">id</span>                          | ca52b7d4-9bb9-4133-98d4-82aa8300cf40                             |
+ | image                       | Debian 11 Bullseye <span class="o">(</span>6d992898-7e4f-44b9-a681-6dcf32d24a1f<span class="o">)</span>        |
+ | key_name                    | pass                                                             |
+ | name                        | maquina-cliente                                                  |
+ | progress                    | 0                                                                |
+ | project_id                  | 2aac00e135b84d868bd4cd6bca13cc5a                                 |
+ | properties                  |                                                                  |
+ | security_groups             | <span class="nv">name</span><span class="o">=</span><span class="s1">'default'</span>                                                   |
+ | status                      | BUILD                                                            |
+ | updated                     | 2022-12-04T20:40:48Z                                             |
+ | user_id                     | 96a8e1784a38a07b78e6b0d2ac823603b2590a618dd18748ebd450bed2a376a9 |
+ | volumes_attached            |                                                                  |
+ +-----------------------------+------------------------------------------------------------------+
+</code></pre></div>    </div>
+
     <ul>
-      <li>No, porque no está conectada directamente con la red externa.</li>
+      <li>¿Podremos assignarle a esta instancia una IP flotante?¿Por qué?
+        <ul>
+          <li>No, porque no está conectada directamente con la red externa.</li>
+        </ul>
+      </li>
     </ul>
   </li>
   <li>
     <p>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server remove security group maquina-router default
- openstack server remove security group maquina-cliente default
- openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> mi-port
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">---</span> maquina-router <span class="nt">---</span>
+ openstack server remove security group maquina-router default
+ openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-externo
+ openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-interno
 </code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">---</span> maquina-cliente <span class="nt">---</span>
+ openstack server remove security group maquina-cliente default
+ openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-cliente
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Nos conectamos a la máquina-cliente a través de la máquina router usando <code class="language-plaintext highlighter-rouge">ssh -AJ</code></li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-AJ</span> debian@172.22.201.223 debian@10.0.100.200
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/4.png" alt="4" /></p>
   </li>
   <li>
     <p>Configuramos la instancia maquina-router para que funcione como router-nat. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</p>
+  </li>
+</ol>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-i</span> ~/.ssh/pass debian@172.22.200.229
- <span class="nt">---</span>
- iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+<ul>
+  <li>
+    <p>Nos conectamos a la máquina-router y la configuramos de la siguiente manera:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">---Nos</span> conectamos---
+ssh debian@172.22.200.229
+</code></pre></div>    </div>
+    <ul>
+      <li>Instalamos iptables
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>su
+apt <span class="nb">install </span>iptables
+</code></pre></div>        </div>
+      </li>
+      <li>Configuramos el bit de forwarding
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div>        </div>
+      </li>
+      <li>Configuramos las reglas de iptables
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 10.0.100.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT <span class="nt">--to</span> 192.168.0.10
+iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 10.0.100.200:80
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@maquina-router:/home/debian# <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-L</span> <span class="nt">-n</span> <span class="nt">-v</span>
+Chain PREROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
+ pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
+    0     0 DNAT       tcp  <span class="nt">--</span>  ens3   <span class="k">*</span>       0.0.0.0/0            0.0.0.0/0            tcp dpt:80 to:10.0.100.200:80
+
+Chain INPUT <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
+ pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
+
+Chain OUTPUT <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
+ pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
+
+Chain POSTROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
+ pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
+    0     0 SNAT       all  <span class="nt">--</span>  <span class="k">*</span>      ens3    10.0.100.0/24        0.0.0.0/0            to:192.168.0.10
 </code></pre></div>    </div>
   </li>
+</ul>
+
+<ol>
   <li>Comprobamos del acceso al servidor web de la maquina-cliente desde el exterior.</li>
-</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Instalación y migración de una aplicación web PHP</title><link href="/iaw/2022/11/17/migracion.html" rel="alternate" type="text/html" title="Instalación y migración de una aplicación web PHP" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/iaw/2022/11/17/migracion</id><content type="html" xml:base="/iaw/2022/11/17/migracion.html"><![CDATA[<h2 id="instalación-previa">Instalación previa</h2>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ssh <span class="nt">-AJ</span> debian@ip debian@10.0.100.200
+  ping <span class="nt">-c</span> 5 8.8.8.8
+</code></pre></div></div>
+
+<p><img src="/assets/images/openstack/5.png" alt="5" /></p>
+
+<ul>
+  <li>
+    <p>Instalamos apache2</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update
+apt <span class="nb">install </span>apache2
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nt">&lt;html&gt;</span>
+    <span class="nt">&lt;head&gt;</span>
+      <span class="nt">&lt;title&gt;</span>TAALLER 2<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;/head&gt;</span>
+    <span class="nt">&lt;body&gt;</span>
+      <span class="nt">&lt;h1&gt;</span>Gestión de redes en OpenStack<span class="nt">&lt;/h1&gt;</span>
+    <span class="nt">&lt;/body&gt;</span>
+  <span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Accedemos desde el navegador a la IP de la máquina-router</li>
+</ul>
+
+<p><img src="/assets/images/openstack/6.png" alt="6" /></p>
+
+<h3 id="extra-comprobación-de-la-creación-de-las-redes">EXTRA. Comprobación de la creación de las redes.</h3>
+
+<p><img src="/assets/images/openstack/7.png" alt="7" /></p>
+
+<p><img src="/assets/images/openstack/8.png" alt="8" /></p>
+
+<p><img src="/assets/images/openstack/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Instalación y migración de una aplicación web PHP</title><link href="/iaw/2022/11/17/migracion.html" rel="alternate" type="text/html" title="Instalación y migración de una aplicación web PHP" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/iaw/2022/11/17/migracion</id><content type="html" xml:base="/iaw/2022/11/17/migracion.html"><![CDATA[<h2 id="instalación-previa">Instalación previa</h2>
 
 <p>Para poder realizar la instalación de la aplicación web, vamos a necesitar una serie de herramientas y servicios que vamos a instalar en el servidor. Pero primero lo realizaremos en un escenario local para poder realizar las pruebas necesarias.</p>
 
