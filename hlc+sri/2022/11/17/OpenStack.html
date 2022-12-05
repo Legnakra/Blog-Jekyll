@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 21 mins</span>
   </p></header>
 </div>
     </div>
@@ -900,18 +900,16 @@ maria@maria-debian:~ ip route
   </li>
   <li>
     <p>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred.</p>
-  </li>
-</ol>
 
-<ul>
-  <li>
-    <p>Primero creamos el puerto con la IP fija:</p>
+    <ul>
+      <li>
+        <p>Primero creamos el puerto con la IP fija:</p>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-externa <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>192.168.0.10 puerto-externo
-</code></pre></div>    </div>
+</code></pre></div>        </div>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>+-------------------------+-----------------------------------------------------------------------------+
 | Field                   | Value                                                                       |
 +-------------------------+-----------------------------------------------------------------------------+
@@ -953,21 +951,21 @@ maria@maria-debian:~ ip route
 | trunk_details           | None                                                                        |
 | updated_at              | 2022-12-04T20:33:10Z                                                        |
 +-------------------------+-----------------------------------------------------------------------------+
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos la instancia y conectamos el puerto creado anteriormente:</p>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos la instancia y conectamos el puerto creado anteriormente:</p>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
 <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
 <span class="nt">--security-group</span> default <span class="se">\</span>
 <span class="nt">--key-name</span> pass <span class="se">\</span>
 <span class="nt">--port</span> puerto-externo <span class="se">\</span>
 maquina-router
-</code></pre></div>    </div>
+</code></pre></div>        </div>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>+-----------------------------+------------------------------------------------------------------+
 | Field                       | Value                                                            |
 +-----------------------------+------------------------------------------------------------------+
@@ -999,17 +997,17 @@ maquina-router
 | user_id                     | 96a8e1784a38a07b78e6b0d2ac823603b2590a618dd18748ebd450bed2a376a9 |
 | volumes_attached            |                                                                  |
 +-----------------------------+------------------------------------------------------------------+
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>¿Podremos aignarle una IP flotante?</p>
-    <ul>
-      <li>Si, porque está diractamente conectada con la red externa.</li>
-    </ul>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>¿Podremos aignarle una IP flotante?</p>
+        <ul>
+          <li>Si, porque está diractamente conectada con la red externa.</li>
+        </ul>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
-    
+
 +---------------------+--------------------------------------+
 | Field               | Value                                |
 +---------------------+--------------------------------------+
@@ -1036,11 +1034,10 @@ maquina-router
 +---------------------+--------------------------------------+
 
 openstack server add floating ip maquina-router 172.22.201.223
-</code></pre></div>    </div>
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
-</ul>
-
-<ol>
   <li>
     <p>Creamos una nueva red llamada <code class="language-plaintext highlighter-rouge">red-interna</code> con una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">10.0.100.0/24</code>.</p>
 
@@ -1304,38 +1301,36 @@ openstack server add floating ip maquina-router 172.22.201.223
   </li>
   <li>
     <p>Configuramos la instancia maquina-router para que funcione como router-nat. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</p>
-  </li>
-</ol>
 
-<ul>
-  <li>
-    <p>Nos conectamos a la máquina-router y la configuramos de la siguiente manera:</p>
+    <ul>
+      <li>
+        <p>Nos conectamos a la máquina-router y la configuramos de la siguiente manera:</p>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nt">---Nos</span> conectamos---
 ssh debian@172.22.200.229
-</code></pre></div>    </div>
-    <ul>
-      <li>Instalamos iptables
-        <div class="language-bash highlighter-rouge">
+</code></pre></div>        </div>
+        <ul>
+          <li>Instalamos iptables
+            <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>su
 apt <span class="nb">install </span>iptables
-</code></pre></div>        </div>
-      </li>
-      <li>Configuramos el bit de forwarding
-        <div class="language-bash highlighter-rouge">
+</code></pre></div>            </div>
+          </li>
+          <li>Configuramos el bit de forwarding
+            <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div>        </div>
-      </li>
-      <li>Configuramos las reglas de iptables
-        <div class="language-bash highlighter-rouge">
+</code></pre></div>            </div>
+          </li>
+          <li>Configuramos las reglas de iptables
+            <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 10.0.100.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT <span class="nt">--to</span> 192.168.0.10
 iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 10.0.100.200:80
-</code></pre></div>        </div>
-      </li>
-    </ul>
+</code></pre></div>            </div>
+          </li>
+        </ul>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>root@maquina-router:/home/debian# <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-L</span> <span class="nt">-n</span> <span class="nt">-v</span>
 Chain PREROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
  pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
@@ -1350,54 +1345,69 @@ Chain OUTPUT <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class
 Chain POSTROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
  pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
     0     0 SNAT       all  <span class="nt">--</span>  <span class="k">*</span>      ens3    10.0.100.0/24        0.0.0.0/0            to:192.168.0.10
-</code></pre></div>    </div>
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
-</ul>
-
-<ol>
-  <li>Comprobamos del acceso al servidor web de la maquina-cliente desde el exterior.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ssh <span class="nt">-AJ</span> debian@ip debian@10.0.100.200
-  ping <span class="nt">-c</span> 5 8.8.8.8
-</code></pre></div></div>
-
-<p><img src="/assets/images/openstack/5.png" alt="5"></p>
-
-<ul>
   <li>
-    <p>Instalamos apache2</p>
+    <p>Comprobamos del acceso al servidor web de la maquina-cliente desde el exterior.</p>
 
     <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-AJ</span> debian@ip debian@10.0.100.200
+ ping <span class="nt">-c</span> 5 8.8.8.8
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/openstack/5.png" alt="5"></p>
+
+    <ul>
+      <li>
+        <p>Instalamos apache2</p>
+
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>apt update
 apt <span class="nb">install </span>apache2
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <div class="language-html highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;html&gt;</span>
+   <span class="nt">&lt;head&gt;</span>
+     <span class="nt">&lt;title&gt;</span>TAALLER 2<span class="nt">&lt;/title&gt;</span>
+   <span class="nt">&lt;/head&gt;</span>
+   <span class="nt">&lt;body&gt;</span>
+     <span class="nt">&lt;h1&gt;</span>Gestión de redes en OpenStack<span class="nt">&lt;/h1&gt;</span>
+   <span class="nt">&lt;/body&gt;</span>
+ <span class="nt">&lt;/html&gt;</span>
 </code></pre></div>    </div>
+
+    <ul>
+      <li>Accedemos desde el navegador a la IP de la máquina-router</li>
+    </ul>
+
+    <p><img src="/assets/images/openstack/6.png" alt="6"></p>
   </li>
-</ul>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nt">&lt;html&gt;</span>
-    <span class="nt">&lt;head&gt;</span>
-      <span class="nt">&lt;title&gt;</span>TAALLER 2<span class="nt">&lt;/title&gt;</span>
-    <span class="nt">&lt;/head&gt;</span>
-    <span class="nt">&lt;body&gt;</span>
-      <span class="nt">&lt;h1&gt;</span>Gestión de redes en OpenStack<span class="nt">&lt;/h1&gt;</span>
-    <span class="nt">&lt;/body&gt;</span>
-  <span class="nt">&lt;/html&gt;</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Accedemos desde el navegador a la IP de la máquina-router</li>
-</ul>
-
-<p><img src="/assets/images/openstack/6.png" alt="6"></p>
+</ol>
 
 <h3 id="extra-comprobación-de-la-creación-de-las-redes">EXTRA. Comprobación de la creación de las redes.</h3>
 
-<p><img src="/assets/images/openstack/7.png" alt="7"></p>
+<ul>
+  <li>
+    <p>Listado de routers</p>
 
-<p><img src="/assets/images/openstack/8.png" alt="8"></p>
+    <p><img src="/assets/images/openstack/7.png" alt="7"></p>
+  </li>
+  <li>
+    <p>Listado de redes</p>
 
-<p><img src="/assets/images/openstack/9.png" alt="9"></p>
+    <p><img src="/assets/images/openstack/8.png" alt="8"></p>
+  </li>
+  <li>
+    <p>Listado de subredes</p>
+
+    <p><img src="/assets/images/openstack/9.png" alt="9"></p>
+  </li>
+</ul>
 
 
     </div>
@@ -1409,10 +1419,10 @@ apt <span class="nb">install </span>apache2
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Instalación y migración de una aplicación web PHP">Configuración de HTTPS en nuestro VPS</a></li>
-<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Instalación y migración de una aplicación web PHP">Introducción a la programación Python</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="Instalación y migración de una aplicación web PHP">Compilación de un kernel a medida</a></li>
+        <li><a class="post-link" href="/aso/2022/11/16/kernel.html" title="Instalación y migración de una aplicación web PHP">Compilación de un kernel a medida</a></li>
 <li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Instalación y migración de una aplicación web PHP">Virtualización en Linux</a></li>
+<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Instalación y migración de una aplicación web PHP">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Instalación y migración de una aplicación web PHP">Configuración de HTTPS en nuestro VPS</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
