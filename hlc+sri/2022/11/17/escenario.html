@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
   </p></header>
 </div>
     </div>
@@ -707,7 +707,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <h2 id="escenario">Escenario</h2>
 
-<p><img src="/assets/images/escenario.png" alt="Escenario"></p>
+<p><img src="/assets/images/escenario/escenario.png" alt="Escenario"></p>
 
 <h2 id="instalación-de-las-instancias-en-openstack">Instalación de las instancias en OpenStack</h2>
 
@@ -755,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
       alfa
   <span class="nt">----</span>
   openstack floating ip create ext-net
-  openstack server add floating ip alfa 
+  openstack server add floating ip alfa 172.22.201.46
 </code></pre></div>        </div>
       </li>
       <li>
@@ -797,7 +797,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>  openstack port create <span class="nt">--network</span> Red<span class="se">\ </span>DMZ<span class="se">\ </span>de<span class="se">\ </span>mariajesus <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>172.16.0.1 alfa-port
-  openstack server add port alfa port-alfa
+  openstack server add port alfa alfa-port
 </code></pre></div>        </div>
       </li>
       <li>
@@ -805,35 +805,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
         <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>  openstack server remove security group alfa
-  openstack remove security group default alfa-port
+  openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> alfa-port
+  openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> 
 </code></pre></div>        </div>
       </li>
       <li>
         <p>Configura de forma permanente la regla SNAT para que las máquinas de la Red DMZ tengan acceso a internet.</p>
 
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>      auto lo
-  iface lo inet loopback
-      dns-nameservers 192.168.202.2
-
-  auto ens3
-  iface ens3 inet dhcp
-
-  mtu 1450
-  post-up ip r del default <span class="o">&amp;&amp;</span> ip r add default via 10.0.0.1
-  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 172.16.0.0/16 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
-  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
-
-  auto br-intra
-  iface br-intra inet static
-
-  mtu 1450
-  address 192.168.0.1
-  network 192.168.0.0
-  netmask 255.255.255.0
-  broadcast 192.168.0.255
-
-  bridge_ports br-intra
+<div class="highlight"><pre class="highlight"><code>  iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 172.16.0.0/16 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+  iptables-save <span class="o">&gt;</span> /etc/iptables/rules.v4
 </code></pre></div>        </div>
       </li>
     </ul>
@@ -893,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
   </li>
 </ol>
 
-<h2 id="instalación-de-los-contenedores-lxc">Instalación de los contenedores LXC</h2>
+<h3 id="instalación-de-los-contenedores-lxc">Instalación de los contenedores LXC</h3>
 <p>En <strong>maquina1</strong> vamos a crear dos contenedores en un red interna, para ello:</p>
 
 <ol>
@@ -901,27 +882,46 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p>Crea en <strong>máquina1 (alfa)</strong> un linux bridge llamado <code class="language-plaintext highlighter-rouge">br-intra</code> y asigna una dirección IP estática <code class="language-plaintext highlighter-rouge">192.168.0.1</code>. Esta será la IP de <strong>máquina1</strong> (alfa) conectada a este switch virtual y será la puerta de enlace de los contenedores.</p>
 
     <ul>
-      <li>definimos el archivo br-intra.xml</li>
-    </ul>
+      <li>
+        <p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">bridge-utils</code> y <code class="language-plaintext highlighter-rouge">qemu-kvm</code> para crear el bridge.</p>
 
-    <div class="language-xml highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;network&gt;</span>
- <span class="nt">&lt;name&gt;</span>br-intra<span class="nt">&lt;/name&gt;</span>
- <span class="nt">&lt;bridge</span> <span class="na">name=</span><span class="s">'br-intra'</span><span class="nt">/&gt;</span>
- <span class="nt">&lt;forward/&gt;</span>
- <span class="nt">&lt;ip</span> <span class="na">address=</span><span class="s">'192.168.0.1'</span> <span class="na">netmask=</span><span class="s">'255.255.255.0'</span><span class="nt">&gt;</span>
- <span class="nt">&lt;/ip&gt;</span>
- <span class="nt">&lt;/network&gt;</span>
-</code></pre></div>    </div>
-    <p>virsh net-define br-intra.xml
-virsh net-start br-intra
-virsh net-autostart br-intra</p>
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils virtinst
+  apt <span class="nb">install </span>bridge-utils
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Definimos el archivo br-intra.xml</p>
+
+        <div class="language-xml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nt">&lt;network&gt;</span>
+  <span class="nt">&lt;name&gt;</span>br-intra<span class="nt">&lt;/name&gt;</span>
+  <span class="nt">&lt;bridge</span> <span class="na">name=</span><span class="s">'br-intra'</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;forward/&gt;</span>
+  <span class="nt">&lt;ip</span> <span class="na">address=</span><span class="s">'192.168.0.1'</span> <span class="na">netmask=</span><span class="s">'255.255.255.0'</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;/ip&gt;</span>
+  <span class="nt">&lt;/network&gt;</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos el bridge</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  virsh net-define br-intra.xml
+  virsh net-start br-intra
+  virsh net-autostart br-intra
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
     <p>Instala LXC y crea dos contenedores con la distribución <strong>Ubuntu 20.04</strong>. Estos contenedores serán la <strong>máquina3</strong> (charlie) y la <strong>máquina4</strong> (delta).</p>
 
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>lxc
+</code></pre></div>    </div>
+
     <ul>
-      <li>sudo apt install lxc</li>
       <li>creamos los contenedores</li>
     </ul>
 
@@ -932,31 +932,264 @@ virsh net-autostart br-intra</p>
   </li>
   <li>
     <p>Configura de forma permanente la regla SNAT para que los contenedores tengan acceso a internet.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+ iptables-save <span class="o">&gt;</span> /etc/iptables/rules.v4
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Conecta los contenedores al bridge <code class="language-plaintext highlighter-rouge">br-intra</code> y configúralo de forma estática con las siguientes direcciones: <strong>máquina3</strong> (charlie) la <code class="language-plaintext highlighter-rouge">192.168.0.2</code> y <strong>máquina4</strong> (delta) la <code class="language-plaintext highlighter-rouge">192.168.0.3</code>.</p>
+
+    <ul>
+      <li>CHARLIE
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-start <span class="nt">-n</span> charlie
+  nano /var/lib/lxc/charlie/config
+
+  <span class="nt">----</span>
+  lxc.net.0.type <span class="o">=</span> veth
+  lxc.net.0.link <span class="o">=</span> br-intra
+  lxc.net.0.flags <span class="o">=</span> up
+  <span class="nt">---</span>
+
+  lxc-stop <span class="nt">-n</span> charlie
+  lxc-start <span class="nt">-n</span> charlie
+  lxc-attach <span class="nt">-n</span> charlie
+  vim /etc/netplan/10-lxc.yaml
+</code></pre></div>        </div>
+
+        <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="na">network</span><span class="pi">:</span>
+      <span class="na">version</span><span class="pi">:</span> <span class="m">2</span>
+      <span class="na">renderer</span><span class="pi">:</span> <span class="s">networkd</span>
+      <span class="na">ethernets</span><span class="pi">:</span>
+          <span class="na">eth0</span><span class="pi">:</span>
+              <span class="na">dhcp4</span><span class="pi">:</span> <span class="s">no</span>
+              <span class="na">addresses</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">192.168.0.2/24</span><span class="pi">]</span>
+              <span class="na">gateway4</span><span class="pi">:</span> <span class="s">192.168.0.1</span>
+</code></pre></div>        </div>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  netplan apply
+</code></pre></div>        </div>
+      </li>
+      <li>DELTA
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-start <span class="nt">-n</span> delta
+  nano /var/lib/lxc/delta/config
+
+  <span class="nt">----</span>
+  lxc.net.0.type <span class="o">=</span> veth
+  lxc.net.0.link <span class="o">=</span> br-intra
+  lxc.net.0.flags <span class="o">=</span> up
+  <span class="nt">---</span>
+
+  lxc-stop <span class="nt">-n</span> delta
+  lxc-start <span class="nt">-n</span> delta
+  lxc-attach <span class="nt">-n</span> delta
+  vim /etc/netplan/10-lxc.yaml
+</code></pre></div>        </div>
+
+        <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="na">network</span><span class="pi">:</span>
+      <span class="na">version</span><span class="pi">:</span> <span class="m">2</span>
+      <span class="na">renderer</span><span class="pi">:</span> <span class="s">networkd</span>
+      <span class="na">ethernets</span><span class="pi">:</span>
+          <span class="na">eth0</span><span class="pi">:</span>
+              <span class="na">dhcp4</span><span class="pi">:</span> <span class="s">no</span>
+              <span class="na">addresses</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">192.168.0.3/24</span><span class="pi">]</span>
+              <span class="na">gateway4</span><span class="pi">:</span> <span class="s">192.168.0.1</span>
+</code></pre></div>        </div>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  netplan apply
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
     <p>Para que la red de OpenStack funcione de forma adecuada las imágenes que usamos tienen configurado la mtu (Unidad máxima de transferencia) a 1450 bytes. Tenemos que adecuar los contenedores a este tamaño de trama. Para ello introduce en la configuración de los contenedores la línea: <code class="language-plaintext highlighter-rouge">lxc.net.0.mtu = 1450</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">echo</span> <span class="s2">"lxc.net.0.mtu = 1450"</span> <span class="o">&gt;&gt;</span> /var/lib/lxc/charlie/config
+ <span class="nb">echo</span> <span class="s2">"lxc.net.0.mtu = 1450"</span> <span class="o">&gt;&gt;</span> /var/lib/lxc/delta/config
+</code></pre></div>    </div>
   </li>
-  <li>Configura los contenedores para que se auto inicien al reiniciar la instancia.
-    <ul>
-      <li>configuramos los contenedores para que se auto inicien al reiniciar la instancia</li>
-    </ul>
+  <li>
+    <p>Configura los contenedores para que se auto inicien al reiniciar la instancia.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ```bash  echo "lxc.start.auto = 1" &gt;&gt; /var/lib/lxc/charlie/config  echo "lxc.start.auto = 1" &gt;&gt; /var/lib/lxc/delta/config  ```
+</code></pre></div>    </div>
   </li>
-  <li>Los contenedores tendrán características parecidas a las instancias anteriormente:
+  <li>
+    <p>Los contenedores tendrán características parecidas a las instancias anteriormente:</p>
     <ul>
-      <li>Debes actualizar los paquetes de la distribución instalada.</li>
-      <li>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto configura de manera adecuda el hostname y el FQDN.</li>
-      <li>Para acceder a los contenedores vamos a usar ssh.</li>
-      <li>Crea dos usuarios:
+      <li>
+        <p>Debes actualizar los paquetes de la distribución instalada.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> apt <span class="nb">install </span>openssh-server
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> apt <span class="nb">install </span>openssh-server
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>El dominio utilizado será del tipo <code class="language-plaintext highlighter-rouge">tunombre.gonzalonazareno.org</code>. Por lo tanto configura de manera adecuda el hostname y el FQDN.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> hostnamectl set-hostname
+  charlie.maria.gonzalonazareno.org
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> hostnamectl set-hostname
+  delta.maria.gonzalonazareno.org
+  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> hostnamectl
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> hostnamectl
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Para acceder a los contenedores vamos a usar ssh.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  ssh ubuntu@192.168.0.2
+  ssh ubuntu@192.168.0.3
+</code></pre></div>        </div>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  ssh-copy-id <span class="nt">-i</span> ~/.ssh/pass <span class="nt">-o</span> <span class="nv">ProxyJump</span><span class="o">=</span>maria@172.22.201.46 maria@192.168.0.2
+  ssh-copy-id <span class="nt">-i</span> ~/.ssh/pass <span class="nt">-o</span> <span class="nv">ProxyJump</span><span class="o">=</span>maria@172.22.201.46 maria@192.168.0.3
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Crea dos usuarios:</p>
         <ul>
-          <li>Un usuario sin privilegios. Se puede llamar como quieras (el nombre de usuario que usaste en las instancias) y accederás a los contenedores usando tu clave ssh privada.</li>
-          <li>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en los contenedores para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</li>
+          <li>
+            <p>Un usuario sin privilegios. Se puede llamar como quieras (el nombre de usuario que usaste en las instancias) y accederás a los contenedores usando tu clave ssh privada.</p>
+
+            <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> adduser maria
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> adduser maria
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Un usuario <code class="language-plaintext highlighter-rouge">profesor</code>, que puede utilizar sudo sin contraseña. Copia de las claves públicas de todos los profesores en los contenedores para que puedan acceder con el usuario <code class="language-plaintext highlighter-rouge">profesor</code>.</p>
+
+            <ul>
+              <li>
+                <p>Añadimos el usuario <code class="language-plaintext highlighter-rouge">profesor</code> a los contenedores.</p>
+
+                <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> adduser profesor
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> adduser profesor  
+</code></pre></div>                </div>
+              </li>
+              <li>
+                <p>Modificamos el ficher /etc/sudoers para que el usuario <code class="language-plaintext highlighter-rouge">profesor</code> pueda utilizar sudo sin contraseña.</p>
+
+                <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="c">#CHARLIE</span>
+  ssh <span class="nt">-J</span> maria@172.22.201.46 ubuntu@192.168.0.2
+  <span class="nb">sudo </span>visudo
+  <span class="nt">---</span>
+  profesor <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span> NOPASSWD:ALL
+  <span class="nt">-----</span>
+
+  <span class="c">#DELTA</span>
+  ssh <span class="nt">-J</span> maria@172.22.201.46 ubuntu@192.168.0.3
+  <span class="nb">sudo </span>visudo
+  <span class="nt">---</span>
+  profesor <span class="nv">ALL</span><span class="o">=(</span>ALL<span class="o">)</span> NOPASSWD:ALL
+  <span class="nt">-----</span>
+</code></pre></div>                </div>
+              </li>
+              <li>
+                <p>Copiamos las claves públicas de los profesores en los contenedores.</p>
+
+                <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="c">#CHARLIE</span>
+  ssh <span class="nt">-J</span> maria@172.22.201.46 ubunto@192.168.0.2
+  <span class="nb">mkdir</span> /home/profesor/.ssh
+  vim /home/profesor/.ssh/authorized_keys
+
+  <span class="c">#DELTA</span>
+  sh <span class="nt">-J</span> maria@172.22.201.46 ubunto@192.168.0.3
+  <span class="nb">mkdir</span> /home/profesor/.ssh
+  vim /home/profesor/.ssh/authorized_keys
+</code></pre></div>                </div>
+              </li>
+              <li>
+                <p>Cambia la contraseña al usuario <code class="language-plaintext highlighter-rouge">root</code>.</p>
+
+                <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  lxc-attach <span class="nt">-n</span> charlie <span class="nt">--</span> passwd
+  <span class="c">#root</span>
+  lxc-attach <span class="nt">-n</span> delta <span class="nt">--</span> passwd
+  <span class="c">#root</span>
+</code></pre></div>                </div>
+              </li>
+            </ul>
+          </li>
         </ul>
       </li>
-      <li>Cambia la contraseña al usuario <code class="language-plaintext highlighter-rouge">root</code>.</li>
     </ul>
+  </li>
+</ol>
+
+<h3 id="pruebas">Pruebas</h3>
+
+<ol>
+  <li>
+    <p>Comprobación de los FQDN y acceso por ssh</p>
+
+    <ul>
+      <li>ALFA</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/1.png" alt="1"></p>
+
+    <ul>
+      <li>BRAVO</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/2.png" alt="2"></p>
+
+    <ul>
+      <li>CHARLIE</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/3.png" alt="3"></p>
+
+    <ul>
+      <li>DELTA</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/4.png" alt="4"></p>
+  </li>
+  <li>
+    <p>Comprobación de acceso a internet</p>
+
+    <ul>
+      <li>ALFA</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/5.png" alt="5"></p>
+
+    <ul>
+      <li>BRAVO</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/6.png" alt="6"></p>
+
+    <ul>
+      <li>CHARLIE</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/7.png" alt="7"></p>
+
+    <ul>
+      <li>DELTA</li>
+    </ul>
+
+    <p><img src="/assets/images/escenario/8.png" alt="8"></p>
   </li>
 </ol>
 
@@ -970,10 +1203,10 @@ virsh net-autostart br-intra</p>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/prueba/2022/10/10/prueba.html" title="Configuración de HTTPS en nuestro VPS">Prueba: Introducción a la implantación de aplicaciones web</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="Configuración de HTTPS en nuestro VPS">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Configuración de HTTPS en nuestro VPS">Configuración de HTTPS en nuestro VPS</a></li>
-<li><a class="post-link" href="/seguridad/2022/11/17/cripto.html" title="Configuración de HTTPS en nuestro VPS">Cifrado asimétrico con gpg y openssl </a></li>
+        <li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Configuración de HTTPS en nuestro VPS">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/asgbd/2022/11/08/interconexion.html" title="Configuración de HTTPS en nuestro VPS">Interconexiones de servidores</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Configuración de HTTPS en nuestro VPS">Apache como proxy inverso</a></li>
+<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Configuración de HTTPS en nuestro VPS">Instalación y migración de una aplicación web PHP</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
