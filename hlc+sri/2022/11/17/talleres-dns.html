@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Talleres DNS | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Talleres DNS">
+<meta property="og:locale" content="en_US">
+<meta name="description" content='Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN tunombre.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "tunombre.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.tunombre.org. @ IN NS dns2.tunombre.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. TRUCOS ADICIONALES. Podemos manejar el servidor DNS con el comando rndc. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.'>
+<meta property="og:description" content='Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN tunombre.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "tunombre.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.tunombre.org. @ IN NS dns2.tunombre.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. TRUCOS ADICIONALES. Podemos manejar el servidor DNS con el comando rndc. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.'>
+<link rel="canonical" href="/hlc+sri/2022/11/17/talleres-dns.html">
+<meta property="og:url" content="/hlc+sri/2022/11/17/talleres-dns.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-11-17T08:17:50+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Talleres DNS">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-11-17T08:17:50+01:00","datePublished":"2022-11-17T08:17:50+01:00","description":"Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS=&quot;-4 -f -u bind&quot; Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone &quot;maria.org&quot; { type master; file &quot;db.maria.org&quot;; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN tunombre.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone &quot;22.172.in-addr.arpa&quot; { type master; file &quot;db.172.22.0.0&quot;; }; Y descomentamos la línea include &quot;/etc/bind/zones.rfc1918&quot;; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone &quot;21.172.in-addr.arpa&quot; { type master; file &quot;/etc/bind/db.empty&quot;; }; //zone &quot;22.172.in-addr.arpa&quot; { type master; file &quot;/etc/bind/db.empty&quot;; }; zone &quot;23.172.in-addr.arpa&quot; { type master; file &quot;/etc/bind/db.empty&quot;; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include &quot;/etc/bind/zones.rfc1918&quot;; zone &quot;tunombre.org&quot; { type master; file &quot;db.maria.org&quot;; allow-transfer { 172.22.6.208; }; notify yes; }; zone &quot;22.172.in-addr.arpa&quot; { type master; file &quot;db.172.22.0.0&quot;; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include &quot;/etc/bind/zones.rfc1918&quot;; zone &quot;maria.org&quot; { type slave; file &quot;db.maria.org&quot;; masters { 172.22.6.208; }; }; zone &quot;22.172.in-addr.arpa&quot; { type slave; file &quot;db.172.22.0.0&quot;; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.tunombre.org. @ IN NS dns2.tunombre.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. TRUCOS ADICIONALES. Podemos manejar el servidor DNS con el comando rndc. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.","headline":"Talleres DNS","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2022/11/17/talleres-dns.html"},"url":"/hlc+sri/2022/11/17/talleres-dns.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/dns.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/dns.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Talleres DNS</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-11-17T08:17:50+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 17, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="talleres-dns">Talleres DNS</h2>
+
+<h3 id="taller-1-instalación-y-configuración-del-servidor-bind9-en-nuestra-red-local">Taller 1: Instalación y configuración del servidor bind9 en nuestra red local.</h3>
+
+<ol>
+  <li>
+    <p>Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>bind9
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos la siguiente configuración para que funcione como servidor.</p>
+
+    <ul>
+      <li>
+        <p>En el fichero <code class="language-plaintext highlighter-rouge">/etc/default/named/</code> modificamos el fichero con la siguiente línea:</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">"-4 -f -u bind"</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code></p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  allow-query <span class="o">{</span>172.29.0.0/16<span class="p">;</span> 172.22.0.0/16<span class="p">;</span><span class="o">}</span><span class="p">;</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc:</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  dig @172.22.7.159 www.josedomingo.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/1.png" alt="1"></p>
+      </li>
+      <li>¿Cuánto ha tardado en realizar la consulta?
+        <ul>
+          <li>367 msec</li>
+        </ul>
+      </li>
+      <li>¿Qué consultas se han realizado para averiguar la dirección IP?
+        <ul>
+          <li>La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org.</li>
+        </ul>
+      </li>
+      <li>Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora?
+        <ul>
+          <li>
+            <p>0 msec</p>
+
+            <p><img src="/assets/images/dns/2.png" alt="2"></p>
+          </li>
+        </ul>
+      </li>
+      <li>¿Por qué ha tardado menos?
+        <ul>
+          <li>Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché.</li>
+        </ul>
+      </li>
+      <li>¿Qué consultas se han realizado para averiguar la dirección IP?
+        <ul>
+          <li>La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Creamos una zona directa para nuestro dominio <code class="language-plaintext highlighter-rouge">maria.org</code>, añadiendo al fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> zone <span class="s2">"maria.org"</span> <span class="o">{</span>
+ <span class="nb">type </span>master<span class="p">;</span>
+ file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/3.png" alt="3"></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de la zona <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code> y el fichero quedaría de la siguiente manera:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                                1         <span class="p">;</span> Serial
+                           604800         <span class="p">;</span> Refresh
+                            86400         <span class="p">;</span> Retry
+                          2419200         <span class="p">;</span> Expire
+                            86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.maria.org.
+ @	IN	MX	10	correo.maria.org.
+
+ <span class="nv">$ORIGIN</span> tunombre.org.
+
+ dns1			IN	A	172.22.7.159
+ correo			IN	A	172.22.200.101
+ asterix		    IN	A	172.22.200.102
+ obelix			IN	A	172.22.200.103
+ www			    IN	CNAME	asterix
+ informatica		IN	CNAME	asterix
+ ftp			    IN	CNAME	obelix
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/4.png" alt="4"></p>
+  </li>
+  <li>
+    <p>Creamos una zona inversa:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+ <span class="nb">type </span>master<span class="p">;</span>
+ file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/7.png" alt="7"></p>
+
+    <p>Y descomentamos la línea <code class="language-plaintext highlighter-rouge">include "/etc/bind/zones.rfc1918";</code> para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz.</p>
+
+    <p><img src="/assets/images/dns/5.png" alt="5"></p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ...
+ zone <span class="s2">"21.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ //zone <span class="s2">"22.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"23.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/6.png" alt="6"></p>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.172.22.0.0</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                                 1         <span class="p">;</span> Serial
+                             604800        <span class="p">;</span> Refresh
+                             86400         <span class="p">;</span> Retry
+                             2419200       <span class="p">;</span> Expire
+                             86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN  NS      dns1.maria.org.
+
+ <span class="nv">$ORIGIN</span> 22.172.in-addr.arpa.
+
+ 159.7		IN	PTR		dns1.maria.org.
+ 101.200		IN	PTR		correo.maria.org.
+ 102.200		IN 	PTR		asterix.maria.org.
+ 103.200		IN 	PTR		obelix.maria.org.
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/7.png" alt="7"></p>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig.</p>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Incluimos en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> la IP del servidor DNS:</p>
+
+    <p><img src="/assets/images/dns/8.png" alt="8"></p>
+
+    <ul>
+      <li>
+        <p>Dirección IP de una máquina o servicio.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  dig www.maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/9.png" alt="9"></p>
+      </li>
+      <li>
+        <p>Servidor DNS con autoridad de dominio:</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  dig ns www.maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/10.png" alt="10"></p>
+      </li>
+      <li>
+        <p>Servidor de correo del dominio.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  dig mx maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/11.png" alt="11"></p>
+      </li>
+      <li>
+        <p>Una resolución inversa.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  dig <span class="nt">-x</span> 172.22.200.103
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/12.png" alt="12"></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="taller-2-instalación-y-configuración-de-un-servidor-dns-esclavo">Taller 2: Instalación y configuración de un servidor DNS esclavo.</h3>
+
+<p>Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores.</p>
+
+<ol>
+  <li>
+    <p>Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre <code class="language-plaintext highlighter-rouge">dns2.maria.org</code>. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span><span class="nb">sudo </span>ufw allow 53/tcp
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> options <span class="o">{</span>
+ ...
+ allow-transfer <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/13.png" alt="13"></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code> para definir la zona del DNS maestro:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+ zone <span class="s2">"tunombre.org"</span> <span class="o">{</span>
+     <span class="nb">type </span>master<span class="p">;</span>
+     file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+     allow-transfer <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+     notify <span class="nb">yes</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+     <span class="nb">type </span>master<span class="p">;</span>
+     file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+     allow-transfer <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+     notify <span class="nb">yes</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/14.png" alt="14"></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code> para definir la zona del DNS esclavo:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+ zone <span class="s2">"maria.org"</span> <span class="o">{</span>
+     <span class="nb">type </span>slave<span class="p">;</span>
+     file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+     masters <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+     <span class="nb">type </span>slave<span class="p">;</span>
+     file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+     masters <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/15.png" alt="15"></p>
+  </li>
+  <li>
+    <p>Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro <code class="language-plaintext highlighter-rouge">A</code> en el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                             1         <span class="p">;</span> Serial
+                         604800        <span class="p">;</span> Refresh
+                         86400         <span class="p">;</span> Retry
+                         2419200       <span class="p">;</span> Expire
+                         86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.maria.org.
+ @	IN	NS		dns2.maria.org.
+ @	IN	MX	10	correo.maria.org.
+
+ <span class="nv">$ORIGIN</span> maria.org.
+
+ dns1		IN	A         172.22.7.159
+ dns2		IN	A	10    172.22.6.208
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/16.png" alt="16"></p>
+
+    <p>Y modificamos el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.172.22.0.0</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                               1         <span class="p">;</span> Serial
+                          604800         <span class="p">;</span> Refresh
+                           86400         <span class="p">;</span> Retry
+                         2419200         <span class="p">;</span> Expire
+                           86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.tunombre.org.
+ @	IN	NS		dns2.tunombre.org.  
+    
+ <span class="nv">$ORIGIN</span> 22.172.in-addr.arpa.    
+ 159.7		IN	PTR		dns1.maria.org.
+ 208.6		IN	PTR		dns2.maria.org.  
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/17.png" alt="17"></p>
+  </li>
+  <li>
+    <p>Reiniciamos los servidores DNS, tanto el maestro como el esclavo.</p>
+  </li>
+  <li>
+    <p>En caso de que nos salga algún error, probamos con los siguientes comandos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> named-checkzone maria.org /var/cache/bind/db.maria.org
+ named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0  
+ <span class="c">#Para detectar errores de configuración en `named.conf`, podemos usar:</span>
+ named-checkconf
+</code></pre></div>    </div>
+  </li>
+  <li>Configuramos el cliente con los dos servidores DNS. En el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> utiliza dos directivas <code class="language-plaintext highlighter-rouge">nameserver</code>. Si hacemos  una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta.
+    <ul>
+      <li>¿Quién ha respondido?.
+        <ul>
+          <li>Al realizar <code class="language-plaintext highlighter-rouge">dig www.maria.org</code> el servdor que responde es el maestro.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/18.png"><img src="/assets/images/dns/18.png" alt="18"></a></p>
+
+    <p>Apagamos el servidor maestro, y volvemos a hacer la misma consulta.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nt">---Apagamos</span> el servicio de la máquina dns1
+ <span class="nv">$ </span><span class="nb">sudo </span>systemctl stop bind9
+ <span class="nt">---Hacemos</span> la consulta
+ <span class="nv">$ </span>dig www.maria.org
+</code></pre></div>    </div>
+
+    <ul>
+      <li>¿Ha respondido el servidor DNS esclavo?
+        <ul>
+          <li>Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/19.png"><img src="/assets/images/dns/19.png" alt="19"></a></p>
+  </li>
+  <li>
+    <p>Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code> añadiendo:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ...
+ prueba		IN  A   172.22.6.208
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Desde el cliente realizaremos una consulta para preguntar por la dirección IP de <code class="language-plaintext highlighter-rouge">prueba.maria.org</code>.</p>
+
+    <ul>
+      <li>¿Quién ha respondido?.
+        <ul>
+          <li>Al realizar <code class="language-plaintext highlighter-rouge">dig prueba.maria.org</code> el servdor que responde es el maestro.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/20.png"><img src="/assets/images/dns/20.png" alt="20"></a></p>
+
+    <p>Apagamos el servidor maestro, y volvemos a hacer la misma consulta.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nt">---Apagamos</span> el servicio de la máquina dns1
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl stop bind9
+<span class="nt">---Hacemos</span> la consulta
+<span class="nv">$ </span>dig www.maria.org
+</code></pre></div>    </div>
+
+    <ul>
+      <li>¿Ha respondido el servidor DNS esclavo?
+        <ul>
+          <li>Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/21.png"><img src="/assets/images/dns/21.png" alt="21"></a></p>
+
+    <p>Comprobamos en el esclavo que se ha producido la transferencia.</p>
+  </li>
+  <li>
+    <p>TRUCOS ADICIONALES.</p>
+
+    <ul>
+      <li>Podemos manejar el servidor DNS con el comando <code class="language-plaintext highlighter-rouge">rndc</code>. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.</li>
+    </ul>
+  </li>
+</ol>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hlc+sri/2022/11/17/escenario.html" title="Escenario en OpenStack">Escenario en OpenStack</a><a class="next" href="/iaw/2022/11/27/https.html" title="Configuración de HTTPS en nuestro VPS">Configuración de HTTPS en nuestro VPS...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Configuración de HTTPS en nuestro VPS">Instalación de nginx con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Configuración de HTTPS en nuestro VPS">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/12/13/integridad.html" title="Configuración de HTTPS en nuestro VPS"> Integridad, firmas y autenticación </a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Configuración de HTTPS en nuestro VPS">Crear un sitio web estático con Jekyll</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

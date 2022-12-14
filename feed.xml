@@ -1,4 +1,236 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-05T13:45:55+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-14T09:44:05+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Integridad, firmas y autenticación</title><link href="/hlc+sri/2022/12/13/integridad.html" rel="alternate" type="text/html" title="Integridad, firmas y autenticación" /><published>2022-12-13T08:17:50+01:00</published><updated>2022-12-13T08:17:50+01:00</updated><id>/hlc+sri/2022/12/13/integridad</id><content type="html" xml:base="/hlc+sri/2022/12/13/integridad.html"><![CDATA[<h2 id="tarea-1-firmas-electrónicas">Tarea 1: Firmas electrónicas</h2>
+
+<p>En este primer apartado vamos a trabajar con las firmas electrónicas, para ello te pueden ayudar los siguientes enlaces:</p>
+
+<p><a href="https://www.gnupg.org/gph/es/manual/x75.html">Intercambiar clave</a></p>
+
+<p><a href="https://www.gnupg.org/gph/es/manual/x354.html">Validar otras claves en nuestro anillo de claves públicas</a></p>
+
+<p><a href="https://www.debian.org/events/keysigning.es.html">Firmado de claves (Debian)</a></p>
+
+<ol>
+  <li>
+    <p>Manda un documento y la firma electrónica del mismo a un compañero. Verifica la firma que tu has recibido.</p>
+
+    <ul>
+      <li>Creamos la firma de la clave pública de Maria Jesus Alloza:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--list-keys</span>
+ gpg <span class="nt">--armor</span> <span class="nt">--export</span> <span class="nt">-a</span> <span class="s2">"Maria Jesus Alloza"</span> <span class="o">&gt;</span> mjar.asc
+</code></pre></div>        </div>
+      </li>
+      <li>Creamos el fichero de prueba y lo firmamos:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">echo</span> <span class="s2">"Fichero de prueba - Criptografía 2"</span> <span class="o">&gt;</span> fichero.txt
+ gpg <span class="nt">--detach-sign</span> fichero.txt
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Enviamos el fichero y la firma a nuestro compañero.</p>
+      </li>
+      <li>Verificamos la firma:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> crip2.txt.sig crip2.txt
+</code></pre></div>        </div>
+        <p><a href="/assets/images/crip2/1.png">1</a></p>
+      </li>
+      <li>Creamos el anillo de confianza:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--send-keys</span> D7D76217F9DA9045296C1EBC75F8A403F54FF4B4
+ <span class="nt">---</span>
+ gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> D7D76217F9DA9045296C1EBC75F8A403F54FF4B4
+</code></pre></div>        </div>
+        <p><a href="/assets/images/crip2/2.png">2</a></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>¿Qué significa el mensaje que aparece en el momento de verificar la firma?</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg: Firma correcta de <span class="s2">"Pepe D &lt;josedom24@gmail.com&gt;"</span> <span class="o">[</span>desconocido]
+ gpg: ATENCIÓN: ¡Esta clave no está certificada por una firma de confianza!
+ gpg:          No hay indicios de que la firma pertenezca al propietario.
+ Huellas dactilares de la clave primaria: E8DD 5DA9 3B88 F08A DA1D  26BF 5141 3DDB 0C99 55FC
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Este mensaje nos indica que al realizar la firma de dicha clave pública, no se ha encontrado ninguna firma de confianza, por lo que no se puede asegurar que la clave pertenezca al propietario.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Vamos a crear un anillo de confianza entre los miembros de nuestra clase, para ello.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> - Tu clave pública debe estar en un servidor de claves.
+ - Escribe tu fingerprint en un papel y dárselo a tu compañero, para que puede descargarse tu clave pública.
+ - Te debes bajar al menos tres claves públicas de compañeros. Firma estas claves.
+ - Tu te debes asegurar que tu clave pública es firmada por al menos tres compañeros de la clase.
+ - Una vez que firmes una clave se la tendrás que devolver a su dueño, para que otra persona se la firme.
+ - Cuando tengas las tres firmas sube la clave al servidor de claves y rellena tus datos en la tabla Claves públicas PGP 2022-2023.
+ - Asegurate que te vuelves a bajar las claves públicas de tus compañeros que tengan las tres firmas.
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Muestra las firmas que tiene tu clave pública.</p>
+  </li>
+  <li>
+    <p>Comprueba que ya puedes verificar sin “problemas” una firma recibida por una persona en la que confías.</p>
+  </li>
+  <li>
+    <p>Comprueba que puedes verificar con confianza una firma de una persona en las que no confías, pero sin embargo si confía otra persona en la que tu tienes confianza total.</p>
+  </li>
+</ol>
+
+<h2 id="tarea-2-correo-seguro-con-evolutionthunderbird">Tarea 2: Correo seguro con evolution/thunderbird</h2>
+
+<ol>
+  <li>
+    <p>Configura el cliente de correo evolution con tu cuenta de correo habitual.</p>
+  </li>
+  <li>
+    <p>Añade a la cuenta las opciones de seguridad para poder enviar correos firmados con tu clave privada o cifrar los mensajes para otros destinatarios.</p>
+  </li>
+  <li>
+    <p>Envía y recibe varios mensajes con tus compañeros y comprueba el funcionamiento adecuado de GPG.</p>
+  </li>
+</ol>
+
+<h2 id="tarea-3-integridad-de-ficheros">Tarea 3: Integridad de ficheros</h2>
+
+<ol>
+  <li>
+    <p>Para validar el contenido de la imagen CD, solo asegúrese de usar la herramienta apropiada para sumas de verificación. Para cada versión publicada existen archivos de suma de comprobación con algoritmos fuertes (SHA256 y SHA512); debería usar las herramientas sha256sum o sha512sum para trabajar con ellos.</p>
+  </li>
+  <li>
+    <p>Verifica que el contenido del hash que has utilizado no ha sido manipulado, usando la firma digital que encontrarás en el repositorio. Puedes encontrar una guía para realizarlo en este artículo: How to verify an authenticity of downloaded Debian ISO images</p>
+  </li>
+</ol>
+
+<h2 id="tarea-4-integridad-y-autenticidad-apt-secure">Tarea 4: Integridad y autenticidad (apt secure)</h2>
+
+<p>Busca información sobre apt secure y responde las siguientes preguntas:</p>
+
+<ol>
+  <li>¿Qué software utiliza apt secure para realizar la criptografía asimétrica?
+    <ul>
+      <li>gpg.</li>
+    </ul>
+  </li>
+  <li>¿Para que sirve el comando apt-key? ¿Qué muestra el comando apt-key list?
+    <ul>
+      <li>apt-key permite administrar las claves de los repositorios de paquetes.</li>
+      <li>Muestra las claves que tenemos en el sistema.</li>
+    </ul>
+  </li>
+  <li>En que fichero se guarda el anillo de claves que guarda la herramienta apt-key?
+    <ul>
+      <li>/etc/apt/trusted.gpg.d/</li>
+    </ul>
+  </li>
+  <li>¿Qué contiene el archivo Release de un repositorio de paquetes?. ¿Y el archivo Release.gpg?. Puedes ver estos archivos en el repositorio http://ftp.debian.org/debian/dists/Debian10.1/. Estos archivos se descargan cuando hacemos un apt update.
+    <ul>
+      <li>Contiene información sobre los paquetes que contiene el repositorio, como la versión, la arquitectura, etc.</li>
+      <li>La firma digital del fichero Release.</li>
+    </ul>
+  </li>
+  <li>Explica el proceso por el cual el sistema nos asegura que los ficheros que estamos descargando son legítimos.
+    <ul>
+      <li>El sistema descarga el fichero Release, fichero Release.gpg y el fichero packages.</li>
+      <li>Comprueba que el fichero Release.gpg es una firma válida del fichero Release.</li>
+      <li>Se compara el checksum del fichero packages con el que se encuentra en el fichero Release. En caso de que no coincidan, se descarga el fichero packages y se comprueba su integridad.</li>
+      <li>Se descarga el fichero Packages.gz y se comprueba su integridad. En caso de que coincida, se descomprime y se comprueba que el fichero Packages es una firma válida del fichero Packages.gz.</li>
+    </ul>
+  </li>
+  <li>Añade de forma correcta el repositorio de virtualbox añadiendo la clave pública de virtualbox como se indica en la documentación.
+    <ul>
+      <li>Añadimos las claves públicas de virtualbox a nuestro sistema.
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox_2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+</code></pre></div>        </div>
+      </li>
+      <li>Añadimos el repositorio de virtualbox a nuestro sistema.
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
+</code></pre></div>        </div>
+      </li>
+      <li>Actualizamos el sistema.
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt update
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="tarea-5-autentificación-ejemplo-ssh">Tarea 5: Autentificación: ejemplo SSH</h2>
+
+<ol>
+  <li>
+    <p>Explica los pasos que se producen entre el cliente y el servidor para que el protocolo cifre la información que se transmite. ¿Para qué se utiliza la criptografía simétrica? ¿Y la asimétrica?</p>
+
+    <ul>
+      <li>
+        <p>La criptografía simétrica proporciona un grado de autentificación porque los datos se cifran y descifran con la misma clave. Siempre que ambas partes mantengan la clave en secreto, nadie más podrá descifrar los datos. Su uso es principalmente para cifrar conexiones.</p>
+      </li>
+      <li>
+        <p>La criptografía asimétrica utiliza un par de claves, una pública y otra privada. La clave pública se utiliza para cifrar la información, mientras que la clave privada se utiliza para descifrarla. Se utiliza para autentificar a los usuarios, ya que solo el usuario con la clave privada puede descifrar la información cifrada con la clave pública.</p>
+      </li>
+    </ul>
+  </li>
+  <li>Explica los dos métodos principales de autentificación: por contraseña y utilizando un par de claves públicas y privadas.
+    <ul>
+      <li>
+        <p>Por contraseña: el usuario introduce la contraseña en el cliente y el servidor la compara con la que tiene almacenada. Si coinciden, el usuario se autentifica.</p>
+      </li>
+      <li>
+        <p>Con par de claves:</p>
+        <ul>
+          <li>El cliente genera un par de claves pública y privada.</li>
+          <li>El cliente envía la clave pública al servidor y la almacena en el fichero ~/.ssh/authorized_keys.</li>
+          <li>Ya almacenada la clave pública, en la primera conexión, el servidor solicitará al cliente que se autentifique mediante la clave privada. Si la clave privada es correcta, el servidor autentifica al cliente.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>En el cliente para que sirve el contenido que se guarda en el fichero ~/.ssh/know_hosts?
+    <ul>
+      <li>Se utiliza para autenticar a los servidores a los que nos conectamos.En este fichero nos encontraremos todas las claves públicas de los servidores a los que nos hemos conectado. De esta forma, cuando nos conectemos a un servidor, el cliente comprobará que la clave pública del servidor coincide con la que tiene almacenada en el fichero.</li>
+    </ul>
+  </li>
+  <li>¿Qué significa este mensaje que aparece la primera vez que nos conectamos a un servidor?
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>ssh debian@172.22.200.74
+ The authenticity of host 172.22.200.74 <span class="o">(</span>172.22.200.74<span class="o">)</span> can t be established.
+ ECDSA key fingerprint is SHA256:7ZoNZPCbQTnDso1meVSNoKszn38ZwUI4i6saebbfL4M.
+ Are you sure you want to <span class="k">continue </span>connecting <span class="o">(</span><span class="nb">yes</span>/no<span class="o">)</span>?
+</code></pre></div>    </div>
+    <ul>
+      <li>El cliente no tiene almacenada la clave pública del servidor, por lo que no puede autentificarlo. Por ello, nos pregunta si queremos continuar la conexión.</li>
+    </ul>
+  </li>
+  <li>En ocasiones cuando estamos trabajando en el cloud, y reutilizamos una ip flotante nos aparece este mensaje:
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>ssh debian@172.22.200.74
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @
+ @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+ IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+ Someone could be eavesdropping on you right now <span class="o">(</span>man-in-the-middle attack<span class="o">)!</span>
+ It is also possible that a host key has just been changed.
+ The fingerprint <span class="k">for </span>the ECDSA key sent by the remote host is
+ SHA256:W05RrybmcnJxD3fbwJOgSNNWATkVftsQl7EzfeKJgNc.
+ Please contact your system administrator.
+ Add correct host key <span class="k">in</span> /home/jose/.ssh/known_hosts to get rid of this message.
+ Offending ECDSA key <span class="k">in</span> /home/jose/.ssh/known_hosts:103
+   remove with:
+   ssh-keygen <span class="nt">-f</span> <span class="s2">"/home/jose/.ssh/known_hosts"</span> <span class="nt">-R</span> <span class="s2">"172.22.200.74"</span>
+ ECDSA host key <span class="k">for </span>172.22.200.74 has changed and you have requested strict checking.
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Cuando nos sale en pantalla este mensaje, es porque el servidor ha cambiado su clave pública pero la dirección IP del host no ha cambiando. Nos da un aviso de que alguien podría estar haciendo un ataque de man-in-the-middle. Para solucionarlo, debemos eliminar la clave pública del servidor del fichero ~/.ssh/known_hosts.
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ssh-keygen <span class="nt">-f</span> <span class="s2">"/home/jose/.ssh/known_hosts"</span> <span class="nt">-R</span> <span class="s2">"ip"</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>¿Qué guardamos y para qué sirve el fichero en el servidor ~/.ssh/authorized_keys?
+    <ul>
+      <li>En este fichero es único para cada usuario y en él se encuentran las claves públicas de los clientes que se han conectado al servidor. De esta manera, el servidor tiene almacenadas las claves públicas de los clientes que se han conectado a él y puede autentificarlos.</li>
+    </ul>
+  </li>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Tarea 1: Firmas electrónicas]]></summary></entry><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -2346,7 +2578,399 @@ server <span class="o">{</span>
 
     <p><img src="/assets/images/escenario/8.png" alt="8" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.]]></summary></entry><entry><title type="html">Talleres DNS</title><link href="/hlc+sri/2022/11/17/talleres-dns.html" rel="alternate" type="text/html" title="Talleres DNS" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/talleres-dns</id><content type="html" xml:base="/hlc+sri/2022/11/17/talleres-dns.html"><![CDATA[<h2 id="talleres-dns">Talleres DNS</h2>
+
+<h3 id="taller-1-instalación-y-configuración-del-servidor-bind9-en-nuestra-red-local">Taller 1: Instalación y configuración del servidor bind9 en nuestra red local.</h3>
+
+<ol>
+  <li>
+    <p>Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>bind9
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos la siguiente configuración para que funcione como servidor.</p>
+
+    <ul>
+      <li>
+        <p>En el fichero <code class="language-plaintext highlighter-rouge">/etc/default/named/</code> modificamos el fichero con la siguiente línea:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">OPTIONS</span><span class="o">=</span><span class="s2">"-4 -f -u bind"</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code></p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  allow-query <span class="o">{</span>172.29.0.0/16<span class="p">;</span> 172.22.0.0/16<span class="p">;</span><span class="o">}</span><span class="p">;</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dig @172.22.7.159 www.josedomingo.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/1.png" alt="1" /></p>
+      </li>
+      <li>¿Cuánto ha tardado en realizar la consulta?
+        <ul>
+          <li>367 msec</li>
+        </ul>
+      </li>
+      <li>¿Qué consultas se han realizado para averiguar la dirección IP?
+        <ul>
+          <li>La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org.</li>
+        </ul>
+      </li>
+      <li>Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora?
+        <ul>
+          <li>
+            <p>0 msec</p>
+
+            <p><img src="/assets/images/dns/2.png" alt="2" /></p>
+          </li>
+        </ul>
+      </li>
+      <li>¿Por qué ha tardado menos?
+        <ul>
+          <li>Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché.</li>
+        </ul>
+      </li>
+      <li>¿Qué consultas se han realizado para averiguar la dirección IP?
+        <ul>
+          <li>La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Creamos una zona directa para nuestro dominio <code class="language-plaintext highlighter-rouge">maria.org</code>, añadiendo al fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> zone <span class="s2">"maria.org"</span> <span class="o">{</span>
+ <span class="nb">type </span>master<span class="p">;</span>
+ file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de la zona <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code> y el fichero quedaría de la siguiente manera:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                                1         <span class="p">;</span> Serial
+                           604800         <span class="p">;</span> Refresh
+                            86400         <span class="p">;</span> Retry
+                          2419200         <span class="p">;</span> Expire
+                            86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.maria.org.
+ @	IN	MX	10	correo.maria.org.
+
+ <span class="nv">$ORIGIN</span> tunombre.org.
+
+ dns1			IN	A	172.22.7.159
+ correo			IN	A	172.22.200.101
+ asterix		    IN	A	172.22.200.102
+ obelix			IN	A	172.22.200.103
+ www			    IN	CNAME	asterix
+ informatica		IN	CNAME	asterix
+ ftp			    IN	CNAME	obelix
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Creamos una zona inversa:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+ <span class="nb">type </span>master<span class="p">;</span>
+ file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/7.png" alt="7" /></p>
+
+    <p>Y descomentamos la línea <code class="language-plaintext highlighter-rouge">include "/etc/bind/zones.rfc1918";</code> para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz.</p>
+
+    <p><img src="/assets/images/dns/5.png" alt="5" /></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ...
+ zone <span class="s2">"21.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ //zone <span class="s2">"22.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"23.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.172.22.0.0</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                                 1         <span class="p">;</span> Serial
+                             604800        <span class="p">;</span> Refresh
+                             86400         <span class="p">;</span> Retry
+                             2419200       <span class="p">;</span> Expire
+                             86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN  NS      dns1.maria.org.
+
+ <span class="nv">$ORIGIN</span> 22.172.in-addr.arpa.
+
+ 159.7		IN	PTR		dns1.maria.org.
+ 101.200		IN	PTR		correo.maria.org.
+ 102.200		IN 	PTR		asterix.maria.org.
+ 103.200		IN 	PTR		obelix.maria.org.
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig.</p>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Incluimos en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> la IP del servidor DNS:</p>
+
+    <p><img src="/assets/images/dns/8.png" alt="8" /></p>
+
+    <ul>
+      <li>
+        <p>Dirección IP de una máquina o servicio.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dig www.maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/9.png" alt="9" /></p>
+      </li>
+      <li>
+        <p>Servidor DNS con autoridad de dominio:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dig ns www.maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/10.png" alt="10" /></p>
+      </li>
+      <li>
+        <p>Servidor de correo del dominio.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dig mx maria.org
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/11.png" alt="11" /></p>
+      </li>
+      <li>
+        <p>Una resolución inversa.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dig <span class="nt">-x</span> 172.22.200.103
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/dns/12.png" alt="12" /></p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="taller-2-instalación-y-configuración-de-un-servidor-dns-esclavo">Taller 2: Instalación y configuración de un servidor DNS esclavo.</h3>
+
+<p>Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores.</p>
+
+<ol>
+  <li>
+    <p>Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre <code class="language-plaintext highlighter-rouge">dns2.maria.org</code>. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span><span class="nb">sudo </span>ufw allow 53/tcp
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> options <span class="o">{</span>
+ ...
+ allow-transfer <span class="o">{</span> none<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/13.png" alt="13" /></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code> para definir la zona del DNS maestro:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+ zone <span class="s2">"tunombre.org"</span> <span class="o">{</span>
+     <span class="nb">type </span>master<span class="p">;</span>
+     file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+     allow-transfer <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+     notify <span class="nb">yes</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+     <span class="nb">type </span>master<span class="p">;</span>
+     file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+     allow-transfer <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+     notify <span class="nb">yes</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/14.png" alt="14" /></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code> para definir la zona del DNS esclavo:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+ zone <span class="s2">"maria.org"</span> <span class="o">{</span>
+     <span class="nb">type </span>slave<span class="p">;</span>
+     file <span class="s2">"db.maria.org"</span><span class="p">;</span>
+     masters <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+ zone <span class="s2">"22.172.in-addr.arpa"</span> <span class="o">{</span>
+     <span class="nb">type </span>slave<span class="p">;</span>
+     file <span class="s2">"db.172.22.0.0"</span><span class="p">;</span>
+     masters <span class="o">{</span> 172.22.6.208<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+ <span class="o">}</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/15.png" alt="15" /></p>
+  </li>
+  <li>
+    <p>Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro <code class="language-plaintext highlighter-rouge">A</code> en el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                             1         <span class="p">;</span> Serial
+                         604800        <span class="p">;</span> Refresh
+                         86400         <span class="p">;</span> Retry
+                         2419200       <span class="p">;</span> Expire
+                         86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.maria.org.
+ @	IN	NS		dns2.maria.org.
+ @	IN	MX	10	correo.maria.org.
+
+ <span class="nv">$ORIGIN</span> maria.org.
+
+ dns1		IN	A         172.22.7.159
+ dns2		IN	A	10    172.22.6.208
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/16.png" alt="16" /></p>
+
+    <p>Y modificamos el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.172.22.0.0</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$TTL</span>    86400
+ @       IN      SOA     dns1.maria.org. root.maria.org. <span class="o">(</span>
+                               1         <span class="p">;</span> Serial
+                          604800         <span class="p">;</span> Refresh
+                           86400         <span class="p">;</span> Retry
+                         2419200         <span class="p">;</span> Expire
+                           86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+ <span class="p">;</span>
+ @	IN	NS		dns1.tunombre.org.
+ @	IN	NS		dns2.tunombre.org.  
+    
+ <span class="nv">$ORIGIN</span> 22.172.in-addr.arpa.    
+ 159.7		IN	PTR		dns1.maria.org.
+ 208.6		IN	PTR		dns2.maria.org.  
+ ...
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/dns/17.png" alt="17" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos los servidores DNS, tanto el maestro como el esclavo.</p>
+  </li>
+  <li>
+    <p>En caso de que nos salga algún error, probamos con los siguientes comandos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> named-checkzone maria.org /var/cache/bind/db.maria.org
+ named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0  
+ <span class="c">#Para detectar errores de configuración en `named.conf`, podemos usar:</span>
+ named-checkconf
+</code></pre></div>    </div>
+  </li>
+  <li>Configuramos el cliente con los dos servidores DNS. En el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> utiliza dos directivas <code class="language-plaintext highlighter-rouge">nameserver</code>. Si hacemos  una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta.
+    <ul>
+      <li>¿Quién ha respondido?.
+        <ul>
+          <li>Al realizar <code class="language-plaintext highlighter-rouge">dig www.maria.org</code> el servdor que responde es el maestro.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/18.png"><img src="/assets/images/dns/18.png" alt="18" /></a></p>
+
+    <p>Apagamos el servidor maestro, y volvemos a hacer la misma consulta.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">---Apagamos</span> el servicio de la máquina dns1
+ <span class="nv">$ </span><span class="nb">sudo </span>systemctl stop bind9
+ <span class="nt">---Hacemos</span> la consulta
+ <span class="nv">$ </span>dig www.maria.org
+</code></pre></div>    </div>
+
+    <ul>
+      <li>¿Ha respondido el servidor DNS esclavo?
+        <ul>
+          <li>Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/19.png"><img src="/assets/images/dns/19.png" alt="19" /></a></p>
+  </li>
+  <li>
+    <p>Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.maria.org</code> añadiendo:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ...
+ prueba		IN  A   172.22.6.208
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Desde el cliente realizaremos una consulta para preguntar por la dirección IP de <code class="language-plaintext highlighter-rouge">prueba.maria.org</code>.</p>
+
+    <ul>
+      <li>¿Quién ha respondido?.
+        <ul>
+          <li>Al realizar <code class="language-plaintext highlighter-rouge">dig prueba.maria.org</code> el servdor que responde es el maestro.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/20.png"><img src="/assets/images/dns/20.png" alt="20" /></a></p>
+
+    <p>Apagamos el servidor maestro, y volvemos a hacer la misma consulta.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">---Apagamos</span> el servicio de la máquina dns1
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl stop bind9
+<span class="nt">---Hacemos</span> la consulta
+<span class="nv">$ </span>dig www.maria.org
+</code></pre></div>    </div>
+
+    <ul>
+      <li>¿Ha respondido el servidor DNS esclavo?
+        <ul>
+          <li>Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><a href="/assets/images/dns/21.png"><img src="/assets/images/dns/21.png" alt="21" /></a></p>
+
+    <p>Comprobamos en el esclavo que se ha producido la transferencia.</p>
+  </li>
+  <li>
+    <p>TRUCOS ADICIONALES.</p>
+
+    <ul>
+      <li>Podemos manejar el servidor DNS con el comando <code class="language-plaintext highlighter-rouge">rndc</code>. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.</li>
+    </ul>
+  </li>
+</ol>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN tunombre.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "tunombre.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.tunombre.org. @ IN NS dns2.tunombre.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. TRUCOS ADICIONALES. Podemos manejar el servidor DNS con el comando rndc. Por ejemplo rndc reload: reinicia el servicio; rndc reload maria.org: Reinicia sólo esa zona; rndc flush: Borra la caché de resoluciones guardadas en el servidor.]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>/aso/2022/11/16/centOS</id><content type="html" xml:base="/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 
 <p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
 
@@ -2876,588 +3500,4 @@ Its output will be used to detect bootable binaries on them and create menu boot
 
 <p>Y como podemos ver, el virtualhost <em>www.pagina2.org</em> ya no está activo.</p>
 
-<p>La receta de ansible la podemos encontrar en el siguiente <a href="https://github.com/Legnakra/Nginx-Ansible">repositorio</a>.</p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[En esta entrada vamos a realizar una variante de este post en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.]]></summary></entry><entry><title type="html">Apache como proxy inverso</title><link href="/hlc+sri/2022/11/08/proxy.html" rel="alternate" type="text/html" title="Apache como proxy inverso" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/hlc+sri/2022/11/08/proxy</id><content type="html" xml:base="/hlc+sri/2022/11/08/proxy.html"><![CDATA[<h2 id="apache-como-proxy-inverso">Apache como proxy inverso</h2>
-
-<p>Apache es un servidor web que se puede utilizar como proxy inverso. En este artículo se explica cómo configurar Apache para que actúe como proxy inverso.</p>
-
-<h2 id="configuración">Configuración</h2>
-
-<p>Lo primero que haremos será aplicar el <a href="https://fp.josedomingo.org/sri2223/3_http/files/ejercicio_proxy.zip">escenario</a> donde encontraremos:</p>
-
-<ul>
-  <li>Un escenario vagrant con dos máquinas virtuales:
-    <ul>
-      <li>Una máquina proxy conectada al exterior y a una red interna.</li>
-      <li>Una máquina servidorweb conectada a la red interna.</li>
-    </ul>
-  </li>
-  <li>Una receta ansible para configurar las dos máquinas virtuales del escenario anterior.</li>
-</ul>
-
-<p>Lo siguiente será instalar apache en la máquina proxy y configurarla para acceder a las páginas web de la máquina servidorweb. La primera URL es www.app1.org y la segunda es www.app2.org.</p>
-
-<p>Activaremos el módulo proxy y proxy_http de apache:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2enmod proxy
-a2enmod proxy_http
-</code></pre></div></div>
-
-<p>Y reiniciaremos el servidor web:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
-
-<p>Ahora crearemos un archivo de configuración para cada una de las aplicaciones que queremos que se sirvan a través de apache. En este caso, crearemos dos archivos de configuración: app1.conf y app2.conf. Estos archivos de configuración se guardarán en la ruta /etc/apache2/sites-available.</p>
-
-<p>El contenido de app1.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app1.org
-        ProxyPass               /       "http://interno.example1.org"
-        ProxyPassReverse        /       "http://interno.example1.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Y el contenido de app2.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app2.org
-        ProxyPass               /       "http://interno.example2.org"
-        ProxyPassReverse        /       "http://interno.example2.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Ahora activaremos los archivos de configuración de las aplicaciones:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite app1.conf
-a2ensite app2.conf
-</code></pre></div></div>
-
-<p>Y reiniciaremos el servidor web:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
-
-<p>Ahora configuraremos el archivo /etc/hosts de la máquina host para que resuelva los nombres de las aplicaciones a las direcciones IP de las máquinas servidorweb. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org
-</code></pre></div></div>
-
-<p>Ahora configuraremos el archivo /etc/hosts de las máquinas servidorweb para que resuelva los nombres de las aplicaciones a las direcciones IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>10.0.0.6 interno.example1.org interno.example2.org
-</code></pre></div></div>
-
-<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
-
-<p><img src="/assets/images/proxy/1.png" alt="1" /></p>
-
-<p><img src="/assets/images/proxy/2.png" alt="2" /></p>
-
-<h2 id="creamos-un-virtualhost-para-las-dos-aplicaciones">Creamos un virtualhost para las dos aplicaciones</h2>
-
-<p>En vez de crear un virtualhost para cada aplicación, podemos crear un virtualhost para las dos aplicaciones. El contenido del archivo servidor.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-    ServerName www.servidor.org
-    &lt;Location "/app1"&gt;
-        ProxyPass           "http://interno.example1.org"
-        ProxyPassReverse    "http://interno.example1.org"
-    &lt;/Location&gt;
-    &lt;Location "/app2"&gt;
-        ProxyPass           "http://interno.example2.org"
-        ProxyPassReverse    "http://interno.example2.org"
-    &lt;/Location&gt;
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Ahora activaremos el archivo de configuración de la aplicación:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a2ensite servidor.conf
-</code></pre></div></div>
-
-<p>Y reiniciaremos el servidor web:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart apache2
-</code></pre></div></div>
-
-<p>Cambiaremos el contenido del archivo /etc/hosts de la máquina host para que resuelva el nombre de la aplicación a la dirección IP de la máquina proxy. El contenido del archivo /etc/hosts será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.121.63 www.app1.org www.app2.org www.servidor.org
-</code></pre></div></div>
-
-<p>Ahora, desde la máquina host, accederemos a las aplicaciones a través de la máquina proxy. Para ello, abriremos un navegador web y accederemos a las siguientes URLs:</p>
-
-<p><img src="/assets/images/proxy/3.png" alt="3" /></p>
-
-<p><img src="/assets/images/proxy/4.png" alt="4" /></p>
-
-<h2 id="modificaciones">Modificaciones</h2>
-
-<p>En el primer escenario, hemos configurado http://www.app1.org/directorio para que se sirva a través de la máquina proxy. Ahora vamos a modificarlo quitando la directiva ProxyPassReverse. El contenido del archivo app1.conf será el siguiente:</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost *:80&gt;
-        ServerName www.app1.org
-        ProxyPass               /       "http://interno.example1.org"
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<p>Si realizamos una petición HEAD con curl, veremos que cambia Location de la respuesta:</p>
-
-<p><img src="/assets/images/proxy/5.png" alt="5" /></p>
-
-<p><img src="/assets/images/proxy/6.png" alt="6" /></p>
-
-<p>Si ponemos de nuevo la directiva ProxyPassReverse, y queremos comprobar que redirección se realiza, podemos comprobarlo en la cabecera de Location de la respuesta:</p>
-
-<p><img src="/assets/images/proxy/7.png" alt="7" /></p>
-
-<p><img src="/assets/images/proxy/8.png" alt="8" /></p>
-
-<p>Como podemos ver en las siguientes imágenes, también sucede con el virtualhost <em>servidor.conf</em>.</p>
-
-<p>(antes de quitar ProxyPassReverse)
-<img src="/assets/images/proxy/9.png" alt="9" /></p>
-
-<p><img src="/assets/images/proxy/10.png" alt="10" /></p>
-
-<p>(despues de quitar ProxyPassReverse)</p>
-
-<p><img src="/assets/images/proxy/11.png" alt="11" /></p>
-
-<p><img src="/assets/images/proxy/12.png" alt="12" /></p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[Apache como proxy inverso]]></summary></entry><entry><title type="html">Interconexiones de servidores</title><link href="/asgbd/2022/11/08/interconexion.html" rel="alternate" type="text/html" title="Interconexiones de servidores" /><published>2022-11-08T13:11:32+01:00</published><updated>2022-11-08T13:11:32+01:00</updated><id>/asgbd/2022/11/08/interconexion</id><content type="html" xml:base="/asgbd/2022/11/08/interconexion.html"><![CDATA[<p>En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.</p>
-
-<p>Decir que para realizar esta documentación las versiones de software que se han utilizado son las siguientes:</p>
-<ul>
-  <li>Debian 11</li>
-  <li>Oracle 19c</li>
-  <li>PostgreSQL 13</li>
-</ul>
-
-<h2 id="interconexión-entre-dos-servidores-con-oracle-19c">Interconexión entre dos servidores con Oracle 19c</h2>
-
-<p><img src="/assets/images/interconexion/oracle.png" alt="oracle" /></p>
-
-<p>En esta primera parte vamos a realizar una interconexión entre dos servidores con Oracle 19c. Para ello vamos a utilizar el servicio de bases de datos Oracle 19c que tenemos instalado y vamos a crear en cada máquina un usuario, <code class="language-plaintext highlighter-rouge">maria1</code> la máquina <code class="language-plaintext highlighter-rouge">oracle1</code> y <code class="language-plaintext highlighter-rouge">maria2</code> en la máquina <code class="language-plaintext highlighter-rouge">oracle2</code>.</p>
-
-<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>oracle1: 192.168.122.189
-<span class="nt">---</span>
-oracle2: 192.168.122.179
-</code></pre></div></div>
-<p>A continuación, vamos conectarnos con el usuario administrador de oracle en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
-<span class="nv">$ </span>sqlplus / as sysdba
-SQL&gt; create user maria1 identified by admin<span class="p">;</span>
-SQL&gt; grant connect, resource to maria1<span class="p">;</span>
-SQL&gt; unlimit tablespace to maria1<span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/1.png" alt="1" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
-<span class="nv">$ </span>sqlplus / as sysdba
-SQL&gt; create user maria2 identified by admin<span class="p">;</span>
-SQL&gt; grant connect, resource to maria2<span class="p">;</span>
-SQL&gt; unlimit tablespace to maria2<span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/2.png" alt="2" /></p>
-
-<p>Ya creados los usuarios, también deberemos comprobar que el servicio de escucha de la base de datos está activo en cada una de las máquinas. Para ello, en cada una de las máquinas, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl status
-</code></pre></div></div>
-<p>Para asegurarnos de que el servicio está activo, debemos ver la siguiente salida:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tnsping &lt;ip&gt;
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/3.png" alt="3" /></p>
-
-<p><img src="/assets/images/interconexion/4.png" alt="4" /></p>
-
-<p>En el caso de que nos aparezca desactivado, lo activamos con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>lsnrctl start
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/5.png" alt="5" /></p>
-
-<h3 id="enrutamos-los-servidores">Enrutamos los servidores</h3>
-
-<p>En este paso, vamos a añadirle una entrada a la tabla de enrutamiento de cada una de las máquinas, para que sepan cómo llegar al otro servidor. Para ello, en cada una de las máquinas, modificaremos el fichero tnsnames.ora, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">$ORACLE_HOME/network/admin/</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
-ORACLE2 <span class="o">=</span>
-    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
-        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.179<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
-        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
-            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
-            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
-        <span class="o">)</span>
-    <span class="o">)</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/6.png" alt="6" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
-ORACLE1 <span class="o">=</span>
-    <span class="o">(</span>DESCRIPTION <span class="o">=</span>
-        <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.189<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
-        <span class="o">(</span>CONNECT_DATA <span class="o">=</span>
-            <span class="o">(</span>SERVER <span class="o">=</span> DEDICATED<span class="o">)</span>
-            <span class="o">(</span>SERVICE_NAME <span class="o">=</span> ORCLCDB<span class="o">)</span>
-        <span class="o">)</span>
-    <span class="o">)</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/7.png" alt="7" /></p>
-
-<h3 id="creamos-la-base-de-datos">Creamos la base de datos</h3>
-
-<p>Ahora vamos a crear una base de datos en cada una de las máquinas. Para las comprobaciones he optado por el esquema SCOTT, que podéis encontrar <a href="https://github.com/Legnakra/esquema-scott/blob/main/scott.sql">aquí</a>. La única diferencia, es que el servidor oracle2 no tendrá la tabla empleados, ya que la vamos a crear en el servidor oracle1.</p>
-
-<h3 id="creamos-los-enlaces">Creamos los enlaces</h3>
-
-<p>Ambos servidores ya tienen la base de datos creada, ahora vamos a crear los enlaces entre ellos. Para ello, en la máquina oracle1, vamos a crear el enlace con el usuario maria1 y en la máquina oracle2, vamos a crear el enlace con el usuario maria2.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
-<span class="nv">$ </span>sqlplus maria1/admin
-SQL&gt; CREATE DATABASE LINK interconexion2 CONNECT TO maria2 IDENTIFIED BY admin USING <span class="s1">'ORACLE2'</span><span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/8.png" alt="8" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
-<span class="nv">$ </span>sqlplus maria2/admin
-SQL&gt; CREATE DATABASE LINK interconexion1 CONNECT TO maria1 IDENTIFIED BY admin USING <span class="s1">'ORACLE1'</span><span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/9.png" alt="9" /></p>
-
-<h3 id="comprobamos-la-conexión">Comprobamos la conexión</h3>
-
-<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle2, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle1</span>
-<span class="nv">$ </span>sqlplus maria1/admin
-SQL&gt; SELECT <span class="k">*</span> FROM dept@interconexion2 WHERE dname <span class="o">=</span> <span class="s1">'SALES'</span><span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/10.png" alt="10" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle2</span>
-<span class="nv">$ </span>sqlplus maria2/admin
-SQL&gt; SELECT <span class="k">*</span> FROM emp@interconexion1 WHERE deptno <span class="o">=</span> 20<span class="p">;</span>
-SQL&gt; <span class="nb">exit</span>
-</code></pre></div></div>
-<p><img src="/assets/images/interconexion/11.png" alt="11" /></p>
-
-<h2 id="interconexión-entre-dos-servidores-con-postgresql">Interconexión entre dos servidores con postgresql</h2>
-
-<p><img src="/assets/images/interconexion/postgresql.png" alt="postgresql" /></p>
-
-<p>Ahora le toca el turno a postgresql. Para realizar la interconexión entre dos servidores, vamos a utilizar el mismo esquema que en el caso de oracle, es decir, vamos a crear una base de datos en cada uno de los servidores y vamos a crear un enlace entre ellos.</p>
-
-<p>Lo primero que debemos averiguar es la IP de cada una de nuestras máquinas, en mi caso son:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria: 192.168.122.167
-<span class="nt">---</span>
-oracle: 192.168.122.189
-</code></pre></div></div>
-
-<h3 id="creamos-la-base-de-datos-1">Creamos la base de datos</h3>
-<p>En este caso voy a utilizar el esquema scott de postgresql, que podéis encontrar <a href="">aquí</a>, para de esa forma hacer las mismas consultas que en el caso de oracle.</p>
-
-<h3 id="creamos-los-usuarios">Creamos los usuarios</h3>
-<p>A continuación, vamos conectarnos con el usuario administrador de postgres en cada una de las máquinas y vamos a crear los usuarios que vamos a utilizar para la interconexión.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
-<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria2 WITH PASSWORD 'admin';</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott2 TO maria2;</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria2;</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
-EXIT<span class="p">;</span>
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
-<span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE USER maria1 WITH PASSWORD 'admin';</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT CONNECT ON DATABASE scott TO maria1;</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT USAGE ON SCHEMA public TO maria1;</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># GRANT;</span>
-EXIT<span class="p">;</span>
-</code></pre></div></div>
-
-<h3 id="creamos-los-enlaces-1">Creamos los enlaces</h3>
-
-<p>Antes de realizar los enlaces entre las dos máquinas, debemos de cerciorarnos de que el puerto 5432 está abierto en las dos máquinas. Para ello, vamos a comprobar con elsiguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>5432
-</code></pre></div></div>
-
-<p>Si no está abierto, lo abrimos con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>ufw allow 5432/tcp
-</code></pre></div></div>
-
-<p>Ahora vamos a crear los enlaces entre las dos máquinas. Para ello realizaremos los siguientes pasos:</p>
-
-<ol>
-  <li>Nos conectamos como usuario postgres.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su - postgres psql
-</code></pre></div>    </div>
-  </li>
-  <li>Nos conectamos a la base de datos:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott2</span>
-<span class="nt">---</span>
-<span class="c"># oracle</span>
-<span class="nv">postgres</span><span class="o">=</span><span class="c"># \c scott</span>
-</code></pre></div>    </div>
-  </li>
-  <li>En las dos máquinas realizamos el mismo comando:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># CREATE EXTENSION dblink;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Comprobamos que los links están realizados:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=</span><span class="c"># \dx</span>
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<h3 id="comprobamos-la-conexión-1">Comprobamos la conexión</h3>
-
-<p>Ahora vamos a comprobar que la conexión entre los dos servidores funciona correctamente. Para ello, vamos a realizar una consulta en la máquina oracle, que es la que no tiene la tabla empleados, y vamos a ver si podemos acceder a ella.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># maria</span>
-<span class="nv">$ </span>psql <span class="nt">-U</span> maria2 <span class="nt">-d</span> scott2
-<span class="nv">scott2</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.189 port=5432 user=maria1 password=admin dbname=scott', 'SELECT * FROM emp WHERE deptno = 20') as t1 (empno int, ename varchar(10), job varchar(9), mgr int, hiredate date, sal numeric(7,2), comm numeric(7,2), deptno int);</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/12.png" alt="12" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># oracle</span>
-<span class="nv">$ </span>psql <span class="nt">-U</span> maria1 <span class="nt">-d</span> scott
-<span class="nv">scott</span><span class="o">=</span><span class="c"># SELECT * FROM dblink('host=192.168.122.167 port=5432 user=maria2 password=admin dbname=scott2', 'SELECT * FROM dept WHERE deptno = 30') as t2 (deptno int, dname varchar(14), loc varchar(13));</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/13.png" alt="13" /></p>
-
-<blockquote>
-  <p><strong>Nota:</strong> En el caso de posgresql, a diferencia de ORACLE, es necesario que a la hora de realizar la consulta, se especifique el formato de salida de la misma, ya que si no, dará error.</p>
-</blockquote>
-
-<p><img src="/assets/images/interconexion/14.png" alt="14" /></p>
-
-<h2 id="interconexión-entre-un-servidor-oracle-y-un-servidor-postgresql">Interconexión entre un servidor Oracle y un servidor Postgresql</h2>
-
-<p><img src="/assets/images/interconexion/oracle-postgresql.png" alt="postgresql-oracle" /></p>
-
-<p>Para finalizar, vamos a realizar una interconexión entre un servidor oracle y un servidor postgresql. Para ello, vamos a utilizar el mismo esquema que en los casos anteriores, es decir, vamos a reutilizar las bases de datos que hemos creado en los casos anteriores.</p>
-
-<p>En la máquina <code class="language-plaintext highlighter-rouge">maria</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.167</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott2</code> con la tabla <code class="language-plaintext highlighter-rouge">dept</code> y en la máquina <code class="language-plaintext highlighter-rouge">oracle</code> con ip <code class="language-plaintext highlighter-rouge">192.168.122.189</code> tenemos la base de datos <code class="language-plaintext highlighter-rouge">scott</code> con la tabla <code class="language-plaintext highlighter-rouge">emp</code>.</p>
-
-<h3 id="creamos-los-enlaces-2">Creamos los enlaces</h3>
-
-<p>Realmente, ambas máquinas ya están configuradas para acceder a ellas de forma remota, ya que en el caso de oracle, hemos creado un usuario remoto y en el caso de postgresql, hemos abierto el puerto 5432. Pero, siendo dos gestores de bases de datos diferentes, vamos a realizar los enlaces de forma diferente.</p>
-
-<h4 id="conectándonos-de-oracle-a-postgresql">Conectándonos de Oracle a Postgresql</h4>
-
-<p>Para que la interconexión entre estos gestores de bases de datos sea posible, debemos de tener instalado el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> en la máquina oracle. Para ello, vamos a realizar los siguientes pasos:</p>
-
-<ol>
-  <li>Nos conectamos como usuario root.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>su
-</code></pre></div>    </div>
-  </li>
-  <li>Actualizamos la lista de paquetes.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get update
-</code></pre></div>    </div>
-  </li>
-  <li>Instalamos el paquete <code class="language-plaintext highlighter-rouge">postgresql-odbc</code> y <code class="language-plaintext highlighter-rouge">unixODCB</code>.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>odbc-postgresql unixodbc
-</code></pre></div>    </div>
-  </li>
-  <li>Creamos el archivo de configuración de odbc.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbc.ini
-</code></pre></div>    </div>
-  </li>
-  <li>Añadimos la siguiente configuración:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>PSQLORCL]
-Debug <span class="o">=</span> 0
-CommLog <span class="o">=</span> 0
-ReadOnly <span class="o">=</span> 0
-Driver <span class="o">=</span> PostgreSQL
-Servername <span class="o">=</span> 192.168.122.172
-Username <span class="o">=</span> maria2
-Password <span class="o">=</span> admin
-Port <span class="o">=</span> 5432
-Database <span class="o">=</span> scott2
-Trace <span class="o">=</span> 0
-TraceFile <span class="o">=</span> /tmp/sql.log
-</code></pre></div>    </div>
-  </li>
-  <li>Creamos el archivo de configuración de odbcinst.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano /etc/odbcinst.ini
-</code></pre></div>    </div>
-  </li>
-  <li>Añadimos la siguiente configuración:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>PostgreSQL]
-Description     <span class="o">=</span> ODBC <span class="k">for </span>PostgreSQL
-Driver          <span class="o">=</span> psqlodbcw.so
-Setup           <span class="o">=</span> libodbcpsqlS.so
-Driver64        <span class="o">=</span> psqlodbcw.so
-Setup64         <span class="o">=</span> libodbcpsqlS.so
-FileUsage       <span class="o">=</span> 1
-</code></pre></div>    </div>
-  </li>
-  <li>Reiniciamos el servicio odbc.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>service odbc restart
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p>Una vez finalizada la configuración, vamos a realizar la conexión entre los dos servidores y comprobar que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>isql <span class="nt">-v</span> PSQLORCL
-</code></pre></div></div>
-
-<p>Y realizamos una consulta simple para comprobar que funciona correctamente.</p>
-
-<p><img src="/assets/images/interconexion/16.png" alt="16" /></p>
-
-<p>Realizamos el link de la base de datos pero esta vez desde Oracle, pero para ello, debemos realizar las siguientes modificaciones:</p>
-
-<ol>
-  <li>Creatermos el fichero <em>initPSQLORCL.ora</em> dentro de $ORACLE_HOME/network/admin.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/initPSQLORCL.ora
-</code></pre></div>    </div>
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HS_FDS_CONNECT_INFO <span class="o">=</span> PSQLU
-HS_FDS_TRACE_LEVEL <span class="o">=</span> DEBUG
-HS_FDS_SHAREABLE_NAME <span class="o">=</span> /usr/lib64/psqlodbcw.so
-HS_LANGUAGE <span class="o">=</span> AMERICAN_AMERICA.WE8ISO8859P1
-<span class="nb">set </span><span class="nv">ODBCINI</span><span class="o">=</span>/etc/odbc.ini
-<span class="nb">set </span><span class="nv">ODBCSYSINI</span><span class="o">=</span>/etc
-</code></pre></div>    </div>
-  </li>
-  <li>Lo siquiente que modificaremos, añadiendo lo descrito, será el fichero <em>listener.ora</em>.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>nano <span class="nv">$ORACLE_HOME</span>/network/admin/listener.ora
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> LISTENER <span class="o">=</span>
-     <span class="o">(</span>DESCRIPTION_LIST <span class="o">=</span>
-         <span class="o">(</span>DESCRIPTION <span class="o">=</span>
-             <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> TCP<span class="o">)(</span>HOST <span class="o">=</span> 192.168.122.189<span class="o">)(</span>PORT <span class="o">=</span> 1521<span class="o">))</span>
-             <span class="o">(</span>ADDRESS <span class="o">=</span> <span class="o">(</span>PROTOCOL <span class="o">=</span> IPC<span class="o">)(</span>KEY <span class="o">=</span> EXTPROC1521<span class="o">))</span>
-         <span class="o">)</span>
-     <span class="o">)</span>
-
- SID_LIST_LISTENER <span class="o">=</span>
-     <span class="o">(</span>SID_LIST <span class="o">=</span>
-         <span class="o">(</span>SID_DESC <span class="o">=</span>
-             <span class="o">(</span>SID_NAME <span class="o">=</span> PSQLORCL<span class="o">)</span>
-             <span class="o">(</span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/opt/oracle/product/19c/dbhome_1<span class="o">)</span>
-             <span class="o">(</span><span class="nv">PROGRAM</span><span class="o">=</span>dg4odbc<span class="o">)</span>
-         <span class="o">)</span>
-     <span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Modicicamos tambien el fichero <em>tnsnames.ora</em>.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PSQLORCL <span class="o">=</span>
- <span class="o">(</span><span class="nv">DESCRIPTION</span><span class="o">=</span>
-     <span class="o">(</span><span class="nv">ADDRESS</span><span class="o">=(</span><span class="nv">PROTOCOL</span><span class="o">=</span>tcp<span class="o">)(</span><span class="nv">HOST</span><span class="o">=</span>192.168.122.189<span class="o">)(</span><span class="nv">PORT</span><span class="o">=</span>1521<span class="o">))</span>
-     <span class="o">(</span><span class="nv">CONNECT_DATA</span><span class="o">=(</span><span class="nv">SID</span><span class="o">=</span>PSQLORCL<span class="o">))</span>
-     <span class="o">(</span><span class="nv">HS</span><span class="o">=</span>OK<span class="o">)</span>
- <span class="o">)</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Reiniciamos el servicio de oracle.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>service oracle restart
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p>Y como podemos comprobar, la conexión funciona correctamente. En la imagen de a continuación podemos ver que se lista la tabla que sí existe en la base de datos de postgres, es decir, la tabla dept.</p>
-
-<p><img src="/assets/images/interconexion/17.png" alt="17" /></p>
-
-<h2 id="interconexión-entre-un-servidor-postgresql-y-un-servidor-oracle">Interconexión entre un servidor Postgresql y un servidor Oracle</h2>
-
-<p>Para que los dos servidores puedan realizar la interconexión, haremos uso de <code class="language-plaintext highlighter-rouge">oracle_fdw</code>. Para ello instalaremos los siguientes paquetes:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>apt-get <span class="nb">install </span>postgresql-server-dev-all libaio1 build-essential
-</code></pre></div></div>
-
-<p>Una vez instalados los paquetes, vamos a descargarnos a través de wget los paquetes de Oracle Instant Client. Loguearemos con el usuario postgres y descargaremos los paquetes.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip
-wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sdk-linux.x64-21.1.0.0.0.zip
-wget https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-sqlplus-linux.x64-21.1.0.0.0.zip
-</code></pre></div></div>
-
-<p>Descomprimimos los paquetes e introducimos las variables de entorno necesarias para no tener que usar el comando <code class="language-plaintext highlighter-rouge">export</code> cada vez que queramos usar los paquetes.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">ORACLE_HOME</span><span class="o">=</span>/var/lib/postgresql/instantclient_21_1
-postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span>:<span class="nv">$ORACLE_HOME</span>
-postgres@bbdd2:~<span class="nv">$ </span><span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$ORACLE_HOME</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/18.png" alt="18" /></p>
-
-<p>Comprobamos que se han hecho correctamente las variables de entorno.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span>which sqlplus
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/19.png" alt="19" /></p>
-
-<p>Y como podemos ver enla siguiente imagen, podemos conectarnos a la base de datos de Oracle.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres@bbdd2:~<span class="nv">$ </span>sqlplus maria1/admin@192.168.122.189/ORCLCDB
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/20.png" alt="20" /></p>
-
-<p>Una vez comprobado que todo funciona correctamente, vamos a instalar el paquete de <code class="language-plaintext highlighter-rouge">oracle_fdw</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/laurenz/oracle_fdw/archive/refs/tags/ORACLE_FDW_2_3_0.zip
-unzip ORACLE_FDW_2_3_0.zip
-<span class="nb">mv </span>oracle_fdw-ORACLE_FDW_2_3_0/ oracle_fdw
-<span class="nb">cd </span>oracle_fdw
-make
-make <span class="nb">install</span>
-</code></pre></div></div>
-
-<p>Y una vez instalado, vamos a entrar en la base de datos y crearemos la extensión, pero nos salta el siguiente error:</p>
-
-<p><img src="/assets/images/interconexion/21.png" alt="21" /></p>
-
-<p>Para solucionarlo, crearemos el fichero <code class="language-plaintext highlighter-rouge">/etc/ls.so.conf.d/oracle.conf</code> y añadiremos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/var/lib/postgresql/instantclient_21_1
-/usr/share/postgresql/13/extension
-</code></pre></div></div>
-
-<h3 id="creamos-los-enlaces-3">Creamos los enlaces</h3>
-
-<p>Creamos los vínculos a las librerías de los directorio que hemos descrito en el fichero anterior y reiniciamos el servicio de postgresql. Tras ello creamos la extensión y lo comprobamos con <code class="language-plaintext highlighter-rouge">\dx</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldconfig
-service postgresql restart
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/22.png" alt="22" /></p>
-
-<p>Creamos un nuevo esquema, y una vez creado, definimos el servidor remoto de Oracle y el mapeo de usuario para que nuestro usuario alojado en PostgreSQL pueda acceder en las tablas del servidor Oracle.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE SCHEMA oracle<span class="p">;</span>
-create server oracle foreign data wrapper oracle_fdw options <span class="o">(</span>dbserver <span class="s1">'//192.168.122.189/ORCLCDB'</span><span class="o">)</span><span class="p">;</span>
-
-create user mapping <span class="k">for </span>maria2 server oracle options <span class="o">(</span>user <span class="s1">'maria1'</span>, password <span class="s1">'admin'</span><span class="o">)</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/23.png" alt="23" /></p>
-
-<p>Salimos de la base de datos y nos conectamos con el usuario que hemos creado con anterioridad.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-h</span> localhost <span class="nt">-U</span> maria2 <span class="nt">-d</span> scott2
-</code></pre></div></div>
-
-<p><img src="/assets/images/interconexion/24.png" alt="24" /></p>
-
-<h3 id="conectándonos-de-postgres-a-oracle">Conectándonos de Postgres a Oracle</h3>
-
-<p>Como podemos ver en la siguiente imagen, podemos acceder a las tablas de la base de datos de PostgreSQL desde Oracle.</p>
-
-<p><img src="/assets/images/interconexion/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="asgbd" /><summary type="html"><![CDATA[En esta entrada vamos a configurar servicios gestores de bases de datos para realizar interconexiones entre ellos. Es una práctica habitual en entornos de producción, donde se suele tener un servidor de bases de datos principal y otros servidores de bases de datos secundarios, que se conectan al servidor principal para realizar consultas y actualizaciones de datos.]]></summary></entry></feed>
+<p>La receta de ansible la podemos encontrar en el siguiente <a href="https://github.com/Legnakra/Nginx-Ansible">repositorio</a>.</p>]]></content><author><name></name></author><category term="hlc+sri" /><summary type="html"><![CDATA[En esta entrada vamos a realizar una variante de este post en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.]]></summary></entry></feed>
