@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-17T12:25:53+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-19T12:25:52+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
 
 <h3 id="introducción">Introducción</h3>
 
@@ -45,7 +45,7 @@
  &lt;/Directory&gt;
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/posts/flask/1.png" alt="1" /></p>
+    <p><img src="/assets/images/uwsgi/1.png" alt="1" /></p>
   </li>
   <li>
     <p>Activamos el módulo wsgi y el virtualhost:</p>
@@ -68,7 +68,178 @@
  172.22.201.119 www.flask.maria.org
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/posts/flask/2.png" alt="2" /></p>
+    <p><img src="/assets/images/uwsgi/2.png" alt="2" /></p>
+  </li>
+</ol>
+
+<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_uwsgi">Desplegando aplicaciones flask con apache2 + mod_uwsgi</h2>
+
+<h3 id="introducción-1">Introducción</h3>
+
+<p>En esta entrada vamos a ver como desplegar una aplicación flask con apache2 + mod_uwsgi.</p>
+
+<h3 id="instalación-de-apache2--mod_uwsgi">Instalación de apache2 + mod_uwsgi</h3>
+
+<ol>
+  <li>
+    <p>Instalamos el paquete python3-dev y uwsgi:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ apt <span class="nb">install </span>python3-dev uwsgi
+</code></pre></div>    </div>
+
+    <p>Es posible que también tengamos que instalar <code class="language-plaintext highlighter-rouge">build-essential</code> para que se instale correctamente uwsgi.</p>
+  </li>
+</ol>
+
+<h3 id="despliegue-de-la-aplicación-flask">Despliegue de la aplicación flask</h3>
+
+<ol>
+  <li>
+    <p>Probamos que el servidor uwsgi funciona correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>uwsgi <span class="nt">--http</span> :8080 <span class="nt">--chdir</span> /home/debian/guestbook <span class="nt">--wsgi-file</span> wsgi.py <span class="nt">--process</span> 4 <span class="nt">--threads</span> 2 <span class="nt">--master</span> 
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/0-1.png" alt="01" /></p>
+
+    <p>Otra forma de comprobar que funciona es creando el ficher <code class="language-plaintext highlighter-rouge">ini</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>nano guestbook.ini
+ <span class="nt">---</span>
+ <span class="o">[</span>uwsgi]
+ http <span class="o">=</span> :8080
+ chdir <span class="o">=</span> /home/debian/guestbook
+ wsgi-file <span class="o">=</span> wsgi.py
+ processes <span class="o">=</span> 4
+ threads <span class="o">=</span> 2
+</code></pre></div>    </div>
+    <p>Y ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>uwsgi <span class="nt">--ini</span> uwsgi.ini
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/0-2.png" alt="02" /></p>
+  </li>
+  <li>
+    <p>Creamos una unidad systemd para controlarla con systemctl.</p>
+
+    <ul>
+      <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/systemd/system/uwsgi.guestbook.service</code>:</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">[</span>Unit]
+ <span class="nv">Description</span><span class="o">=</span>uwsgi-guestbook
+ <span class="nv">After</span><span class="o">=</span>network.target
+
+ <span class="o">[</span>Install]
+ <span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+
+ <span class="o">[</span>Service]
+ <span class="nv">User</span><span class="o">=</span>www-data
+ <span class="nv">Group</span><span class="o">=</span>www-data
+ <span class="nv">Restart</span><span class="o">=</span>always
+
+ <span class="nv">ExecStart</span><span class="o">=</span>/home/debian/venv/flask/bin/uwsgi /home/debian/venv/flask/guestbook.ini
+ <span class="nv">ExecReload</span><span class="o">=</span>/bin/kill <span class="nt">-s</span> HUP <span class="nv">$MAINPID</span>
+ <span class="nv">ExecStop</span><span class="o">=</span>/bin/kill <span class="nt">-s</span> TERM <span class="nv">$MAINPID</span>
+    
+ <span class="nv">WorkingDirectory</span><span class="o">=</span>/home/debian/guestbook
+ <span class="nv">Environment</span><span class="o">=</span><span class="nv">PYTHONPATH</span><span class="o">=</span> <span class="s1">'/home/debian/guestbook:/home/debian/venv/flask/lib/python3.9/site-packages'</span>
+    
+ <span class="nv">PrivateTmp</span><span class="o">=</span><span class="nb">true</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/3.png" alt="3" /></p>
+
+    <ul>
+      <li>Activamos el servicio:</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl <span class="nb">enable </span>uwsgi.guestbook
+ root@debian:~ systemctl start uwsgi.guestbook
+</code></pre></div>    </div>
+
+    <p><strong>NOTA</strong>: Si cambiamos elcontenido de la unidad lo recargaremosejecutando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl daemon-reload
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h3 id="proxy-inverso-para-uwsgi">Proxy Inverso para uwsgi</h3>
+
+<ol>
+  <li>
+    <p>Activamos el módulo proxy_http:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> DocumentRoot /home/debian/guestbook
+ ProxyPass / http://127.0.0.1:8080/
+ ProxyPassReverse / http://127.0.0.1:8080/
+ &lt;Directory /home/debian/guestbook&gt;
+     Require all granted
+ &lt;/Directory&gt;
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio apache2:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ a2enmod proxy_http
+ root@debian:~ systemctl restart apache2
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/5.png" alt="5" /></p>
+  </li>
+</ol>
+
+<h3 id="nginx-como-proxy-inverso-de-uwsgi">Nginx como proxy inverso de uwsgi</h3>
+
+<ol>
+  <li>
+    <p>Configuramos el virtualhost de nginx en <code class="language-plaintext highlighter-rouge">/etc/nginx/sites-available/guestbook.conf</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> location / <span class="o">{</span>
+ proxy_pass http://localhost:8080<span class="p">;</span>
+ include proxy_params<span class="p">;</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Activamos el virtualhost:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ <span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/guestbook.conf /etc/nginx/sites-enabled/guestbook.conf
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio nginx:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl restart nginx
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/uwsgi/8.png" alt="8" /></p>
+  </li>
+</ol>
+
+<h3 id="comprobaciones">Comprobaciones</h3>
+
+<ol>
+  <li>
+    <p>Instalamos nginx y lo configuramos también como proxy inverso. Para ello su fichero de configuración será:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> location / <span class="o">{</span>
+ proxy_pass http://localhost:8080<span class="p">;</span>
+ include proxy_params<span class="p">;</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <p>Accedemos a la aplicación desde el navegador:</p>
+
+    <p><img src="/assets/images/posts/flask/8.png" alt="8" /></p>
   </li>
 </ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Desplegando aplicaciones flask con apache2 + mod_wsgi]]></summary></entry><entry><title type="html">Integridad, firmas y autenticación</title><link href="/seguridad/2022/12/13/integridad.html" rel="alternate" type="text/html" title="Integridad, firmas y autenticación" /><published>2022-12-13T08:17:50+01:00</published><updated>2022-12-13T08:17:50+01:00</updated><id>/seguridad/2022/12/13/integridad</id><content type="html" xml:base="/seguridad/2022/12/13/integridad.html"><![CDATA[<h2 id="tarea-1-firmas-electrónicas">Tarea 1: Firmas electrónicas</h2>
 
