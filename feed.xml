@@ -1,4 +1,168 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-19T12:54:26+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2022-12-20T13:49:38+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Despliegue de una aplcación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
+
+<p>En esta entrada vamos a desplegar una aplicación Python realizada en Django.</p>
+
+<h2 id="entorno-de-desarrollo">Entorno de desarrollo</h2>
+
+<ol>
+  <li>
+    <p>Utilizamos la máquina <code class="language-plaintext highlighter-rouge">bravo</code> de nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> que usa Rocky Linux 9.</p>
+  </li>
+  <li>
+    <p>Vamos a configurar nuestro escenario de la siguiente manera:</p>
+
+    <ul>
+      <li>
+        <p>Realizamos un fork del repositorio con la <a href="https://github.com/josedom24/django_tutorial">app</a>.</p>
+      </li>
+      <li>
+        <p>Creamos un entorno virtual de Python3 e instalamos las dependencias necesarias.</p>
+      </li>
+      <li>Comprobamos que la base de datos con la que vamosa trabajar es SQLite.
+        <ul>
+          <li>¿Qué fichero tenemos que consultar?</li>
+          <li>¿Cómo se llamala base de datos que vamos a crear?</li>
+        </ul>
+      </li>
+      <li>
+        <p>Creamos la base de datos.</p>
+      </li>
+      <li>
+        <p>Creamos el usuario Administrador.</p>
+      </li>
+      <li>
+        <p>Ejecutamos el servidor web de desarrollo y entramos en la zona de administración para comprobar que los datos se han almacenado correctamente.</p>
+      </li>
+      <li>
+        <p>Creamos dos preguntas con posibles respuestas.</p>
+      </li>
+      <li>
+        <p>Comprobamos que podemos acceder a la aplicación desde el navegador. y accedemos a la url <code class="language-plaintext highlighter-rouge">/polls</code>.</p>
+      </li>
+      <li>Configura el servidor web con el módulo wsgi para sevir lapágina web. Como hemos utilizado la máquina <code class="language-plaintext highlighter-rouge">bravo</code> se accederá por el nombre <code class="language-plaintext highlighter-rouge">python.maria.gonzalonazareno.org</code>.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="entorno-de-producción">Entorno de producción</h2>
+
+<p>Eneste apartado vamos a realizar el despliegue de nuestra aplicación en un entorno de producción, para ello vamos a utilizar nuestro VPS.</p>
+
+<p>Para ello:</p>
+
+<ol>
+  <li>
+    <p>Vamos a clonar el repositorio de la aplicación en el VPS.</p>
+  </li>
+  <li>
+    <p>Creamos un entorno virtual e instalamos las dependencias de nuestra aplicación.</p>
+  </li>
+  <li>
+    <p>Instalamos el módulo que nos permitirá que python trabajecon mysql:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> pip <span class="nb">install </span>mysqlclient
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos la base de datos y un usuario en mysql.</p>
+  </li>
+  <li>
+    <p>Configuramos la aplicación para trabajar con mysql, por ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la siguiente manera:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+     <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
+     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'myproject'</span><span class="p">,</span>
+     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'myprojectuser'</span><span class="p">,</span>
+     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'password'</span><span class="p">,</span>
+     <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
+     <span class="s">'PORT'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span>
+     <span class="p">}</span>
+ <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos una copia de seguridad de la base de datos, teniendo en cuenta que en el entorno de desarrollo hemos utilizado SQLite y en el de producción MySQL. Por ello, lo recomendable es realizar la copia de seguridad y recuperarla con los comandos adecuados.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> manage.py dumpdata
+ python manage.py loaddata 
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configuramos el servidor de aplicaciones uwsgi, creando una unidad de systemd (como hemor realizado en el paso 2 de <a href="https://sysmaria.netlify.app/iaw/2022/12/17/wsgi.html#h-despliegue-de-la-aplicaci%C3%B3n-flask">talleres wsgi</a>) y configuramos nginx como proxy inverso para servir la aplicación.</p>
+  </li>
+  <li>
+    <p>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
+  </li>
+  <li>
+    <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
+  </li>
+  <li>
+    <p>La página web deberá ser accesible usando https, en la URL: <code class="language-plaintext highlighter-rouge">https://python.mariatec.es</code>.</p>
+  </li>
+</ol>
+
+<p>Como podemos ver en la siguiente imagen, la página funciona correctamente:</p>
+
+<p><img src="/assets/images/posts/app-python.png" alt="app-python" /></p>
+
+<h2 id="entorno-de-producción-1">Entorno de producción</h2>
+
+<p>En este apartado vamos a realizar cambios en el entorno de desarrollo y posteriormente vamos a subirlas a producción. Vamos a realizar tres modificaciones, pero recuerda que primero lo haces en el entrono de desarrollo, y luego tendrás que llevar los cambios a producción:</p>
+
+<ol>
+  <li>
+    <p>Modifica la página inicial donde se ven las encuestas para que aparezca tu nombre, para ello modifica el archivo <code class="language-plaintext highlighter-rouge">django_tutorial/polls/templates/polls/index.html</code>.</p>
+  </li>
+  <li>
+    <p>Modificamos la imagen que aparece como fondo de la aplicación.</p>
+  </li>
+  <li>
+    <p>Vamos a crear una nueva tabla en la base de datos, para ello sigue los siguientes pasos:</p>
+
+    <ol>
+      <li>
+        <p>Añadimos un nuevo modelo al fichero <code class="language-plaintext highlighter-rouge">polls/models.py</code>:</p>
+
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">class</span> <span class="nc">Persona</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
+     <span class="n">Abr</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+     <span class="n">Nombre</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+         <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">Abr</span><span class="o">+</span><span class="s">" - "</span><span class="o">+</span><span class="bp">self</span><span class="p">.</span><span class="n">Nombre</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos una migración.</p>
+      </li>
+      <li>
+        <p>Aplicamos la migración.</p>
+      </li>
+      <li>Añadimos el nuevomodelo al sitio de administración de django:
+        <ul>
+          <li>
+            <p>Cambiamos la siguiente línea del fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
+
+            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span>
+</code></pre></div>            </div>
+
+            <p>por:</p>
+
+            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span><span class="p">,</span> <span class="n">Persona</span>
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
+
+            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">Categoria</span><span class="p">)</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li>Deplegamos el cambio en el entorno de producción.</li>
+    </ol>
+  </li>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
 
 <h3 id="introducción">Introducción</h3>
 
@@ -255,21 +419,12 @@
         <p>Enviamos el fichero y la firma a nuestro compañero.</p>
       </li>
       <li>Verificamos la firma:
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> crip2.txt.sig crip2.txt
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> integridad.txt.sig integridad.txt
 </code></pre></div>        </div>
-        <p><a href="/assets/images/crip2/1.png">1</a></p>
       </li>
-      <li>Creamos el anillo de confianza:
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> http://keyserver.ubuntu.com/ <span class="nt">--send-keys</span> 2614614FABC5378E657019153C7A682537DE4164
- <span class="nt">---</span>
- gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> 2614614FABC5378E657019153C7A682537DE4164
-</code></pre></div>        </div>
-        <p><a href="/assets/images/crip2/2.png">2</a></p>
-      </li>
-      <li>Borramos una firma por id:
- ```bash
- gpg –si</li>
     </ul>
+
+    <p><a href="/assets/images/integridad/1.png">1</a></p>
   </li>
   <li>
     <p>¿Qué significa el mensaje que aparece en el momento de verificar la firma?</p>
@@ -295,15 +450,60 @@
  - Cuando tengas las tres firmas sube la clave al servidor de claves y rellena tus datos en la tabla Claves públicas PGP 2022-2023.
  - Asegurate que te vuelves a bajar las claves públicas de tus compañeros que tengan las tres firmas.
 </code></pre></div>    </div>
+
+    <ul>
+      <li>Creamos el anillo de confianza:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> http://keyserver.ubuntu.com/ <span class="nt">--send-keys</span> 2614614FABC5378E657019153C7A682537DE4164
+ <span class="nt">---</span>
+ gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> 2614614FABC5378E657019153C7A682537DE4164
+</code></pre></div>        </div>
+      </li>
+      <li>Enviamos mi clave pública a mis compañeros. En mi caso, la he compartido manualmente con ellos, dado que el servicio de claves funciona de forma intermitente. Por ello, he firmado una a una. Finalmente, comprobamos que tenemos tres firmas:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--list-sigs</span> 2614614FABC5378E657019153C7A682537DE4164
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/2.png" alt="2" /></p>
   </li>
   <li>
     <p>Muestra las firmas que tiene tu clave pública.</p>
+
+    <p><img src="/assets/images/integridad/3.png" alt="3" /></p>
   </li>
   <li>
     <p>Comprueba que ya puedes verificar sin “problemas” una firma recibida por una persona en la que confías.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> integridad.txt.sig integridad.txt
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Comprueba que puedes verificar con confianza una firma de una persona en las que no confías, pero sin embargo si confía otra persona en la que tu tienes confianza total.</p>
+
+    <ul>
+      <li>Importo la clave de antonio con su anillo de confianza:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--import</span> 4C6D5995F2B13373
+</code></pre></div>        </div>
+      </li>
+      <li>Edito la confianza de la clave de antonio:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg  <span class="nt">--edit-key</span> 4C6D5995F2B13373
+ trust
+ 5
+ quit
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Antonio le ha mandado su clave a Roberto y este a su vez a Maria Jesus, por lo que Maria Jesus tiene confianza en la clave de antonio.</p>
+      </li>
+      <li>
+        <p>Ahora yo, le mando a Roberto un fichero firmado por mi proia clave, y al tener la clave de Antonio, el cual previamente me ha dado confianza mutuamente y viceversa, puede verificar mi fichero sin problemas.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--verify</span> fichero.txt.sig fichero.txt
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/integridad/4.png" alt="4" /></p>
+      </li>
+    </ul>
   </li>
 </ol>
 
@@ -311,13 +511,30 @@
 
 <ol>
   <li>
-    <p>Configura el cliente de correo evolution con tu cuenta de correo habitual.</p>
+    <p>Configura el cliente de correo evolution/thunderbird con tu cuenta de correo habitual.</p>
+
+    <ul>
+      <li>Instalamos thunderbird:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>thunderbird-l10n-es-es
+</code></pre></div>        </div>
+      </li>
+      <li>Configuramos nuestra cuenta habitual de correo.</li>
+    </ul>
   </li>
   <li>
     <p>Añade a la cuenta las opciones de seguridad para poder enviar correos firmados con tu clave privada o cifrar los mensajes para otros destinatarios.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--export-secret-keys</span> <span class="nt">--armor</span> 2614614FABC5378E657019153C7A682537DE4164 <span class="o">&gt;</span> clave-correo.asc
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/integridad/5.png" alt="5" /></p>
   </li>
   <li>
     <p>Envía y recibe varios mensajes con tus compañeros y comprueba el funcionamiento adecuado de GPG.</p>
+
+    <p><img src="assets/images/integridad/5-1.png" alt="5-1" /></p>
+
+    <p><img src="assets/images/integridad/5-2.png" alt="5-2" /></p>
   </li>
 </ol>
 
@@ -326,9 +543,57 @@
 <ol>
   <li>
     <p>Para validar el contenido de la imagen CD, solo asegúrese de usar la herramienta apropiada para sumas de verificación. Para cada versión publicada existen archivos de suma de comprobación con algoritmos fuertes (SHA256 y SHA512); debería usar las herramientas sha256sum o sha512sum para trabajar con ellos.</p>
+
+    <ul>
+      <li>Descargamos la imagen de debian 11.0.0:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.6.0-amd64-netinst.iso
+</code></pre></div>        </div>
+      </li>
+      <li>Descargamos el fichero de sumas de comprobación:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+      <li>Comprobamos la integridad de la imagen:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sha512sum</span> <span class="nt">--check</span> <span class="nt">--ignore-missing</span> SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/6.png" alt="6" /></p>
   </li>
   <li>
-    <p>Verifica que el contenido del hash que has utilizado no ha sido manipulado, usando la firma digital que encontrarás en el repositorio. Puedes encontrar una guía para realizarlo en este artículo: How to verify an authenticity of downloaded Debian ISO images</p>
+    <p>Verifica que el contenido del hash que has utilizado no ha sido manipulado, usando la firma digital que encontrarás en el repositorio. Puedes encontrar una guía para realizarlo en este artículo: How to verify an authenticity of downloaded Debian ISO images.</p>
+
+    <ul>
+      <li>Descargamos la firma digital del repositorio:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS.sign
+</code></pre></div>        </div>
+      </li>
+      <li>Verificamos la firma:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> SHA512SUMS.sign SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/7.png" alt="7" /></p>
+
+    <p>Vemos que nos ha saltado el error de que es impossible verificar la firma, esto es debido a que no tenemos la clave publica de la persona que ha firmado el fichero. Para solucionarlo, importamos la clave publica de la persona que ha firmado el fichero:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ gpg --keyserver keyserver.ubuntu.com --recv-keys DF9B9C49EAA9298432589D76DA87E80D6294BE9B
+ ```
+</code></pre></div>    </div>
+
+    <p>Y verificamos la firma de nuevo:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ gpg --verify SHA512SUMS.sign SHA512SUMS
+ ```
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/integridad/8.png" alt="8" /></p>
+
+    <p>Vemos que ahora si que nos ha verificado la firma correctamente.</p>
   </li>
 </ol>
 
@@ -370,12 +635,12 @@
   <li>Añade de forma correcta el repositorio de virtualbox añadiendo la clave pública de virtualbox como se indica en la documentación.
     <ul>
       <li>Añadimos las claves públicas de virtualbox a nuestro sistema.
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox<span class="se">\_</span>2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
-  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox_2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
 </code></pre></div>        </div>
       </li>
       <li>Añadimos el repositorio de virtualbox a nuestro sistema.
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="se">\"</span>deb <span class="se">\[</span><span class="nb">arch</span><span class="o">=</span>amd64] https://download.virtualbox.org/virtualbox/debian buster contrib<span class="se">\"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
 </code></pre></div>        </div>
       </li>
       <li>Actualizamos el sistema.
@@ -993,9 +1258,9 @@ nameserver 172.22.6.208
     <p><img src="/assets/images/dns/29.png" alt="29" /></p>
   </li>
   <li>
-    <p><strong>EXTRA</strong></p>
+    <p><strong>EXTRA</strong> Crea un nuevo registro en la zona del subdominio.</p>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Antes que nada, cabe decir que el número de serie de la zona de transferencia tiene como función decirle al esclavo si la zona ha cambiado o no. Si el número de serie del esclavo es menor que el del maestro, el esclavo solicitará la zona al maestro. Si el número de serie del esclavo es mayor que el del maestro, el esclavo no solicitará la zona al maestro. Los diferentes tiempos que se configuran enel registro SOA son: Refresh: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona ha cambiado. Retry: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona no ha cambiado. Expire: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado y la borre. Negative Cache TTL: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... } Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 ... Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. EXTRA. Crea un registro nuevo en el maestro y regístrarlo en el esclavo. En el maestro añadimos el registro prueba2 con la IP 172.22.7.169 en el fichero /var/cache/bind/db.maria.org: ... prueba2 IN A 172.22.7.169 ... Modificamos el fichero /etc/resolv.conf del host para realizar las pruebas. ... nameserver 172.22.7.159 nameserver 172.22.6.208 ... Hacemos la consulta desde el cliente para comprobar que se ha registrado correctamente y comprobamos que responde el servidor maestro. $ dig prueba2.maria.org Apagamos el servidor maestro y volvemos a hacer la consulta. En este caso, el servidor que responde es el esclavo. $ sudo systemctl stop bind9 #Hacemos la consulta en el host $ dig prueba2.maria.org Taller 3: Delegación de subdominios con bind9 Crea una nueva máquina e instala un servidor DNS bind9, será el servidor DNS con autoridad para la zona delegada que será informatica.maria.org. Nombra de manera adecuada esta máquina para que tenga el nombre dns.informatica.maria.org. Tendremos el servidor dns1.maria.org (y el esclavo dns2.maria.org) con autoridad para la zona maria.org. En esta zona, por ejemplo, puede existir el nombre www.maria.org. Tendremos el servidor dns.informatica.maria.org con autoridad sobre el subdominio delegado, es decir tendrá autoridad para la zona informatica.maria.org. En esta zona, por ejemplo, puede existir el nombre www.informatica.maria.org. Vamos a realizar la delegación de autoridad para el subdominio en el servidor DNS principal (en dns1.maria.org) para ello modificamos el fichero /var/cache/bind/db.maria.org añadiendo las siguientes líneas donde realizamos la delegación: ... $ORIGIN informatica.maria.org. @ IN NS dns dns IN A 172.22.2.218 ... Ahora vamos a configurar el servidor DNS delegado. Por lo tanto en el servidor dns.informatica.maria.org creamos una nueva zona en el fichero /etc/bind/named.conf.local: zone "informatica.maria.org" { type master; file "db.informatica.maria.org"; }; Y creamos la zona en el fichero /var/cache/bind/db.informatica.maria.org: $TTL 86400 @ IN SOA dns.informatica.maria.org. root.informatica.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns.informatica.maria.org. @ IN MX 10 mail.informatica.maria.org. $ORIGIN informatica.maria.org. dns IN A 172.22.2.218 mail IN A 172.22.200.121 web IN A 172.22.200.122 www IN CNAME web ... No modifiques el fichero /etc/resolv.conf del cliente, es decir, las consultas se hacen al servidor DNS principal, cuando preguntemos por un nombre en la zona delegada el servidor DNS principal, preguntará al servidor DNS delegado y guardara la respuesta en su caché. Pregunta por la dirección ip del nombre www.informatica.maria.org. ¿Quién ha respondido? El servidor DNS que ha respondido es el servidor maestro dns1.maria.org ya que es el que tiene la autoridad sobre la zona maria.org. Comprobaciones de funcionamiento Vamos a realizar una consulta para averiguar la dirección IP de www.informatica.maria.org desde el cliente sin modificar el fichero /etc/resolv.conf del cliente. $ dig www.informatica.maria.org Realizamos una consulta para averiguar el servidor DNS con autoridad para la zona del dominio informatica.maria.org. ¿Es el mimso que el servidor DNS con autoridad para la zona del dominio maria.org? $ dig ns wwwinformatica.maria.org El servidor DNS con autoridad para la zona del dominio informatica.maria.org es el servidor dns.informatica.maria.org y el servidor DNS con autoridad para la zona del dominio maria.org es el servidor dns1.maria.org. Realizamos una consulta para averiguar el servidor de correo confgurado para informatica.maria.org. $ dig mx informatica.maria.org EXTRA]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/12/05/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-12-05T08:17:50+01:00</published><updated>2022-12-05T08:17:50+01:00</updated><id>/hlc+sri/2022/12/05/escenario</id><content type="html" xml:base="/hlc+sri/2022/12/05/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Antes que nada, cabe decir que el número de serie de la zona de transferencia tiene como función decirle al esclavo si la zona ha cambiado o no. Si el número de serie del esclavo es menor que el del maestro, el esclavo solicitará la zona al maestro. Si el número de serie del esclavo es mayor que el del maestro, el esclavo no solicitará la zona al maestro. Los diferentes tiempos que se configuran enel registro SOA son: Refresh: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona ha cambiado. Retry: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona no ha cambiado. Expire: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado y la borre. Negative Cache TTL: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... } Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 ... Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. EXTRA. Crea un registro nuevo en el maestro y regístrarlo en el esclavo. En el maestro añadimos el registro prueba2 con la IP 172.22.7.169 en el fichero /var/cache/bind/db.maria.org: ... prueba2 IN A 172.22.7.169 ... Modificamos el fichero /etc/resolv.conf del host para realizar las pruebas. ... nameserver 172.22.7.159 nameserver 172.22.6.208 ... Hacemos la consulta desde el cliente para comprobar que se ha registrado correctamente y comprobamos que responde el servidor maestro. $ dig prueba2.maria.org Apagamos el servidor maestro y volvemos a hacer la consulta. En este caso, el servidor que responde es el esclavo. $ sudo systemctl stop bind9 #Hacemos la consulta en el host $ dig prueba2.maria.org Taller 3: Delegación de subdominios con bind9 Crea una nueva máquina e instala un servidor DNS bind9, será el servidor DNS con autoridad para la zona delegada que será informatica.maria.org. Nombra de manera adecuada esta máquina para que tenga el nombre dns.informatica.maria.org. Tendremos el servidor dns1.maria.org (y el esclavo dns2.maria.org) con autoridad para la zona maria.org. En esta zona, por ejemplo, puede existir el nombre www.maria.org. Tendremos el servidor dns.informatica.maria.org con autoridad sobre el subdominio delegado, es decir tendrá autoridad para la zona informatica.maria.org. En esta zona, por ejemplo, puede existir el nombre www.informatica.maria.org. Vamos a realizar la delegación de autoridad para el subdominio en el servidor DNS principal (en dns1.maria.org) para ello modificamos el fichero /var/cache/bind/db.maria.org añadiendo las siguientes líneas donde realizamos la delegación: ... $ORIGIN informatica.maria.org. @ IN NS dns dns IN A 172.22.2.218 ... Ahora vamos a configurar el servidor DNS delegado. Por lo tanto en el servidor dns.informatica.maria.org creamos una nueva zona en el fichero /etc/bind/named.conf.local: zone "informatica.maria.org" { type master; file "db.informatica.maria.org"; }; Y creamos la zona en el fichero /var/cache/bind/db.informatica.maria.org: $TTL 86400 @ IN SOA dns.informatica.maria.org. root.informatica.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns.informatica.maria.org. @ IN MX 10 mail.informatica.maria.org. $ORIGIN informatica.maria.org. dns IN A 172.22.2.218 mail IN A 172.22.200.121 web IN A 172.22.200.122 www IN CNAME web ... No modifiques el fichero /etc/resolv.conf del cliente, es decir, las consultas se hacen al servidor DNS principal, cuando preguntemos por un nombre en la zona delegada el servidor DNS principal, preguntará al servidor DNS delegado y guardara la respuesta en su caché. Pregunta por la dirección ip del nombre www.informatica.maria.org. ¿Quién ha respondido? El servidor DNS que ha respondido es el servidor maestro dns1.maria.org ya que es el que tiene la autoridad sobre la zona maria.org. Comprobaciones de funcionamiento Vamos a realizar una consulta para averiguar la dirección IP de www.informatica.maria.org desde el cliente sin modificar el fichero /etc/resolv.conf del cliente. $ dig www.informatica.maria.org Realizamos una consulta para averiguar el servidor DNS con autoridad para la zona del dominio informatica.maria.org. ¿Es el mimso que el servidor DNS con autoridad para la zona del dominio maria.org? $ dig ns wwwinformatica.maria.org El servidor DNS con autoridad para la zona del dominio informatica.maria.org es el servidor dns.informatica.maria.org y el servidor DNS con autoridad para la zona del dominio maria.org es el servidor dns1.maria.org. Realizamos una consulta para averiguar el servidor de correo confgurado para informatica.maria.org. $ dig mx informatica.maria.org EXTRA Crea un nuevo registro en la zona del subdominio.]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/12/05/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-12-05T08:17:50+01:00</published><updated>2022-12-05T08:17:50+01:00</updated><id>/hlc+sri/2022/12/05/escenario</id><content type="html" xml:base="/hlc+sri/2022/12/05/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 <p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
 
 <p>Para nombrar las máquinas se va a utilizar <strong>alfa, bravo, charlie y delta</strong>, que son las primeras letras de un alfabeto que nació antes de la Primera Guerra Mundial en respuesta a los avances en la radio bidireccional compatible con la voz, para mejorar la comunicación en circuitos telefónicos de baja calidad y de larga distancia.</p>
@@ -3450,207 +3715,4 @@ server <span class="o">{</span>
 
 <p>Como conclusión, es cierto que centos se lanzó al mercado muy pronto debido a todos su fallas inciales, demostrando tener un control de calidad poco estricto y pulcro. Esto hace que no se muestre como una distribución seria y profesional. Y dado que no puede tener ningún extra, su mérito como candidato de escritorio se reduce aún más.</p>
 
-<p>Su instalador es su talón de Aquíles, aparte de su gran falta de aplicaciones y herramientas por parte de terceros. Pero si es verdad que existe un gran potencial en esta distribución.</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Instalación de nginx con PHP con vagrant y ansible</title><link href="/hlc+sri/2022/11/13/ansible-nginx.html" rel="alternate" type="text/html" title="Instalación de nginx con PHP con vagrant y ansible" /><published>2022-11-13T16:17:03+01:00</published><updated>2022-11-13T16:17:03+01:00</updated><id>/hlc+sri/2022/11/13/ansible-nginx</id><content type="html" xml:base="/hlc+sri/2022/11/13/ansible-nginx.html"><![CDATA[<p>En esta entrada vamos a realizar una variante de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.</p>
-
-<h2 id="descripción-del-escenario">Descripción del escenario</h2>
-
-<ol>
-  <li>Vamos a utilizar como base la receta de ansible de <a href="https://sysmaria.netlify.app/hlc+sri/2022/11/08/proxy.html">este post</a> y la vamos a modificarla para añadirle las siguientes funcionalidades:
-    <ul>
-      <li>Instalamos los servicios (con roles diferenciados).</li>
-      <li>Copiamos un index en el DocumentRoot y un info.php.</li>
-    </ul>
-  </li>
-</ol>
-
-<ul>
-  <li>La receta de ansible debe desactivar los virtualhost que tengamos definidos en otra lista.</li>
-</ul>
-
-<ol>
-  <li>Configuramos sobre una máquina virtual, un servidor ngix con PHP con dos virtualhost:
-    <ul>
-      <li><code class="language-plaintext highlighter-rouge">www.pagina1.org</code>, cuyo <em>DocumentRoot</em> es <code class="language-plaintext highlighter-rouge">/srv/www/pagina1.org</code>.</li>
-      <li><code class="language-plaintext highlighter-rouge">www.pagina2.org</code>, cuyo <em>DocumentRoot</em> es <code class="language-plaintext highlighter-rouge">/srv/www/pagina2.org</code>.</li>
-    </ul>
-  </li>
-  <li>Una vez configurada la receta, debemos configurar de forma manual las siguientes características:
-    <ul>
-      <li>Cuando accedamos a <code class="language-plaintext highlighter-rouge">www.pagina1.org</code> se redireccionará a <code class="language-plaintext highlighter-rouge">www.pagina2.org/principal</code>. No se permitirá ver la lista de ficheros.</li>
-      <li>Cuando accedamos a `www.pagina1.org/principal se debe mostrar una página web estática.</li>
-      <li>Si accedemos a la página <code class="language-plaintext highlighter-rouge">www.pagina2.org/principal/documentos</code> se visualizarán los documentos que tengamos en <code class="language-plaintext highlighter-rouge">/srv/doc</code>. Y se permitirá el listado y el seguimiento de enlaces simbólicos.</li>
-      <li>Limitaremos el accero a <code class="language-plaintext highlighter-rouge">www.pagina1.org/principal/secreto</code> con autenticación básica.</li>
-    </ul>
-  </li>
-</ol>
-
-<h2 id="la-receta-de-ansible">La receta de ansible</h2>
-
-<p>Ya ejecutada la receta, y habiendo cambiando el fichero <em>hosts</em> para que apunte a la máquina virtual, podemos comprobar que tenemos instalado el servidor nginx con PHP. Y vamos a realizar las siguientes comprobaciones:</p>
-
-<ol>
-  <li>
-    <p>Los virtualhost que tenemos definidos en la receta de ansible, están creados y funcionando correctamente.</p>
-
-    <p><img src="/assets/images/nginx/1.png" alt="1" /></p>
-
-    <p><img src="/assets/images/nginx/2.png" alt="2" /></p>
-
-    <p><img src="/assets/images/nginx/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Comprobamos que al acceder a <em>www.pagina1.org</em> se produce la redirección a <em>www.pagina1.org/principal</em>.</p>
-
-    <p>Si lo que queremos es que nginx redireccione a otra página, debemos añadir la siguiente línea en el fichero de configuración del virtualhost:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    server <span class="o">{</span>
-     rewrite ^/<span class="nv">$ </span>/principal redirect<span class="p">;</span>
-
-     location / <span class="o">{</span>
-         try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
-         autoindex off<span class="p">;</span>
-         disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
-     <span class="o">}</span>
- <span class="o">}</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nginx/4.png" alt="4" /></p>
-
-    <p><img src="/assets/images/nginx/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Si accedemos a la página <em>www.pagina1.org/principal/documentos</em> se visualizarán los documentos que tengamos en <em>/srv/doc</em>. Y no se permitirá el listado y el seguimiento de enlaces simbólicos.</p>
-
-    <ul>
-      <li>
-        <p>Creamos el directorio y le cambiamos los permisos:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir</span> /srv/doc
-  <span class="nb">chown </span>www-data:www-data /srv/doc
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos un fichero en el directorio <em>/srv/doc</em> y lo enlazamos simbólicamente en el directorio <em>/srv/www/pagina1.org/principal/documentos</em>.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Mundo"</span> <span class="o">&gt;</span> /srv/doc/doc1.txt
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Modificamos el fichero <em>pagina1.conf</em> para que liste los ficheros del directorio <em>/srv/doc</em>.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  location /principal/documentos <span class="o">{</span>
-      <span class="nb">alias</span> /srv/doc<span class="p">;</span>
-      autoindex on<span class="p">;</span>
-  <span class="o">}</span>
-</code></pre></div>        </div>
-        <p><img src="/assets/images/nginx/6.png" alt="6" /></p>
-      </li>
-    </ul>
-
-    <p><img src="/assets/images/nginx/7.png" alt="7" /></p>
-
-    <p><img src="/assets/images/nginx/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Limitaremos el acceso a <em>www.pagina1.org/secreto</em> en nginx con autenticación básica.</p>
-
-    <ul>
-      <li>
-        <p>Creamos un fichero <em>.htpasswd</em> con el usuario y la contraseña que queramos dentro de */secreto.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  htpasswd <span class="nt">-c</span> <span class="nt">-b</span> <span class="nt">-B</span> /srv/www/pagina1/secreto/.htpasswd maria admin
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Modificamos el fichero <em>pagina1.conf</em> para que se aplique la autenticación básica y accederemos al index de <em>www.pagina1.com/secreto</em>.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  location /secreto <span class="o">{</span>
-      auth_basic <span class="s2">"Acceso restringido"</span><span class="p">;</span>
-      auth_basic_user_file /srv/www/pagina1/secreto/.htpasswd<span class="p">;</span>
-  <span class="o">}</span>
-</code></pre></div>        </div>
-        <p><img src="/assets/images/nginx/9.png" alt="9" /></p>
-      </li>
-    </ul>
-
-    <p><img src="/assets/images/nginx/10.png" alt="10" /></p>
-  </li>
-</ol>
-
-<p>Tras todas las modificaciones, el fichero <em>pagina1.conf</em> quedaría de la siguiente forma:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
-    listen 80<span class="p">;</span>
-        root /srv/www/pagina1<span class="p">;</span>
-        index index.php index.html index.htm index.nginx-debian.html<span class="p">;</span>
-        server_name pagina1.org www.pagina1.org<span class="p">;</span>
-
-        rewrite ^/<span class="nv">$ </span>/principal redirect<span class="p">;</span>
-
-        error_log /var/log/nginx/error_pagina1.log<span class="p">;</span>
-        access_log /var/log/nginx/access_pagina1.log<span class="p">;</span>
-
-        location / <span class="o">{</span>
-            try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
-            autoindex off<span class="p">;</span>
-            disable_symlinks if_not_owner <span class="nv">from</span><span class="o">=</span><span class="nv">$root</span><span class="p">;</span>
-        <span class="o">}</span>
-       location /principal/documentos <span class="o">{</span>
-            autoindex on<span class="p">;</span>
-            <span class="nb">alias</span> /srv/doc<span class="p">;</span>
-        <span class="o">}</span>
-
-        location /secreto <span class="o">{</span>
-            try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
-            auth_basic <span class="s2">"Acceso restringido"</span><span class="p">;</span>
-            auth_basic_user_file /srv/www/pagina1/secreto/.htpasswd<span class="p">;</span>
-        <span class="o">}</span>
-
-        location ~ <span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
-                include snippets/fastcgi-php.conf<span class="p">;</span>
-                fastcgi_pass unix:/var/run/php/php7.4-fpm.sock<span class="p">;</span>
-        <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<h2 id="para-finalizar">Para finalizar</h2>
-
-<p>Como podemos ver el virtualhost <em>www.pagina2.org</em> está activo.</p>
-
-<p><img src="/assets/images/nginx/11.png" alt="11" /></p>
-
-<p>Pero, vamos a cambiar la receta de ansible para desactivar el acceso a la página <em>www.pagina2.org</em> de la siguiente manera:</p>
-
-<ol>
-  <li>
-    <p>Vamosa modificar el <em>all.yaml</em> para que se desactive.</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">del_virtualhost</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">pagina2</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>En el <em>main.yaml</em> vamos a añadir la siguiente tarea:</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Delete vhost pagina2</span>
-   <span class="na">file</span><span class="pi">:</span>
-     <span class="na">path</span><span class="pi">:</span> <span class="s">/etc/nginx/sites-enabled/.conf</span>
-     <span class="na">state</span><span class="pi">:</span> <span class="s">absent</span>
-   <span class="na">with_items</span><span class="pi">:</span>
-     <span class="pi">-</span> <span class="s2">"</span><span class="s">"</span>
-   <span class="na">notify</span><span class="pi">:</span>
-     <span class="pi">-</span> <span class="s">restart nginx</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Ejecutamos la receta de ansible.</p>
-
-    <p><img src="/assets/images/nginx/12.png" alt="12" /></p>
-
-    <p><img src="/assets/images/nginx/13.png" alt="13" /></p>
-  </li>
-</ol>
-
-<p>Y como podemos ver, el virtualhost <em>www.pagina2.org</em> ya no está activo.</p>
-
-<p>La receta de ansible la podemos encontrar en el siguiente <a href="https://github.com/Legnakra/Nginx-Ansible">repositorio</a>.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[En esta entrada vamos a realizar una variante de este post en el que lo haremos desde por completo con una receta de ansible y sustituyendo apache por nginx.]]></summary></entry></feed>
+<p>Su instalador es su talón de Aquíles, aparte de su gran falta de aplicaciones y herramientas por parte de terceros. Pero si es verdad que existe un gran potencial en esta distribución.</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>

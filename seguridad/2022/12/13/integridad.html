@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
   </p></header>
 </div>
     </div>
@@ -721,22 +721,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
       </li>
       <li>Verificamos la firma:
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> crip2.txt.sig crip2.txt
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> integridad.txt.sig integridad.txt
 </code></pre></div>        </div>
-        <p><a href="/assets/images/crip2/1.png">1</a></p>
       </li>
-      <li>Creamos el anillo de confianza:
-        <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> http://keyserver.ubuntu.com/ <span class="nt">--send-keys</span> 2614614FABC5378E657019153C7A682537DE4164
- <span class="nt">---</span>
- gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> 2614614FABC5378E657019153C7A682537DE4164
-</code></pre></div>        </div>
-        <p><a href="/assets/images/crip2/2.png">2</a></p>
-      </li>
-      <li>Borramos una firma por id:
- ```bash
- gpg –si</li>
     </ul>
+
+    <p><a href="/assets/images/integridad/1.png">1</a></p>
   </li>
   <li>
     <p>¿Qué significa el mensaje que aparece en el momento de verificar la firma?</p>
@@ -764,15 +754,66 @@ document.addEventListener('DOMContentLoaded', function(event) {
  - Cuando tengas las tres firmas sube la clave al servidor de claves y rellena tus datos en la tabla Claves públicas PGP 2022-2023.
  - Asegurate que te vuelves a bajar las claves públicas de tus compañeros que tengan las tres firmas.
 </code></pre></div>    </div>
+
+    <ul>
+      <li>Creamos el anillo de confianza:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> http://keyserver.ubuntu.com/ <span class="nt">--send-keys</span> 2614614FABC5378E657019153C7A682537DE4164
+ <span class="nt">---</span>
+ gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> 2614614FABC5378E657019153C7A682537DE4164
+</code></pre></div>        </div>
+      </li>
+      <li>Enviamos mi clave pública a mis compañeros. En mi caso, la he compartido manualmente con ellos, dado que el servicio de claves funciona de forma intermitente. Por ello, he firmado una a una. Finalmente, comprobamos que tenemos tres firmas:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--list-sigs</span> 2614614FABC5378E657019153C7A682537DE4164
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/2.png" alt="2"></p>
   </li>
   <li>
     <p>Muestra las firmas que tiene tu clave pública.</p>
+
+    <p><img src="/assets/images/integridad/3.png" alt="3"></p>
   </li>
   <li>
     <p>Comprueba que ya puedes verificar sin “problemas” una firma recibida por una persona en la que confías.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> integridad.txt.sig integridad.txt
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Comprueba que puedes verificar con confianza una firma de una persona en las que no confías, pero sin embargo si confía otra persona en la que tu tienes confianza total.</p>
+
+    <ul>
+      <li>Importo la clave de antonio con su anillo de confianza:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--import</span> 4C6D5995F2B13373
+</code></pre></div>        </div>
+      </li>
+      <li>Edito la confianza de la clave de antonio:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg  <span class="nt">--edit-key</span> 4C6D5995F2B13373
+ trust
+ 5
+ quit
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Antonio le ha mandado su clave a Roberto y este a su vez a Maria Jesus, por lo que Maria Jesus tiene confianza en la clave de antonio.</p>
+      </li>
+      <li>
+        <p>Ahora yo, le mando a Roberto un fichero firmado por mi proia clave, y al tener la clave de Antonio, el cual previamente me ha dado confianza mutuamente y viceversa, puede verificar mi fichero sin problemas.</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--verify</span> fichero.txt.sig fichero.txt
+</code></pre></div>        </div>
+
+        <p><img src="/assets/images/integridad/4.png" alt="4"></p>
+      </li>
+    </ul>
   </li>
 </ol>
 
@@ -780,13 +821,32 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <ol>
   <li>
-    <p>Configura el cliente de correo evolution con tu cuenta de correo habitual.</p>
+    <p>Configura el cliente de correo evolution/thunderbird con tu cuenta de correo habitual.</p>
+
+    <ul>
+      <li>Instalamos thunderbird:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>thunderbird-l10n-es-es
+</code></pre></div>        </div>
+      </li>
+      <li>Configuramos nuestra cuenta habitual de correo.</li>
+    </ul>
   </li>
   <li>
     <p>Añade a la cuenta las opciones de seguridad para poder enviar correos firmados con tu clave privada o cifrar los mensajes para otros destinatarios.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--export-secret-keys</span> <span class="nt">--armor</span> 2614614FABC5378E657019153C7A682537DE4164 <span class="o">&gt;</span> clave-correo.asc
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/integridad/5.png" alt="5"></p>
   </li>
   <li>
     <p>Envía y recibe varios mensajes con tus compañeros y comprueba el funcionamiento adecuado de GPG.</p>
+
+    <p><img src="assets/images/integridad/5-1.png" alt="5-1"></p>
+
+    <p><img src="assets/images/integridad/5-2.png" alt="5-2"></p>
   </li>
 </ol>
 
@@ -795,9 +855,64 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <ol>
   <li>
     <p>Para validar el contenido de la imagen CD, solo asegúrese de usar la herramienta apropiada para sumas de verificación. Para cada versión publicada existen archivos de suma de comprobación con algoritmos fuertes (SHA256 y SHA512); debería usar las herramientas sha256sum o sha512sum para trabajar con ellos.</p>
+
+    <ul>
+      <li>Descargamos la imagen de debian 11.0.0:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.6.0-amd64-netinst.iso
+</code></pre></div>        </div>
+      </li>
+      <li>Descargamos el fichero de sumas de comprobación:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+      <li>Comprobamos la integridad de la imagen:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">sha512sum</span> <span class="nt">--check</span> <span class="nt">--ignore-missing</span> SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/6.png" alt="6"></p>
   </li>
   <li>
-    <p>Verifica que el contenido del hash que has utilizado no ha sido manipulado, usando la firma digital que encontrarás en el repositorio. Puedes encontrar una guía para realizarlo en este artículo: How to verify an authenticity of downloaded Debian ISO images</p>
+    <p>Verifica que el contenido del hash que has utilizado no ha sido manipulado, usando la firma digital que encontrarás en el repositorio. Puedes encontrar una guía para realizarlo en este artículo: How to verify an authenticity of downloaded Debian ISO images.</p>
+
+    <ul>
+      <li>Descargamos la firma digital del repositorio:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS.sign
+</code></pre></div>        </div>
+      </li>
+      <li>Verificamos la firma:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--verify</span> SHA512SUMS.sign SHA512SUMS
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/integridad/7.png" alt="7"></p>
+
+    <p>Vemos que nos ha saltado el error de que es impossible verificar la firma, esto es debido a que no tenemos la clave publica de la persona que ha firmado el fichero. Para solucionarlo, importamos la clave publica de la persona que ha firmado el fichero:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ```bash
+ gpg --keyserver keyserver.ubuntu.com --recv-keys DF9B9C49EAA9298432589D76DA87E80D6294BE9B
+ ```
+</code></pre></div>    </div>
+
+    <p>Y verificamos la firma de nuevo:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> ```bash
+ gpg --verify SHA512SUMS.sign SHA512SUMS
+ ```
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/integridad/8.png" alt="8"></p>
+
+    <p>Vemos que ahora si que nos ha verificado la firma correctamente.</p>
   </li>
 </ol>
 
@@ -840,13 +955,13 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <ul>
       <li>Añadimos las claves públicas de virtualbox a nuestro sistema.
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox<span class="se">\_</span>2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
-  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+<div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox_2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
 </code></pre></div>        </div>
       </li>
       <li>Añadimos el repositorio de virtualbox a nuestro sistema.
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="se">\"</span>deb <span class="se">\[</span><span class="nb">arch</span><span class="o">=</span>amd64] https://download.virtualbox.org/virtualbox/debian buster contrib<span class="se">\"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
 </code></pre></div>        </div>
       </li>
       <li>Actualizamos el sistema.
@@ -936,6 +1051,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 </ol>
 
 
+
     </div>
 
 </article>
@@ -945,10 +1061,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Cloud Computing IaaS. OpenStack</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Instalación de nginx con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Cifrado asimétrico con gpg y openssl </a></li>
 <li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Compilar dos2unix partiendo del código fuente</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/seguridad/2022/12/13/integridad.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi "> Integridad, firmas y autenticación </a></li>
+<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
