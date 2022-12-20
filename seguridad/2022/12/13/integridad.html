@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
   </p></header>
 </div>
     </div>
@@ -756,16 +756,48 @@ document.addEventListener('DOMContentLoaded', function(event) {
 </code></pre></div>    </div>
 
     <ul>
-      <li>Creamos el anillo de confianza:
+      <li>Subo mi clave a <code class="language-plaintext highlighter-rouge">keyserver.ubuntu.com</code>, dado que rediris está fuera de servicio:
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--keyserver</span> http://keyserver.ubuntu.com/ <span class="nt">--send-keys</span> 2614614FABC5378E657019153C7A682537DE4164
- <span class="nt">---</span>
- gpg <span class="nt">--keyserver</span> pgp.rediris.es <span class="nt">--search-keys</span> 2614614FABC5378E657019153C7A682537DE4164
+<div class="highlight"><pre class="highlight"><code>  c
 </code></pre></div>        </div>
       </li>
-      <li>Enviamos mi clave pública a mis compañeros. En mi caso, la he compartido manualmente con ellos, dado que el servicio de claves funciona de forma intermitente. Por ello, he firmado una a una. Finalmente, comprobamos que tenemos tres firmas:
+      <li>Envío mi fingerprint a mi compañero para que pueda descargar mi clave pública:
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> gpg <span class="nt">--list-sigs</span> 2614614FABC5378E657019153C7A682537DE4164
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--fingerprint</span>
+  <span class="nv">$ </span>2614614FABC5378E657019153C7A682537DE4164
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Descargo las claves públicas de mis compañeros:
+  ```bash
+  gpg –keyserver keys.openpgp.org –recv-keys 43140D1577041C18C5830A9B195360276022F67D # Arantxa
+  gpg –keyserver keyserver.ubuntu.com –recv-keys 4C6D5995F2B13373 # Antonio
+  gpg –keyserver keyserver.ubuntu.com –recv-keys 212357B9A18C9EFA3531CDF994615205285D18A5 # Juan Jesús</p>
+      </li>
+      <li>Firmo las claves públicas de mis compañeros:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--sign-key</span> 43140D1577041C18C5830A9B195360276022F67D <span class="c"># Arantxa</span>
+  gpg <span class="nt">--sign-key</span> 4C6D5995F2B13373 <span class="c"># Antonio</span>
+  gpg <span class="nt">--sign-key</span> 212357B9A18C9EFA3531CDF994615205285D18A5 <span class="c"># Juan Jesús</span>
+</code></pre></div>        </div>
+      </li>
+      <li>Envío las claves firmadas a mis compañeros para que las firmen:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--armor</span> <span class="nt">--export</span> <span class="nt">-a</span> <span class="s2">"Arantxa"</span> <span class="o">&gt;</span> arantxa.asc
+  gpg <span class="nt">--armor</span> <span class="nt">--export</span> <span class="nt">-a</span> <span class="s2">"Antonio"</span> <span class="o">&gt;</span> antonio.asc
+  gpg <span class="nt">--armor</span> <span class="nt">--export</span> <span class="nt">-a</span> <span class="s2">"Juan Jesús"</span> <span class="o">&gt;</span> juanjesus.asc
+</code></pre></div>        </div>
+      </li>
+      <li>Importo mi clave ya firmada por mis compañeros:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--import</span> arantxa.asc
+  gpg <span class="nt">--import</span> antonio.asc
+  gpg <span class="nt">--import</span> juanjesus.asc
+</code></pre></div>        </div>
+      </li>
+      <li>Compruebo que mis compañeros han firmado mi clave:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  gpg <span class="nt">--list-sigs</span> 2614614FABC5378E657019153C7A682537DE4164
 </code></pre></div>        </div>
       </li>
     </ul>
@@ -802,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 </code></pre></div>        </div>
       </li>
       <li>
-        <p>Antonio le ha mandado su clave a Roberto y este a su vez a Maria Jesus, por lo que Maria Jesus tiene confianza en la clave de antonio.</p>
+        <p>Antonio le ha mandado su clave a Roberto y este a su vez a mi, por lo que yo tengo confianza en la clave de Antonio.</p>
       </li>
       <li>
         <p>Ahora yo, le mando a Roberto un fichero firmado por mi proia clave, y al tener la clave de Antonio, el cual previamente me ha dado confianza mutuamente y viceversa, puede verificar mi fichero sin problemas.</p>
@@ -849,6 +881,19 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p><img src="assets/images/integridad/5-2.png" alt="5-2"></p>
   </li>
 </ol>
+
+<p><strong>EXTRA</strong>Añadid a la tarea 2 un último punto consistente en enviarle un correo electrónico al profesor un mensaje firmado por vosotros y que solo pueda descifrar yo.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Para realizar esta actividad extra, vamos a importar la clave pública del profesor a nuestro sistema, y la exportamos en formato ASCII para poder enviarla por correo electrónico.
+
+```bash
+gpg --keyserver keyserver.ubuntu.com --recv-keys 8DEB2BE5
+---
+gpg --export --armor 8DEB2BE5 &gt; clave-profesor.asc
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/integridad/extra.png" alt="extra"></p>
 
 <h2 id="tarea-3-integridad-de-ficheros">Tarea 3: Integridad de ficheros</h2>
 
@@ -955,13 +1000,13 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <ul>
       <li>Añadimos las claves públicas de virtualbox a nuestro sistema.
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox_2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
-  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle_vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+<div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox<span class="se">\_</span>2016.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
+  wget <span class="nt">-q</span> https://www.virtualbox.org/download/oracle<span class="se">\_</span>vbox.asc <span class="nt">-O-</span> | <span class="nb">sudo </span>apt-key add -
 </code></pre></div>        </div>
       </li>
       <li>Añadimos el repositorio de virtualbox a nuestro sistema.
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian buster contrib"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="se">\"</span>deb <span class="se">\[</span><span class="nb">arch</span><span class="o">=</span>amd64] https://download.virtualbox.org/virtualbox/debian buster contrib<span class="se">\"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/virtualbox.list
 </code></pre></div>        </div>
       </li>
       <li>Actualizamos el sistema.
@@ -1061,10 +1106,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/12/05/escenario.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Escenario en OpenStack</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/centOS.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Migración CentOS</a></li>
-<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
+        <li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
+<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Bienvenid@</a></li>
 <li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Cifrado asimétrico con gpg y openssl </a></li>
+<li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi ">Compilación de un kernel a medida</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
