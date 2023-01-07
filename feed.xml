@@ -1,4 +1,661 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-12-20T17:10:17+01:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Despliegue de una aplcación Python</title><link href="http://localhost:4000/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>http://localhost:4000/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="http://localhost:4000/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-07T16:31:16+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
+
+<p><img src="/assets/images/certificado/cert.png" alt="certificado" /></p>
+
+<p>Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc.</p>
+
+<h3 id="tarea-1-instalación-del-certificado">Tarea 1: Instalación del certificado</h3>
+
+<p><strong>NOTA</strong>: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico.</p>
+
+<ol>
+  <li>
+    <p>Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito.</p>
+
+    <ul>
+      <li>
+        <p>Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador.</p>
+
+        <p><img src="/assets/images/certificado/1.png" alt="1" /></p>
+      </li>
+      <li>
+        <p>A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
+
+        <p><img src="/assets/images/certificado/2.png" alt="2" /></p>
+      </li>
+      <li>
+        <p>Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado.</p>
+
+        <p><img src="/assets/images/certificado/3.png" alt="3" /></p>
+      </li>
+      <li>
+        <p>Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente.</p>
+
+        <p><img src="/assets/images/certificado/4.png" alt="4" /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado.</p>
+
+    <ul>
+      <li>Para ver las preferencias del navegador, accedemos a <code class="language-plaintext highlighter-rouge">Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados</code>. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado.</li>
+    </ul>
+
+    <p><img src="/assets/images/certificado/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta.</p>
+
+    <ul>
+      <li>Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a <code class="language-plaintext highlighter-rouge">Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados</code>. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad.</li>
+    </ul>
+
+    <p>En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado.</p>
+
+    <p><img src="/assets/images/certificado/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Investiga como exportar la clave pública de tu certificado.</p>
+
+    <ul>
+      <li>
+        <p>Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS).</p>
+      </li>
+      <li>
+        <p>Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil.</p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="tarea-2-validación-del-certificado">Tarea 2: Validación del certificado</h3>
+
+<ol>
+  <li>
+    <p>Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación.</p>
+
+    <ul>
+      <li>
+        <p>Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador.</p>
+      </li>
+      <li>
+        <p>Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
+      </li>
+      <li>
+        <p>Ingresamos en la página de VALIDe y seleccionamos la opción de <code class="language-plaintext highlighter-rouge">Validar Certificado</code></p>
+
+        <p><img src="/assets/images/certificado/7.png" alt="7" /></p>
+      </li>
+      <li>
+        <p>Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada.</p>
+
+        <p><img src="/assets/images/certificado/8.png" alt="8" /></p>
+      </li>
+      <li>
+        <p>Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en <code class="language-plaintext highlighter-rouge">Validar</code></p>
+
+        <p><img src="/assets/images/certificado/9.png" alt="9" /></p>
+      </li>
+      <li>
+        <p>Como podemos ver, la clave es válida.</p>
+
+        <p><img src="/assets/images/certificado/10.png" alt="10" /></p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="preparando-el-entorno-de-trabajo-en-debian">Preparando el entorno de trabajo en Debian</h3>
+
+<p>Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, <code class="language-plaintext highlighter-rouge">sudo apt install libnss3-tools</code> para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero <code class="language-plaintext highlighter-rouge">.deb</code> de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
+
+<h3 id="tarea-3-firma-electrónica">Tarea 3: Firma electrónica</h3>
+
+<ol>
+  <li>
+    <p>Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero.</p>
+
+    <ul>
+      <li>
+        <p>Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola. Soy Maria. Esto es una prueba de VALIDe."</span> <span class="o">&gt;</span> valide.txt
+  <span class="nb">echo</span> <span class="s2">"Hola. Soy Maria. Esto es una prueba de autofirma."</span> <span class="o">&gt;</span> autofirma.txt
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma.</p>
+
+        <p><img src="/assets/images/certificado/11.png" alt="11" /></p>
+
+        <p><img src="/assets/images/certificado/12.png" alt="12" /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma <code class="language-plaintext highlighter-rouge">Visualizar Firma</code> y <code class="language-plaintext highlighter-rouge">Verificar Firma</code>.</p>
+
+    <ul>
+      <li>¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero?
+        <ul>
+          <li>Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma.</li>
+        </ul>
+      </li>
+      <li>¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas.
+        <ul>
+          <li>Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos.</p>
+
+    <p><img src="/assets/images/certificado/13.png" alt="13" /></p>
+
+    <p><img src="/assets/images/certificado/14.png" alt="14" /></p>
+  </li>
+</ol>
+
+<h3 id="tarea-4-autenticación">Tarea 4: Autenticación</h3>
+
+<ol>
+  <li>
+    <p>Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas.</p>
+
+    <ul>
+      <li>
+        <p>Accedemos a la web de la <a href="https://www.dgt.es/nuestros-servicios/permisos-de-conducir/tus-puntos-y-tus-permisos/consulta-y-certificado-de-puntos/">DGT</a> para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos.</p>
+
+        <p><img src="/assets/images/certificado/dgt1.png" alt="dgt" /></p>
+      </li>
+      <li>
+        <p>Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos <code class="language-plaintext highlighter-rouge">Cl@ave</code>.</p>
+
+        <p><img src="/assets/images/certificado/dgt2.png" alt="dgt2" /></p>
+      </li>
+      <li>
+        <p>El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos.</p>
+
+        <p><img src="/assets/images/certificado/dgt3.png" alt="dgt3" /></p>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="https--ssl">HTTPS / SSL</h2>
+
+<p><img src="/assets/images/certificado/https.png" alt="https" /></p>
+
+<p><strong>NOTA</strong>: Vamos a realizar esta práctica en una web que se acceda con el nombre <code class="language-plaintext highlighter-rouge">maria.iesgn.org</code>.</p>
+
+<p>Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa.</p>
+
+<p>Para ello, podemos hacer uso de los siguientes enlaces para buscar más información:</p>
+
+<ul>
+  <li><a href="https://www.phildev.net/ssl/">Phil’s X509/SSL Guide</a></li>
+  <li><a href="https://gist.github.com/Soarez/9688998">How to setup your own CA with OpenSSL</a></li>
+  <li><a href="https://blog.guillen.io/2018/09/29/crear-autoridad-certificadora-ca-y-certificados-autofirmados-en-linux/">Crear autoridad certificadora (CA) y certificados autofirmados en Linux</a></li>
+</ul>
+
+<h3 id="creamos-la-autoridad-certificadora">Creamos la Autoridad certificadora</h3>
+
+<ol>
+  <li>
+    <p>Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC.</p>
+
+    <ul>
+      <li>
+        <p>Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir </span>CA
+  <span class="nb">cd </span>CA
+  <span class="nb">mkdir </span>certs csr crl newcerts private 
+  <span class="nb">chmod </span>700 private
+  <span class="nb">touch </span>index.txt
+  <span class="nb">touch </span>index.txt.attr
+  <span class="nb">echo </span>1000 <span class="o">&gt;</span> serial
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos las variables de entorno donde definiremos los datos de configuración de la CA.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">countryName_default</span><span class="o">=</span><span class="s2">"ES"</span>
+  <span class="nv">stateOrProvinceName_default</span><span class="o">=</span><span class="s2">"Sevilla"</span>
+  <span class="nv">localityName_default</span><span class="o">=</span><span class="s2">"Dos Hermanas"</span>
+  <span class="nv">organizationName_default</span><span class="o">=</span><span class="s2">"Maria"</span>
+  <span class="nv">organizationalUnitName_default</span><span class="o">=</span><span class="s2">"ASIR2"</span>
+  <span class="nv">emailAddress_default</span><span class="o">=</span><span class="s2">"mariajesus.alloza@outlook.es"</span>
+  <span class="nv">DIR_CA</span><span class="o">=</span><span class="s2">"./"</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos el fichero de configuración.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">&gt;</span><span class="nv">$DIR_CA</span><span class="sh">/openssl.conf
+  [ ca ]
+  # man ca
+  default_ca = CA_default
+
+  [ CA_default ]
+  # Directory and file locations.
+  dir               = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">
+  certs             = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">certs
+  crl_dir           = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crl
+  new_certs_dir     = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">newcerts
+  database          = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">index.txt
+  serial            = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">serial
+  RANDFILE          = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">private/.rand
+
+  # The root key and root certificate.
+  private_key       = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">private/private.key
+  certificate       = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">certs/cacert.crt
+
+  # For certificate revocation lists.
+  crlnumber         = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crlnumber
+  crl               = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crl/ca.crl.pem
+  crl_extensions    = crl_ext
+  default_crl_days  = 30
+
+  # SHA-1 is deprecated, so use SHA-2 instead.
+  default_md        = sha256
+
+  name_opt          = ca_default
+  cert_opt          = ca_default
+  default_days      = 375
+  preserve          = no
+  policy            = policy_strict
+
+  [ policy_strict ]
+  # The root CA should only sign intermediate certificates that match.
+  # See the POLICY FORMAT section of man ca.
+  countryName             = match
+  stateOrProvinceName     = match
+  organizationName        = match
+  organizationalUnitName  = optional
+  commonName              = supplied
+  emailAddress            = optional
+
+  [ policy_loose ]
+  # Allow the intermediate CA to sign a more diverse range of certificates.
+  # See the POLICY FORMAT section of the ca man page.
+  countryName             = optional
+  stateOrProvinceName     = optional
+  localityName            = optional
+  organizationName        = optional
+  organizationalUnitName  = optional
+  commonName              = supplied
+  emailAddress            = optional
+
+  [ req ]
+  # Options for the req tool (man req).
+  default_bits        = 2048
+  distinguished_name  = req_distinguished_name
+  string_mask         = utf8only
+  # SHA-1 is deprecated, so use SHA-2 instead.
+  default_md          = sha256
+  # Extension to add when the -x509 option is used.
+  x509_extensions     = v3_ca
+  # Extension for SANs
+  req_extensions      = v3_req
+
+  [ v3_req ]
+  # Extensions to add to a certificate request
+  # Before invoke openssl use: export SAN=DNS:value1,DNS:value2
+  basicConstraints = CA:FALSE
+  keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+  xxxsubjectAltNamexxx =
+
+  [ req_distinguished_name ]
+  # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;.
+  countryName                     = Country Name (2 letter code)
+  stateOrProvinceName             = State or Province Name
+  localityName                    = Locality Name
+  0.organizationName              = Organization Name
+  organizationalUnitName          = Organizational Unit Name
+  commonName                      = Common Name
+  emailAddress                    = Email Address
+
+  # Optionally, specify some defaults.
+  countryName_default             = </span><span class="nv">$countryName_default</span><span class="sh">
+  stateOrProvinceName_default     = </span><span class="nv">$stateOrProvinceName_default</span><span class="sh">
+  localityName_default            = </span><span class="nv">$localityName_default</span><span class="sh">
+  0.organizationName_default      = </span><span class="nv">$organizationName_default</span><span class="sh">
+  organizationalUnitName_default  = </span><span class="nv">$organizationalUnitName_default</span><span class="sh">
+  emailAddress_default            = </span><span class="nv">$emailAddress_default</span><span class="sh">
+
+  [ v3_ca ]
+  # Extensions for a typical CA (man x509v3_config).
+  subjectKeyIdentifier = hash
+  authorityKeyIdentifier = keyid:always,issuer
+  basicConstraints = critical, CA:true
+  keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+  [ v3_intermediate_ca ]
+  # Extensions for a typical intermediate CA (man x509v3_config).
+  subjectKeyIdentifier = hash
+  authorityKeyIdentifier = keyid:always,issuer
+  basicConstraints = critical, CA:true, pathlen:0
+  keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+  [ usr_cert ]
+  # Extensions for client certificates (man x509v3_config).
+  basicConstraints = CA:FALSE
+  nsCertType = client, email
+  nsComment = "OpenSSL Generated Client Certificate"
+  subjectKeyIdentifier = hash
+  authorityKeyIdentifier = keyid,issuer
+  keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
+  extendedKeyUsage = clientAuth, emailProtection
+
+  [ server_cert ]
+  # Extensions for server certificates (man x509v3_config).
+  basicConstraints = CA:FALSE
+  nsCertType = server
+  nsComment = "OpenSSL Generated Server Certificate"
+  subjectKeyIdentifier = hash
+  authorityKeyIdentifier = keyid,issuer:always
+  keyUsage = critical, digitalSignature, keyEncipherment
+  extendedKeyUsage = serverAuth
+
+  [ crl_ext ]
+  # Extension for CRLs (man x509v3_config).
+  authorityKeyIdentifier=keyid:always
+
+  [ ocsp ]
+  # Extension for OCSP signing certificates (man ocsp).
+  basicConstraints = CA:FALSE
+  subjectKeyIdentifier = hash
+  authorityKeyIdentifier = keyid,issuer
+  keyUsage = critical, digitalSignature
+  extendedKeyUsage = critical, OCSPSigning
+</span><span class="no">  EOF
+</span></code></pre></div>        </div>
+
+        <ul>
+          <li>Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando:</li>
+        </ul>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">#Creación de la clave</span>
+  openssl genrsa <span class="nt">-aes256</span> <span class="nt">-out</span> private/private.key 4096
+  <span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g'</span> openssl.conf
+  <span class="nv">URL</span><span class="o">=</span>juanjesus.iesgn.org
+  <span class="nb">export </span><span class="nv">SAN</span><span class="o">=</span>DNS:<span class="nv">$URL</span>
+        
+  <span class="c">#Creación del certificado</span>
+  openssl req <span class="nt">-config</span> openssl.conf <span class="nt">-key</span> private/private.key <span class="nt">-new</span> <span class="nt">-x509</span> <span class="nt">-days</span> 3650 <span class="nt">-sha256</span> <span class="nt">-extensions</span> v3_ca <span class="nt">-out</span> certs/cacert.crt
+  <span class="nb">chmod </span>444 certs/cacert.crt
+    
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero.</p>
+
+    <ul>
+      <li>Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c">#Firmar el certificado</span>
+ openssl ca <span class="nt">-config</span> openssl.conf <span class="nt">-extensions</span> v3_req <span class="nt">-days</span> 3650 <span class="nt">-notext</span> <span class="nt">-md</span> sha256 <span class="nt">-in</span> csr/juanjesus-mjca.csr <span class="nt">-out</span> certs/juanjesus-mjca.crt
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado?</p>
+
+    <ul>
+      <li>Dentro de nuestro fichero <code class="language-plaintext highlighter-rouge">openssl.conf</code> nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son:
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">countryName</code></li>
+          <li><code class="language-plaintext highlighter-rouge">stateOrProvinceName</code></li>
+          <li><code class="language-plaintext highlighter-rouge">localityName</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="administramos-el-servidor-web">Administramos el servidor web</h3>
+
+<h4 id="preparando-el-escenario">Preparando el escenario</h4>
+
+<p>Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos:</p>
+
+<ul>
+  <li>
+    <p>Instalamos el servidor apache:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>apache2
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Deshabilitamos el virtual host por defecto:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2dissite 000-default.conf
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos un nuevo virtual host y su fichero de configuración:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo mkdir</span> /var/www/html/maria.iesgn.org
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code> dentro de la carpeta que hemos creado anteriormente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /var/www/html/maria.iesgn.org/index.html
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p>Y dentro de este fichero, escribimos lo siguiente:</p>
+
+        <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
+      <span class="nt">&lt;html&gt;</span>
+          <span class="nt">&lt;head&gt;</span>
+          <span class="nt">&lt;title&gt;</span>maria.iesgn.org<span class="nt">&lt;/title&gt;</span>
+          <span class="nt">&lt;/head&gt;</span>
+      <span class="nt">&lt;body&gt;</span>
+          <span class="nt">&lt;h1&gt;</span>maria.iesgn.org<span class="nt">&lt;/h1&gt;</span>
+          <span class="nt">&lt;p&gt;</span>Web de prueba para cripto 3 - HTTPS<span class="nt">&lt;/p&gt;</span>
+      <span class="nt">&lt;/body&gt;</span>
+  <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Habilitamos el nuevo virtual host y reiniciamos el servicio apache:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2ensite maria.iesgn.org.conf
+  <span class="nb">sudo </span>systemctl restart apache2
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h4 id="empezamos">Empezamos</h4>
+
+<ol>
+  <li>
+    <p>Crea una clave privada RSA de 4096 bits para identificar el servidor.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>openssl genrsa <span class="nt">-aes256</span> <span class="nt">-out</span> /etc/ssl/private/maria-priv.key 4096
+ <span class="nb">sudo chmod </span>400 /etc/ssl/private/maria-priv.key
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (<code class="language-plaintext highlighter-rouge">maria.iesgn.org</code>).</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>openssl req <span class="nt">-new</span> <span class="nt">-sha256</span> <span class="nt">-key</span> /etc/ssl/private/maria-priv.key <span class="nt">-out</span> maria.csr
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora.</p>
+  </li>
+  <li>
+    <p>Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https).</p>
+
+    <ul>
+      <li>
+        <p>Modificamos el fichero de configuración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &lt;IfModule mod_ssl.c&gt;
+      &lt;VirtualHost <span class="k">*</span>:443&gt;
+          ServerName maria.iesgn.org
+          DocumentRoot /var/www/html/maria.iesgn.org
+          ErrorLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/error-maria.log
+          CustomLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/access-maria.log combined
+
+          SSLEngine on
+          SSLCertificateFile /etc/ssl/certs/maria.crt
+          SSLCertificateKeyFile /etc/ssl/private/maria-priv.key
+          SSLCertificateChainFile /etc/ssl/certs/cacert.crt
+
+          &lt;Directory /var/www/html/maria.iesgn.org&gt;
+              Options Indexes FollowSymLinks
+              AllowOverride None
+              Require all granted
+          &lt;/Directory&gt;
+      &lt;/VirtualHost&gt;
+  &lt;/IfModule&gt;
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Movemos los ficheros que hemos generado a la carpeta <code class="language-plaintext highlighter-rouge">/etc/ssl/certs</code> y le proporcionamos los permisos necesarios:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo mv </span>maria.crt /etc/ssl/certs/
+  <span class="nb">sudo mv </span>cacert.crt /etc/ssl/certs/
+  <span class="nb">sudo chown </span>root:root /etc/ssl/certs/maria.crt
+  <span class="nb">sudo chown </span>root:root /etc/ssl/certs/cacert.crt
+  <span class="nb">sudo chmod </span>644 /etc/ssl/certs/maria.crt
+  <span class="nb">sudo chmod </span>644 /etc/ssl/certs/cacert.crt
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Habilitamos el módulo ssl y reiniciamos el servicio apache:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2enmod ssl
+  <span class="nb">sudo </span>a2ensite ssl-maria.iesgn.org.conf
+  <span class="nb">sudo </span>systemctl reload apache2
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Modificamos el fichero para que realice una redirección de http a https:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/apache2/sites-available/maria.iesgn.org.conf
+
+  <span class="c">#Añadimos la siguiente línea:</span>
+  Redirect 301 / https://maria.iesgn.org/
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Reiniciamos el servicio apache:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl reload apache2
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Comprobamos su funcionamiento:</p>
+
+        <p><img src="/assets/images/certificado/15.png" alt="15" /></p>
+
+        <p><img src="/assets/images/certificado/16.png" alt="16" /></p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS.</p>
+
+    <ul>
+      <li>
+        <p>Deshabilitamos apache:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl disable <span class="nt">--now</span> apache2
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Instalamos el servidor nginx:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nginx
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /var/www/html/maria.iesgn.org/index.html
+</code></pre></div>        </div>
+        <ul>
+          <li>
+            <p>Y dentro de este fichero, escribimos lo siguiente:</p>
+
+            <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server {
+      listen 80;
+      listen [::]:80;
+      server_name maria.iesgn.org;
+      return 301 https://$server_name$request_uri;
+  }
+
+  server {
+      listen 443 ssl http2;
+      listen [::]:443 ssl http2;
+      server_name maria.iesgn.org;
+
+      ssl_certificate /etc/ssl/certs/maria.crt;
+      ssl_certificate_key /etc/ssl/private/maria-priv.key;
+      ssl_trusted_certificate /etc/ssl/certs/cacert.crt;
+
+      root /var/www/html/maria.iesgn.org;
+      index index.html;
+
+      location / {
+          try_files $uri $uri/ =404;
+      }
+  }
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code> que hemos creado anteriormente:</p>
+
+            <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
+      <span class="nt">&lt;html&gt;</span>
+          <span class="nt">&lt;head&gt;</span>
+          <span class="nt">&lt;title&gt;</span>maria.iesgn.org<span class="nt">&lt;/title&gt;</span>
+          <span class="nt">&lt;/head&gt;</span>
+      <span class="nt">&lt;body&gt;</span>
+          <span class="nt">&lt;h1&gt;</span>maria.iesgn.org<span class="nt">&lt;/h1&gt;</span>
+          <span class="nt">&lt;p&gt;</span>Web de prueba para cripto 3 - HTTPS<span class="nt">&lt;/p&gt;</span>
+          <span class="nt">&lt;p&gt;</span>PRUEBA NGINX<span class="nt">&lt;/p&gt;</span>
+      <span class="nt">&lt;/body&gt;</span>
+  <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Realizamos la firma del certificado:</p>
+
+            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>openssl rsa <span class="nt">-in</span> /etc/ssl/private/maria-priv.key <span class="nt">-out</span> /etc/ssl/private/maria-priv2.key
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx:</p>
+
+            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/
+  <span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Comprobamos que el servidor funciona correctamente:</p>
+
+            <p><img src="/assets/images/certificado/17.png" alt="17" /></p>
+
+            <p><img src="/assets/images/certificado/18.png" alt="18" /></p>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Certificado digital de persona física Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc. Tarea 1: Instalación del certificado NOTA: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico. Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito. Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador. A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado. Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente. Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado. Para ver las preferencias del navegador, accedemos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado. ¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta. Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad. En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado. Investiga como exportar la clave pública de tu certificado. Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS). Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil. Tarea 2: Validación del certificado Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación. Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador. Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Ingresamos en la página de VALIDe y seleccionamos la opción de Validar Certificado Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada. Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en Validar Como podemos ver, la clave es válida. Preparando el entorno de trabajo en Debian Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, sudo apt install libnss3-tools para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero .deb de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tarea 3: Firma electrónica Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero. Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma. echo "Hola. Soy Maria. Esto es una prueba de VALIDe." &gt; valide.txt echo "Hola. Soy Maria. Esto es una prueba de autofirma." &gt; autofirma.txt Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma. Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma Visualizar Firma y Verificar Firma. ¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero? Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma. ¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas. Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador. Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos. Tarea 4: Autenticación Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas. Accedemos a la web de la DGT para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos. Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos Cl@ave. El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos. HTTPS / SSL NOTA: Vamos a realizar esta práctica en una web que se acceda con el nombre maria.iesgn.org. Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa. Para ello, podemos hacer uso de los siguientes enlaces para buscar más información: Phil’s X509/SSL Guide How to setup your own CA with OpenSSL Crear autoridad certificadora (CA) y certificados autofirmados en Linux Creamos la Autoridad certificadora Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC. Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios. mkdir CA cd CA mkdir certs csr crl newcerts private chmod 700 private touch index.txt touch index.txt.attr echo 1000 &gt; serial Creamos las variables de entorno donde definiremos los datos de configuración de la CA. countryName_default="ES" stateOrProvinceName_default="Sevilla" localityName_default="Dos Hermanas" organizationName_default="Maria" organizationalUnitName_default="ASIR2" emailAddress_default="mariajesus.alloza@outlook.es" DIR_CA="./" Creamos el fichero de configuración. cat &lt;&lt;EOF&gt;$DIR_CA/openssl.conf [ ca ] # man ca default_ca = CA_default [ CA_default ] # Directory and file locations. dir = ${DIR_CA} certs = ${DIR_CA}certs crl_dir = ${DIR_CA}crl new_certs_dir = ${DIR_CA}newcerts database = ${DIR_CA}index.txt serial = ${DIR_CA}serial RANDFILE = ${DIR_CA}private/.rand # The root key and root certificate. private_key = ${DIR_CA}private/private.key certificate = ${DIR_CA}certs/cacert.crt # For certificate revocation lists. crlnumber = ${DIR_CA}crlnumber crl = ${DIR_CA}crl/ca.crl.pem crl_extensions = crl_ext default_crl_days = 30 # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 name_opt = ca_default cert_opt = ca_default default_days = 375 preserve = no policy = policy_strict [ policy_strict ] # The root CA should only sign intermediate certificates that match. # See the POLICY FORMAT section of man ca. countryName = match stateOrProvinceName = match organizationName = match organizationalUnitName = optional commonName = supplied emailAddress = optional [ policy_loose ] # Allow the intermediate CA to sign a more diverse range of certificates. # See the POLICY FORMAT section of the ca man page. countryName = optional stateOrProvinceName = optional localityName = optional organizationName = optional organizationalUnitName = optional commonName = supplied emailAddress = optional [ req ] # Options for the req tool (man req). default_bits = 2048 distinguished_name = req_distinguished_name string_mask = utf8only # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 # Extension to add when the -x509 option is used. x509_extensions = v3_ca # Extension for SANs req_extensions = v3_req [ v3_req ] # Extensions to add to a certificate request # Before invoke openssl use: export SAN=DNS:value1,DNS:value2 basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment xxxsubjectAltNamexxx = [ req_distinguished_name ] # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;. countryName = Country Name (2 letter code) stateOrProvinceName = State or Province Name localityName = Locality Name 0.organizationName = Organization Name organizationalUnitName = Organizational Unit Name commonName = Common Name emailAddress = Email Address # Optionally, specify some defaults. countryName_default = $countryName_default stateOrProvinceName_default = $stateOrProvinceName_default localityName_default = $localityName_default 0.organizationName_default = $organizationName_default organizationalUnitName_default = $organizationalUnitName_default emailAddress_default = $emailAddress_default [ v3_ca ] # Extensions for a typical CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ v3_intermediate_ca ] # Extensions for a typical intermediate CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true, pathlen:0 keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ usr_cert ] # Extensions for client certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = client, email nsComment = "OpenSSL Generated Client Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment extendedKeyUsage = clientAuth, emailProtection [ server_cert ] # Extensions for server certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = server nsComment = "OpenSSL Generated Server Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer:always keyUsage = critical, digitalSignature, keyEncipherment extendedKeyUsage = serverAuth [ crl_ext ] # Extension for CRLs (man x509v3_config). authorityKeyIdentifier=keyid:always [ ocsp ] # Extension for OCSP signing certificates (man ocsp). basicConstraints = CA:FALSE subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, digitalSignature extendedKeyUsage = critical, OCSPSigning EOF Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando: #Creación de la clave openssl genrsa -aes256 -out private/private.key 4096 sed -i 's|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g' openssl.conf URL=juanjesus.iesgn.org export SAN=DNS:$URL #Creación del certificado openssl req -config openssl.conf -key private/private.key -new -x509 -days 3650 -sha256 -extensions v3_ca -out certs/cacert.crt chmod 444 certs/cacert.crt Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero. Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta. #Firmar el certificado openssl ca -config openssl.conf -extensions v3_req -days 3650 -notext -md sha256 -in csr/juanjesus-mjca.csr -out certs/juanjesus-mjca.crt ¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado? Dentro de nuestro fichero openssl.conf nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son: countryName stateOrProvinceName localityName Administramos el servidor web Preparando el escenario Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos: Instalamos el servidor apache: sudo apt install apache2 Deshabilitamos el virtual host por defecto: sudo a2dissite 000-default.conf Creamos un nuevo virtual host y su fichero de configuración: sudo mkdir /var/www/html/maria.iesgn.org Creamos el fichero index.html dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Habilitamos el nuevo virtual host y reiniciamos el servicio apache: sudo a2ensite maria.iesgn.org.conf sudo systemctl restart apache2 Empezamos Crea una clave privada RSA de 4096 bits para identificar el servidor. sudo openssl genrsa -aes256 -out /etc/ssl/private/maria-priv.key 4096 sudo chmod 400 /etc/ssl/private/maria-priv.key Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (maria.iesgn.org). sudo openssl req -new -sha256 -key /etc/ssl/private/maria-priv.key -out maria.csr Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora. Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https). Modificamos el fichero de configuración: &lt;IfModule mod_ssl.c&gt; &lt;VirtualHost *:443&gt; ServerName maria.iesgn.org DocumentRoot /var/www/html/maria.iesgn.org ErrorLog ${APACHE_LOG_DIR}/error-maria.log CustomLog ${APACHE_LOG_DIR}/access-maria.log combined SSLEngine on SSLCertificateFile /etc/ssl/certs/maria.crt SSLCertificateKeyFile /etc/ssl/private/maria-priv.key SSLCertificateChainFile /etc/ssl/certs/cacert.crt &lt;Directory /var/www/html/maria.iesgn.org&gt; Options Indexes FollowSymLinks AllowOverride None Require all granted &lt;/Directory&gt; &lt;/VirtualHost&gt; &lt;/IfModule&gt; Movemos los ficheros que hemos generado a la carpeta /etc/ssl/certs y le proporcionamos los permisos necesarios: sudo mv maria.crt /etc/ssl/certs/ sudo mv cacert.crt /etc/ssl/certs/ sudo chown root:root /etc/ssl/certs/maria.crt sudo chown root:root /etc/ssl/certs/cacert.crt sudo chmod 644 /etc/ssl/certs/maria.crt sudo chmod 644 /etc/ssl/certs/cacert.crt Habilitamos el módulo ssl y reiniciamos el servicio apache: sudo a2enmod ssl sudo a2ensite ssl-maria.iesgn.org.conf sudo systemctl reload apache2 Modificamos el fichero para que realice una redirección de http a https: sudo nano /etc/apache2/sites-available/maria.iesgn.org.conf #Añadimos la siguiente línea: Redirect 301 / https://maria.iesgn.org/ Reiniciamos el servicio apache: sudo systemctl reload apache2 Comprobamos su funcionamiento: Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS. Deshabilitamos apache: sudo systemctl disable --now apache2 Instalamos el servidor nginx: sudo apt install nginx Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: server { listen 80; listen [::]:80; server_name maria.iesgn.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; server_name maria.iesgn.org; ssl_certificate /etc/ssl/certs/maria.crt; ssl_certificate_key /etc/ssl/private/maria-priv.key; ssl_trusted_certificate /etc/ssl/certs/cacert.crt; root /var/www/html/maria.iesgn.org; index index.html; location / { try_files $uri $uri/ =404; } } Modificamos el fichero index.html que hemos creado anteriormente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;p&gt;PRUEBA NGINX&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Realizamos la firma del certificado: sudo openssl rsa -in /etc/ssl/private/maria-priv.key -out /etc/ssl/private/maria-priv2.key Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx: sudo ln -s /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/ sudo systemctl restart nginx Comprobamos que el servidor funciona correctamente:]]></summary></entry><entry><title type="html">Despliegue de una aplcación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
 
 <p>En esta entrada vamos a desplegar una aplicación Python realizada en Django.</p>
 
@@ -21,7 +678,7 @@
       <li>Comprobamos que la base de datos con la que vamosa trabajar es SQLite.
         <ul>
           <li>¿Qué fichero tenemos que consultar?</li>
-          <li>¿Cómo se llamala base de datos que vamos a crear?</li>
+          <li>¿Cómo se llama la base de datos que vamos a crear?</li>
         </ul>
       </li>
       <li>
@@ -39,7 +696,7 @@
       <li>
         <p>Comprobamos que podemos acceder a la aplicación desde el navegador. y accedemos a la url <code class="language-plaintext highlighter-rouge">/polls</code>.</p>
       </li>
-      <li>Configura el servidor web con el módulo wsgi para sevir lapágina web. Como hemos utilizado la máquina <code class="language-plaintext highlighter-rouge">bravo</code> se accederá por el nombre <code class="language-plaintext highlighter-rouge">python.maria.gonzalonazareno.org</code>.</li>
+      <li>Configura el servidor web con el módulo wsgi para sevir la página web. Como hemos utilizado la máquina <code class="language-plaintext highlighter-rouge">bravo</code> se accederá por el nombre <code class="language-plaintext highlighter-rouge">python.maria.gonzalonazareno.org</code>.</li>
     </ul>
   </li>
 </ol>
@@ -162,7 +819,7 @@
       <li>Deplegamos el cambio en el entorno de producción.</li>
     </ol>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="http://localhost:4000/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>http://localhost:4000/iaw/2022/12/17/wsgi</id><content type="html" xml:base="http://localhost:4000/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
 
 <h3 id="introducción">Introducción</h3>
 
@@ -390,7 +1047,7 @@
 
     <p><img src="/assets/images/uwsgi/7.png" alt="7" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Desplegando aplicaciones flask con apache2 + mod_wsgi]]></summary></entry><entry><title type="html">Integridad, firmas y autenticación</title><link href="http://localhost:4000/seguridad/2022/12/13/integridad.html" rel="alternate" type="text/html" title="Integridad, firmas y autenticación" /><published>2022-12-13T08:17:50+01:00</published><updated>2022-12-13T08:17:50+01:00</updated><id>http://localhost:4000/seguridad/2022/12/13/integridad</id><content type="html" xml:base="http://localhost:4000/seguridad/2022/12/13/integridad.html"><![CDATA[<h2 id="tarea-1-firmas-electrónicas">Tarea 1: Firmas electrónicas</h2>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Desplegando aplicaciones flask con apache2 + mod_wsgi]]></summary></entry><entry><title type="html">Integridad, firmas y autenticación</title><link href="/seguridad/2022/12/13/integridad.html" rel="alternate" type="text/html" title="Integridad, firmas y autenticación" /><published>2022-12-13T08:17:50+01:00</published><updated>2022-12-13T08:17:50+01:00</updated><id>/seguridad/2022/12/13/integridad</id><content type="html" xml:base="/seguridad/2022/12/13/integridad.html"><![CDATA[<h2 id="tarea-1-firmas-electrónicas">Tarea 1: Firmas electrónicas</h2>
 
 <p>En este primer apartado vamos a trabajar con las firmas electrónicas, para ello te pueden ayudar los siguientes enlaces:</p>
 
@@ -764,7 +1421,7 @@ gpg --export --armor 8DEB2BE5 &gt; clave-profesor.asc
       <li>En este fichero es único para cada usuario y en él se encuentran las claves públicas de los clientes que se han conectado al servidor. De esta manera, el servidor tiene almacenadas las claves públicas de los clientes que se han conectado a él y puede autentificarlos.</li>
     </ul>
   </li>
-</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Tarea 1: Firmas electrónicas]]></summary></entry><entry><title type="html">Talleres DNS</title><link href="http://localhost:4000/hlc+sri/2022/12/12/talleres-dns.html" rel="alternate" type="text/html" title="Talleres DNS" /><published>2022-12-12T08:17:50+01:00</published><updated>2022-12-12T08:17:50+01:00</updated><id>http://localhost:4000/hlc+sri/2022/12/12/talleres-dns</id><content type="html" xml:base="http://localhost:4000/hlc+sri/2022/12/12/talleres-dns.html"><![CDATA[<h2 id="talleres-dns">Talleres DNS</h2>
+</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Tarea 1: Firmas electrónicas]]></summary></entry><entry><title type="html">Talleres DNS</title><link href="/hlc+sri/2022/12/12/talleres-dns.html" rel="alternate" type="text/html" title="Talleres DNS" /><published>2022-12-12T08:17:50+01:00</published><updated>2022-12-12T08:17:50+01:00</updated><id>/hlc+sri/2022/12/12/talleres-dns</id><content type="html" xml:base="/hlc+sri/2022/12/12/talleres-dns.html"><![CDATA[<h2 id="talleres-dns">Talleres DNS</h2>
 
 <h3 id="taller-1-instalación-y-configuración-del-servidor-bind9-en-nuestra-red-local">Taller 1: Instalación y configuración del servidor bind9 en nuestra red local.</h3>
 
@@ -1301,7 +1958,7 @@ nameserver 172.22.6.208
   <li>
     <p><strong>EXTRA</strong> Crea un nuevo registro en la zona del subdominio.</p>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Antes que nada, cabe decir que el número de serie de la zona de transferencia tiene como función decirle al esclavo si la zona ha cambiado o no. Si el número de serie del esclavo es menor que el del maestro, el esclavo solicitará la zona al maestro. Si el número de serie del esclavo es mayor que el del maestro, el esclavo no solicitará la zona al maestro. Los diferentes tiempos que se configuran enel registro SOA son: Refresh: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona ha cambiado. Retry: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona no ha cambiado. Expire: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado y la borre. Negative Cache TTL: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... } Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 ... Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. EXTRA. Crea un registro nuevo en el maestro y regístrarlo en el esclavo. En el maestro añadimos el registro prueba2 con la IP 172.22.7.169 en el fichero /var/cache/bind/db.maria.org: ... prueba2 IN A 172.22.7.169 ... Modificamos el fichero /etc/resolv.conf del host para realizar las pruebas. ... nameserver 172.22.7.159 nameserver 172.22.6.208 ... Hacemos la consulta desde el cliente para comprobar que se ha registrado correctamente y comprobamos que responde el servidor maestro. $ dig prueba2.maria.org Apagamos el servidor maestro y volvemos a hacer la consulta. En este caso, el servidor que responde es el esclavo. $ sudo systemctl stop bind9 #Hacemos la consulta en el host $ dig prueba2.maria.org Taller 3: Delegación de subdominios con bind9 Crea una nueva máquina e instala un servidor DNS bind9, será el servidor DNS con autoridad para la zona delegada que será informatica.maria.org. Nombra de manera adecuada esta máquina para que tenga el nombre dns.informatica.maria.org. Tendremos el servidor dns1.maria.org (y el esclavo dns2.maria.org) con autoridad para la zona maria.org. En esta zona, por ejemplo, puede existir el nombre www.maria.org. Tendremos el servidor dns.informatica.maria.org con autoridad sobre el subdominio delegado, es decir tendrá autoridad para la zona informatica.maria.org. En esta zona, por ejemplo, puede existir el nombre www.informatica.maria.org. Vamos a realizar la delegación de autoridad para el subdominio en el servidor DNS principal (en dns1.maria.org) para ello modificamos el fichero /var/cache/bind/db.maria.org añadiendo las siguientes líneas donde realizamos la delegación: ... $ORIGIN informatica.maria.org. @ IN NS dns dns IN A 172.22.2.218 ... Ahora vamos a configurar el servidor DNS delegado. Por lo tanto en el servidor dns.informatica.maria.org creamos una nueva zona en el fichero /etc/bind/named.conf.local: zone "informatica.maria.org" { type master; file "db.informatica.maria.org"; }; Y creamos la zona en el fichero /var/cache/bind/db.informatica.maria.org: $TTL 86400 @ IN SOA dns.informatica.maria.org. root.informatica.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns.informatica.maria.org. @ IN MX 10 mail.informatica.maria.org. $ORIGIN informatica.maria.org. dns IN A 172.22.2.218 mail IN A 172.22.200.121 web IN A 172.22.200.122 www IN CNAME web ... No modifiques el fichero /etc/resolv.conf del cliente, es decir, las consultas se hacen al servidor DNS principal, cuando preguntemos por un nombre en la zona delegada el servidor DNS principal, preguntará al servidor DNS delegado y guardara la respuesta en su caché. Pregunta por la dirección ip del nombre www.informatica.maria.org. ¿Quién ha respondido? El servidor DNS que ha respondido es el servidor maestro dns1.maria.org ya que es el que tiene la autoridad sobre la zona maria.org. Comprobaciones de funcionamiento Vamos a realizar una consulta para averiguar la dirección IP de www.informatica.maria.org desde el cliente sin modificar el fichero /etc/resolv.conf del cliente. $ dig www.informatica.maria.org Realizamos una consulta para averiguar el servidor DNS con autoridad para la zona del dominio informatica.maria.org. ¿Es el mimso que el servidor DNS con autoridad para la zona del dominio maria.org? $ dig ns wwwinformatica.maria.org El servidor DNS con autoridad para la zona del dominio informatica.maria.org es el servidor dns.informatica.maria.org y el servidor DNS con autoridad para la zona del dominio maria.org es el servidor dns1.maria.org. Realizamos una consulta para averiguar el servidor de correo confgurado para informatica.maria.org. $ dig mx informatica.maria.org EXTRA Crea un nuevo registro en la zona del subdominio.]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="http://localhost:4000/hlc+sri/2022/12/05/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-12-05T08:17:50+01:00</published><updated>2022-12-05T08:17:50+01:00</updated><id>http://localhost:4000/hlc+sri/2022/12/05/escenario</id><content type="html" xml:base="http://localhost:4000/hlc+sri/2022/12/05/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Talleres DNS Taller 1: Instalación y configuración del servidor bind9 en nuestra red local. Creamos una máquina en Proxmox configurada con cloud init e instalamos bind9. apt install bind9 Realizamos la siguiente configuración para que funcione como servidor. En el fichero /etc/default/named/ modificamos el fichero con la siguiente línea: OPTIONS="-4 -f -u bind" Además, debemos tener en cuenta que solo se permitirán consultas desde la red local. En caso de realizarlo con una VPNm debemos modificar el fichero /etc/bind/named.conf.options allow-query {172.29.0.0/16; 172.22.0.0/16;}; Reiniciamos el servidor y realizamos la siguiente consulta desde nuestro pc: dig @172.22.7.159 www.josedomingo.org ¿Cuánto ha tardado en realizar la consulta? 367 msec ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Realizamos de nuevo la consulta. ¿Cuánto ha tardado ahora? 0 msec ¿Por qué ha tardado menos? Porque ya se ha realizado la consulta anteriormente y se ha guardado en el caché. ¿Qué consultas se han realizado para averiguar la dirección IP? La consulta es de tipo A y se ha realizado a la zona directa de josedomingo.org. Creamos una zona directa para nuestro dominio maria.org, añadiendo al fichero /etc/bind/named.conf.local: zone "maria.org" { type master; file "db.maria.org"; }; Creamos el fichero de la zona /var/cache/bind/db.maria.org y el fichero quedaría de la siguiente manera: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 correo IN A 172.22.200.101 asterix IN A 172.22.200.102 obelix IN A 172.22.200.103 www IN CNAME asterix informatica IN CNAME asterix ftp IN CNAME obelix Creamos una zona inversa: zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; }; Y descomentamos la línea include "/etc/bind/zones.rfc1918"; para así incluir todas las zonas correspondientes a las redes privadas para que no se pregunten por ellas al servidor DNS raíz. ... zone "21.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; //zone "22.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; zone "23.172.in-addr.arpa" { type master; file "/etc/bind/db.empty"; }; ... Creamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 101.200 IN PTR correo.maria.org. 102.200 IN PTR asterix.maria.org. 103.200 IN PTR obelix.maria.org. Reiniciamos el servicio. Y configuramos el nuevo DNS en otra máquina, desde la que vamos a realizar las siguentes consultas con dig. Incluimos en el fichero /etc/resolv.conf la IP del servidor DNS: Dirección IP de una máquina o servicio. dig www.maria.org Servidor DNS con autoridad de dominio: dig ns www.maria.org Servidor de correo del dominio. dig mx maria.org Una resolución inversa. dig -x 172.22.200.103 Taller 2: Instalación y configuración de un servidor DNS esclavo. Un servidor DNS esclavo contiene una réplica de las zonas del servidor maestro. Se debe producir una transferencia de zona (el esclavo hace una solicitud de la zona completa al maestro) para que se sincronicen los servidores. Antes que nada, cabe decir que el número de serie de la zona de transferencia tiene como función decirle al esclavo si la zona ha cambiado o no. Si el número de serie del esclavo es menor que el del maestro, el esclavo solicitará la zona al maestro. Si el número de serie del esclavo es mayor que el del maestro, el esclavo no solicitará la zona al maestro. Los diferentes tiempos que se configuran enel registro SOA son: Refresh: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona ha cambiado. Retry: Tiempo que debe pasar antes de que el esclavo vuelva a consultar al maestro si la zona no ha cambiado. Expire: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado y la borre. Negative Cache TTL: Tiempo que debe pasar antes de que el esclavo considere que la zona ha expirado. Creamos otra máquina en Proxmox cuyo rol será de Servidor DNS esclavo, al que le instalaremos bind9 y lo nombraremos con el nombre dns2.maria.org. La transferencia de zona entre maestro y esclavo usará el puerto 53/tcp, que abriremos en el grupo de seguridad. $ sudo ufw allow 53/tcp Solo deberemos aceptar las transferencias de zonas hacia los esclavos autorizados, que lo haremos en el fichero /etc/bind/named.conf.options: options { ... allow-transfer { none; }; ... } Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS maestro: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type master; file "db.maria.org"; allow-transfer { 172.22.6.208; }; notify yes; }; zone "22.172.in-addr.arpa" { type master; file "db.172.22.0.0"; allow-transfer { 172.22.6.208; }; notify yes; }; Modificamos el fichero /etc/bind/named.conf.local para definir la zona del DNS esclavo: include "/etc/bind/zones.rfc1918"; zone "maria.org" { type slave; file "db.maria.org"; masters { 172.22.6.208; }; }; zone "22.172.in-addr.arpa" { type slave; file "db.172.22.0.0"; masters { 172.22.6.208; }; }; Añadimos la información del DNS esclavo en las zonas. Añadimos un nuevo registro NS y su correspondiente registro A en el fichero /var/cache/bind/db.maria.org: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. @ IN MX 10 correo.maria.org. $ORIGIN maria.org. dns1 IN A 172.22.7.159 dns2 IN A 10 172.22.6.208 ... Y modificamos el fichero /var/cache/bind/db.172.22.0.0: $TTL 86400 @ IN SOA dns1.maria.org. root.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns1.maria.org. @ IN NS dns2.maria.org. $ORIGIN 22.172.in-addr.arpa. 159.7 IN PTR dns1.maria.org. 208.6 IN PTR dns2.maria.org. ... Reiniciamos los servidores DNS, tanto el maestro como el esclavo. En caso de que nos salga algún error, probamos con los siguientes comandos: named-checkzone maria.org /var/cache/bind/db.maria.org named-checkzone 22.172.in-addr.arpa /var/cache/bind/db.172.22.0.0 #Para detectar errores de configuración en `named.conf`, podemos usar: named-checkconf Configuramos el cliente con los dos servidores DNS. En el fichero /etc/resolv.conf utiliza dos directivas nameserver. Si hacemos una consulta desde un cliente, y el dns maestro no responde, responderá el esclavo. Prueba a realizar una consulta. ¿Quién ha respondido?. Al realizar dig www.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Modificamos la zona, y para ello lo modificamos en el servidor maestro en el fichero /var/cache/bind/db.maria.org añadiendo: ... prueba IN A 172.22.6.208 ... Desde el cliente realizaremos una consulta para preguntar por la dirección IP de prueba.maria.org. ¿Quién ha respondido?. Al realizar dig prueba.maria.org el servdor que responde es el maestro. Apagamos el servidor maestro, y volvemos a hacer la misma consulta. ---Apagamos el servicio de la máquina dns1 $ sudo systemctl stop bind9 ---Hacemos la consulta $ dig www.maria.org ¿Ha respondido el servidor DNS esclavo? Al apagar el servidor maestro y realizar la consulta, el servidor que responde es el esclavo. Comprobamos en el esclavo que se ha producido la transferencia. EXTRA. Crea un registro nuevo en el maestro y regístrarlo en el esclavo. En el maestro añadimos el registro prueba2 con la IP 172.22.7.169 en el fichero /var/cache/bind/db.maria.org: ... prueba2 IN A 172.22.7.169 ... Modificamos el fichero /etc/resolv.conf del host para realizar las pruebas. ... nameserver 172.22.7.159 nameserver 172.22.6.208 ... Hacemos la consulta desde el cliente para comprobar que se ha registrado correctamente y comprobamos que responde el servidor maestro. $ dig prueba2.maria.org Apagamos el servidor maestro y volvemos a hacer la consulta. En este caso, el servidor que responde es el esclavo. $ sudo systemctl stop bind9 #Hacemos la consulta en el host $ dig prueba2.maria.org Taller 3: Delegación de subdominios con bind9 Crea una nueva máquina e instala un servidor DNS bind9, será el servidor DNS con autoridad para la zona delegada que será informatica.maria.org. Nombra de manera adecuada esta máquina para que tenga el nombre dns.informatica.maria.org. Tendremos el servidor dns1.maria.org (y el esclavo dns2.maria.org) con autoridad para la zona maria.org. En esta zona, por ejemplo, puede existir el nombre www.maria.org. Tendremos el servidor dns.informatica.maria.org con autoridad sobre el subdominio delegado, es decir tendrá autoridad para la zona informatica.maria.org. En esta zona, por ejemplo, puede existir el nombre www.informatica.maria.org. Vamos a realizar la delegación de autoridad para el subdominio en el servidor DNS principal (en dns1.maria.org) para ello modificamos el fichero /var/cache/bind/db.maria.org añadiendo las siguientes líneas donde realizamos la delegación: ... $ORIGIN informatica.maria.org. @ IN NS dns dns IN A 172.22.2.218 ... Ahora vamos a configurar el servidor DNS delegado. Por lo tanto en el servidor dns.informatica.maria.org creamos una nueva zona en el fichero /etc/bind/named.conf.local: zone "informatica.maria.org" { type master; file "db.informatica.maria.org"; }; Y creamos la zona en el fichero /var/cache/bind/db.informatica.maria.org: $TTL 86400 @ IN SOA dns.informatica.maria.org. root.informatica.maria.org. ( 1 ; Serial 604800 ; Refresh 86400 ; Retry 2419200 ; Expire 86400 ) ; Negative Cache TTL ; @ IN NS dns.informatica.maria.org. @ IN MX 10 mail.informatica.maria.org. $ORIGIN informatica.maria.org. dns IN A 172.22.2.218 mail IN A 172.22.200.121 web IN A 172.22.200.122 www IN CNAME web ... No modifiques el fichero /etc/resolv.conf del cliente, es decir, las consultas se hacen al servidor DNS principal, cuando preguntemos por un nombre en la zona delegada el servidor DNS principal, preguntará al servidor DNS delegado y guardara la respuesta en su caché. Pregunta por la dirección ip del nombre www.informatica.maria.org. ¿Quién ha respondido? El servidor DNS que ha respondido es el servidor maestro dns1.maria.org ya que es el que tiene la autoridad sobre la zona maria.org. Comprobaciones de funcionamiento Vamos a realizar una consulta para averiguar la dirección IP de www.informatica.maria.org desde el cliente sin modificar el fichero /etc/resolv.conf del cliente. $ dig www.informatica.maria.org Realizamos una consulta para averiguar el servidor DNS con autoridad para la zona del dominio informatica.maria.org. ¿Es el mimso que el servidor DNS con autoridad para la zona del dominio maria.org? $ dig ns wwwinformatica.maria.org El servidor DNS con autoridad para la zona del dominio informatica.maria.org es el servidor dns.informatica.maria.org y el servidor DNS con autoridad para la zona del dominio maria.org es el servidor dns1.maria.org. Realizamos una consulta para averiguar el servidor de correo confgurado para informatica.maria.org. $ dig mx informatica.maria.org EXTRA Crea un nuevo registro en la zona del subdominio.]]></summary></entry><entry><title type="html">Escenario en OpenStack</title><link href="/hlc+sri/2022/12/05/escenario.html" rel="alternate" type="text/html" title="Escenario en OpenStack" /><published>2022-12-05T08:17:50+01:00</published><updated>2022-12-05T08:17:50+01:00</updated><id>/hlc+sri/2022/12/05/escenario</id><content type="html" xml:base="/hlc+sri/2022/12/05/escenario.html"><![CDATA[<h2 id="descripción">Descripción</h2>
 <p>En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.</p>
 
 <p>Para nombrar las máquinas se va a utilizar <strong>alfa, bravo, charlie y delta</strong>, que son las primeras letras de un alfabeto que nació antes de la Primera Guerra Mundial en respuesta a los avances en la radio bidireccional compatible con la voz, para mejorar la comunicación en circuitos telefónicos de baja calidad y de larga distancia.</p>
@@ -1772,7 +2429,7 @@ nameserver 172.22.6.208
 
     <p><img src="/assets/images/escenario/8.png" alt="8" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.]]></summary></entry><entry><title type="html">Cifrado asimétrico con gpg y openssl</title><link href="http://localhost:4000/seguridad/2022/12/02/cripto.html" rel="alternate" type="text/html" title="Cifrado asimétrico con gpg y openssl" /><published>2022-12-02T08:17:50+01:00</published><updated>2022-12-02T08:17:50+01:00</updated><id>http://localhost:4000/seguridad/2022/12/02/cripto</id><content type="html" xml:base="http://localhost:4000/seguridad/2022/12/02/cripto.html"><![CDATA[<h2 id="tarea-1-generación-de-claves">Tarea 1: Generación de claves</h2>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción En esta tarea se va a crear el escenario de trabajo que se va a usar durante todo el curso, que va a constar inicialmente de 4 máquinas: 2 instancias en OpenStack y dos contenedores LXC que se ejecutarán en una de las instancias.]]></summary></entry><entry><title type="html">Cifrado asimétrico con gpg y openssl</title><link href="/seguridad/2022/12/02/cripto.html" rel="alternate" type="text/html" title="Cifrado asimétrico con gpg y openssl" /><published>2022-12-02T08:17:50+01:00</published><updated>2022-12-02T08:17:50+01:00</updated><id>/seguridad/2022/12/02/cripto</id><content type="html" xml:base="/seguridad/2022/12/02/cripto.html"><![CDATA[<h2 id="tarea-1-generación-de-claves">Tarea 1: Generación de claves</h2>
 
 <ol>
   <li>Genera un par de claves (pública y privada). ¿En que directorio se guarda las claves de un usuario?
@@ -2126,7 +2783,7 @@ nameserver 172.22.6.208
 
     <p><img src="/assets/images/criptografia/12.png" alt="12" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Tarea 1: Generación de claves]]></summary></entry><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="http://localhost:4000/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>http://localhost:4000/iaw/2022/11/27/https</id><content type="html" xml:base="http://localhost:4000/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
+</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Tarea 1: Generación de claves]]></summary></entry><entry><title type="html">Configuración de HTTPS en nuestro VPS</title><link href="/iaw/2022/11/27/https.html" rel="alternate" type="text/html" title="Configuración de HTTPS en nuestro VPS" /><published>2022-11-27T10:25:52+01:00</published><updated>2022-11-27T10:25:52+01:00</updated><id>/iaw/2022/11/27/https</id><content type="html" xml:base="/iaw/2022/11/27/https.html"><![CDATA[<h2 id="qué-es-un-certificado-ssl">¿Qué es un certificado SSL?</h2>
 
 <p>Un certificado ssl es un documento que se utiliza para encriptar la información que se envía entre un servidor y un cliente. Este certificado se utiliza para que la información que se envía entre el servidor y el cliente no pueda ser leída por terceros.</p>
 
@@ -2218,7 +2875,7 @@ Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si c
 
 <p><img src="/assets/images/https/4.png" alt="4" /></p>
 
-<p><img src="/assets/images/https/5.png" alt="5" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[¿Qué es un certificado SSL?]]></summary></entry><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="http://localhost:4000/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>http://localhost:4000/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="http://localhost:4000/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
+<p><img src="/assets/images/https/5.png" alt="5" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[¿Qué es un certificado SSL?]]></summary></entry><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
 
 <p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
 
@@ -2901,7 +3558,7 @@ apt <span class="nb">install </span>apache2
 
     <p><img src="/assets/images/openstack/9.png" alt="9" /></p>
   </li>
-</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Instalación y migración de una aplicación web PHP</title><link href="http://localhost:4000/iaw/2022/11/17/migracion.html" rel="alternate" type="text/html" title="Instalación y migración de una aplicación web PHP" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>http://localhost:4000/iaw/2022/11/17/migracion</id><content type="html" xml:base="http://localhost:4000/iaw/2022/11/17/migracion.html"><![CDATA[<h2 id="instalación-previa">Instalación previa</h2>
+</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry><entry><title type="html">Instalación y migración de una aplicación web PHP</title><link href="/iaw/2022/11/17/migracion.html" rel="alternate" type="text/html" title="Instalación y migración de una aplicación web PHP" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/iaw/2022/11/17/migracion</id><content type="html" xml:base="/iaw/2022/11/17/migracion.html"><![CDATA[<h2 id="instalación-previa">Instalación previa</h2>
 
 <p>Para poder realizar la instalación de la aplicación web, vamos a necesitar una serie de herramientas y servicios que vamos a instalar en el servidor. Pero primero lo realizaremos en un escenario local para poder realizar las pruebas necesarias.</p>
 
@@ -3649,111 +4306,4 @@ server <span class="o">{</span>
 
 <h2 id="instalación-de-cliente-nextcloud-en-otro-cliente">Instalación de cliente Nextcloud en otro cliente</h2>
 
-<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry><entry><title type="html">Migración CentOS</title><link href="http://localhost:4000/aso/2022/11/16/centOS.html" rel="alternate" type="text/html" title="Migración CentOS" /><published>2022-11-16T16:17:03+01:00</published><updated>2022-11-16T16:17:03+01:00</updated><id>http://localhost:4000/aso/2022/11/16/centOS</id><content type="html" xml:base="http://localhost:4000/aso/2022/11/16/centOS.html"><![CDATA[<h2 id="descripción">Descripción</h2>
-
-<p>Debido al anuncio del fin de soporte por parte de Red Hat de Centos8 el pasado 31 de diciembre de 2021, y teniendo en cuentas que el fin de vida de centos 7 está programada para el 30 de junio de 2024. Han salido múltiples distribuciones que cubren el hueco dejado por esta distribución tan extendida y tan usada en el ámbito de servidores.</p>
-
-<p>En la presente práctica, analiza posibles versiones candidatas y opciones desplegadas para la migración de tus servidores CentOS.</p>
-
-<p>El espectro es amplio:</p>
-
-<p>Cambiar el rumbo a una nueva distribución, debian, opensuse, slakware, etc.</p>
-
-<p>Soluciones aportadas por Red Hat: Red Hat Enterprise Linux, CentOS Stream.</p>
-
-<p>Solución aportada por Oracle Linux</p>
-
-<p>Nuevas distribuciones surgidas para paliar el hueco dejado:</p>
-
-<ul>
-  <li>AlmaLinux</li>
-  <li>Rocky Linux</li>
-  <li>VZLinux</li>
-  <li>euroLinux</li>
-</ul>
-
-<h3 id="analiza-el-desencadenante-de-la-retirada-de-centos-8-del-mercado-qué-opinión-tienes-al-respecto">Analiza el desencadenante de la retirada de centOS 8 del mercado. ¿Qué opinión tienes al respecto?</h3>
-
-<p>CentOS es un acrónimo para <em>Community Enterprise Operating System</em> y está totalmente reconstruido por Red Hat Enterprise Linux. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad.</p>
-
-<p>Uno de los ejecutivos de Red Hat dijo que CentOS estaba destruyendo las ventas de RHEL. Esto es cierto, pero no es culpa de CentOS. CentOS es una distribución de Linux empresarial gratuita que se basa en RHEL. Si bien RHEL cuesta dinero, CentOS se ofrece como una distribución de Linux empresarial gratuita respaldada por la comunidad. Los desarrolladores y las empresas que son buenos en Linux y no quieren pagar las tarifas de soporte de RHEL siempre seleccionaron CentOS para ahorrar dinero y obtener un software de clase empresarial. Sin embargo, el viaje gratis ha terminado. Red Hat anunció que CentOS Linux 8, como una reconstrucción de RHEL 8, finalizará en 2021. CentOS Stream continúa después de esa fecha, sirviendo como la rama upstream (desarrollo) de Red Hat Enterprise Linux.</p>
-
-<p>Debido a un cambio de enfoque de CentOS Linux, anunciaron que CentOS Linux 8 se retirará el 31 de diciembre de 2021. Esto significa que no habrá más actualizaciones de seguridad o correcciones de errores para CentOS Linux 8 después de esa fecha. Esto también significa que CentOS Linux 8 no se convertirá en una versión de soporte a largo plazo (LTS) como CentOS Linux 7. Por lo tanto, los usuarios de CentOS Linux 8 deben migrar a CentOS Stream o a una nueva distribución de Linux.</p>
-
-<p>Algunos de los usuarios, y con total normalidad, estaban en desacuerdo pero como es lógico, Red Hat tiene que hacer lo que tiene que hacer. Es cierto que la comunicación de tal hecho se hizo de una forma rápida e intempesta. Pero, como usuarios también debemos sopesar todo lo que CentOS nos ha aportado y a qué costo.</p>
-
-<p>En mi opinión es un paso en falso por parte de Red Hat, ya que CentOS estaba pensado principalmente para pruebas que luego eran volcadas y migradas a RHEL. Como todo en las empresas, se busca una rentabilidad y un beneficio, y en este caso, Red Hat ha decidido que no es rentable mantener CentOS. Es cierto que podemos optar a una suscripción de RHEL por cuenta propia, pero no es lo mismo que tener una distribución gratuita y de código abierto. En el caso en el que una empresa tenga más de un desarrollador, esta tendría que lidiar con cuentas adicionales para ello.</p>
-
-<p>Por eso, y desde mi punto de vista, creo que la mejor optativa podría ser Oracle Linux.</p>
-
-<h3 id="crea-una-cuenta-en-red-hat-y-descárgate-la-iso-de-red-hat-enterprise-linux-rhel-y-evalúa-el-producto-comenta-el-procedimiento-de-alta">Crea una cuenta en Red Hat y descárgate la iso de Red Hat Enterprise Linux (RHEL) y evalúa el producto. Comenta el procedimiento de alta.</h3>
-
-<p>Para poder acceder a la descarga de RHEL, es necesario tener una cuenta en Red Hat. Para ello, se debe acceder a la página de Red Hat y registrarse. Una vez hecho esto, se puede acceder a la descarga de RHEL.</p>
-
-<p>De hecho, si se accede a la página de descarga de RHEL, se puede ver que se puede descargar una versión de prueba de 90 días. Una vez pasado este tiempo, se puede seguir usando la versión de prueba, pero se tendrá que reiniciar el sistema cada 24 horas.</p>
-
-<h3 id="descargamos-la-iso-de-centos-stream-y-evalúa-el-producto">Descargamos la iso de CentOS Stream y evalúa el producto.</h3>
-
-<p>Para comenzar, debemos decir que CentOs Stream es una variante o clon de Red Hat y esta variante, rolling, es decir, que se actualiza constantemente, es la que se ha decidido mantener.</p>
-
-<p>Nos encontramos realmente ante un sistema que se encuentra entre Fedora y RedHat, aunque no hay nada oficial al respecto.</p>
-
-<p>A la hora de instalarlo, tendríamos que irnos a la página oficial de centos/centos-stream. Una vez allí, nos encontramos con la opción de descargar la iso de CentOS Stream. Una vez descargada, la instalación es muy sencilla, ya que es muy similar a la de CentOS 7.</p>
-
-<p><img src="/assets/images/centos/1.png" alt="1" /></p>
-
-<p>El asistente de instalación es igual que el que nos podemos encontrar en CentOS 7 o Rocky.</p>
-
-<p>Una vez iniciado el sistema, ingresamos con nuestras credenciales y nos encontramos con un escritorio muy similar al de CentOS 7.</p>
-
-<p><img src="/assets/images/centos/2.png" alt="2" /></p>
-
-<p>Dentro de las opciones de configuraciones nos encontramos las mismas que en CentOS 7, pero con algunas diferencias. Por ejemplo, en la opción de configuración de la red, nos encontramos con la opción de configurar la red con NetworkManager, pero también con la opción de configurarla con ifcfg.</p>
-
-<p>Al ser una instalación mínima, nos encontraremos con un escritorio muy básico, pero con la posibilidad de instalar los escritorios que queramos, a lo igual que las aplicaciones.</p>
-
-<p><img src="/assets/images/centos/3.png" alt="3" /></p>
-
-<p>De momento no está pensado para administrar servidores, pero si que se puede usar para ello.</p>
-
-<h3 id="descargamos-la-iso-de-una-de-las-otras-distribuciones-candidatas-indica-criterios-para-la-elección-de-la-nueva-distribución-y-evalúa-el-producto">Descargamos la iso de una de las otras distribuciones candidatas, indica criterios para la elección de la nueva distribución y evalúa el producto.</h3>
-
-<p>Hace algo más de un año, llegó Rocky Linux y ha sido un éxito abrumador y aplastante. Primero la distribución estuvo disponible en las principales nubes públicas, y después llegó Rocky, un clon de RHEL 9.</p>
-
-<p>Es cierto que, igual que alguno de los ribales, se basa en CentOS Stream y que duplica las funcionalidades de RHEL, pero para mi la gran diferencia es que Rocky viene con Peridot, que es un sistema de compilación de código abierto.</p>
-
-<p>Al igual que el CentOS original, Rocky es un reemplazo directo gratuito para RHEL. En el momento de escribir este artículo, tiene disponible una instalación de versión candidata. Las imágenes están disponibles para los procesadores x86-64 y ARM. Para cada arquitectura, hay opciones “Mínimo”, “DVD” y “Arranque”. La definición de “Minimal” parece relativa porque pesa 1,73 GB.</p>
-
-<p>La instalación es similar a CentOS y prácticamente a cualquier otro programa de instalación de Linux. Lo guía a través de la configuración de la distribución del teclado, la partición de su disco duro y la selección de paquetes. Una peculiaridad extraña del proceso de instalación es que no configura automáticamente su conexión de red. Tienes que habilitarlo en el instalador.</p>
-
-<p>¿Por qué Rocky Linux?</p>
-
-<p>Al igual que CentOS, es una excelente manera de aprender sobre el ecosistema de Red Hat de forma práctica y gratuita, ya que muchos centros de datos ejecutan RHEL. Si está interesado en la computación científica, no solo las principales supercomputadoras ejecutan Linux, sino que la gran mayoría ejecuta RHEL o una distribución derivada de RHEL. Tal vez podamos ver estas supercomputadoras ejecutando Rocky Linux en el futuro.</p>
-
-<p>Hay una diferencia entre una estación de trabajo Linux y un servidor. La elección de una distribución puede afectar el rendimiento de su servidor hasta cierto punto. Y por eso es importante elegir la distribución de Linux adecuada para su servidor.</p>
-
-<ol>
-  <li>Instala CentOS 7, y evalúa la herramientas que ofrecen la distribución del punto 3.</li>
-</ol>
-
-<p>La instalación de CentOS 7 es muy sencilla, ya que es muy similar a la de CentOS 6. En cuanto a ss herramientas,</p>
-
-<p>El menú del sistema funciona bien y también buscará por descripción. Ahora, las búsquedas genéricas funcionan, como por ejemplo, la palabra <strong>captura de pantalla</strong> evocará la aplicación correcta, Ksnapshot, en este caso.</p>
-
-<p><img src="/assets/images/centos/4.jpeg" alt="4" /></p>
-
-<p>En cuanto al hardware, no tenían unas vistas demasiado concisas y claras. La opción de conexión inalábrica, tanto de 2,4 GHz como de 5 GHz, de bluetooth, uso compartido de Samba en particiones NTFS, almacenamiento SSD local…está bastante bien, a decir verdad. De hecho, el sistema podría ser incluso un poco demasiado entusiasta al tratar de ser puntual.</p>
-
-<p>El instalador es idéntico al de Fedora 18. Pero la cuestión está en que es una distribuición que se parece más a Fedora 19, pero no es altamente diferenciador. De igual manera, el instalador queda lejos de ser intuitivo y simple y algo, que desde mi perspectiva debería de mejorarse.</p>
-
-<p>Es muy incómodo que la opción de <code class="language-plaintext highlighter-rouge">Hecho</code> esté en la parte superior de la ventana de configuración de la instalación, además de tener que presionarlo 2 veces dependiendo de la configuración de la que se trate. Por ejemplo, si se quiere instalar en un disco duro, se debe de presionar 2 veces la opción de <code class="language-plaintext highlighter-rouge">Hecho</code> para que se muestre la siguiente ventana.</p>
-
-<p>Otra cosa que no me gusta es que no se pueda instalar en un disco duro sin particionar, ya que el instalador no permite crear una partición nueva. Por lo tanto, si se quiere instalar en un disco duro sin particionar, se debe de crear una partición desde otro sistema operativo, como Windows, y después instalar CentOS 7.</p>
-
-<p>Después de eso, seleccionar las particiones deseadas a través de una configuración manual no es dificil, pero si confuso, por lo que a la hora de realizar un LVM es menos confuso realizarlo desde la terminal.</p>
-
-<p>Una cosa es segura y es que, además de sus problemas de instalación, es realmente estable y rápido. No se ha quedado estático ni se ha bloqueado.</p>
-
-<p>Como conclusión, es cierto que centos se lanzó al mercado muy pronto debido a todos su fallas inciales, demostrando tener un control de calidad poco estricto y pulcro. Esto hace que no se muestre como una distribución seria y profesional. Y dado que no puede tener ningún extra, su mérito como candidato de escritorio se reduce aún más.</p>
-
-<p>Su instalador es su talón de Aquíles, aparte de su gran falta de aplicaciones y herramientas por parte de terceros. Pero si es verdad que existe un gran potencial en esta distribución.</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>
+<p><img src="/assets/images/migracion/9.png" alt="9" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Instalación previa]]></summary></entry></feed>
