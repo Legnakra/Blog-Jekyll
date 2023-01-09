@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-07T20:33:08+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-09T20:24:05+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
 
 <p><img src="/assets/images/certificado/cert.png" alt="certificado" /></p>
 
@@ -984,7 +984,176 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
 
     <p><img src="/assets/images/nfs-systemd/18.png" alt="18" /></p>
   </li>
-</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd. Creamos el escenario Creamos el servidor Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd Le añadimos un volumen de 2GB openstack volume create --size 2 \ --description "Volumen NFS-Systemd" \ --availability-zone "nova" \ --bootable \ nfs Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.229 Creamos el cliente Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd-Cliente Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.247 Configuración Configuramos el servicio NFS En la máquina servidor,con ip 172.22.201.229 realizamos las siguientes acciones: Instalamos el servicio NFS: sudo apt install nfs-kernel-server sudo apt install nfs-common Tras su instalación, vamos a habilitar y activar el servicio: systemctl start rpcbind nfs-server systemctl enable rpcbind nfs-server Comprobamos que el servicio está activo: systemctl status rpcbind nfs-server En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049. Configuramos el punto de montaje Ahora le toca el turno a la máquina cliente, con ip 172.22.201.247. En ella realizamos las siguientes acciones: Creamos el punto de montaje: mkdir /nfs Creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/nfs.mount Añadimos el siguiente contenido: [Unit] #Descripción Description=Montaje NFS-Systemd [Mount] #Volumen de 2GB añadido a la instancia What=/dev/vdb #Directorio de montaje Where=/nfs #Sistema de ficheros empleado Type=ext4 #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Vamos a formatear el volumen anexado a la instancia: mkfs.ext4 /dev/vdb Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje: systemctl daemon-reload systemctl start nfs.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: /dev/vdb /nfs ext4 defaults 0 0 Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero /etc/exports: nano /etc/exports #Añadimos la siguiente línea al final del fichero: /nfs 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check) La configuración anterior permite que todos los clientes de la red 10.0.0.0/24 puedan acceder al punto de montaje /nfs con permisos de lectura y escritura. Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Configuración del cliente NFS Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Instalamos el cliente NFS: apt update &amp;&amp; apt upgrade -y apt install nfs-common Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando: showmount -e 10.0.0.215 Lo que se nos mostrará es la exportación del servidor: Configuración del punto de montaje del cliente Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Creamos el directorio que usaremos como punto de montaje: mkdir /cliente Y a continuación, creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/cliente.mount La configuración del fichero es la siguiente: [Unit] Description=Montaje NFS-cliente [Mount] #Dirección IP:Directorio de exportación What=10.0.0.215:/nfs #Directorio del recurso compartido Where=/cliente #Tipo de recurso Type=nfs #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Activamos y montamos el recurso que queremos compartir: systemctl enable NFS-cliente.mount systemctl start NFS-cliente.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje del cliente Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: 10.0.0.215:/nfs /cliente nfs defaults 0 0 Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Comprobación del funcionamiento del servicio NFS Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente. ¡NOTA! Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar sudo exportfs -ra para que se actualicen los cambios. Creamos un directorio y un fichero en el punto de montaje del servidor: mkdir /NFS-Systemd/prueba echo "Esto es un texto escrito desde el servidor" &gt; /nfs/nfs-prueba.txt Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente: cd /cliente ls cat nfs-prueba.txt Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor: echo "Esto es un texto escrito desde el cliente" &gt; /cliente/prueba/prueba-cliente.txt ls /nfs/prueba cat /nfs/prueba/prueba-cliente.txt]]></summary></entry><entry><title type="html">Despliegue de una aplcación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
+</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd. Creamos el escenario Creamos el servidor Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd Le añadimos un volumen de 2GB openstack volume create --size 2 \ --description "Volumen NFS-Systemd" \ --availability-zone "nova" \ --bootable \ nfs Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.229 Creamos el cliente Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd-Cliente Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.247 Configuración Configuramos el servicio NFS En la máquina servidor,con ip 172.22.201.229 realizamos las siguientes acciones: Instalamos el servicio NFS: sudo apt install nfs-kernel-server sudo apt install nfs-common Tras su instalación, vamos a habilitar y activar el servicio: systemctl start rpcbind nfs-server systemctl enable rpcbind nfs-server Comprobamos que el servicio está activo: systemctl status rpcbind nfs-server En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049. Configuramos el punto de montaje Ahora le toca el turno a la máquina cliente, con ip 172.22.201.247. En ella realizamos las siguientes acciones: Creamos el punto de montaje: mkdir /nfs Creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/nfs.mount Añadimos el siguiente contenido: [Unit] #Descripción Description=Montaje NFS-Systemd [Mount] #Volumen de 2GB añadido a la instancia What=/dev/vdb #Directorio de montaje Where=/nfs #Sistema de ficheros empleado Type=ext4 #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Vamos a formatear el volumen anexado a la instancia: mkfs.ext4 /dev/vdb Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje: systemctl daemon-reload systemctl start nfs.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: /dev/vdb /nfs ext4 defaults 0 0 Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero /etc/exports: nano /etc/exports #Añadimos la siguiente línea al final del fichero: /nfs 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check) La configuración anterior permite que todos los clientes de la red 10.0.0.0/24 puedan acceder al punto de montaje /nfs con permisos de lectura y escritura. Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Configuración del cliente NFS Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Instalamos el cliente NFS: apt update &amp;&amp; apt upgrade -y apt install nfs-common Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando: showmount -e 10.0.0.215 Lo que se nos mostrará es la exportación del servidor: Configuración del punto de montaje del cliente Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Creamos el directorio que usaremos como punto de montaje: mkdir /cliente Y a continuación, creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/cliente.mount La configuración del fichero es la siguiente: [Unit] Description=Montaje NFS-cliente [Mount] #Dirección IP:Directorio de exportación What=10.0.0.215:/nfs #Directorio del recurso compartido Where=/cliente #Tipo de recurso Type=nfs #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Activamos y montamos el recurso que queremos compartir: systemctl enable NFS-cliente.mount systemctl start NFS-cliente.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje del cliente Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: 10.0.0.215:/nfs /cliente nfs defaults 0 0 Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Comprobación del funcionamiento del servicio NFS Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente. ¡NOTA! Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar sudo exportfs -ra para que se actualicen los cambios. Creamos un directorio y un fichero en el punto de montaje del servidor: mkdir /NFS-Systemd/prueba echo "Esto es un texto escrito desde el servidor" &gt; /nfs/nfs-prueba.txt Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente: cd /cliente ls cat nfs-prueba.txt Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor: echo "Esto es un texto escrito desde el cliente" &gt; /cliente/prueba/prueba-cliente.txt ls /nfs/prueba cat /nfs/prueba/prueba-cliente.txt]]></summary></entry><entry><title type="html">Desarrollo y despliegue de una aplicación Java simple</title><link href="/iaw/2022/12/28/java-simple.html" rel="alternate" type="text/html" title="Desarrollo y despliegue de una aplicación Java simple" /><published>2022-12-28T11:59:07+01:00</published><updated>2022-12-28T11:59:07+01:00</updated><id>/iaw/2022/12/28/java-simple</id><content type="html" xml:base="/iaw/2022/12/28/java-simple.html"><![CDATA[<p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
+
+<p><strong>Tomcat</strong> es un servidor web que permite ejecutar aplicaciones Java. En este post vamos a ver como desplegar una aplicación Java en un servidor Tomcat.</p>
+
+<p>Mientras que <strong>Maven</strong> es una herramienta de construcción de software que nos permite gestionar el ciclo de vida de un proyecto Java. En este post vamos a ver como crear un proyecto Java con Maven.</p>
+
+<h2 id="escenario">Escenario</h2>
+<ol>
+  <li>
+    <p>Instala tomcat9 como hemos visto en la documentación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>tomcat9 tomcat9-admin
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configuramos el panel de administración Tomcat-Manager y configúralo para su acceso.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano /etc/tomcat9/tomcat-users.xml
+</code></pre></div>    </div>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;tomcat-users&gt;</span>
+     <span class="nt">&lt;role</span> <span class="na">rolename=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+     <span class="nt">&lt;user</span> <span class="na">username=</span><span class="s">"tomcat"</span> <span class="na">password=</span><span class="s">"s3cret"</span> <span class="na">roles=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+ <span class="nt">&lt;/tomcat-users&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instala la aplicación maven que nos va a ayudar a compilar aplicaciones java.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>maven
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>A continuación vamos a generar un proyecto, que será el esqueleto de nuestra aplicación Java, para ello ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mvn archetype:generate <span class="nt">-DgroupId</span><span class="o">=</span>com.app.example <span class="nt">-DartifactId</span><span class="o">=</span>java-app <span class="nt">-DarchetypeArtifactId</span><span class="o">=</span>maven-archetype-quickstart <span class="nt">-DinteractiveMode</span><span class="o">=</span><span class="nb">false</span>
+</code></pre></div>    </div>
+
+    <p>La estructura de nuestro directorio sería la siguiente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> java-app/
+ ├── pom.xml
+ └── src
+     ├── main
+     │   ├── java
+     │   │   └── com
+     │   │       └── app
+     │   │           └── example
+     │   │               └── App.java
+     │   └── resources
+     └── <span class="nb">test</span>
+         └── java
+             └── com
+                 └── app
+                     └── example
+                         └── AppTest.java
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">java-app/pom.xml</code> para que tenga la siguiente estructura:</p>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="cp">&lt;?xml version = "1.0" encoding = "UTF-8"?&gt;</span>
+     <span class="nt">&lt;project</span> <span class="na">xmlns =</span> <span class="s">"http://maven.apache.org/POM/4.0.0"</span> 
+        <span class="na">xmlns:xsi =</span> <span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+
+     <span class="na">xsi:schemaLocation =</span> <span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+        <span class="nt">&lt;groupId&gt;</span>com.tutorialspoint<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>hello-world<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>1<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
+
+        <span class="nt">&lt;parent&gt;</span>
+           <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+           <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+           <span class="nt">&lt;version&gt;</span>2.3.0.RELEASE<span class="nt">&lt;/version&gt;</span>
+           <span class="nt">&lt;relativePath/&gt;</span> 
+        <span class="nt">&lt;/parent&gt;</span>
+
+        <span class="nt">&lt;properties&gt;</span>
+           <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+           <span class="nt">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.reporting.outputEncoding&gt;</span>
+           <span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
+           <span class="nt">&lt;tomcat.version&gt;</span>9.0.37<span class="nt">&lt;/tomcat.version&gt;</span>
+        <span class="nt">&lt;/properties&gt;</span>
+
+        <span class="nt">&lt;dependencies&gt;</span>
+           <span class="nt">&lt;dependency&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+           <span class="nt">&lt;/dependency&gt;</span>
+           <span class="nt">&lt;dependency&gt;</span>  
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>  
+     	 <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-tomcat<span class="nt">&lt;/artifactId&gt;</span>  
+     	 <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>  
+           <span class="nt">&lt;/dependency&gt;</span>   
+           <span class="nt">&lt;dependency&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+           <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;/dependencies&gt;</span>
+
+        <span class="nt">&lt;build&gt;</span>
+           <span class="nt">&lt;plugins&gt;</span>
+              <span class="nt">&lt;plugin&gt;</span>
+                 <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                 <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;/plugin&gt;</span>
+           <span class="nt">&lt;/plugins&gt;</span>
+        <span class="nt">&lt;/build&gt;</span>
+
+     <span class="nt">&lt;/project&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Construimos la aplicación, y para ello modificamos el fichero <code class="language-plaintext highlighter-rouge">src/main/java/com/app/example/App.java</code> para que tenga la siguiente estructura:</p>
+
+    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kn">package</span> <span class="nn">com.app.example</span><span class="o">;</span>
+
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.builder.SpringApplicationBuilder</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.web.servlet.support.SpringBootServletInitializer</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMapping</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+
+ <span class="nd">@SpringBootApplication</span>
+ <span class="nd">@RestController</span>
+ <span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="nc">SpringBootServletInitializer</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="nc">SpringApplicationBuilder</span> <span class="nf">configure</span><span class="o">(</span><span class="nc">SpringApplicationBuilder</span> <span class="n">application</span><span class="o">)</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">application</span><span class="o">.</span><span class="na">sources</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+       <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hello</span><span class="o">()</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="s">"&lt;center&gt;Hola mundo!!!&lt;/center&gt;"</span><span class="o">;</span>
+    <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Construimos la aplicación, y para ello ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mvn package
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Copiamos el fichero <code class="language-plaintext highlighter-rouge">java-app/target/hello-world-1.war</code> a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code> y reiniciamos el servicio de tomcat9.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> systemctl restart tomcat9
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/java-simple/1.png" alt="1" /></p>
+  </li>
+</ol>
+
+<h2 id="comprobación">Comprobación</h2>
+<p>Si accedemos a la ip de nuestro servidor, veremos el mensaje <code class="language-plaintext highlighter-rouge">Hola mundo!!!</code> en el navegador.</p>
+
+<p><img src="/assets/images/java-simple/2.png" alt="2" /></p>
+
+<p>Y si accedemos al Tomcat-Manager, veremos que la aplicación se ha desplegado correctamente.</p>
+
+<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry><entry><title type="html">Despliegue de una aplcación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
 
 <p>En esta entrada vamos a desplegar una aplicación Python realizada en Django.</p>
 
@@ -3204,687 +3373,4 @@ Let’s Encrypt hará una petición DNS para que se devuelva dicha string y si c
 
 <p><img src="/assets/images/https/4.png" alt="4" /></p>
 
-<p><img src="/assets/images/https/5.png" alt="5" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[¿Qué es un certificado SSL?]]></summary></entry><entry><title type="html">Cloud Computing IaaS. OpenStack</title><link href="/hlc+sri/2022/11/17/OpenStack.html" rel="alternate" type="text/html" title="Cloud Computing IaaS. OpenStack" /><published>2022-11-17T08:17:50+01:00</published><updated>2022-11-17T08:17:50+01:00</updated><id>/hlc+sri/2022/11/17/OpenStack</id><content type="html" xml:base="/hlc+sri/2022/11/17/OpenStack.html"><![CDATA[<h2 id="qué-es-openstack">¿Qué es OpenStack?</h2>
-
-<p>OpenStack es un software de código abierto que permite la creación de infraestructuras de nube privada. Es decir, permite crear una nube privada en la que los usuarios pueden crear máquinas virtuales, almacenar datos, etc.</p>
-
-<p>En esta entrada vamos a realizar una serie de pequeños talleres de configuración y gestión.</p>
-
-<h2 id="configuración-del-cliente-vpn">Configuración del cliente VPN</h2>
-
-<p>Para poder acceder a la red local desde el exterior, existe una red privada configurada con OpenVPN que utiliza certificados x509 para autenticar los usuarios y el servidor.</p>
-
-<p>Para ello, vamos a conectarnos desde mi red local a la VPN del centro. Para ello, vamos a utilizar el cliente OpenVPN.</p>
-
-<p>Lo único que vamos a necesitar son dos cosas:</p>
-
-<ul>
-  <li>Disponer de un certificado x509 para autenticarnos en el servidor.</li>
-  <li>Configurar el cliente OpenVPN con la configuración del servidor.</li>
-</ul>
-
-<h3 id="pasos-a-seguir">Pasos a seguir</h3>
-
-<p>Lo primero que deberemos hacer es crear una solicitud de firma del certificado.</p>
-
-<p><strong>¿Cómo?</strong> Pues muy sencillo, vamos a utilizar el comando <code class="language-plaintext highlighter-rouge">openssl</code> para generar una solicitud de firma de certificado.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@maria-debian:~ openssl genrsa 4096 <span class="o">&gt;</span> /etc/ssl/private/[nombredemimaquina].key
-</code></pre></div></div>
-
-<p>Una vez generado el certificado, vamos a generar la solicitud de firma.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@maria-debian:~ openssl req <span class="nt">-new</span> <span class="nt">-key</span> /etc/ssl/private/[nombredemimaquina].key <span class="nt">-out</span> /root/[nombredemimaquina].csr
-</code></pre></div></div>
-
-<p>Nos pedirá una serie de valores para identificar al certificado, que tendremos que rellenar correctamente y son:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  C=ES
-  ST=Sevilla
-  L=Dos Hermanas
-  O=IES Gonzalo Nazareno
-  OU=Informatica
-  CN=[Nombre del equipo] (debe ser único)
-</code></pre></div></div>
-
-<p>Una vez generado el certificado, lo tendremos que enviar al administrador de la red para que nos lo firme y nos lo envíe, (en este caso, el profesor del centro).</p>
-
-<p>Tras haber recibido el certificado, lo tendremos que instalar en el equipo. Para ello tendremos que tener instalado el cliente OpenVPN.</p>
-
-<p>Una vez nstalado, debemos crear un fichero con extensión <code class="language-plaintext highlighter-rouge">.conf</code> en el directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/</code> con el siguiente contenido:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  dev tun
-  remote sputnik.gonzalonazareno.org
-  ifconfig 172.23.0.0 255.255.255.0
-  pull
-  proto tcp-client
-  tls-client
-  # remote-cert-tls server
-  ca /etc/ssl/certs/gonzalonazareno.crt &lt;- Cambiar por la ruta al certificado de la CA Gonzalo Nazareno (el mismo que utilizamos para la moodle, redmine, etc.)
-  cert /etc/openvpn/mut-albertomolina.crt &lt;- Cambiar por la ruta al certificado CRT firmado que nos han devuelto
-  key /etc/ssl/private/mut.key &lt;- Cambiar por la ruta a la clave privada, aunque en ese directorio es donde debe estar y con permisos 600
-  comp-lzo
-  keepalive 10 60
-  log /var/log/openvpn-sputnik.log
-  verb 1
-</code></pre></div></div>
-
-<p>Reiniciamos el servicio y comprobaremos que se haya creado correctamente el tunel y que la regla de encaminamiento adicional para acceder a los equipos que pertenecen a la red local del centro se haya añadido correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@maria-debian:~ <span class="nb">sudo </span>systemctl restart
-maria@maria-debian:~ ip route
-</code></pre></div></div>
-
-<p>También podremos comprobarlo a través de los mensajes del fichero <em>/var/log/openvpn-sputnik.log</em>.</p>
-
-<blockquote>
-  <p><strong>Nota 1:</strong> Para que el servicio no se inicie de forma automática, podemos deshabilitarlo con el comando <code class="language-plaintext highlighter-rouge">systemctl disable openvpn.service</code>.</p>
-</blockquote>
-
-<blockquote>
-  <p><strong>Nota 2:</strong> No se nos debe olvidar actualizar el fichero <em>/etc/hosts</em> para que podamos acceder a los equipos de la red local del centro por su nombre.</p>
-</blockquote>
-
-<h3 id="comprobación-de-funcionamiento">Comprobación de funcionamiento</h3>
-
-<p>Desde mi red local de casa, y una vez configurada la IP del interfaz tun0, podemos comprobar que podemos acceder a los equipos de la red local del centro.</p>
-
-<p><img src="/assets/images/openstack/tunel.png" alt="Tunel" /></p>
-
-<h2 id="gestión-de-redes-en-openstack">Gestión de redes en OpenStack</h2>
-
-<p>En esta sección vamos a ver cómo crear una red en OpenStack. Los siguientes pasos los vamos hacer con el cliente de OpenStack, y entraremos en Horizon para comprobar que, efectivamente, se ha creado correctamente.</p>
-
-<p><img src="/assets/images/openstack/Escenario.png" alt="Escenario" /></p>
-
-<ol>
-  <li>
-    <p>Vamos a crear una red llamada <code class="language-plaintext highlighter-rouge">red-externa</code> y una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">192.168.0.0/24</code>. Crearemos también un router y conectaremos ambas redes a este router.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create red-externa
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +---------------------------+--------------------------------------+
- | Field                     | Value                                |
- +---------------------------+--------------------------------------+
- | admin_state_up            | UP                                   |
- | availability_zone_hints   |                                      |
- | availability_zones        |                                      |
- | created_at                | 2022-12-04T20:29:15Z                 |
- | description               |                                      |
- | dns_domain                | None                                 |
- | <span class="nb">id</span>                        | 50f75d96-bc22-4ce6-aab5-fbfac98032cc |
- | ipv4_address_scope        | None                                 |
- | ipv6_address_scope        | None                                 |
- | is_default                | False                                |
- | is_vlan_transparent       | None                                 |
- | mtu                       | 1450                                 |
- | name                      | red-externa                          |
- | port_security_enabled     | True                                 |
- | project_id                | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | provider:network_type     | None                                 |
- | provider:physical_network | None                                 |
- | provider:segmentation_id  | None                                 |
- | qos_policy_id             | None                                 |
- | revision_number           | 1                                    |
- | router:external           | Internal                             |
- | segments                  | None                                 |
- | shared                    | False                                |
- | status                    | ACTIVE                               |
- | subnets                   |                                      |
- | tags                      |                                      |
- | tenant_id                 | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | updated_at                | 2022-12-04T20:29:15Z                 |
- +---------------------------+--------------------------------------+
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack subnet create <span class="nt">--network</span> red-externa <span class="nt">--subnet-range</span> 192.168.0.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 192.168.0.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-externa
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +----------------------+--------------------------------------+
- | Field                | Value                                |
- +----------------------+--------------------------------------+
- | allocation_pools     | 192.168.0.2-192.168.0.254            |
- | cidr                 | 192.168.0.0/24                       |
- | created_at           | 2022-12-04T20:30:16Z                 |
- | description          |                                      |
- | dns_nameservers      | 192.168.202.2                        |
- | dns_publish_fixed_ip | None                                 |
- | enable_dhcp          | True                                 |
- | gateway_ip           | 192.168.0.1                          |
- | host_routes          |                                      |
- | <span class="nb">id</span>                   | 77b06357-36d5-4aac-a06d-d048964939d5 |
- | ip_version           | 4                                    |
- | ipv6_address_mode    | None                                 |
- | ipv6_ra_mode         | None                                 |
- | name                 | subred-externa                       |
- | network_id           | 50f75d96-bc22-4ce6-aab5-fbfac98032cc |
- | project_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | revision_number      | 0                                    |
- | segment_id           | None                                 |
- | service_types        |                                      |
- | subnetpool_id        | None                                 |
- | tags                 |                                      |
- | tenant_id            | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | updated_at           | 2022-12-04T20:30:16Z                 |
- +----------------------+--------------------------------------+
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/1.png" alt="1" /></p>
-
-    <p>Crearemos también un router y conectaremos ambas redes a este router.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack router create router-externo
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+--------------------------------------+
- | Field                   | Value                                |
- +-------------------------+--------------------------------------+
- | admin_state_up          | UP                                   |
- | availability_zone_hints |                                      |
- | availability_zones      |                                      |
- | created_at              | 2022-12-04T20:31:24Z                 |
- | description             |                                      |
- | enable_ndp_proxy        | None                                 |
- | external_gateway_info   | null                                 |
- | flavor_id               | None                                 |
- | <span class="nb">id</span>                      | 430c756a-e261-4aee-bbe1-dbcc5982fa4b |
- | name                    | router-externo                       |
- | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | revision_number         | 1                                    |
- | routes                  |                                      |
- | status                  | ACTIVE                               |
- | tags                    |                                      |
- | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | updated_at              | 2022-12-04T20:31:24Z                 |
- +-------------------------+--------------------------------------+
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/2.png" alt="2" /></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack router add subnet router-externo subred-externa
- openstack router <span class="nb">set </span>router-externo <span class="nt">--external-gateway</span> ext-net
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Crearemos una instancia llamada <code class="language-plaintext highlighter-rouge">maquina-router</code>que conectaremos a la nueva red y donde comprobaremos que la IP fija está en el redireccionamiento de la subred.</p>
-
-    <ul>
-      <li>
-        <p>Primero creamos el puerto con la IP fija:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack port create <span class="nt">--network</span> red-externa <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>192.168.0.10 puerto-externo
-</code></pre></div>        </div>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-------------------------+-----------------------------------------------------------------------------+
-| Field                   | Value                                                                       |
-+-------------------------+-----------------------------------------------------------------------------+
-| admin_state_up          | UP                                                                          |
-| allowed_address_pairs   |                                                                             |
-| binding_host_id         | None                                                                        |
-| binding_profile         | None                                                                        |
-| binding_vif_details     | None                                                                        |
-| binding_vif_type        | None                                                                        |
-| binding_vnic_type       | normal                                                                      |
-| created_at              | 2022-12-04T20:33:10Z                                                        |
-| data_plane_status       | None                                                                        |
-| description             |                                                                             |
-| device_id               |                                                                             |
-| device_owner            |                                                                             |
-| device_profile          | None                                                                        |
-| dns_assignment          | None                                                                        |
-| dns_domain              | None                                                                        |
-| dns_name                | None                                                                        |
-| extra_dhcp_opts         |                                                                             |
-| fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'192.168.0.10'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'77b06357-36d5-4aac-a06d-d048964939d5'</span> |
-| <span class="nb">id</span>                      | 14cac4e6-0a06-44a2-9cd0-d0285c19981c                                        |
-| ip_allocation           | None                                                                        |
-| mac_address             | fa:16:3e:a8:c3:e0                                                           |
-| name                    | puerto-externo                                                              |
-| network_id              | 50f75d96-bc22-4ce6-aab5-fbfac98032cc                                        |
-| numa_affinity_policy    | None                                                                        |
-| port_security_enabled   | True                                                                        |
-| project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
-| propagate_uplink_status | None                                                                        |
-| qos_network_policy_id   | None                                                                        |
-| qos_policy_id           | None                                                                        |
-| resource_request        | None                                                                        |
-| revision_number         | 1                                                                           |
-| security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                        |
-| status                  | DOWN                                                                        |
-| tags                    |                                                                             |
-| tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
-| trunk_details           | None                                                                        |
-| updated_at              | 2022-12-04T20:33:10Z                                                        |
-+-------------------------+-----------------------------------------------------------------------------+
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos la instancia y conectamos el puerto creado anteriormente:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
-<span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
-<span class="nt">--security-group</span> default <span class="se">\</span>
-<span class="nt">--key-name</span> pass <span class="se">\</span>
-<span class="nt">--port</span> puerto-externo <span class="se">\</span>
-maquina-router
-</code></pre></div>        </div>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-----------------------------+------------------------------------------------------------------+
-| Field                       | Value                                                            |
-+-----------------------------+------------------------------------------------------------------+
-| OS-DCF:diskConfig           | MANUAL                                                           |
-| OS-EXT-AZ:availability_zone |                                                                  |
-| OS-EXT-STS:power_state      | NOSTATE                                                          |
-| OS-EXT-STS:task_state       | scheduling                                                       |
-| OS-EXT-STS:vm_state         | building                                                         |
-| OS-SRV-USG:launched_at      | None                                                             |
-| OS-SRV-USG:terminated_at    | None                                                             |
-| accessIPv4                  |                                                                  |
-| accessIPv6                  |                                                                  |
-| addresses                   |                                                                  |
-| adminPass                   | dBkgyGGPNFd8                                                     |
-| config_drive                |                                                                  |
-| created                     | 2022-12-04T20:34:38Z                                             |
-| flavor                      | m1.mini <span class="o">(</span>3<span class="o">)</span>                                                      |
-| hostId                      |                                                                  |
-| <span class="nb">id</span>                          | 109737f8-3b6f-4af8-93dd-f6e53977562e                             |
-| image                       | Debian 11 Bullseye <span class="o">(</span>6d992898-7e4f-44b9-a681-6dcf32d24a1f<span class="o">)</span>        |
-| key_name                    | pass                                                             |
-| name                        | maquina-router                                                   |
-| progress                    | 0                                                                |
-| project_id                  | 2aac00e135b84d868bd4cd6bca13cc5a                                 |
-| properties                  |                                                                  |
-| security_groups             | <span class="nv">name</span><span class="o">=</span><span class="s1">'ea2781f0-7c84-46b5-873c-a4986b14f232'</span>                      |
-| status                      | BUILD                                                            |
-| updated                     | 2022-12-04T20:34:38Z                                             |
-| user_id                     | 96a8e1784a38a07b78e6b0d2ac823603b2590a618dd18748ebd450bed2a376a9 |
-| volumes_attached            |                                                                  |
-+-----------------------------+------------------------------------------------------------------+
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>¿Podremos aignarle una IP flotante?</p>
-        <ul>
-          <li>Si, porque está diractamente conectada con la red externa.</li>
-        </ul>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maria@maria-debian:~<span class="nv">$ </span>openstack floating ip create ext-net
-
-+---------------------+--------------------------------------+
-| Field               | Value                                |
-+---------------------+--------------------------------------+
-| created_at          | 2022-12-04T20:35:28Z                 |
-| description         |                                      |
-| dns_domain          | None                                 |
-| dns_name            | None                                 |
-| fixed_ip_address    | None                                 |
-| floating_ip_address | 172.22.201.223                       |
-| floating_network_id | 2ebd4d15-00e3-44c6-a9a7-aeebef5f6540 |
-| <span class="nb">id</span>                  | e7075044-807b-4a69-87df-efb96b237358 |
-| name                | 172.22.201.223                       |
-| port_details        | None                                 |
-| port_id             | None                                 |
-| project_id          | 2aac00e135b84d868bd4cd6bca13cc5a     |
-| qos_policy_id       | None                                 |
-| revision_number     | 0                                    |
-| router_id           | None                                 |
-| status              | DOWN                                 |
-| subnet_id           | None                                 |
-| tags                | <span class="o">[]</span>                                   |
-| tenant_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
-| updated_at          | 2022-12-04T20:35:28Z                 |
-+---------------------+--------------------------------------+
-
-openstack server add floating ip maquina-router 172.22.201.223
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Creamos una nueva red llamada <code class="language-plaintext highlighter-rouge">red-interna</code> con una subred con DHCP, DNS el <code class="language-plaintext highlighter-rouge">192.168.202.2</code> y direccionamiento <code class="language-plaintext highlighter-rouge">10.0.100.0/24</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack network create red-interna
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +---------------------------+--------------------------------------+
- | Field                     | Value                                |
- +---------------------------+--------------------------------------+
- | admin_state_up            | UP                                   |
- | availability_zone_hints   |                                      |
- | availability_zones        |                                      |
- | created_at                | 2022-12-04T20:36:32Z                 |
- | description               |                                      |
- | dns_domain                | None                                 |
- | <span class="nb">id</span>                        | 883c8952-21e8-48a1-8cf0-0418e8e592d7 |
- | ipv4_address_scope        | None                                 |
- | ipv6_address_scope        | None                                 |
- | is_default                | False                                |
- | is_vlan_transparent       | None                                 |
- | mtu                       | 1450                                 |
- | name                      | red-interna                          |
- | port_security_enabled     | True                                 |
- | project_id                | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | provider:network_type     | None                                 |
- | provider:physical_network | None                                 |
- | provider:segmentation_id  | None                                 |
- | qos_policy_id             | None                                 |
- | revision_number           | 1                                    |
- | router:external           | Internal                             |
- | segments                  | None                                 |
- | shared                    | False                                |
- | status                    | ACTIVE                               |
- | subnets                   |                                      |
- | tags                      |                                      |
- | tenant_id                 | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | updated_at                | 2022-12-04T20:36:32Z                 |
- +---------------------------+--------------------------------------+
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack subnet create <span class="nt">--network</span> red-interna <span class="nt">--subnet-range</span> 10.0.100.0/24 <span class="nt">--dhcp</span> <span class="nt">--gateway</span> 10.0.100.1 <span class="nt">--dns-nameserver</span> 192.168.202.2 subred-interna
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +----------------------+--------------------------------------+
- | Field                | Value                                |
- +----------------------+--------------------------------------+
- | allocation_pools     | 10.0.100.2-10.0.100.254              |
- | cidr                 | 10.0.100.0/24                        |
- | created_at           | 2022-12-04T20:37:21Z                 |
- | description          |                                      |
- | dns_nameservers      | 192.168.202.2                        |
- | dns_publish_fixed_ip | None                                 |
- | enable_dhcp          | True                                 |
- | gateway_ip           | 10.0.100.1                           |
- | host_routes          |                                      |
- | <span class="nb">id</span>                   | 2b25eec7-cb6c-4fa8-a06e-651ab5e13f09 |
- | ip_version           | 4                                    |
- | ipv6_address_mode    | None                                 |
- | ipv6_ra_mode         | None                                 |
- | name                 | subred-interna                       |
- | network_id           | 883c8952-21e8-48a1-8cf0-0418e8e592d7 |
- | project_id           | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | revision_number      | 0                                    |
- | segment_id           | None                                 |
- | service_types        |                                      |
- | subnetpool_id        | None                                 |
- | tags                 |                                      |
- | tenant_id            | 2aac00e135b84d868bd4cd6bca13cc5a     |
- | updated_at           | 2022-12-04T20:37:21Z                 |
- +----------------------+--------------------------------------+
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Lo siguiente que realizaremos será conectar la <code class="language-plaintext highlighter-rouge">máquina-router</code> a la nueva red y le asignamos la primera dirección: <code class="language-plaintext highlighter-rouge">10.0.100.1</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.1 puerto-interno
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+---------------------------------------------------------------------------+
- | Field                   | Value                                                                     |
- +-------------------------+---------------------------------------------------------------------------+
- | admin_state_up          | UP                                                                        |
- | allowed_address_pairs   |                                                                           |
- | binding_host_id         | None                                                                      |
- | binding_profile         | None                                                                      |
- | binding_vif_details     | None                                                                      |
- | binding_vif_type        | None                                                                      |
- | binding_vnic_type       | normal                                                                    |
- | created_at              | 2022-12-04T20:38:34Z                                                      |
- | data_plane_status       | None                                                                      |
- | description             |                                                                           |
- | device_id               |                                                                           |
- | device_owner            |                                                                           |
- | device_profile          | None                                                                      |
- | dns_assignment          | None                                                                      |
- | dns_domain              | None                                                                      |
- | dns_name                | None                                                                      |
- | extra_dhcp_opts         |                                                                           |
- | fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'10.0.100.1'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'2b25eec7-cb6c-4fa8-a06e-651ab5e13f09'</span> |
- | <span class="nb">id</span>                      | f795c9c0-3a3d-4b64-800e-8f1833716b38                                      |
- | ip_allocation           | None                                                                      |
- | mac_address             | fa:16:3e:cd:a7:50                                                         |
- | name                    | puerto-interno                                                            |
- | network_id              | 883c8952-21e8-48a1-8cf0-0418e8e592d7                                      |
- | numa_affinity_policy    | None                                                                      |
- | port_security_enabled   | True                                                                      |
- | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                          |
- | propagate_uplink_status | None                                                                      |
- | qos_network_policy_id   | None                                                                      |
- | qos_policy_id           | None                                                                      |
- | resource_request        | None                                                                      |
- | revision_number         | 1                                                                         |
- | security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                      |
- | status                  | DOWN                                                                      |
- | tags                    |                                                                           |
- | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                          |
- | trunk_details           | None                                                                      |
- | updated_at              | 2022-12-04T20:38:34Z                                                      |
- +-------------------------+---------------------------------------------------------------------------+
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server add port maquina-router puerto-interno
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos una nueva instancia llamada <code class="language-plaintext highlighter-rouge">maquina-cliente</code> y la conectamos a la red que hemos llamado <code class="language-plaintext highlighter-rouge">red-interna</code>. Usando los puertos de red, le asignaremos la IP <code class="language-plaintext highlighter-rouge">10.0.100.200</code> y comprobamos si su puerta de enlace es la <code class="language-plaintext highlighter-rouge">máquina-router</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack port create <span class="nt">--network</span> red-interna <span class="nt">--fixed-ip</span> ip-address<span class="o">=</span>10.0.100.200 puerto-cliente
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-------------------------+-----------------------------------------------------------------------------+
- | Field                   | Value                                                                       |
- +-------------------------+-----------------------------------------------------------------------------+
- | admin_state_up          | UP                                                                          |
- | allowed_address_pairs   |                                                                             |
- | binding_host_id         | None                                                                        |
- | binding_profile         | None                                                                        |
- | binding_vif_details     | None                                                                        |
- | binding_vif_type        | None                                                                        |
- | binding_vnic_type       | normal                                                                      |
- | created_at              | 2022-12-04T20:39:42Z                                                        |
- | data_plane_status       | None                                                                        |
- | description             |                                                                             |
- | device_id               |                                                                             |
- | device_owner            |                                                                             |
- | device_profile          | None                                                                        |
- | dns_assignment          | None                                                                        |
- | dns_domain              | None                                                                        |
- | dns_name                | None                                                                        |
- | extra_dhcp_opts         |                                                                             |
- | fixed_ips               | <span class="nv">ip_address</span><span class="o">=</span><span class="s1">'10.0.100.200'</span>, <span class="nv">subnet_id</span><span class="o">=</span><span class="s1">'2b25eec7-cb6c-4fa8-a06e-651ab5e13f09'</span> |
- | <span class="nb">id</span>                      | f790d187-3a17-4eb6-ac68-0a93275927b0                                        |
- | ip_allocation           | None                                                                        |
- | mac_address             | fa:16:3e:a8:d9:6a                                                           |
- | name                    | puerto-cliente                                                              |
- | network_id              | 883c8952-21e8-48a1-8cf0-0418e8e592d7                                        |
- | numa_affinity_policy    | None                                                                        |
- | port_security_enabled   | True                                                                        |
- | project_id              | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
- | propagate_uplink_status | None                                                                        |
- | qos_network_policy_id   | None                                                                        |
- | qos_policy_id           | None                                                                        |
- | resource_request        | None                                                                        |
- | revision_number         | 1                                                                           |
- | security_group_ids      | ea2781f0-7c84-46b5-873c-a4986b14f232                                        |
- | status                  | DOWN                                                                        |
- | tags                    |                                                                             |
- | tenant_id               | 2aac00e135b84d868bd4cd6bca13cc5a                                            |
- | trunk_details           | None                                                                        |
- | updated_at              | 2022-12-04T20:39:42Z                                                        |
- +-------------------------+-----------------------------------------------------------------------------+
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
- <span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
- <span class="nt">--key-name</span> pass <span class="se">\</span>
- <span class="nt">--port</span> puerto-cliente <span class="se">\</span>
- maquina-cliente
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +-----------------------------+------------------------------------------------------------------+
- | Field                       | Value                                                            |
- +-----------------------------+------------------------------------------------------------------+
- | OS-DCF:diskConfig           | MANUAL                                                           |
- | OS-EXT-AZ:availability_zone |                                                                  |
- | OS-EXT-STS:power_state      | NOSTATE                                                          |
- | OS-EXT-STS:task_state       | scheduling                                                       |
- | OS-EXT-STS:vm_state         | building                                                         |
- | OS-SRV-USG:launched_at      | None                                                             |
- | OS-SRV-USG:terminated_at    | None                                                             |
- | accessIPv4                  |                                                                  |
- | accessIPv6                  |                                                                  |
- | addresses                   |                                                                  |
- | adminPass                   | 24fYKvf2iM5g                                                     |
- | config_drive                |                                                                  |
- | created                     | 2022-12-04T20:40:48Z                                             |
- | flavor                      | m1.mini <span class="o">(</span>3<span class="o">)</span>                                                      |
- | hostId                      |                                                                  |
- | <span class="nb">id</span>                          | ca52b7d4-9bb9-4133-98d4-82aa8300cf40                             |
- | image                       | Debian 11 Bullseye <span class="o">(</span>6d992898-7e4f-44b9-a681-6dcf32d24a1f<span class="o">)</span>        |
- | key_name                    | pass                                                             |
- | name                        | maquina-cliente                                                  |
- | progress                    | 0                                                                |
- | project_id                  | 2aac00e135b84d868bd4cd6bca13cc5a                                 |
- | properties                  |                                                                  |
- | security_groups             | <span class="nv">name</span><span class="o">=</span><span class="s1">'default'</span>                                                   |
- | status                      | BUILD                                                            |
- | updated                     | 2022-12-04T20:40:48Z                                             |
- | user_id                     | 96a8e1784a38a07b78e6b0d2ac823603b2590a618dd18748ebd450bed2a376a9 |
- | volumes_attached            |                                                                  |
- +-----------------------------+------------------------------------------------------------------+
-</code></pre></div>    </div>
-
-    <ul>
-      <li>¿Podremos assignarle a esta instancia una IP flotante?¿Por qué?
-        <ul>
-          <li>No, porque no está conectada directamente con la red externa.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Ya montado todo este escenario, vamos a configurar la <code class="language-plaintext highlighter-rouge">máquina-router</code>para que haga de router nat. Sin embargo, las restricciones y la seguridad del cortafuegos que tenemos configurado en cada una de las intrefaces de las instancias no van a permitir que funcione de forma adecuada. Por lo tanto, desactiva la seguridad de la interfaz de <code class="language-plaintext highlighter-rouge">maquina-router</code> y <code class="language-plaintext highlighter-rouge">maquina-cliente</code> conectadas a la red-interna.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">---</span> maquina-router <span class="nt">---</span>
- openstack server remove security group maquina-router default
- openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-externo
- openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-interno
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">---</span> maquina-cliente <span class="nt">---</span>
- openstack server remove security group maquina-cliente default
- openstack port <span class="nb">set</span> <span class="nt">--disable-port-security</span> puerto-cliente
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Nos conectamos a la máquina-cliente a través de la máquina router usando <code class="language-plaintext highlighter-rouge">ssh -AJ</code></li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-AJ</span> debian@172.22.201.223 debian@10.0.100.200
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Configuramos la instancia maquina-router para que funcione como router-nat. Comprueba que el cliente tiene acceso a internet. Instala un servidor web en el cliente.</p>
-
-    <ul>
-      <li>
-        <p>Nos conectamos a la máquina-router y la configuramos de la siguiente manera:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">---Nos</span> conectamos---
-ssh debian@172.22.200.229
-</code></pre></div>        </div>
-        <ul>
-          <li>Instalamos iptables
-            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>su
-apt <span class="nb">install </span>iptables
-</code></pre></div>            </div>
-          </li>
-          <li>Configuramos el bit de forwarding
-            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div>            </div>
-          </li>
-          <li>Configuramos las reglas de iptables
-            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 10.0.100.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> SNAT <span class="nt">--to</span> 192.168.0.10
-iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 10.0.100.200:80
-</code></pre></div>            </div>
-          </li>
-        </ul>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@maquina-router:/home/debian# <span class="nb">sudo </span>iptables <span class="nt">-t</span> nat <span class="nt">-L</span> <span class="nt">-n</span> <span class="nt">-v</span>
-Chain PREROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
- pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
-    0     0 DNAT       tcp  <span class="nt">--</span>  ens3   <span class="k">*</span>       0.0.0.0/0            0.0.0.0/0            tcp dpt:80 to:10.0.100.200:80
-
-Chain INPUT <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
- pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
-
-Chain OUTPUT <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
- pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
-
-Chain POSTROUTING <span class="o">(</span>policy ACCEPT 0 packets, 0 bytes<span class="o">)</span>
- pkts bytes target     prot opt <span class="k">in     </span>out     <span class="nb">source               </span>destination         
-    0     0 SNAT       all  <span class="nt">--</span>  <span class="k">*</span>      ens3    10.0.100.0/24        0.0.0.0/0            to:192.168.0.10
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Comprobamos del acceso al servidor web de la maquina-cliente desde el exterior.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-AJ</span> debian@ip debian@10.0.100.200
- ping <span class="nt">-c</span> 5 8.8.8.8
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/openstack/5.png" alt="5" /></p>
-
-    <ul>
-      <li>
-        <p>Instalamos apache2</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt update
-apt <span class="nb">install </span>apache2
-</code></pre></div>        </div>
-      </li>
-    </ul>
-
-    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;html&gt;</span>
-   <span class="nt">&lt;head&gt;</span>
-     <span class="nt">&lt;title&gt;</span>TAALLER 2<span class="nt">&lt;/title&gt;</span>
-   <span class="nt">&lt;/head&gt;</span>
-   <span class="nt">&lt;body&gt;</span>
-     <span class="nt">&lt;h1&gt;</span>Gestión de redes en OpenStack<span class="nt">&lt;/h1&gt;</span>
-   <span class="nt">&lt;/body&gt;</span>
- <span class="nt">&lt;/html&gt;</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Accedemos desde el navegador a la IP de la máquina-router</li>
-    </ul>
-
-    <p><img src="/assets/images/openstack/6.png" alt="6" /></p>
-  </li>
-</ol>
-
-<h3 id="extra-comprobación-de-la-creación-de-las-redes">EXTRA. Comprobación de la creación de las redes.</h3>
-
-<ul>
-  <li>
-    <p>Listado de routers</p>
-
-    <p><img src="/assets/images/openstack/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Listado de redes</p>
-
-    <p><img src="/assets/images/openstack/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Listado de subredes</p>
-
-    <p><img src="/assets/images/openstack/9.png" alt="9" /></p>
-  </li>
-</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[¿Qué es OpenStack?]]></summary></entry></feed>
+<p><img src="/assets/images/https/5.png" alt="5" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[¿Qué es un certificado SSL?]]></summary></entry></feed>

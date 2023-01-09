@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>¿Qué diferencia hay entre exploit, vulnerabilidad y payload? | sysmaria</title>
+<title>Desarrollo y despliegue de una aplicación Java simple | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="¿Qué diferencia hay entre exploit, vulnerabilidad y payload?">
+<meta property="og:title" content="Desarrollo y despliegue de una aplicación Java simple">
 <meta property="og:locale" content="en_US">
-<meta name="description" content="En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.">
-<meta property="og:description" content="En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.">
-<link rel="canonical" href="/seguridad/2022/10/10/payload.html">
-<meta property="og:url" content="/seguridad/2022/10/10/payload.html">
+<meta name="description" content="En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.">
+<meta property="og:description" content="En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.">
+<link rel="canonical" href="/iaw/2022/12/28/java-simple.html">
+<meta property="og:url" content="/iaw/2022/12/28/java-simple.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2022-10-10T10:40:32+02:00">
+<meta property="article:published_time" content="2022-12-28T11:59:07+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="¿Qué diferencia hay entre exploit, vulnerabilidad y payload?">
+<meta property="twitter:title" content="Desarrollo y despliegue de una aplicación Java simple">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-10-10T10:40:32+02:00","datePublished":"2022-10-10T10:40:32+02:00","description":"En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.","headline":"¿Qué diferencia hay entre exploit, vulnerabilidad y payload?","mainEntityOfPage":{"@type":"WebPage","@id":"/seguridad/2022/10/10/payload.html"},"url":"/seguridad/2022/10/10/payload.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-12-28T11:59:07+01:00","datePublished":"2022-12-28T11:59:07+01:00","description":"En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.","headline":"Desarrollo y despliegue de una aplicación Java simple","mainEntityOfPage":{"@type":"WebPage","@id":"/iaw/2022/12/28/java-simple.html"},"url":"/iaw/2022/12/28/java-simple.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -449,17 +449,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <section class="page-banner">
     <div class="page-banner-img">
-<div style="background-image: url(https://img.freepik.com/vector-premium/banner-tecnologia-digital-seguridad-abstracta_43778-429.jpg?w=900)"></div>
-        <img class="img-placeholder" src="https://img.freepik.com/vector-premium/banner-tecnologia-digital-seguridad-abstracta_43778-429.jpg?w=900">
+<div style="background-image: url(/assets/images/banners/java.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/java.png">
 </div>
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Desarrollo y despliegue de una aplicación Java simple</h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
-    <time class="dt-published" datetime="2022-10-10T10:40:32+02:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 10, 2022
+    <time class="dt-published" datetime="2022-12-28T11:59:07+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Dec 28, 2022
     </time>
 
     
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
   </p></header>
 </div>
     </div>
@@ -689,130 +689,201 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <div class="post-content e-content" itemprop="articleBody">
 
-      <p>En seguridad informática es muy habitual confundir estos tres conceptos, y por ello vamos a ver que es un exploit, una vulnerabilidad y un payload.</p>
+      <p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
 
-<p>Debemos tener en cuenta que estos términos son utilizados principalmente cuando realizamos pruebas de penetración o ejercicios de hacking ético. 
-¿En qué parte del hacking podemos encontrarnos con estos términos?
-Lo vemos en la fase de explotación, es decir, una vez que conocemos las características del sistema que tienen las máquinas a las que queremos acceder, podemos investigar si existen vulnerabilidades para esos sistemas, y en el caso afirmativo, (que de costumbre es que sí) sería el momento de buscar algún exploit para romper dicha vulnerabilidad.</p>
+<p><strong>Tomcat</strong> es un servidor web que permite ejecutar aplicaciones Java. En este post vamos a ver como desplegar una aplicación Java en un servidor Tomcat.</p>
 
-<p>Pero vamos a ver cada uno de ellos y como se interrelacionan</p>
+<p>Mientras que <strong>Maven</strong> es una herramienta de construcción de software que nos permite gestionar el ciclo de vida de un proyecto Java. En este post vamos a ver como crear un proyecto Java con Maven.</p>
 
-<h2 id="qué-es-un-exploit">¿Qué es un exploit?</h2>
-
-<p>Un exploit es la herramienta(software) con la cual el hacker aprovechará para comprometer, romper y explotar una vulnerabilidad de seguridad del sistema para sus propios fines.</p>
-
-<p>Esto sucede ya que algunos fabricantes suelen tener fallas de seguridad en sus productos, como por el ejemplo el exploit de día cero, denominado así cuando el desarrollador del producto desconoce de una vulnerabilidad que solo el ciberdelincuente conoce.</p>
-
-<p>Los ciberdelincuentes aplican ingeniería inversa para analizar toda la programación de dicho sistema, de este modo pueden detectar algún error de código y explotarlo.</p>
-
-<h3 id="tipos">Tipos</h3>
-
-<ul>
+<h2 id="escenario">Escenario</h2>
+<ol>
   <li>
-<strong>Exploit remoto</strong>:
-Se realizan mediante una conexión víctima con el atacante, todo mediante una red de comunicaciones.
-Por ejemplo, una conexión por internet, por lo general este tipo de ataque suele hacerse mediante el envío y la instalación del software malicioso en el dispositivo.</li>
-</ul>
+    <p>Instala tomcat9 como hemos visto en la documentación.</p>
 
-<p><img src="https://assets.website-files.com/5ff66329429d880392f6cba2/61c43d47dccfe68a303551d4_exploit%20Preview.png" alt="Exploit"></p>
-
-<ul>
-  <li>
-    <p><strong>Exploit local</strong>:
-La principal diferencia con el anterior tipo es que se necesita acceso al sistema antes de efectuar un ataque de explotación. Se necesita burlar al sistema para escalar privilegios en el sistema, donde el ciberdelincuente podría controlar al final todo el sistema.</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>tomcat9 tomcat9-admin
+</code></pre></div>    </div>
   </li>
   <li>
-    <p><strong>Exploit en cliente</strong>:
-Para realizar este tipo de ataques suele influir mucho el phishing para poder comprometer la máquina víctima con un exploit.
-Esto se realiza principalmente en las estaciones de trabajo de una organización atacando los softwares de ofimática mediante envío de malware por correos electrónicos.
-La mayoría de veces suele ser un éxito, ya que algunos cortafuegos o antivirus dan por alto estos ataques, de este modo los ciberdelincuentes empiezan a escalar privilegios hasta obtener el control total del sistema, aquí podemos llegar a la conclusión de que las víctimas dan el acceso.</p>
-  </li>
-</ul>
+    <p>Configuramos el panel de administración Tomcat-Manager y configúralo para su acceso.</p>
 
-<p>Un claro ejemplo explot fue el llamado Eternal Blue, que se aprovechó de la vulnerabilidad en el protocolo SMB en la versión 1, que estaba presente en todos los sistemas operativos de windows, desde su versión 95 al 10. Es capaz de brindarnos control total de una máquina, otorgando la capacidad de ejecutar código a nivel administrador.</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> nano /etc/tomcat9/tomcat-users.xml
+</code></pre></div>    </div>
 
-<h2 id="qué-es-la-vulnerabilidad">¿Qué es la vulnerabilidad?</h2>
-
-<p><img src="https://netcloudengineering.com/wp-content/uploads/2017/06/vulnerabilidades-ciberseguridad.jpg" alt="vulnerabilidad"></p>
-
-<p>Una vulnerabilidad  es una debilidad o un error en el código de un sistema que puede ser explotado para obtener acceso no autorizado o realizar acciones no autorizadas en un sistema informático comprometer la seguridad permitiendo a los atacantes ejecutar código, acceder a la memoria de un sistema, instalar malware y robar, destruir o modificar datos confidenciales.</p>
-
-<h3 id="ejemplos-de-vulnerabilidad">Ejemplos de vulnerabilidad</h3>
-
-<ul>
-  <li>
-    <p><strong>Autenticación rota</strong>:
-En la autenticación rota, cada vez que un usuario inicia sesión en su cuenta, se crea una identificación de sesión, y esa identificación de sesión solo se permite para esa cuenta en particular. En caso de que la aplicación web no esté diseñada de forma segura, el atacante puede usar varias técnicas dadas:</p>
-
-    <ul>
-      <li>Relleno de credenciales</li>
-      <li>Contraseñas sin cifrar</li>
-      <li>Tiempos de espera de sesión mal configurados</li>
-    </ul>
+    <div class="language-xml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;tomcat-users&gt;</span>
+     <span class="nt">&lt;role</span> <span class="na">rolename=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+     <span class="nt">&lt;user</span> <span class="na">username=</span><span class="s">"tomcat"</span> <span class="na">password=</span><span class="s">"s3cret"</span> <span class="na">roles=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+ <span class="nt">&lt;/tomcat-users&gt;</span>
+</code></pre></div>    </div>
   </li>
   <li>
-    <p><strong>Inyección de SQL</strong>:
-Es un tipo de vulnerabilidad en la que un atacante inserta su propio código en un sitio web con el fin acceder a datos protegidos o sensibles.</p>
+    <p>Instala la aplicación maven que nos va a ayudar a compilar aplicaciones java.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>maven
+</code></pre></div>    </div>
   </li>
   <li>
-    <p><strong>Secuencias de comandos entre sitios:</strong>
-Son un tipo de vulnerabilidad de los sitios web, que permite que los atacantes coloquen secuencias de comandos maliciosas en páginas web.</p>
+    <p>A continuación vamos a generar un proyecto, que será el esqueleto de nuestra aplicación Java, para ello ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> mvn archetype:generate <span class="nt">-DgroupId</span><span class="o">=</span>com.app.example <span class="nt">-DartifactId</span><span class="o">=</span>java-app <span class="nt">-DarchetypeArtifactId</span><span class="o">=</span>maven-archetype-quickstart <span class="nt">-DinteractiveMode</span><span class="o">=</span><span class="nb">false</span>
+</code></pre></div>    </div>
+
+    <p>La estructura de nuestro directorio sería la siguiente:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> java-app/
+ ├── pom.xml
+ └── src
+     ├── main
+     │   ├── java
+     │   │   └── com
+     │   │       └── app
+     │   │           └── example
+     │   │               └── App.java
+     │   └── resources
+     └── <span class="nb">test</span>
+         └── java
+             └── com
+                 └── app
+                     └── example
+                         └── AppTest.java
+</code></pre></div>    </div>
   </li>
-</ul>
-
-<p><img src="https://academy.avast.com/hs-fs/hubfs/What_is_scross-site_scripting-1.png?width=600&name=What_is_scross-site_scripting-1.png" alt="Vulnerabilidad"></p>
-
-<ul>
   <li>
-    <p><strong>Falsificación de solicitudes entre sitios</strong>:
-Es un ataque contra aplicaciones hospedadas en web en las que una aplicación web malintencionada puede influir en la interacción entre un explorador cliente y una aplicación web que confía en ese explorador.</p>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">java-app/pom.xml</code> para que tenga la siguiente estructura:</p>
+
+    <div class="language-xml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>     <span class="cp">&lt;?xml version = "1.0" encoding = "UTF-8"?&gt;</span>
+     <span class="nt">&lt;project</span> <span class="na">xmlns =</span> <span class="s">"http://maven.apache.org/POM/4.0.0"</span> 
+        <span class="na">xmlns:xsi =</span> <span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+
+     <span class="na">xsi:schemaLocation =</span> <span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+     <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+        <span class="nt">&lt;groupId&gt;</span>com.tutorialspoint<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>hello-world<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>1<span class="nt">&lt;/version&gt;</span>
+        <span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
+
+        <span class="nt">&lt;parent&gt;</span>
+           <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+           <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
+           <span class="nt">&lt;version&gt;</span>2.3.0.RELEASE<span class="nt">&lt;/version&gt;</span>
+           <span class="nt">&lt;relativePath/&gt;</span> 
+        <span class="nt">&lt;/parent&gt;</span>
+
+        <span class="nt">&lt;properties&gt;</span>
+           <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
+           <span class="nt">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.reporting.outputEncoding&gt;</span>
+           <span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
+           <span class="nt">&lt;tomcat.version&gt;</span>9.0.37<span class="nt">&lt;/tomcat.version&gt;</span>
+        <span class="nt">&lt;/properties&gt;</span>
+
+        <span class="nt">&lt;dependencies&gt;</span>
+           <span class="nt">&lt;dependency&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
+           <span class="nt">&lt;/dependency&gt;</span>
+           <span class="nt">&lt;dependency&gt;</span>  
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>  
+     	 <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-tomcat<span class="nt">&lt;/artifactId&gt;</span>  
+     	 <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>  
+           <span class="nt">&lt;/dependency&gt;</span>   
+           <span class="nt">&lt;dependency&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+           <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;/dependencies&gt;</span>
+
+        <span class="nt">&lt;build&gt;</span>
+           <span class="nt">&lt;plugins&gt;</span>
+              <span class="nt">&lt;plugin&gt;</span>
+                 <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+                 <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;/plugin&gt;</span>
+           <span class="nt">&lt;/plugins&gt;</span>
+        <span class="nt">&lt;/build&gt;</span>
+
+     <span class="nt">&lt;/project&gt;</span>
+</code></pre></div>    </div>
   </li>
   <li>
-    <p><strong>Configuración incorrecta de seguridad</strong>:
-Son controles de seguridad que se configuran incorrectamente o se dejan inseguros, lo que pone en riesgo sus sistemas y datos.</p>
+    <p>Construimos la aplicación, y para ello modificamos el fichero <code class="language-plaintext highlighter-rouge">src/main/java/com/app/example/App.java</code> para que tenga la siguiente estructura:</p>
+
+    <div class="language-java highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="kn">package</span> <span class="nn">com.app.example</span><span class="o">;</span>
+
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.builder.SpringApplicationBuilder</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.boot.web.servlet.support.SpringBootServletInitializer</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMapping</span><span class="o">;</span>
+ <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+
+ <span class="nd">@SpringBootApplication</span>
+ <span class="nd">@RestController</span>
+ <span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="nc">SpringBootServletInitializer</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="nc">SpringApplicationBuilder</span> <span class="nf">configure</span><span class="o">(</span><span class="nc">SpringApplicationBuilder</span> <span class="n">application</span><span class="o">)</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="n">application</span><span class="o">.</span><span class="na">sources</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+       <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hello</span><span class="o">()</span> <span class="o">{</span>
+       <span class="k">return</span> <span class="s">"&lt;center&gt;Hola mundo!!!&lt;/center&gt;"</span><span class="o">;</span>
+    <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
-</ul>
+  <li>
+    <p>Construimos la aplicación, y para ello ejecutamos:</p>
 
-<h2 id="qué-es-el-payload">¿Qué es el payload?</h2>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> mvn package
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Copiamos el fichero <code class="language-plaintext highlighter-rouge">java-app/target/hello-world-1.war</code> a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code> y reiniciamos el servicio de tomcat9.</p>
 
-<p>En informática, un payload es una carga de capacidad en un paquete o en otros medios de transmisión. Dicho término está arraigado en el mundo militar y a veces está asociado con la capacidad de código malicioso con el fin de dañar. Podemos encontrarnos con data payloads o malware payload. Del primero podemos decir que se produce cuando el dato es enviado por un destino de comunicación, y el segundo es un código malicioso que pretende hacer daño al objetivo señalado.</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> systemctl restart tomcat9
+</code></pre></div>    </div>
 
-<p><img src="https://esgeeks.com/media/2022/03/Concepto-payload-carga-u%CC%81til.jpg" alt="payload"></p>
+    <p><img src="/assets/images/java-simple/1.png" alt="1"></p>
+  </li>
+</ol>
 
-<h3 id="ejemplos">Ejemplos</h3>
+<h2 id="comprobación">Comprobación</h2>
+<p>Si accedemos a la ip de nuestro servidor, veremos el mensaje <code class="language-plaintext highlighter-rouge">Hola mundo!!!</code> en el navegador.</p>
 
-<p>Un ejemplo de <strong>Data pyload</strong> sería a través de un paquete IP. Este puede contener un payload con comandos emitidos por el último usuario, como una solicitud de un contenido web. Aunque, a menudo, consiste en transmitir datos por un servidor en respuesta a un usuario solicitante.  Los límites de los payloads en las PDUs (Protocol Data Unit) son con frecuencia especificados por un protocolo, y el tamaño máximo para un PDU individual raramente cambia.</p>
+<p><img src="/assets/images/java-simple/2.png" alt="2"></p>
 
-<p><img src="https://cdn-icons-png.flaticon.com/512/1995/1995756.png" alt="icono"></p>
+<p>Y si accedemos al Tomcat-Manager, veremos que la aplicación se ha desplegado correctamente.</p>
 
-<p>El tamaño máximo de payloads por paquetes de IP está limitado por el campo de longitud total (total length) en la cabecera del paquete IP; este campo tiene una longitud de 16 bits, lo que significa que el valor máximo posible es 2¹⁶ y el  valor más alto posible para la longitud del paquete es de 65535, menos del número de bytes que requiere un encabezado de paquete. El MTU para paquetes IP varía por el sistema y la red. La IP original estándar especifica que todos los hosts deben ser capaces de aceptar paquetes tan largos como sean de 576 bytes con los payload data de 512 bytes y los 64 de la cabecera. El valor predeterminado MTU actualmente aceptado para paquetes IPv4 es de 1500 bytes por la compatibilidad con los segmentos Ethernet.</p>
-
-<p>En cuanto a un <strong>payload malicioso</strong> (o malware payload) podemos poner como ejemplo todos aquellos correos electrónicos o incluso SMS que contienen un virus autorreplicante alojado en un enlace. Los atacantes eluden las defensas, mantienen la carga y atacan a la víctima. Esta vía, la de métodos de distribución comprobados, como los emails de suplantación de identidad y los gusanos, pueden adaptarse. Mientras no tenga límites específicos para la capacidad máxima de carga, los actores maliciosos intentarán mantenerlos en un tamaño razonable para evitar ser detectado por herramientas de detección de malware.</p>
-
-<p>Casi ningún tipo de malware puede ser incorporado dentro de un payload con la ayuda de un generador de payload para crear un malware ejecutable. Una vez entregado y ejecutado, el proceso de distribución infecta al sistema objetivo, a menos que haya un sistema de detección de malware. Una carga útil puede contener cualquier tipo de malware, incluido el ransomware, el reclutamiento de botnets u otros tipos de virus o gusanos.</p>
-
-<h2 id="conclusión">Conclusión</h2>
-
-<p>Ya con este contexto, podemos decir que un exploit es un pequeño programa o un pedazo de código que se aprovecha o explota de una vulnerabilidad encontrada, mientras que un payload viene siendo esa acción que queremos hacer una vez que hemos explotado la vulnerabilidad.</p>
-
-<p>Tanto el exploit como el payload son pedazos de código que funcionan en conjunto para un fin, que en este caso, sería explotar la vulnerabilidad encontrada.</p>
-
-<p>Y también cabe decir que dentro del mundo del hacking, existen varias herramientas automatizadas, como lo es Metaexploit, que en la práctica nos ayudan a comprender mucho mejor como funciona este par de términos, ya que no necesariamente un exploit está amarrado a un payload y viceversa. Sino que un exploit puede usar varios payloads a fin de tener una shellcon privilegios, crear usuarios, etc.</p>
+<p><img src="/assets/images/java-simple/3.png" alt="3"></p>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/hlc+sri/2022/09/29/infraestructura.html" title="Infraestructura como código">Infraestructura como código</a><a class="next" href="/hlc+sri/2022/10/10/prueba.html" title="Prueba: Introducción a la implantación de aplicaciones web">Prueba: Introducción a la implantación de...</a>
+<a class="previous" href="/aso/2022/12/28/nfs-systemd.html" title="Montaje NFS mediante systemd">Montaje NFS mediante systemd</a><a class="next" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="Certificados digitales. HTTPS">Certificados digitales. HTTPS</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Prueba: Introducción a la implantación de aplicaciones web">Apache como proxy inverso</a></li>
-<li><a class="post-link" href="/iaw/2022/12/28/java-simple.html" title="Prueba: Introducción a la implantación de aplicaciones web">Desarrollo y despliegue de una aplicación Java simple</a></li>
-<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Prueba: Introducción a la implantación de aplicaciones web">Montaje NFS mediante systemd</a></li>
-<li><a class="post-link" href="/seguridad/2022/12/13/integridad.html" title="Prueba: Introducción a la implantación de aplicaciones web"> Integridad, firmas y autenticación </a></li>
+        <li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Certificados digitales. HTTPS">Montaje NFS mediante systemd</a></li>
+<li><a class="post-link" href="/iaw/2022/12/28/java-simple.html" title="Certificados digitales. HTTPS">Desarrollo y despliegue de una aplicación Java simple</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="Certificados digitales. HTTPS">Introducción a GitHub</a></li>
+<li><a class="post-link" href="/asgdb/2022/11/08/interconexion.html" title="Certificados digitales. HTTPS">Interconexiones de servidores</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
