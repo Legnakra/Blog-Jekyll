@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.">
+<meta property="og:description" content="Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.">
+<link rel="canonical" href="/hlc+sri/2023/01/03/dns.html">
+<meta property="og:url" content="/hlc+sri/2023/01/03/dns.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-01-03T11:06:21+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-03T11:06:21+01:00","datePublished":"2023-01-03T11:06:21+01:00","description":"Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.","headline":"Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/01/03/dns.html"},"url":"/hlc+sri/2023/01/03/dns.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/dns.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/dns.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-01-03T11:06:21+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 3, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 17 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>Tomando como referencia el <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.</p>
+
+<h1 id="servidor-dns">Servidor DNS</h1>
+<p>Vamos a instalar un servidor dns en <code class="language-plaintext highlighter-rouge">charlie</code> que nos permita gestionar la resolución directa e inversa de nuestros nombres. Vamos a poseer un servidor dns con autoridad sobre un subdominio de nuestro dominio principal gonzalonazareno.org, que se llamará <code class="language-plaintext highlighter-rouge">mariajesus.gonzalonazareno.org</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>bind9
+</code></pre></div></div>
+
+<h2 id="creamos-las-vistas">Creamos las vistas</h2>
+
+<p>Para ello, vamos a crear vistas pero, ¿qué es una vista? Una vista es una forma de organizar las zonas de resolución en un servidor DNS. Una vista es una zona de resolución que se puede configurar de forma independiente. Por ejemplo, podemos tener una vista para la resolución de los nombres de las máquinas de la red interna y otra vista para la resolución de los nombres de las máquinas de la red externa.</p>
+
+<p>De esta forma, podemos tener un servidor DNS que resuelva los nombres de las máquinas de la red interna y otro servidor DNS que resuelva los nombres de las máquinas de la red externa.</p>
+
+<p>En nuestro caso, vamos a crear cinco vistas:</p>
+
+<ul>
+  <li>Una vista que será la que tendrán <code class="language-plaintext highlighter-rouge">alfa</code>, <code class="language-plaintext highlighter-rouge">charlie</code> y <code class="language-plaintext highlighter-rouge">delta</code> con la IP <code class="language-plaintext highlighter-rouge">192.168.0.0</code>.</li>
+  <li>Una vista DMZ que resuelva a bravo con la IP <code class="language-plaintext highlighter-rouge">172.16.0.0</code>.</li>
+  <li>Una vista externa que se muestre al exterior con la IP <code class="language-plaintext highlighter-rouge">172.22.0.0</code>.</li>
+  <li>Dos vistas para la resolución inversa, una para la vista interna y otra para la vista DMZ.</li>
+</ul>
+
+<p>Para realizar la configuración, debemos realizarla en el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code>, quedando de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>view interna <span class="o">{</span>
+    match-clients <span class="o">{</span> 192.168.0.0/24<span class="p">;</span> 127.0.0.1<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.interna.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"0.168.192.in-addr.arpa"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"16.172.in-addr.arpa"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.16.172"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+view externa <span class="o">{</span>
+    match-clients <span class="o">{</span> 172.22.0.0/16<span class="p">;</span> 192.168.202.2<span class="p">;</span> 172.29.0.0/16<span class="p">;</span><span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.externa.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+view dmz <span class="o">{</span>
+    match-clients <span class="o">{</span> 172.16.0.0/16<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.dmz.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"16.172.in-addr.arpa"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.16.172"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"0.168.192.in-addr.arpa"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/1.png" alt="1"></p>
+
+<p>Y también modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf</code> de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// This is the primary configuration file <span class="k">for </span>the BIND DNS server named.
+//
+// Please <span class="nb">read</span> /usr/share/doc/bind9/README.Debian.gz <span class="k">for </span>information on the
+// structure of BIND configuration files <span class="k">in </span>Debian, <span class="k">*</span>BEFORE<span class="k">*</span> you customize
+// this configuration file.
+//
+// If you are just adding zones, please <span class="k">do </span>that <span class="k">in</span> /etc/bind/named.conf.local
+
+include <span class="s2">"/etc/bind/named.conf.options"</span><span class="p">;</span>
+include <span class="s2">"/etc/bind/named.conf.local"</span><span class="p">;</span>
+//include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/2.png" alt="2"></p>
+
+<h2 id="creamos-las-zonas">Creamos las zonas</h2>
+
+<h3 id="zona-externa">Zona Externa</h3>
+
+<p>Para crear la zona externa, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.externa.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
+@       IN      SOA     alfa.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      alfa.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       172.22.201.46
+dns         IN      CNAME   alfa
+www         IN      CNAME   alfa
+
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/3.png" alt="3"></p>
+
+<h3 id="zona-interna">Zona Interna</h3>
+
+<p>Para crear la zona interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.interna.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       192.168.0.1
+bravo       IN      A       172.16.0.200
+charlie     IN      A       192.168.0.2
+delta       IN      A       192.168.0.3
+bd          IN      CNAME   delta
+dns         IN      CNAME   charlie
+www         IN      CNAME   bravo
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/4.png" alt="4"></p>
+
+<h3 id="zona-dmz">Zona DMZ</h3>
+
+<p>Para crear la zona DMZ, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       172.16.0.1
+bravo       IN      A       172.16.0.200
+charlie     IN      A       192.168.0.2
+delta       IN      A       192.168.0.3
+bd          IN      CNAME   delta
+dns         IN      CNAME   charlie
+www         IN      CNAME   bravo
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/5.png" alt="5"></p>
+
+<h3 id="zona-inversa-interna">Zona Inversa Interna</h3>
+
+<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.0.168.192</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> 0.168.192.in-addr.arpa.
+
+1       IN      PTR     alfa.mariajesus.gonzalonazareno.org.
+2       IN      PTR     charlie.mariajesus.gonzalonazareno.org.
+3       IN      PTR     delta.mariajesus.gonzalonazareno.org.
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/6.png" alt="6"></p>
+
+<h3 id="zona-inversa-dmz">Zona Inversa DMZ</h3>
+
+<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.16.172</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> 16.172.in-addr.arpa.
+
+1.0     IN      PTR     alfa.mariajesus.gonzalonazareno.org.
+200.0   IN      PTR     bravo.mariajesus.gonzalonazareno.org.
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/7.png" alt="7"></p>
+
+<p>No debemos olvidar que también debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/zones.rfc1918</code> para desactivar las zonas inversas por defecto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zone <span class="s2">"10.in-addr.arpa"</span>      <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+
+//zone <span class="s2">"16.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"17.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"18.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"19.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"20.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"21.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+//zone <span class="s2">"22.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"23.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"24.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"25.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"26.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"27.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"28.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"29.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"30.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"31.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/8.png" alt="8"></p>
+
+<h3 id="configuración-del-forwarder">Configuración del forwarder</h3>
+
+<p>Vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code> para que el servidor <code class="language-plaintext highlighter-rouge">papión</code> actúe como forwarder:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>       forwarders <span class="o">{</span>
+              192.168.202.2<span class="p">;</span>
+       <span class="o">}</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/9.png" alt="9"></p>
+
+<p>Reiniciamos el servicio bind9:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart bind9
+</code></pre></div></div>
+
+<h1 id="servidor-web">Servidor Web</h1>
+
+<p>En <code class="language-plaintext highlighter-rouge">bravo</code> vamos a instalar un servidor web apache. Recuerda que es una máquina con rocky linux. Para ello, debemos ejecutar los siguientes comandos:</p>
+
+<p><strong>NOTA</strong>: Recordemos que esta máquina es una máquina con un sistema Rocky Linux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>dnf <span class="nb">install </span>httpd php php-mysqlnd php-gd php-fpm
+</code></pre></div></div>
+
+<p>Iniciamos, habilitamos el servicio apache y comprobamos que está en ejecución:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>httpd
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>php-fpm
+<span class="nt">---</span>
+<span class="nb">sudo </span>systemctl status httpd
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/10.png" alt="10"></p>
+
+<p>Creamos el VirtualHost, pero para ello:</p>
+
+<ol>
+  <li>
+    <p>Creamos los directorios <code class="language-plaintext highlighter-rouge">sites-available</code> y <code class="language-plaintext highlighter-rouge">sites-enabled</code> en <code class="language-plaintext highlighter-rouge">/etc/httpd</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+mkdir /etc/httpd/sites-available /etc/httpd/sites-enabled
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configuramos <code class="language-plaintext highlighter-rouge">/etc/httpd/conf/httpd.conf</code> para que cargue los ficheros de configuración de los VirtualHosts:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+#Añadimos esta línea al final del fichero
+IncludeOptional sites-enabled/*.conf
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf</code>. Recordemos también que debemos incluir la configuración para agregar php al servidor web, por lo que el fichero quedaría con el siguiente contenido:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+&lt;VirtualHost *:80&gt;
+    ServerName www.mariajesus.gonzalonazareno.org
+    DocumentRoot /var/www/html/mariajesus
+    ErrorLog /var/www/html/mariajesus/log/error.log
+    CustomLog /var/www/html/mariajesus/log/access.log combined
+
+    &lt;FilesMatch \.php$&gt;
+        SetHandler "proxy:unix:/run/php-fpm/www.sock|fcgi://localhost"
+    &lt;/FilesMatch&gt;
+&lt;/VirtualHost&gt;
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el enlace simbólico en <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-enabled</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+sudo ln -s /etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf /etc/httpd/sites-enabled/www.mariajesus.gonzalonazareno.org.conf
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus/info.php</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```php
+&lt;?php
+phpinfo();
+?&gt;
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el index.html en <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus</code>:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```html
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset='utf-8'&gt;
+    &lt;meta name='viewport' content='width=device-width, initial-scale=1'&gt;
+    &lt;title&gt;www.mariajesus.gonzalonazareno.org&lt;/title&gt;
+       &lt;style type="text/css"&gt;
+      /*&lt;![CDATA[*/
+   
+            html {
+             height: 100%;
+             width: 100%;
+           }  
+             body {
+       background: rgb(20,72,50);
+       background: -moz-linear-gradient(180deg, rgba(23,43,70,1) 30%, rgba(0,0,0,1) 90%)  ;
+       background: -webkit-linear-gradient(180deg, rgba(23,43,70,1) 30%, rgba(0,0,0,1) 90%) ;
+       background: linear-gradient(180deg, rgba(23,43,70,1) 30%, rgba(0,0,0,1) 90%);
+       background-repeat: no-repeat;
+       background-attachment: fixed;
+       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#3c6eb4",endColorstr="#3c95b4",GradientType=1); 
+             color: white;
+             font-size: 0.9em;
+             font-weight: 400;
+             font-family: 'Montserrat', sans-serif;
+             margin: 0;
+             padding: 10em 6em 10em 6em;
+             box-sizing: border-box;      
+
+           }
+                   h1 {
+         text-align: center;
+         margin: 0;
+         padding: 0.6em 2em 0.4em;
+         color: #fff;
+         font-weight: bold;
+         font-family: 'Montserrat', sans-serif;
+         font-size: 2em;
+       }
+       h1 strong {
+         font-weight: bolder;
+         font-family: 'Montserrat', sans-serif;
+       }
+       h2 {
+         font-size: 1.5em;
+         font-weight:bold;
+       }
+             .title {
+         border: 1px solid black;
+         font-weight: bold;
+         position: relative;
+         float: right;
+         width: 150px;
+         text-align: center;
+         padding: 10px 0 10px 0;
+         margin-top: 0;
+       }
+             .description {
+         padding: 45px 10px 5px 10px;
+         clear: right;
+         padding: 15px;
+       }
+             .section {
+         padding-left: 3%;
+        margin-bottom: 10px;
+       }
+             img {
+               padding: 2px;
+         margin: 2px;
+       }
+       a:hover img {
+         padding: 2px;
+         margin: 2px;
+       }
+             :link {
+         color: rgb(199, 252, 77);
+         text-shadow:
+       }
+       :visited {
+         color: rgb(122, 206, 255);
+       }
+       a:hover {
+         color: rgb(16, 44, 122);
+       }
+       .row {
+         width: 100%;
+         padding: 0 10px 0 10px;
+       }
+             footer {
+         padding-top: 6em;
+         margin-bottom: 6em;
+         text-align: center;
+         font-size: xx-small;
+         overflow:hidden;
+         clear: both;
+       }
+             .summary {
+         font-size: 140%;
+         text-align: center;
+       }
+             #rocky-poweredby img {
+         margin-left: -10px;
+       }
+             #logos img {
+         vertical-align: top;
+       }
+             /* Desktop  View Options */
+             @media (min-width: 768px)  {
+               body {
+           padding: 10em 20% !important;
+         }
+               .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6,
+         .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12 {
+           float: left;
+         }
+               .col-md-1 {
+           width: 8.33%;
+         }
+         .col-md-2 {
+           width: 16.66%;
+         }
+         .col-md-3 {
+           width: 25%;
+         }
+         .col-md-4 {
+           width: 33%;
+         }
+         .col-md-5 {
+           width: 41.66%;
+         }
+         .col-md-6 {
+           border-left:3px ;
+           width: 50%;
+                     }
+         .col-md-7 {
+           width: 58.33%;
+         }
+         .col-md-8 {
+           width: 66.66%;
+         }
+         .col-md-9 {
+           width: 74.99%;
+         }
+         .col-md-10 {
+           width: 83.33%;
+         }
+         .col-md-11 {
+           width: 91.66%;
+         }
+         .col-md-12 {
+           width: 100%;
+         }
+       }
+             /* Mobile View Options */
+       @media (max-width: 767px) {
+         .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6,
+         .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12 {
+           float: left;
+         }
+               .col-sm-1 {
+           width: 8.33%;
+         }
+         .col-sm-2 {
+           width: 16.66%;
+         }
+         .col-sm-3 {
+           width: 25%;
+         }
+         .col-sm-4 {
+           width: 33%;
+         }
+         .col-sm-5 {
+           width: 41.66%;
+         }
+         .col-sm-6 {
+           width: 50%;
+         }
+         .col-sm-7 {
+           width: 58.33%;
+         }
+         .col-sm-8 {
+           width: 66.66%;
+         }
+         .col-sm-9 {
+           width: 74.99%;
+         }
+         .col-sm-10 {
+           width: 83.33%;
+         }
+         .col-sm-11 {
+           width: 91.66%;
+         }
+         .col-sm-12 {
+           width: 100%;
+         }
+         h1 {
+           padding: 0 !important;
+         }
+       }
+
+             &lt;/style&gt;
+       &lt;/head&gt;
+       &lt;body&gt;
+              &lt;h1&gt;¡Bienvenid@ a la web!&lt;/h1&gt;
+              &lt;h2&gt;Esta es una web de prueba en Rocky Linux &lt;/h2&gt;
+              &lt;p&gt;Podemos comprobar la información de este sitio web de forma más detallada en &lt;a href="info.php"&gt;info.php&lt;/a&gt;.&lt;/p&gt;
+       &lt;/body&gt;
+&lt;/html&gt;
+```
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p><strong>IMPORTANTE</strong></p>
+
+<p>Estamos ante un escenario con una máquina Rocky Linux 9, por lo que debemos hacer una modificación en el fichero <code class="language-plaintext highlighter-rouge">/etc/sysconfig/selinux</code> para que el servidor web funcione correctamente. Tras ello, reiniciamos la máquina.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SELINUX</span><span class="o">=</span>diabled
+</code></pre></div></div>
+
+<p><img src="/assets/images/dns-escenario/11.png" alt="11"></p>
+
+<p><img src="/assets/images/dns-escenario/12.png" alt="12"></p>
+
+<h1 id="servidor-de-base-de-datos">Servidor de Base de Datos</h1>
+
+<p>En <code class="language-plaintext highlighter-rouge">delta</code> vamos a instalar un servidor de base de datos mariajesusdb (<code class="language-plaintext highlighter-rouge">bd.mariajesus.gonzalonazareno.org</code>). A este seervidor de base de datos se debe permitir el acceso desde todas las máquinas del escenario.</p>
+
+<h2 id="instalación-y-configuración-remota-de-mariadb">Instalación y configuración remota de MariaDB</h2>
+
+<ol>
+  <li>
+    <p>Instalamos el servidor de base de datos, en este caso MariaDB.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+sudo apt install mariadb-server
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Configuramos MariaDB para conectarnos de forma remota.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+sudo mysql_secure_installation
+```
+
+```bash
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we ll need the current password for the root user. If you ve just installed MariaDB, and you haven t set the root password yet, the password will be blank, so you should just press enter here.
+
+Enter current password for root (enter for none):********
+OK, successfully used password, moving on...
+
+Setting the root password ensures that nobody can log into the MariaDB root user without the proper authorisation.
+
+You already have a root password set, so you can safely answer 'n'.
+
+Change the root password? [Y/n] Y
+New password:********
+Re-enter new password:********
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+
+By default, a MariaDB installation has an anonymous user, allowing anyone to log into MariaDB without having to have a user account created for them. This is intended only for testing, and to make the installation go a bit smoother. You should remove them before moving into a production environment.
+
+Remove anonymous users? [Y/n] Y
+ ... Success!
+
+Normally, root should only be allowed to connect from localhost. This ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] Y
+ ... Success!
+
+By default, MariaDB comes with a database named test that anyone can access. This is also intended only for testing, and should be removed before moving into a production environment.
+
+Remove test database and access to it? [Y/n] Y
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far will take effect immediately.
+
+Reload privilege tables now? [Y/n] Y
+ ... Success!
+
+Cleaning up...
+
+All done! If you ve completed all of the above steps, your MariaDB installation should now be secure.
+
+Thanks for using MariaDB!
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el usuario:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+sudo mysql -u root -p
+----
+CREATE USER 'mariajesus'@'%' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON *.* TO 'mariajesus'@'%';
+FLUSH PRIVILEGES;
+exit;
+```
+
+![13](/assets/images/dns-escenario/13.png)
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Habilitamos el acceso remoto a la base de datos modificando el fichero <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code> y lo modificamos de la siguiente manera:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+bind-address = 0.0.0.0
+```
+
+![14](/assets/images/dns-escenario/14.png)
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio de MariaDB y comprobamos su estado.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+systemctl restart mariadb
+systemctl status mariadb
+```
+
+![15](/assets/images/dns-escenario/15.png)
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="configuración-del-acceso-remoto-a-la-base-de-datos-desde-bravo">Configuración del acceso remoto a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code>
+</h2>
+
+<ol>
+  <li>
+    <p>Instalamos el cliente de MariaDB en <code class="language-plaintext highlighter-rouge">bravo</code>.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+dnf install mariadb-server
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> donde pondremos la ip de <code class="language-plaintext highlighter-rouge">charlie</code> como servidor DNS.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+nameserver 192.168.0.2
+```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que podemos acceder a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code>.</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>```bash
+mysql - u mariajesus -p mariajesus -h bd -p
+```
+
+![16](/assets/images/dns-escenario/16.png)
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="Certificados digitales. HTTPS">Certificados digitales. HTTPS</a><a class="next" href="/aso/2023/01/04/journald.html" title="Recolección centralizada de logs de sistema, mediante journald">Recolección centralizada de logs de sistema,...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Recolección centralizada de logs de sistema, mediante journald">Virtualización en Linux</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/12/12/talleres-dns.html" title="Recolección centralizada de logs de sistema, mediante journald">Talleres DNS</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Recolección centralizada de logs de sistema, mediante journald">Crear un sitio web estático con Jekyll</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Recolección centralizada de logs de sistema, mediante journald">Instalación de nginx con PHP con vagrant y ansible</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
