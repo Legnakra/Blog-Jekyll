@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-15T21:59:28+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-21T21:45:45+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -8,6 +8,25 @@
 
 <p>Utilizando la utilidad mail manda un correo desde un usuario del servidor a otro usuario del servidor. El usuario destinatario debe leer el correo con el mismo programa.</p>
 
+<h2 id="preparación-del-escenario">Preparación del escenario</h2>
+
+<ul>
+  <li>
+    <p>Instalamos el servidor de correo</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>postfix bsd-mailx
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos una prueba de envío de correo</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/correo/1.png" alt="1" /></p>
+  </li>
+</ul>
+
 <h1 id="ejercicio-2">Ejercicio 2</h1>
 
 <p>Configura tu servidor de correo para que use como relay el servidor de correo de nuestra <code class="language-plaintext highlighter-rouge">red babuino-smtp.gonzalonazareno.org</code>. Con la utilidad <code class="language-plaintext highlighter-rouge">mail</code> envía un correo a tu cuenta personal de gmail, hotmail,…</p>
@@ -16,11 +35,78 @@
 
 <p>Comprueba las cabeceras del correo que has recibido e indica donde vemos los servidores por los que ha pasado el correo.</p>
 
+<ul>
+  <li>
+    <p>Nos disponemos a usar el servidor de correo de la red babuino</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/postfix/main.cf
+</code></pre></div>    </div>
+
+    <p>Y añadimos la siguiente línea</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  relayhost <span class="o">=</span> babuino-smtp.gonzalonazareno.org
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/correo/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart postfix
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Enviamos un correo a nuestro correo personal</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span> <span class="nt">-r</span> <span class="s2">"mariajesus.alloza@outlook.es"</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/correo/3.jpg" alt="3" /></p>
+  </li>
+  <li>
+    <p>Comprobamos el log del sistema</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo tail</span> <span class="nt">-f</span> /var/log/mail.log
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/correo/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Comprobamos las cabeceras del correo que hemos recibido</p>
+
+    <p><img src="/assets/images/correo/5.png" alt="5" /></p>
+  </li>
+</ul>
+
 <h1 id="ejercicio-3">Ejercicio 3</h1>
 
 <p>En este ejercicio debemos responder desde nuestra cuenta de correo personal al correo que recibimos en el ejercicio anterior. Recuerda que para que todo funcione debemos indicarle al profesor el nombre de tu dominio para que configure de manera adecuada el parámetro <code class="language-plaintext highlighter-rouge">relay_domains</code> en <code class="language-plaintext highlighter-rouge">babuino-smtp</code>. Además debes configurar de manera adecuada el registro MX de tu servidor DNS.</p>
 
 <p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito.</p>
+
+<ul>
+  <li>
+    <p>Nos logueamos en <code class="language-plaintext highlighter-rouge">alfa</code> y configuramos la regla DNAT para que los emails que lleguen a <code class="language-plaintext highlighter-rouge">babuino-smtp</code> sean redirigidos a <code class="language-plaintext highlighter-rouge">delta</code></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 25 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 192.168.0.3
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>En el contenedor <code class="language-plaintext highlighter-rouge">charlie</code> configuramos el registro MX de nuestro dominio</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>nano <span class="nt">-cl</span> /var/cache/bind/db.externa.mariajesus.gonzalonazareno.org
+ <span class="nt">---</span>
+ @       IN      MX  10  alfa.mariajesus.gonzalonazareno.org.
+</code></pre></div>    </div>
+    <p>Reiniciamos <code class="language-plaintext highlighter-rouge">bind9</code> y ya podemos enviar correos desde <code class="language-plaintext highlighter-rouge">charlie</code> a <code class="language-plaintext highlighter-rouge">delta</code></p>
+
+    <p><img src="/assets/images/correo/6.png" alt="6" /></p>
+  </li>
+</ul>
+
+<h1 id="ejercicio-extra">Ejercicio Extra</h1>
+
+<p>Vamos a mandarle un correo electrónico al profesor, comprobando que el correo se ha recibido con éxito y puede ser respondido, por lo que la respuesta nos llegará a nuestra cuenta de correo personal.</p>
 
 <h1 id="comprobación">Comprobación</h1>
 
@@ -35,7 +121,7 @@
     <p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3</p>
   </li>
   <li>
-    <p><strong>Ejercicio propuesto por elprofesor</strong>:</p>
+    <p><strong>Ejercicio propuesto por el profesor</strong>:</p>
   </li>
 </ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un servidor de correo.]]></summary></entry><entry><title type="html">Desarrollo y despliegue de una aplicación Java simple</title><link href="/iaw/2023/01/09/java-simple.html" rel="alternate" type="text/html" title="Desarrollo y despliegue de una aplicación Java simple" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-simple</id><content type="html" xml:base="/iaw/2023/01/09/java-simple.html"><![CDATA[<p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
 
@@ -323,7 +409,195 @@
 
 <h2 id="tarea-1-desarrollo-y-despliegue-de-una-aplicación-java">Tarea 1: Desarrollo y despliegue de una aplicación Java</h2>
 
-<p>De forma similar a lo que hemos hecho el <a href="https://sysmaria.netlify.app/iaw/2022/12/28/java-simple.html">despliegue simple</a>, despliegue de forma manual la aplicación Java que encontrarás en <a href="https://github.com/josedom24/rock-paper-scissors">siguiente repositorio</a>.</p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.]]></summary></entry><entry><title type="html">Recolección centralizada de logs de sistema, mediante journald</title><link href="/aso/2023/01/04/journald.html" rel="alternate" type="text/html" title="Recolección centralizada de logs de sistema, mediante journald" /><published>2023-01-04T11:59:07+01:00</published><updated>2023-01-04T11:59:07+01:00</updated><id>/aso/2023/01/04/journald</id><content type="html" xml:base="/aso/2023/01/04/journald.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>, o similares.</p>
+<p>De forma similar a lo que hemos hecho el <a href="https://sysmaria.netlify.app/iaw/2022/12/28/java-simple.html">despliegue simple</a>, despliegue de forma manual la aplicación Java que encontrarás en <a href="https://github.com/josedom24/rock-paper-scissors">siguiente repositorio</a>.</p>
+
+<ul>
+  <li>
+    <p>Instalamos git</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>git
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Clonamos el repositorio</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git clone https://github.com/josedom24/rock-paper-scissors.git
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Nos dirigimos al directorio que se ha creado al clonar el repositorio y ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mvn package
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>NOTA</strong>: Lo puedes realizar en el mismo escenario en el que hemos realizado este <a href="https://sysmaria.netlify.app/iaw/2023/01/09/java-simple.html">taller</a></p>
+
+<ul>
+  <li>
+    <p>Nos transferimos el fichero generado en <code class="language-plaintext highlighter-rouge">/target</code> a nuestra máquina local.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  scp <span class="nt">-r</span> roshambo.war maria@172.20.10.8:/home/maria/Documentos
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Abrimos en nuestro navegador el manager de tomcat, que en mi caso se encuentra en <code class="language-plaintext highlighter-rouge">http://192.168.122.93:8080/manager/html/</code>, nos dirigimos a la pestaña <code class="language-plaintext highlighter-rouge">WAR file to deploy</code> y seleccionamos el fichero que hemos transferido.</p>
+
+    <p><img src="/assets/images/despliegue-java/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Una vez desplegada, podemos ver que la aplicación java funciona correctamente.</p>
+
+    <p><img src="/assets/images/despliegue-java/2.png" alt="2" /></p>
+  </li>
+</ul>
+
+<h2 id="tarea-2-despliegue-de-un-cms-java">Tarea 2: Despliegue de un CMS Java</h2>
+
+<ul>
+  <li>
+    <p>Nos descargamos el <a href="https://cloud.josedomingo.org/index.php/s/cwMj6NAZ4fNMoRA">fichero.war</a></p>
+  </li>
+  <li>
+    <p>Instalamos MySQL y los configuramos de la siguiente manera:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>mariadb-server
+</code></pre></div>    </div>
+
+    <p>Creamos el usuario:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+  <span class="nt">----</span>
+  CREATE USER <span class="s1">'java'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
+  GRANT ALL PRIVILEGES ON <span class="k">*</span> <span class="nb">.</span> <span class="k">*</span> TO <span class="s1">'java'</span>@<span class="s1">'localhost'</span> WITH GRANT OPTION<span class="p">;</span>
+  FLUSH PRIVILEGES<span class="p">;</span>
+  EXIT<span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/despliegue-java/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Movemos el fichero.war a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code>. Como podemos ver en la siguiente imagen, en la tabla de aplicaciones, nos aparece nuestra aplicación <code class="language-plaintext highlighter-rouge">CMS</code>.</p>
+
+    <p><img src="/assets/images/despliegue-java/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Una vez comrobado esto, en nuestro navegador accedemos a <code class="language-plaintext highlighter-rouge">http://&lt;ip-máquina&gt;:8080/opencms/setup/</code></p>
+
+    <p><img src="/assets/images/despliegue-java/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Y procedemos con la instalación:</p>
+
+    <p><img src="/assets/images/despliegue-java/6.png" alt="6" /></p>
+
+    <p><img src="/assets/images/despliegue-java/7.png" alt="7" /></p>
+
+    <p><img src="/assets/images/despliegue-java/8.png" alt="8" /></p>
+
+    <p><img src="/assets/images/despliegue-java/9.png" alt="9" /></p>
+
+    <p><img src="/assets/images/despliegue-java/10.png" alt="10" /></p>
+  </li>
+  <li>
+    <p>Tras toda la instalación, nos aparecerá la siguiente pantalla:</p>
+
+    <p><img src="/assets/images/despliegue-java/11.png" alt="11" /></p>
+  </li>
+</ul>
+
+<h3 id="modificación-de-opencms">Modificación de OpenCms</h3>
+
+<p>En mi caso le he cambiado el fondo de la página principal, eltítulo y el subtítulo. Para realizarlo, debemos conectarnos como usuario <code class="language-plaintext highlighter-rouge">Admin</code> y contraseña <code class="language-plaintext highlighter-rouge">admin</code>.</p>
+
+<p>Una vez dentro, en las esquinas superiores derecha de cada contenido, nos aparecerá ⭕️ y al pulsar sobre él, nos aparecerá un menú desplegable con la opción <code class="language-plaintext highlighter-rouge">Edit</code>. Al pulsar sobre ella, nos aparecerá una ventana en la que podremos modificar el contenido.</p>
+
+<p>Tras ello, en la esquina superior izquierda, nos aparecerá un 🔄 (Publish) y al pulsar sobre él, se publicará el contenido.</p>
+
+<p><img src="/assets/images/despliegue-java/12.png" alt="12" /></p>
+
+<p>En mi caso, ha quedado de la siguiente manera:</p>
+
+<p><img src="/assets/images/despliegue-java/13.png" alt="13" /></p>
+
+<h2 id="tarea-3-acceso-a-las-aplicaciones">Tarea 3: Acceso a las aplicaciones</h2>
+
+<p>Cuando trabajamos con tomcat no se accedemos directamente al servidor de aplicaciones, se instala un proxy inverso que nos permita el acceso a las aplicaciones. Instala un proxy inverso para acceder a las aplicaciones con las siguientes urls:</p>
+
+<ul>
+  <li>
+    <p>A la aplicación rock-paper-scissors se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code>.</p>
+  </li>
+  <li>
+    <p>A la aplicación OpenCMS se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code>.</p>
+  </li>
+  <li>
+    <p>Lo primero que realizaremos será la instalación de Nginx en nuestra máquina.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nginx
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el VirtualHost:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/java.conf
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Vamos a configurarlo de forma que al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code> nos redirija a la aplicación OpenCMS y al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code> nos redirija a la aplicación rock-paper-scissors.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server <span class="o">{</span>
+      listen 80<span class="p">;</span>
+      listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+      index index.html index.htm index.nginx-debian.html<span class="p">;</span>
+
+      server_name java.mariajesus.org<span class="p">;</span>
+
+      location / <span class="o">{</span>
+          proxy_pass http://localhost:8080/opencms/<span class="p">;</span>
+          include proxy_params<span class="p">;</span>
+      <span class="o">}</span>
+
+      location /game <span class="o">{</span>
+          proxy_pass http://localhost:8080/roshambo/<span class="p">;</span>
+          include proxy_params<span class="p">;</span>
+      <span class="o">}</span>
+  <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos el enlace simbólico:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/java.conf /etc/nginx/sites-enabled/java.conf
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para que nos redirija a nuestra máquina:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/hosts
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  192.168.122.93 java.mariajesus.org
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que funciona correctamente:</p>
+
+    <p><strong>OpenCMS</strong>
+  <img src="/assets/images/despliegue-java/14.png" alt="14" /></p>
+
+    <p><strong>Rock-Paper-Scissors</strong>
+  <img src="/assets/images/despliegue-java/15.png" alt="15" /></p>
+  </li>
+</ul>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.]]></summary></entry><entry><title type="html">Recolección centralizada de logs de sistema, mediante journald</title><link href="/aso/2023/01/04/journald.html" rel="alternate" type="text/html" title="Recolección centralizada de logs de sistema, mediante journald" /><published>2023-01-04T11:59:07+01:00</published><updated>2023-01-04T11:59:07+01:00</updated><id>/aso/2023/01/04/journald</id><content type="html" xml:base="/aso/2023/01/04/journald.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>, o similares.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -1096,7 +1370,51 @@ systemctl status mariadb
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql - u mariajesus <span class="nt">-p</span> mariajesus <span class="nt">-h</span> bd <span class="nt">-p</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/dns-escenario/16.png" alt="16" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.]]></summary></entry><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
+<p><img src="/assets/images/dns-escenario/16.png" alt="16" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.]]></summary></entry><entry><title type="html">Despliegue de aplicaciones Java</title><link href="/iaw/2023/01/03/java.html" rel="alternate" type="text/html" title="Despliegue de aplicaciones Java" /><published>2023-01-03T11:06:21+01:00</published><updated>2023-01-03T11:06:21+01:00</updated><id>/iaw/2023/01/03/java</id><content type="html" xml:base="/iaw/2023/01/03/java.html"><![CDATA[<h2 id="tarea-1-desarrollo-y-despliegue-de-una-aplicación-java-simple">Tarea 1: Desarrollo y despliegue de una aplicación Java simple</h2>
+
+<h3 id="preparamos-el-escenario">Preparamos el escenario</h3>
+
+<ol>
+  <li>
+    <p>Habilitamos el puerto 8080 en el cortafuegos de la máquina virtual.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>ufw allow 8080
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalamos el servidor web Tomcat y el administrador web de Tomcat.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>tomcat9 tomcat9-admin <span class="nt">-y</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/tomcat9/tomcat-users.xml</code> para añadir el usuario <code class="language-plaintext highlighter-rouge">admin</code> con contraseña <code class="language-plaintext highlighter-rouge">admin</code> y el rol <code class="language-plaintext highlighter-rouge">manager-gui</code>.</p>
+
+    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;tomcat-users&gt;</span>
+     <span class="nt">&lt;role</span> <span class="na">rolename=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+     <span class="nt">&lt;user</span> <span class="na">username=</span><span class="s">"admin"</span> <span class="na">password=</span><span class="s">"admin"</span> <span class="na">roles=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
+ <span class="nt">&lt;/tomcat-users&gt;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio Tomcat.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>systemctl restart tomcat9
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalamos Maven.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>maven <span class="nt">-y</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Clonamos el repositorio de la aplicación Java.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone https://github.com/josedom24/rock-paper-scissors.git
+</code></pre></div>    </div>
+  </li>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Tarea 1: Desarrollo y despliegue de una aplicación Java simple]]></summary></entry><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
 
 <p><img src="/assets/images/certificado/cert.png" alt="certificado" /></p>
 
@@ -2128,6 +2446,201 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   </li>
 </ol>
 
+<h3 id="realización-entorno-de-desarrollo">Realización Entorno de desarrollo</h3>
+
+<p>Para realizar el entorno de desarrollo vamos a utilizar la máquina <code class="language-plaintext highlighter-rouge">bravo</code> de nuestro escenario, que usa Rocky Linux 9.</p>
+
+<ul>
+  <li>
+    <p>Primero instalamos git para poder clonar el repositorio de la aplicación:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>git
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos un fork del repositorio con la <a href="https://github.com/josedom24/django_tutorial">app</a> y clonamos el repositorio en la máquina <code class="language-plaintext highlighter-rouge">bravo</code>, concretamente en eldirectorio <code class="language-plaintext highlighter-rouge">/var/www/html</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git clone https://github.com/Legnakra/Tutorial-Django.git
+</code></pre></div>    </div>
+
+    <p>E instalamos el entorno virtual de python:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 <span class="nt">-m</span> venv venv
+    
+  <span class="nb">source </span>venv/bin/activate
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalamos las dependencias de la aplicación:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>¿Qué fichero tienes que consultar? ¿Cómo se llama la base de datos que vamos a crear?</p>
+
+    <p>Para consultar el fichero que tenemos que consultar, vamos a ver el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la aplicación, en el apartado de <code class="language-plaintext highlighter-rouge">DATABASES</code>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.sqlite3'</span><span class="p">,</span>
+          <span class="s">'NAME'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'db.sqlite3'</span><span class="p">),</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/1.png">1</a></p>
+
+    <p>Como podemos ver, la base de datos que vamos a crear es <code class="language-plaintext highlighter-rouge">db.sqlite3</code>.</p>
+  </li>
+  <li>
+    <p>Creamos la base de datos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py migrate
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/2.png">2</a></p>
+  </li>
+  <li>
+    <p>Creamos el usuario Administrador:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py createsuperuser
+  <span class="nt">---</span>
+  password: admin
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/3.png">3</a></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="s">'*'</span><span class="p">]</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ejecutamos el servidor web de desarrollo y entramos en la zona de administración para comprobar que los datos se han almacenado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py runserver 0.0.0.0:8000
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/4.png">4</a></p>
+
+    <p><strong>NOTA</strong>: Para acceder a la página web desde el ordenador, tendremos que añadir una nueva regla DNAT en <code class="language-plaintext highlighter-rouge">alfa</code> para que redirija el tráfico de la máquina <code class="language-plaintext highlighter-rouge">bravo</code> al puerto 8000.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/network/interfaces.d/50-cloud-init
+  <span class="nt">---</span>
+  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 8000 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
+</code></pre></div>    </div>
+
+    <p>Seguidamente reiniciamos la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>reboot
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que podemos acceder a la aplicación desde el navegador, sobre todo en la zona de administración:</p>
+
+    <p><a href="/assets/images/django/5.png">5</a></p>
+
+    <p><a href="/assets/images/django/6.png">6</a></p>
+
+    <p><a href="/assets/images/django/7.png">7</a></p>
+  </li>
+  <li>
+    <p>Creamos dos preguntas con varias respuestas.</p>
+
+    <p><a href="/assets/images/django/8.png">8</a></p>
+
+    <p><a href="/assets/images/django/9.png">9</a></p>
+
+    <p><a href="/assets/images/django/10.png">10</a></p>
+
+    <p><a href="/assets/images/django/11.png">11</a></p>
+  </li>
+</ul>
+
+<h3 id="configurar-el-servidor-web">Configurar el servidor web</h3>
+
+<p>Vamos a configurar el servidor web apache2 con el módulo wsgi para servir la página web. Al utilizar como entorno de desarrollo la máquina bravo, se accederá con el nombre python.mariajesus.gonzalonazareno.org.</p>
+
+<ul>
+  <li>
+    <p>Para reunir los ficheros estáticos, ejecutamos el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py collectstatic
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p>Pero antes de ello, tenemos que modificar el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
+
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="s">'/var/www/html/Django_Tutorial/static'</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Instalamos el módulo wsgi para apache2:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>mod_wsgi httpd
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el VirtualHost que servirá la web:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/httpd/sites-available/django_tutorial.conf
+
+  <span class="nt">---</span>
+
+  &lt;VirtualHost <span class="k">*</span>:80&gt;
+      ServerName python.mariajesus.gonzalonazareno.org
+      DocumentRoot /var/www/html/django_tutorial
+      Alias /static/ /var/www/html/django_tutorial/static/
+      WSGIDaemonProcess django_tutorial python-path<span class="o">=</span>/var/www/html/django_tutorial:/var/www/html/django/lib/python3.9/site-packages
+      WSGIProcessGroup django_tutorial
+      WSGIScriptAlias / /var/www/html/django_tutorial/django_tutorial/wsgi.py
+      ErrorLog /var/log/httpd/django_tutorial_error.log
+      CustomLog /var/log/httpd/django_tutorial_access.log combined
+  &lt;/VirtualHost&gt;
+</code></pre></div>    </div>
+
+    <p>Lo activamos:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ```bash
+  ln -s /etc/httpd/sites-available/django_tutorial.conf /etc/httpd/sites-enabled/django_tutorial.conf
+  ```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio apache2:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart httpd
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Nos dirigimos a la máquina <code class="language-plaintext highlighter-rouge">charlie</code>, que es el servidor DNS, y añadimos la nueva zona DNS:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /var/cache/bind/db.interna.mariajesus.gonzalonazareno.org
+  nano /var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org
+  <span class="nt">---</span>
+  python  IN  A   bravo
+</code></pre></div>    </div>
+
+    <p>Refrescamos la zona DNS:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ```bash
+  rndc flush
+  systemctl restart bind9
+  ```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que podemos acceder a la aplicación desde el navegador:</p>
+
+    <p><a href="/assets/images/django/12.png">12</a></p>
+  </li>
+</ul>
+
 <h2 id="entorno-de-producción">Entorno de producción</h2>
 
 <p>Eneste apartado vamos a realizar el despliegue de nuestra aplicación en un entorno de producción, para ello vamos a utilizar nuestro VPS.</p>
@@ -2137,18 +2650,37 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
 <ol>
   <li>
     <p>Vamos a clonar el repositorio de la aplicación en el VPS.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone git@github.com:Legnakra/Tutorial-Django.git
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Creamos un entorno virtual e instalamos las dependencias de nuestra aplicación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python3 <span class="nt">-m</span> venv django
+ <span class="nb">source </span>django/bin/activate
+ pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div>    </div>
   </li>
   <li>
-    <p>Instalamos el módulo que nos permitirá que python trabajecon mysql:</p>
+    <p>Instalamos el módulo que nos permitirá que python trabaje con mysql:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> pip <span class="nb">install </span>mysqlclient
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>python3-dev default-libmysqlclient-dev build-essential <span class="nt">-y</span>
+ pip <span class="nb">install </span>mysqlclient
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Creamos la base de datos y un usuario en mysql.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+</code></pre></div>    </div>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">django</span><span class="p">;</span>
+ <span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'django'</span><span class="o">@</span><span class="s1">'%'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'admin'</span><span class="p">;</span>
+ <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">django</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'%'</span><span class="p">;</span>
+ <span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+ <span class="n">EXIT</span><span class="p">;</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Configuramos la aplicación para trabajar con mysql, por ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la siguiente manera:</p>
@@ -2156,9 +2688,9 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
     <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
      <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
-     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'myproject'</span><span class="p">,</span>
-     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'myprojectuser'</span><span class="p">,</span>
-     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'password'</span><span class="p">,</span>
+     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
+     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
+     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
      <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
      <span class="s">'PORT'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span>
      <span class="p">}</span>
@@ -2168,8 +2700,23 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <li>
     <p>Creamos una copia de seguridad de la base de datos, teniendo en cuenta que en el entorno de desarrollo hemos utilizado SQLite y en el de producción MySQL. Por ello, lo recomendable es realizar la copia de seguridad y recuperarla con los comandos adecuados.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> manage.py dumpdata
- python manage.py loaddata 
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python3 manage.py dumpdata <span class="o">&gt;</span> db.json 
+</code></pre></div>    </div>
+
+    <p>Y la subimos al repositorio:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git add db.json
+ git commit <span class="nt">-m</span> <span class="s2">"Copia de seguridad de la base de datos"</span>
+ git push
+</code></pre></div>    </div>
+
+    <p>Nos conectamos anuestro VPS y realizamos la migración de la base de datos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/django_tutorial
+ git pull
+ pip <span class="nb">install </span>pymysql
+ python3 manage.py migrate
+ python3 manage.py loaddata db.json
 </code></pre></div>    </div>
   </li>
   <li>
@@ -2246,232 +2793,4 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
       <li>Deplegamos el cambio en el entorno de producción.</li>
     </ol>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry><entry><title type="html">Desplegando aplicaciones flask con apache2 + mod_wsgi</title><link href="/iaw/2022/12/17/wsgi.html" rel="alternate" type="text/html" title="Desplegando aplicaciones flask con apache2 + mod_wsgi" /><published>2022-12-17T08:17:50+01:00</published><updated>2022-12-17T08:17:50+01:00</updated><id>/iaw/2022/12/17/wsgi</id><content type="html" xml:base="/iaw/2022/12/17/wsgi.html"><![CDATA[<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_wsgi">Desplegando aplicaciones flask con apache2 + mod_wsgi</h2>
-
-<h3 id="introducción">Introducción</h3>
-
-<p>En esta entrada vamos a ver como desplegar una aplicación flask con apache2 + mod_wsgi.</p>
-
-<h3 id="configuración-de-apache2-para-servir-una-aplicación-web-flask">Configuración de apache2 para servir una aplicación web flask</h3>
-
-<ol>
-  <li>Instalamos apache2 y mod_wsgi</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>root@debian:~ apt <span class="nb">install </span>apache2 libapache2-mod-wsgi-py3
-</code></pre></div></div>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Suponiendo que tenemos:
-    - Un servidor web apache2 con wsgi activado.
-    - Una aplicación flask en el directorio /home/debian/guestbook
-    - Un entorno virtual con flask instalado en /home/debian/guestbook/venv
-</code></pre></div></div>
-
-<ol>
-  <li>Creamos el fichero wsgi que estará en el directorio del entorno virtual con el siguiente contenido:</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from app import prog as aplicacion
-</code></pre></div></div>
-
-<p>Y veremos que:
-    - El app se corresponde con el nombre del módulo, <code class="language-plaintext highlighter-rouge">app.py</code>.
-    - El <code class="language-plaintext highlighter-rouge">prog</code> corresponde a la aplicación flask creada en app.py: prog = Flask(<strong>name</strong>).
-    - Importamos la aplicación flask, pero la llamamos application necesario para que el servidor web pueda enviarle peticiones.</p>
-
-<h3 id="configuración-de-apache2-para-servir-una-aplicación-web-flask-1">Configuración de apache2 para servir una aplicación web flask</h3>
-
-<ol>
-  <li>
-    <p>Creamos un virtualhost que se acceda con el nombre flask.tunombre.org, esta configuración irá en el fichero correspondiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> DocumentRoot /home/debian/guestbook
- WSGIDaemonProcess flask_guestbook python-path<span class="o">=</span>/home/debian/guestbook:/home/debian/venv/flask/lib/python3.9/site-packages
- WSGIProcessGroup flask_guestbook
- WSGIScriptAlias / /home/debian/guestbook/wsgi.py process-group<span class="o">=</span>flask_guestbook
- &lt;Directory /home/debian/guestbook&gt;
-         Require all granted
- &lt;/Directory&gt;
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Activamos el módulo wsgi y el virtualhost:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ a2enmod wsgi
- root@debian:~ a2ensite flask.maria.org
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio apache2:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl restart apache2
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Cambiamos el fichero hosts para que apunte a la ip del servidor:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>nano /etc/hosts
- <span class="nt">---</span>
- 172.22.201.119 www.flask.maria.org
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/2.png" alt="2" /></p>
-  </li>
-</ol>
-
-<h2 id="desplegando-aplicaciones-flask-con-apache2--mod_uwsgi">Desplegando aplicaciones flask con apache2 + mod_uwsgi</h2>
-
-<h3 id="introducción-1">Introducción</h3>
-
-<p>En esta entrada vamos a ver como desplegar una aplicación flask con apache2 + mod_uwsgi.</p>
-
-<h3 id="instalación-de-apache2--mod_uwsgi">Instalación de apache2 + mod_uwsgi</h3>
-
-<ol>
-  <li>
-    <p>Instalamos el paquete python3-dev y uwsgi:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ apt <span class="nb">install </span>python3-dev uwsgi
-</code></pre></div>    </div>
-
-    <p>Es posible que también tengamos que instalar <code class="language-plaintext highlighter-rouge">build-essential</code> para que se instale correctamente uwsgi.</p>
-  </li>
-</ol>
-
-<h3 id="despliegue-de-la-aplicación-flask">Despliegue de la aplicación flask</h3>
-
-<ol>
-  <li>
-    <p>Probamos que el servidor uwsgi funciona correctamente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>uwsgi <span class="nt">--http</span> :8080 <span class="nt">--chdir</span> /home/debian/guestbook <span class="nt">--wsgi-file</span> wsgi.py <span class="nt">--process</span> 4 <span class="nt">--threads</span> 2 <span class="nt">--master</span> 
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/0-1.png" alt="01" /></p>
-
-    <p>Otra forma de comprobar que funciona es creando el ficher <code class="language-plaintext highlighter-rouge">ini</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>nano guestbook.ini
- <span class="nt">---</span>
- <span class="o">[</span>uwsgi]
- http <span class="o">=</span> :8080
- chdir <span class="o">=</span> /home/debian/guestbook
- wsgi-file <span class="o">=</span> wsgi.py
- processes <span class="o">=</span> 4
- threads <span class="o">=</span> 2
-</code></pre></div>    </div>
-    <p>Y ejecutamos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">(</span>flask<span class="o">)</span><span class="nv">$ </span>uwsgi <span class="nt">--ini</span> uwsgi.ini
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/0-2.png" alt="02" /></p>
-  </li>
-  <li>
-    <p>Creamos una unidad systemd para controlarla con systemctl.</p>
-
-    <ul>
-      <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/systemd/system/uwsgi.guestbook.service</code>:</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">[</span>Unit]
- <span class="nv">Description</span><span class="o">=</span>uwsgi-guestbook
- <span class="nv">After</span><span class="o">=</span>network.target
-
- <span class="o">[</span>Install]
- <span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-
- <span class="o">[</span>Service]
- <span class="nv">User</span><span class="o">=</span>www-data
- <span class="nv">Group</span><span class="o">=</span>www-data
- <span class="nv">Restart</span><span class="o">=</span>always
-
- <span class="nv">ExecStart</span><span class="o">=</span>/home/debian/venv/flask/bin/uwsgi /home/debian/venv/flask/guestbook.ini
- <span class="nv">ExecReload</span><span class="o">=</span>/bin/kill <span class="nt">-s</span> HUP <span class="nv">$MAINPID</span>
- <span class="nv">ExecStop</span><span class="o">=</span>/bin/kill <span class="nt">-s</span> TERM <span class="nv">$MAINPID</span>
-    
- <span class="nv">WorkingDirectory</span><span class="o">=</span>/home/debian/guestbook
- <span class="nv">Environment</span><span class="o">=</span><span class="nv">PYTHONPATH</span><span class="o">=</span> <span class="s1">'/home/debian/guestbook:/home/debian/venv/flask/lib/python3.9/site-packages'</span>
-    
- <span class="nv">PrivateTmp</span><span class="o">=</span><span class="nb">true</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/3.png" alt="3" /></p>
-
-    <ul>
-      <li>Activamos el servicio:</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl <span class="nb">enable </span>uwsgi.guestbook
- root@debian:~ systemctl start uwsgi.guestbook
-</code></pre></div>    </div>
-
-    <p><strong>NOTA</strong>: Si cambiamos el contenido de la unidad lo recargaremos ejecutando:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl daemon-reload
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<h3 id="proxy-inverso-para-uwsgi">Proxy Inverso para uwsgi</h3>
-
-<ol>
-  <li>
-    <p>Activamos el módulo proxy_http:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> DocumentRoot /home/debian/guestbook
- ProxyPass / http://127.0.0.1:8080/
- ProxyPassReverse / http://127.0.0.1:8080/
- &lt;Directory /home/debian/guestbook&gt;
-     Require all granted
- &lt;/Directory&gt;
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio apache2:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ a2enmod proxy_http
- root@debian:~ systemctl restart apache2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/5.png" alt="5" /></p>
-  </li>
-</ol>
-
-<h3 id="nginx-como-proxy-inverso-de-uwsgi">Nginx como proxy inverso de uwsgi</h3>
-
-<ol>
-  <li>
-    <p>Configuramos el virtualhost de nginx en <code class="language-plaintext highlighter-rouge">/etc/nginx/sites-available/guestbook.conf</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> server <span class="o">{</span>
-     listen 80<span class="p">;</span>
-     server_name www.guestbook-nginx.maria.org<span class="p">;</span>
-     root /home/debian/guestbook<span class="p">;</span>
-     location / <span class="o">{</span>
-         proxy_pass http://localhost:8080<span class="p">;</span>
-         include proxy_params<span class="p">;</span>
-     <span class="o">}</span>
- <span class="o">}</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/6.png" alt="6" /></p>
-  </li>
-  <li>
-    <p>Activamos el virtualhost:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ <span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/guestbook.conf /etc/nginx/sites-enabled/guestbook.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio nginx:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> root@debian:~ systemctl restart nginx
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/uwsgi/7.png" alt="7" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Desplegando aplicaciones flask con apache2 + mod_wsgi]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>

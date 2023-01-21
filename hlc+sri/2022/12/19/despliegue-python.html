@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 5 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 11 mins</span>
   </p></header>
 </div>
     </div>
@@ -735,6 +735,220 @@ document.addEventListener('DOMContentLoaded', function(event) {
   </li>
 </ol>
 
+<h3 id="realización-entorno-de-desarrollo">Realización Entorno de desarrollo</h3>
+
+<p>Para realizar el entorno de desarrollo vamos a utilizar la máquina <code class="language-plaintext highlighter-rouge">bravo</code> de nuestro escenario, que usa Rocky Linux 9.</p>
+
+<ul>
+  <li>
+    <p>Primero instalamos git para poder clonar el repositorio de la aplicación:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>git
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos un fork del repositorio con la <a href="https://github.com/josedom24/django_tutorial">app</a> y clonamos el repositorio en la máquina <code class="language-plaintext highlighter-rouge">bravo</code>, concretamente en eldirectorio <code class="language-plaintext highlighter-rouge">/var/www/html</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  git clone https://github.com/Legnakra/Tutorial-Django.git
+</code></pre></div>    </div>
+
+    <p>E instalamos el entorno virtual de python:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  python3 <span class="nt">-m</span> venv venv
+    
+  <span class="nb">source </span>venv/bin/activate
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalamos las dependencias de la aplicación:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>¿Qué fichero tienes que consultar? ¿Cómo se llama la base de datos que vamos a crear?</p>
+
+    <p>Para consultar el fichero que tenemos que consultar, vamos a ver el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la aplicación, en el apartado de <code class="language-plaintext highlighter-rouge">DATABASES</code>:</p>
+
+    <div class="language-python highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.sqlite3'</span><span class="p">,</span>
+          <span class="s">'NAME'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'db.sqlite3'</span><span class="p">),</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/1.png">1</a></p>
+
+    <p>Como podemos ver, la base de datos que vamos a crear es <code class="language-plaintext highlighter-rouge">db.sqlite3</code>.</p>
+  </li>
+  <li>
+    <p>Creamos la base de datos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py migrate
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/2.png">2</a></p>
+  </li>
+  <li>
+    <p>Creamos el usuario Administrador:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py createsuperuser
+  <span class="nt">---</span>
+  password: admin
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/3.png">3</a></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
+
+    <div class="language-python highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="s">'*'</span><span class="p">]</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ejecutamos el servidor web de desarrollo y entramos en la zona de administración para comprobar que los datos se han almacenado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py runserver 0.0.0.0:8000
+</code></pre></div>    </div>
+
+    <p><a href="/assets/images/django/4.png">4</a></p>
+
+    <p><strong>NOTA</strong>: Para acceder a la página web desde el ordenador, tendremos que añadir una nueva regla DNAT en <code class="language-plaintext highlighter-rouge">alfa</code> para que redirija el tráfico de la máquina <code class="language-plaintext highlighter-rouge">bravo</code> al puerto 8000.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  nano /etc/network/interfaces.d/50-cloud-init
+  <span class="nt">---</span>
+  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 8000 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
+</code></pre></div>    </div>
+
+    <p>Seguidamente reiniciamos la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>reboot
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que podemos acceder a la aplicación desde el navegador, sobre todo en la zona de administración:</p>
+
+    <p><a href="/assets/images/django/5.png">5</a></p>
+
+    <p><a href="/assets/images/django/6.png">6</a></p>
+
+    <p><a href="/assets/images/django/7.png">7</a></p>
+  </li>
+  <li>
+    <p>Creamos dos preguntas con varias respuestas.</p>
+
+    <p><a href="/assets/images/django/8.png">8</a></p>
+
+    <p><a href="/assets/images/django/9.png">9</a></p>
+
+    <p><a href="/assets/images/django/10.png">10</a></p>
+
+    <p><a href="/assets/images/django/11.png">11</a></p>
+  </li>
+</ul>
+
+<h3 id="configurar-el-servidor-web">Configurar el servidor web</h3>
+
+<p>Vamos a configurar el servidor web apache2 con el módulo wsgi para servir la página web. Al utilizar como entorno de desarrollo la máquina bravo, se accederá con el nombre python.mariajesus.gonzalonazareno.org.</p>
+
+<ul>
+  <li>
+    <p>Para reunir los ficheros estáticos, ejecutamos el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py collectstatic
+</code></pre></div>    </div>
+
+    <ul>
+      <li>
+        <p>Pero antes de ello, tenemos que modificar el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
+
+        <div class="language-python highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="s">'/var/www/html/Django_Tutorial/static'</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Instalamos el módulo wsgi para apache2:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>mod_wsgi httpd
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el VirtualHost que servirá la web:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  nano /etc/httpd/sites-available/django_tutorial.conf
+
+  <span class="nt">---</span>
+
+  &lt;VirtualHost <span class="k">*</span>:80&gt;
+      ServerName python.mariajesus.gonzalonazareno.org
+      DocumentRoot /var/www/html/django_tutorial
+      Alias /static/ /var/www/html/django_tutorial/static/
+      WSGIDaemonProcess django_tutorial python-path<span class="o">=</span>/var/www/html/django_tutorial:/var/www/html/django/lib/python3.9/site-packages
+      WSGIProcessGroup django_tutorial
+      WSGIScriptAlias / /var/www/html/django_tutorial/django_tutorial/wsgi.py
+      ErrorLog /var/log/httpd/django_tutorial_error.log
+      CustomLog /var/log/httpd/django_tutorial_access.log combined
+  &lt;/VirtualHost&gt;
+</code></pre></div>    </div>
+
+    <p>Lo activamos:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  ```bash
+  ln -s /etc/httpd/sites-available/django_tutorial.conf /etc/httpd/sites-enabled/django_tutorial.conf
+  ```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Reiniciamos el servicio apache2:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart httpd
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Nos dirigimos a la máquina <code class="language-plaintext highlighter-rouge">charlie</code>, que es el servidor DNS, y añadimos la nueva zona DNS:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  nano /var/cache/bind/db.interna.mariajesus.gonzalonazareno.org
+  nano /var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org
+  <span class="nt">---</span>
+  python  IN  A   bravo
+</code></pre></div>    </div>
+
+    <p>Refrescamos la zona DNS:</p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  ```bash
+  rndc flush
+  systemctl restart bind9
+  ```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que podemos acceder a la aplicación desde el navegador:</p>
+
+    <p><a href="/assets/images/django/12.png">12</a></p>
+  </li>
+</ul>
+
 <h2 id="entorno-de-producción">Entorno de producción</h2>
 
 <p>Eneste apartado vamos a realizar el despliegue de nuestra aplicación en un entorno de producción, para ello vamos a utilizar nuestro VPS.</p>
@@ -744,19 +958,42 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <ol>
   <li>
     <p>Vamos a clonar el repositorio de la aplicación en el VPS.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> git clone git@github.com:Legnakra/Tutorial-Django.git
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Creamos un entorno virtual e instalamos las dependencias de nuestra aplicación.</p>
-  </li>
-  <li>
-    <p>Instalamos el módulo que nos permitirá que python trabajecon mysql:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> pip <span class="nb">install </span>mysqlclient
+<div class="highlight"><pre class="highlight"><code> python3 <span class="nt">-m</span> venv django
+ <span class="nb">source </span>django/bin/activate
+ pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalamos el módulo que nos permitirá que python trabaje con mysql:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>python3-dev default-libmysqlclient-dev build-essential <span class="nt">-y</span>
+ pip <span class="nb">install </span>mysqlclient
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Creamos la base de datos y un usuario en mysql.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+</code></pre></div>    </div>
+
+    <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">django</span><span class="p">;</span>
+ <span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'django'</span><span class="o">@</span><span class="s1">'%'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'admin'</span><span class="p">;</span>
+ <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">django</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'%'</span><span class="p">;</span>
+ <span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+ <span class="n">EXIT</span><span class="p">;</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Configuramos la aplicación para trabajar con mysql, por ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la siguiente manera:</p>
@@ -765,9 +1002,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="highlight"><pre class="highlight"><code> <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
      <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
-     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'myproject'</span><span class="p">,</span>
-     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'myprojectuser'</span><span class="p">,</span>
-     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'password'</span><span class="p">,</span>
+     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
+     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
+     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
      <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
      <span class="s">'PORT'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span>
      <span class="p">}</span>
@@ -778,8 +1015,25 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p>Creamos una copia de seguridad de la base de datos, teniendo en cuenta que en el entorno de desarrollo hemos utilizado SQLite y en el de producción MySQL. Por ello, lo recomendable es realizar la copia de seguridad y recuperarla con los comandos adecuados.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> manage.py dumpdata
- python manage.py loaddata 
+<div class="highlight"><pre class="highlight"><code> python3 manage.py dumpdata <span class="o">&gt;</span> db.json 
+</code></pre></div>    </div>
+
+    <p>Y la subimos al repositorio:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> git add db.json
+ git commit <span class="nt">-m</span> <span class="s2">"Copia de seguridad de la base de datos"</span>
+ git push
+</code></pre></div>    </div>
+
+    <p>Nos conectamos anuestro VPS y realizamos la migración de la base de datos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/django_tutorial
+ git pull
+ pip <span class="nb">install </span>pymysql
+ python3 manage.py migrate
+ python3 manage.py loaddata db.json
 </code></pre></div>    </div>
   </li>
   <li>
@@ -872,10 +1126,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Montaje NFS mediante systemd">Crear un sitio web estático con Jekyll</a></li>
-<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Montaje NFS mediante systemd">Instalación y migración de una aplicación web PHP</a></li>
-<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Montaje NFS mediante systemd">Montaje NFS mediante systemd</a></li>
-<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Montaje NFS mediante systemd">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
+        <li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Montaje NFS mediante systemd">VPN con OpenVPN y certificados x509</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Montaje NFS mediante systemd">Virtualización en Linux</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="Montaje NFS mediante systemd">Infraestructura como código</a></li>
+<li><a class="post-link" href="/iaw/2023/01/09/java-simple.html" title="Montaje NFS mediante systemd">Desarrollo y despliegue de una aplicación Java simple</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
