@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-24T18:33:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-24T18:50:20+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -2489,7 +2489,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <span class="p">}</span>
 </code></pre></div>    </div>
 
-    <p><a href="/assets/images/django/1.png">1</a></p>
+    <p><img src="/assets/images/django/1.png" alt="1" /></p>
 
     <p>Como podemos ver, la base de datos que vamos a crear es <code class="language-plaintext highlighter-rouge">db.sqlite3</code>.</p>
   </li>
@@ -2499,7 +2499,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py migrate
 </code></pre></div>    </div>
 
-    <p><a href="/assets/images/django/2.png">2</a></p>
+    <p><img src="/assets/images/django/2.png" alt="2" /></p>
   </li>
   <li>
     <p>Creamos el usuario Administrador:</p>
@@ -2509,7 +2509,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   password: admin
 </code></pre></div>    </div>
 
-    <p><a href="/assets/images/django/3.png">3</a></p>
+    <p><img src="/assets/images/django/3.png" alt="3" /></p>
   </li>
   <li>
     <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
@@ -2523,7 +2523,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py runserver 0.0.0.0:8000
 </code></pre></div>    </div>
 
-    <p><a href="/assets/images/django/4.png">4</a></p>
+    <p><img src="/assets/images/django/4.png" alt="4" /></p>
 
     <p><strong>NOTA</strong>: Para acceder a la página web desde el ordenador, tendremos que añadir una nueva regla DNAT en <code class="language-plaintext highlighter-rouge">alfa</code> para que redirija el tráfico de la máquina <code class="language-plaintext highlighter-rouge">bravo</code> al puerto 8000.</p>
 
@@ -2540,22 +2540,22 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <li>
     <p>Comprobamos que podemos acceder a la aplicación desde el navegador, sobre todo en la zona de administración:</p>
 
-    <p><a href="/assets/images/django/5.png">5</a></p>
+    <p><img src="/assets/images/django/5.png" alt="5" /></p>
 
-    <p><a href="/assets/images/django/6.png">6</a></p>
+    <p><img src="/assets/images/django/6.png" alt="6" /></p>
 
-    <p><a href="/assets/images/django/7.png">7</a></p>
+    <p><img src="/assets/images/django/7.png" alt="7" /></p>
   </li>
   <li>
     <p>Creamos dos preguntas con varias respuestas.</p>
 
-    <p><a href="/assets/images/django/8.png">8</a></p>
+    <p><img src="/assets/images/django/8.png" alt="8" /></p>
 
-    <p><a href="/assets/images/django/9.png">9</a></p>
+    <p><img src="/assets/images/django/9.png" alt="9" /></p>
 
-    <p><a href="/assets/images/django/10.png">10</a></p>
+    <p><img src="/assets/images/django/10.png" alt="10" /></p>
 
-    <p><a href="/assets/images/django/11.png">11</a></p>
+    <p><img src="/assets/images/django/11.png" alt="11" /></p>
 
     <p><img src="/assets/images/django/12.png" alt="12" /></p>
   </li>
@@ -2639,7 +2639,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <li>
     <p>Comprobamos que podemos acceder a la aplicación desde el navegador:</p>
 
-    <p><a href="/assets/images/django/12.png">12</a></p>
+    <p><img src="/assets/images/django/12.png" alt="12" /></p>
   </li>
 </ul>
 
@@ -2724,37 +2724,35 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   </li>
   <li>
     <p>Configuramos el servidor de aplicaciones uwsgi, creando una unidad de systemd (como hemos realizado en el paso 2 de <a href="https://sysmaria.netlify.app/iaw/2022/12/17/wsgi.html#h-despliegue-de-la-aplicaci%C3%B3n-flask">talleres wsgi</a> y configuramos nginx como proxy inverso para servir la aplicación.</p>
-  </li>
-</ol>
 
-<ul>
-  <li>
-    <p>Instalamos el módulo uwsgi y lo configuramos</p>
+    <ul>
+      <li>
+        <p>Instalamos el módulo uwsgi y lo configuramos</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>uwsgi
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>uwsgi
   <span class="nt">---</span>
   <span class="nb">sudo </span>nano /var/www/html/Tutorial-Django/django/uwsgi.ini
-</code></pre></div>    </div>
+</code></pre></div>        </div>
 
-    <p>Añadimos al fichero las siguientes líneas:</p>
+        <p>Añadimos al fichero las siguientes líneas:</p>
 
-    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[uwsgi]</span>
+        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[uwsgi]</span>
   <span class="py">http</span> <span class="p">=</span> <span class="s">:8080</span>
   <span class="py">chdir</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django</span>
   <span class="py">wsgi-file</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django/django_tutorial/wsgi.py</span>
   <span class="py">processes</span> <span class="p">=</span> <span class="s">4</span>
   <span class="py">threads</span> <span class="p">=</span> <span class="s">2</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos la unidad de systemd para el servicio uwsgi:</p>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos la unidad de systemd para el servicio uwsgi:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/systemd/system/uwsgi.service
-</code></pre></div>    </div>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/systemd/system/uwsgi.service
+</code></pre></div>        </div>
 
-    <p>Añadimos las siguientes líneas:</p>
+        <p>Añadimos las siguientes líneas:</p>
 
-    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[Unit]</span>
+        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[Unit]</span>
   <span class="py">Description</span><span class="p">=</span><span class="s">uWSGI Emperor service</span>
   <span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
 
@@ -2764,47 +2762,46 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <span class="py">Restart</span><span class="p">=</span><span class="s">always</span>
 
   <span class="py">ExecStart</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial/django/bin/uwsgi --ini /var/www/html/Tutorial-Django/django/uwsgi.ini</span>
-    
+
   <span class="py">ExecReload</span><span class="p">=</span><span class="s">/bin/kill -s HUP $MAINPID</span>
   <span class="py">ExecStop</span><span class="p">=</span><span class="s">/bin/kill -s TERM $MAINPID</span>
   <span class="py">WorkingDirectory</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial</span>
   <span class="py">Environment</span><span class="p">=</span><span class="s">PYTHONPATH='/var/www/html/Tutorial-Django/django_tutorial:/var/www/html/Tutorial-Django/django/lib/python3.9/site-packages'</span>
   <span class="py">PrivateTmp</span><span class="p">=</span><span class="s">true</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Y lo activamos:</p>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Y lo activamos:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl daemon-reload
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl daemon-reload
   <span class="nb">sudo </span>systemctl <span class="nb">enable </span>uwsgi
   <span class="nb">sudo </span>systemctl start uwsgi
-</code></pre></div>    </div>
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
-</ul>
-
-<ol>
-  <li>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</li>
-</ol>
-
-<ul>
   <li>
-    <p>Creamos el VirtualHost de nginx:</p>
+    <p>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/django
-</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p>Creamos el VirtualHost de nginx:</p>
 
-    <p>Añadimos las siguientes líneas:</p>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/django
+</code></pre></div>        </div>
 
-    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">server</span> <span class="err">{</span>
+        <p>Añadimos las siguientes líneas:</p>
+
+        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">server</span> <span class="err">{</span>
       <span class="err">listen</span> <span class="err">80</span><span class="c">;
 </span>      <span class="err">listen</span> <span class="nn">[::]</span><span class="err">:80</span><span class="c">;
 </span>
       <span class="err">root</span> <span class="err">/var/www/html/Tutorial-Django/</span>
 
       <span class="err">index</span> <span class="err">index.php</span>
-        
+
       <span class="err">server_name</span> <span class="err">python.mariatec.es</span><span class="c">;
-</span>        
+</span>
       <span class="err">location</span> <span class="err">/</span> <span class="err">{</span>
           <span class="err">proxy_pass</span> <span class="err">http://localhost:8080</span><span class="c">;
 </span>          <span class="err">include</span> <span class="err">proxy_params</span><span class="c">;
@@ -2814,36 +2811,38 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
           <span class="err">alias</span> <span class="err">/var/www/html/Tutorial-Django/static/</span><span class="c">;
 </span>      <span class="err">}</span>
   <span class="err">}</span>
-</code></pre></div>    </div>
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
     <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
 
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el enlace simbólico:</p>
+    <ul>
+      <li>
+        <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
-</code></pre></div>    </div>
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos el enlace simbólico:</p>
 
-    <p>Y reiniciamos el servicio:</p>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
+</code></pre></div>        </div>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Realizamos los cambios necesarios en el DNS del VPS para que la URL <code class="language-plaintext highlighter-rouge">python.mariatec.es</code> apunte a la IP del VPS.</p>
+        <p>Y reiniciamos el servicio:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Realizamos los cambios necesarios en el DNS del VPS para que la URL <code class="language-plaintext highlighter-rouge">python.mariatec.es</code> apunte a la IP del VPS.</p>
+      </li>
+    </ul>
 
     <p><img src="/assets/images/django/13.png" alt="13" /></p>
   </li>
-</ul>
-
-<ol>
   <li>
     <p>La página web deberá ser accesible en la URL: <code class="language-plaintext highlighter-rouge">python.mariatec.es</code>. ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
 
@@ -2948,7 +2947,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
       <li>Modificamos el propietario del fichero para que el servidor web pueda acceder a él.</li>
     </ul>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="nb">chown</span> <span class="nt">-R</span> apache:apache static/polls/images/fondo.jpg
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">chown</span> <span class="nt">-R</span> apache:apache static/polls/images/fondo.jpg
 </code></pre></div>    </div>
 
     <ul>
@@ -2969,7 +2968,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
 </code></pre></div>    </div>
 
     <ul>
-      <li>centrar la imagen de fondo y que sea responsive.</li>
+      <li>Centrar la imagen de fondo y que sea responsive.</li>
     </ul>
 
     <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">body</span> <span class="p">{</span>
@@ -2990,48 +2989,50 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
       <li>
         <p>Añadimos un nuevo modelo al fichero <code class="language-plaintext highlighter-rouge">polls/models.py</code>:</p>
 
-        <p>```python
-  class Categoria(models.Model):	
-  	    Abr = models.CharField(max_length=4)
-  	    Nombre = models.CharField(max_length=50)</p>
+        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">class</span> <span class="nc">Categoria</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>	
+  	<span class="n">Abr</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+  	<span class="n">Nombre</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+  	<span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  		<span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">Abr</span><span class="o">+</span><span class="s">" - "</span><span class="o">+</span><span class="bp">self</span><span class="p">.</span><span class="n">Nombre</span> 		
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Creamos una nueva migración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python manage.py makemigrations
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Aplicamos la migración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python manage.py migrate
+</code></pre></div>        </div>
+      </li>
+      <li>Añadimos el nuevomodelo al sitio de administración de django:
+        <ul>
+          <li>
+            <p>Cambiamos la siguiente línea del fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
+
+            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span><span class="p">,</span> <span class="n">Categoria</span>
+</code></pre></div>            </div>
+          </li>
+          <li>
+            <p>Añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
+
+            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">Categoria</span><span class="p">)</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>Comprobamos que el cambio se ha realizado correctamente:</p>
+
+        <p><img src="/assets/images/django/20.png" alt="20" /></p>
       </li>
     </ul>
   </li>
 </ol>
-
-  	    def <strong>str</strong>(self):
-  	    	return self.Abr+” - “+self.Nombre 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ```
-
-- Creamos una nueva migración:
-
-    ```bash
-    python manage.py makemigrations
-    ```
-
-- Aplicamos la migración:
-
-    ```bash
-    python manage.py migrate
-    ```
-    
-- Añadimos el nuevomodelo al sitio de administración de django:
-    - Cambiamos la siguiente línea del fichero `polls/admin.py`:
-
-        ```python
-        from .models import Choice, Question, Categoria
-        ```
-    
-    - Añadimos la siguiente línea al fichero `polls/admin.py`:
-
-        ```python
-        admin.site.register(Categoria)
-        ```
-
-- Comprobamos que el cambio se ha realizado correctamente:
-
-    ![20](/assets/images/django/20.png)
-</code></pre></div></div>
 
 <ul>
   <li>
