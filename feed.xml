@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-21T22:05:19+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-24T18:33:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -2400,7 +2400,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
 
     <p><img src="/assets/images/nfs-systemd/18.png" alt="18" /></p>
   </li>
-</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd. Creamos el escenario Creamos el servidor Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd Le añadimos un volumen de 2GB openstack volume create --size 2 \ --description "Volumen NFS-Systemd" \ --availability-zone "nova" \ --bootable \ nfs Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.229 Creamos el cliente Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd-Cliente Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.247 Configuración Configuramos el servicio NFS En la máquina servidor,con ip 172.22.201.229 realizamos las siguientes acciones: Instalamos el servicio NFS: sudo apt install nfs-kernel-server sudo apt install nfs-common Tras su instalación, vamos a habilitar y activar el servicio: systemctl start rpcbind nfs-server systemctl enable rpcbind nfs-server Comprobamos que el servicio está activo: systemctl status rpcbind nfs-server En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049. Configuramos el punto de montaje Ahora le toca el turno a la máquina cliente, con ip 172.22.201.247. En ella realizamos las siguientes acciones: Creamos el punto de montaje: mkdir /nfs Creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/nfs.mount Añadimos el siguiente contenido: [Unit] #Descripción Description=Montaje NFS-Systemd [Mount] #Volumen de 2GB añadido a la instancia What=/dev/vdb #Directorio de montaje Where=/nfs #Sistema de ficheros empleado Type=ext4 #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Vamos a formatear el volumen anexado a la instancia: mkfs.ext4 /dev/vdb Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje: systemctl daemon-reload systemctl start nfs.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: /dev/vdb /nfs ext4 defaults 0 0 Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero /etc/exports: nano /etc/exports #Añadimos la siguiente línea al final del fichero: /nfs 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check) La configuración anterior permite que todos los clientes de la red 10.0.0.0/24 puedan acceder al punto de montaje /nfs con permisos de lectura y escritura. Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Configuración del cliente NFS Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Instalamos el cliente NFS: apt update &amp;&amp; apt upgrade -y apt install nfs-common Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando: showmount -e 10.0.0.215 Lo que se nos mostrará es la exportación del servidor: Configuración del punto de montaje del cliente Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Creamos el directorio que usaremos como punto de montaje: mkdir /cliente Y a continuación, creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/cliente.mount La configuración del fichero es la siguiente: [Unit] Description=Montaje NFS-cliente [Mount] #Dirección IP:Directorio de exportación What=10.0.0.215:/nfs #Directorio del recurso compartido Where=/cliente #Tipo de recurso Type=nfs #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Activamos y montamos el recurso que queremos compartir: systemctl enable NFS-cliente.mount systemctl start NFS-cliente.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje del cliente Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: 10.0.0.215:/nfs /cliente nfs defaults 0 0 Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Comprobación del funcionamiento del servicio NFS Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente. ¡NOTA! Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar sudo exportfs -ra para que se actualicen los cambios. Creamos un directorio y un fichero en el punto de montaje del servidor: mkdir /NFS-Systemd/prueba echo "Esto es un texto escrito desde el servidor" &gt; /nfs/nfs-prueba.txt Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente: cd /cliente ls cat nfs-prueba.txt Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor: echo "Esto es un texto escrito desde el cliente" &gt; /cliente/prueba/prueba-cliente.txt ls /nfs/prueba cat /nfs/prueba/prueba-cliente.txt]]></summary></entry><entry><title type="html">Despliegue de una aplcación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplcación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
+</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd. Creamos el escenario Creamos el servidor Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd Le añadimos un volumen de 2GB openstack volume create --size 2 \ --description "Volumen NFS-Systemd" \ --availability-zone "nova" \ --bootable \ nfs Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.229 Creamos el cliente Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd-Cliente Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.247 Configuración Configuramos el servicio NFS En la máquina servidor,con ip 172.22.201.229 realizamos las siguientes acciones: Instalamos el servicio NFS: sudo apt install nfs-kernel-server sudo apt install nfs-common Tras su instalación, vamos a habilitar y activar el servicio: systemctl start rpcbind nfs-server systemctl enable rpcbind nfs-server Comprobamos que el servicio está activo: systemctl status rpcbind nfs-server En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049. Configuramos el punto de montaje Ahora le toca el turno a la máquina cliente, con ip 172.22.201.247. En ella realizamos las siguientes acciones: Creamos el punto de montaje: mkdir /nfs Creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/nfs.mount Añadimos el siguiente contenido: [Unit] #Descripción Description=Montaje NFS-Systemd [Mount] #Volumen de 2GB añadido a la instancia What=/dev/vdb #Directorio de montaje Where=/nfs #Sistema de ficheros empleado Type=ext4 #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Vamos a formatear el volumen anexado a la instancia: mkfs.ext4 /dev/vdb Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje: systemctl daemon-reload systemctl start nfs.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: /dev/vdb /nfs ext4 defaults 0 0 Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero /etc/exports: nano /etc/exports #Añadimos la siguiente línea al final del fichero: /nfs 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check) La configuración anterior permite que todos los clientes de la red 10.0.0.0/24 puedan acceder al punto de montaje /nfs con permisos de lectura y escritura. Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Configuración del cliente NFS Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Instalamos el cliente NFS: apt update &amp;&amp; apt upgrade -y apt install nfs-common Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando: showmount -e 10.0.0.215 Lo que se nos mostrará es la exportación del servidor: Configuración del punto de montaje del cliente Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Creamos el directorio que usaremos como punto de montaje: mkdir /cliente Y a continuación, creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/cliente.mount La configuración del fichero es la siguiente: [Unit] Description=Montaje NFS-cliente [Mount] #Dirección IP:Directorio de exportación What=10.0.0.215:/nfs #Directorio del recurso compartido Where=/cliente #Tipo de recurso Type=nfs #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Activamos y montamos el recurso que queremos compartir: systemctl enable NFS-cliente.mount systemctl start NFS-cliente.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje del cliente Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: 10.0.0.215:/nfs /cliente nfs defaults 0 0 Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Comprobación del funcionamiento del servicio NFS Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente. ¡NOTA! Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar sudo exportfs -ra para que se actualicen los cambios. Creamos un directorio y un fichero en el punto de montaje del servidor: mkdir /NFS-Systemd/prueba echo "Esto es un texto escrito desde el servidor" &gt; /nfs/nfs-prueba.txt Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente: cd /cliente ls cat nfs-prueba.txt Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor: echo "Esto es un texto escrito desde el cliente" &gt; /cliente/prueba/prueba-cliente.txt ls /nfs/prueba cat /nfs/prueba/prueba-cliente.txt]]></summary></entry><entry><title type="html">Despliegue de una aplicación Python</title><link href="/hlc+sri/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplicación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/hlc+sri/2022/12/19/despliegue-python</id><content type="html" xml:base="/hlc+sri/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
 
 <p>En esta entrada vamos a desplegar una aplicación Python realizada en Django.</p>
 
@@ -2556,6 +2556,8 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
     <p><a href="/assets/images/django/10.png">10</a></p>
 
     <p><a href="/assets/images/django/11.png">11</a></p>
+
+    <p><img src="/assets/images/django/12.png" alt="12" /></p>
   </li>
 </ul>
 
@@ -2657,7 +2659,8 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
   <li>
     <p>Creamos un entorno virtual e instalamos las dependencias de nuestra aplicación.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python3 <span class="nt">-m</span> venv django
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/
+ python3 <span class="nt">-m</span> venv django
  <span class="nb">source </span>django/bin/activate
  pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
 </code></pre></div>    </div>
@@ -2689,7 +2692,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
      <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
      <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
-     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
+     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
      <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
      <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
      <span class="s">'PORT'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span>
@@ -2710,7 +2713,7 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
  git push
 </code></pre></div>    </div>
 
-    <p>Nos conectamos anuestro VPS y realizamos la migración de la base de datos:</p>
+    <p>Nos conectamos a nuestro VPS y realizamos la migración de la base de datos:</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/django_tutorial
  git pull
@@ -2720,77 +2723,370 @@ Recuerda que una vez realizados los cambios, para que el sercidor NFS los recono
 </code></pre></div>    </div>
   </li>
   <li>
-    <p>Configuramos el servidor de aplicaciones uwsgi, creando una unidad de systemd (como hemor realizado en el paso 2 de <a href="https://sysmaria.netlify.app/iaw/2022/12/17/wsgi.html#h-despliegue-de-la-aplicaci%C3%B3n-flask">talleres wsgi</a>) y configuramos nginx como proxy inverso para servir la aplicación.</p>
+    <p>Configuramos el servidor de aplicaciones uwsgi, creando una unidad de systemd (como hemos realizado en el paso 2 de <a href="https://sysmaria.netlify.app/iaw/2022/12/17/wsgi.html#h-despliegue-de-la-aplicaci%C3%B3n-flask">talleres wsgi</a> y configuramos nginx como proxy inverso para servir la aplicación.</p>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Instalamos el módulo uwsgi y lo configuramos</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>uwsgi
+  <span class="nt">---</span>
+  <span class="nb">sudo </span>nano /var/www/html/Tutorial-Django/django/uwsgi.ini
+</code></pre></div>    </div>
+
+    <p>Añadimos al fichero las siguientes líneas:</p>
+
+    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[uwsgi]</span>
+  <span class="py">http</span> <span class="p">=</span> <span class="s">:8080</span>
+  <span class="py">chdir</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django</span>
+  <span class="py">wsgi-file</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django/django_tutorial/wsgi.py</span>
+  <span class="py">processes</span> <span class="p">=</span> <span class="s">4</span>
+  <span class="py">threads</span> <span class="p">=</span> <span class="s">2</span>
+</code></pre></div>    </div>
   </li>
   <li>
-    <p>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
+    <p>Creamos la unidad de systemd para el servicio uwsgi:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/systemd/system/uwsgi.service
+</code></pre></div>    </div>
+
+    <p>Añadimos las siguientes líneas:</p>
+
+    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[Unit]</span>
+  <span class="py">Description</span><span class="p">=</span><span class="s">uWSGI Emperor service</span>
+  <span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
+
+  <span class="nn">[Install]</span>
+  <span class="py">User</span><span class="p">=</span><span class="s">www-data</span>
+  <span class="py">Group</span><span class="p">=</span><span class="s">www-data</span>
+  <span class="py">Restart</span><span class="p">=</span><span class="s">always</span>
+
+  <span class="py">ExecStart</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial/django/bin/uwsgi --ini /var/www/html/Tutorial-Django/django/uwsgi.ini</span>
+    
+  <span class="py">ExecReload</span><span class="p">=</span><span class="s">/bin/kill -s HUP $MAINPID</span>
+  <span class="py">ExecStop</span><span class="p">=</span><span class="s">/bin/kill -s TERM $MAINPID</span>
+  <span class="py">WorkingDirectory</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial</span>
+  <span class="py">Environment</span><span class="p">=</span><span class="s">PYTHONPATH='/var/www/html/Tutorial-Django/django_tutorial:/var/www/html/Tutorial-Django/django/lib/python3.9/site-packages'</span>
+  <span class="py">PrivateTmp</span><span class="p">=</span><span class="s">true</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Y lo activamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl daemon-reload
+  <span class="nb">sudo </span>systemctl <span class="nb">enable </span>uwsgi
+  <span class="nb">sudo </span>systemctl start uwsgi
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<ol>
+  <li>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Creamos el VirtualHost de nginx:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/django
+</code></pre></div>    </div>
+
+    <p>Añadimos las siguientes líneas:</p>
+
+    <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">server</span> <span class="err">{</span>
+      <span class="err">listen</span> <span class="err">80</span><span class="c">;
+</span>      <span class="err">listen</span> <span class="nn">[::]</span><span class="err">:80</span><span class="c">;
+</span>
+      <span class="err">root</span> <span class="err">/var/www/html/Tutorial-Django/</span>
+
+      <span class="err">index</span> <span class="err">index.php</span>
+        
+      <span class="err">server_name</span> <span class="err">python.mariatec.es</span><span class="c">;
+</span>        
+      <span class="err">location</span> <span class="err">/</span> <span class="err">{</span>
+          <span class="err">proxy_pass</span> <span class="err">http://localhost:8080</span><span class="c">;
+</span>          <span class="err">include</span> <span class="err">proxy_params</span><span class="c">;
+</span>      <span class="err">}</span>
+
+      <span class="err">location</span> <span class="err">/static/</span> <span class="err">{</span>
+          <span class="err">alias</span> <span class="err">/var/www/html/Tutorial-Django/static/</span><span class="c">;
+</span>      <span class="err">}</span>
+  <span class="err">}</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
   </li>
   <li>
-    <p>La página web deberá ser accesible usando https, en la URL: <code class="language-plaintext highlighter-rouge">https://python.mariatec.es</code>.</p>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el enlace simbólico:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
+</code></pre></div>    </div>
+
+    <p>Y reiniciamos el servicio:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos los cambios necesarios en el DNS del VPS para que la URL <code class="language-plaintext highlighter-rouge">python.mariatec.es</code> apunte a la IP del VPS.</p>
+
+    <p><img src="/assets/images/django/13.png" alt="13" /></p>
+  </li>
+</ul>
+
+<ol>
+  <li>
+    <p>La página web deberá ser accesible en la URL: <code class="language-plaintext highlighter-rouge">python.mariatec.es</code>. ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
+
+    <p>Como podemos ver en las siguientes imagenes, la página, su fondo y su hoja de estilo funcionan correctamente:</p>
+
+    <p>Como podemos ver en la siguiente imagen, la página funciona correctamente:</p>
+
+    <p><img src="/assets/images/django/14.png" alt="14" /></p>
+
+    <p><img src="/assets/images/django/15.png" alt="15" /></p>
+
+    <p><img src="/assets/images/django/16.png" alt="16" /></p>
+
+    <p><img src="/assets/images/django/17.png" alt="17" /></p>
+  </li>
+  <li>
+    <p>Instalamos el certificado SSL.</p>
   </li>
 </ol>
 
-<p>Como podemos ver en la siguiente imagen, la página funciona correctamente:</p>
+<ul>
+  <li>
+    <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
 
-<p><img src="/assets/images/posts/app-python.png" alt="app-python" /></p>
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Cambiamos el VirtualHost:</p>
 
-<h2 id="entorno-de-producción-1">Entorno de producción</h2>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server <span class="o">{</span>
+          listen 80<span class="p">;</span>
+          listen <span class="o">[</span>::]:80<span class="p">;</span>
+          server_name python.mariatec.es<span class="p">;</span>
+          <span class="k">return </span>301 https://<span class="nv">$server_name$request_uri</span><span class="p">;</span>
+  <span class="o">}</span>
+  server <span class="o">{</span>
+          listen 443 ssl<span class="p">;</span>
+          listen <span class="o">[</span>::]:443 ssl<span class="p">;</span>
+          server_name python.mariatec.es<span class="p">;</span>
+          ssl_certificate /etc/letsencrypt/live/mariatec.es/fullchain.pem<span class="p">;</span>
+          ssl_certificate_key /etc/letsencrypt/live/mariatec.es/privkey.pem<span class="p">;</span>
+          include /etc/letsencrypt/options-ssl-nginx.conf<span class="p">;</span>
+          ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem<span class="p">;</span>
+          root /var/www/html/Tutorial-Django<span class="p">;</span>
+          index index.php<span class="p">;</span>
+          location / <span class="o">{</span>
+                  proxy_pass http://localhost:8080<span class="p">;</span>
+                  include proxy_params<span class="p">;</span>
+          <span class="o">}</span>
+          location /static/ <span class="o">{</span>
+                  <span class="nb">alias</span> /var/www/html/Tutorial-Django/static/<span class="p">;</span>
+          <span class="o">}</span>
+  <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Y reiniciamos el servicio:</p>
 
-<p>En este apartado vamos a realizar cambios en el entorno de desarrollo y posteriormente vamos a subirlas a producción. Vamos a realizar tres modificaciones, pero recuerda que primero lo haces en el entrono de desarrollo, y luego tendrás que llevar los cambios a producción:</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que el certificado funciona correctamente:</p>
+
+    <p><img src="/assets/images/django/18.png" alt="18" /></p>
+  </li>
+</ul>
+
+<h2 id="modificación-de-la-aplicación-y-migración-de-los-cambios-a-producción">Modificación de la aplicación y migración de los cambios a producción</h2>
+
+<p>En este apartado vamos a realizar cambios en el entorno de desarrollo y posteriormente vamos a subirlas a producción. Vamos a realizar tres modificaciones.</p>
+
+<p>Primero vamosa realizar los cambios en el entorno de desarrollo, es decir, en <code class="language-plaintext highlighter-rouge">bravo</code>.</p>
 
 <ol>
   <li>
     <p>Modifica la página inicial donde se ven las encuestas para que aparezca tu nombre, para ello modifica el archivo <code class="language-plaintext highlighter-rouge">django_tutorial/polls/templates/polls/index.html</code>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/Tutorial-Django
+ nano polls/templates/polls/index.html
+</code></pre></div>    </div>
+    <ul>
+      <li>
+        <p>Vamos a realizar los cambios necesarios para que aparezca mi nombre en la página principal:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      &lt;h2&gt;Maria Jesus&lt;/h2&gt;
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
-    <p>Modificamos la imagen que aparece como fondo de la aplicación.</p>
+    <p>Modificamos la imagen que aparece como fondo de la aplicación. Para ello, vamos a buscar una imagen nueva, la descargamos y la antigua imagen por la nueva.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://i.imgur.com/rqzs4jU.jpeg <span class="nt">-O</span> fondo.jpg
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Modificamos el propietario del fichero para que el servidor web pueda acceder a él.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="nb">chown</span> <span class="nt">-R</span> apache:apache static/polls/images/fondo.jpg
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Modificamos también el fichero de estilo para que apunte a la nueva imagen y para que la renderice.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano static/polls/style.css
+ <span class="nt">---</span>
+ li a <span class="o">{</span>
+     color: green<span class="p">;</span>
+     background-color: blanchedalmond<span class="p">;</span>
+ <span class="o">}</span>
+
+ body <span class="o">{</span>
+     background: white url<span class="o">(</span><span class="s2">"images/fondo.jpg"</span><span class="o">)</span><span class="p">;</span>
+     background-size: cover<span class="p">;</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>centrar la imagen de fondo y que sea responsive.</li>
+    </ul>
+
+    <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">body</span> <span class="p">{</span>
+     <span class="nl">background</span><span class="p">:</span> <span class="no">white</span> <span class="sx">url("images/fondo.jpg")</span><span class="p">;</span>
+     <span class="nl">background-size</span><span class="p">:</span> <span class="n">cover</span><span class="p">;</span>
+     <span class="nl">background-position</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+     <span class="nl">background-repeat</span><span class="p">:</span> <span class="nb">no-repeat</span><span class="p">;</span>
+     <span class="nl">background-attachment</span><span class="p">:</span> <span class="nb">fixed</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/django/19.png" alt="19" /></p>
   </li>
   <li>
     <p>Vamos a crear una nueva tabla en la base de datos, para ello sigue los siguientes pasos:</p>
 
-    <ol>
+    <ul>
       <li>
         <p>Añadimos un nuevo modelo al fichero <code class="language-plaintext highlighter-rouge">polls/models.py</code>:</p>
 
-        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">class</span> <span class="nc">Persona</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>
-     <span class="n">Abr</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-     <span class="n">Nombre</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <p>```python
+  class Categoria(models.Model):	
+  	    Abr = models.CharField(max_length=4)
+  	    Nombre = models.CharField(max_length=50)</p>
+      </li>
+    </ul>
+  </li>
+</ol>
 
-     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-         <span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">Abr</span><span class="o">+</span><span class="s">" - "</span><span class="o">+</span><span class="bp">self</span><span class="p">.</span><span class="n">Nombre</span>
+  	    def <strong>str</strong>(self):
+  	    	return self.Abr+” - “+self.Nombre 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    ```
+
+- Creamos una nueva migración:
+
+    ```bash
+    python manage.py makemigrations
+    ```
+
+- Aplicamos la migración:
+
+    ```bash
+    python manage.py migrate
+    ```
+    
+- Añadimos el nuevomodelo al sitio de administración de django:
+    - Cambiamos la siguiente línea del fichero `polls/admin.py`:
+
+        ```python
+        from .models import Choice, Question, Categoria
+        ```
+    
+    - Añadimos la siguiente línea al fichero `polls/admin.py`:
+
+        ```python
+        admin.site.register(Categoria)
+        ```
+
+- Comprobamos que el cambio se ha realizado correctamente:
+
+    ![20](/assets/images/django/20.png)
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Deplegamos los cambios en el entorno de producción.</p>
+
+    <ul>
+      <li>
+        <p>Realizamos un backup de la base de datos:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py dumpdata <span class="o">&gt;</span> db2.json
 </code></pre></div>        </div>
       </li>
       <li>
-        <p>Creamos una migración.</p>
+        <p>Añadimos los ficheros que hemos cambiado al repositorio:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git status
+  git add <span class="nb">.</span>
+  git commit <span class="nt">-m</span> <span class="s2">"Tarea 3"</span>
+  git push
+</code></pre></div>        </div>
       </li>
       <li>
-        <p>Aplicamos la migración.</p>
+        <p>Nos dirigimos al entorno de producción y actualizamos el repositorio:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cd</span> /var/www/html/Tutorial-Django
+  git pull
+</code></pre></div>        </div>
       </li>
-      <li>Añadimos el nuevomodelo al sitio de administración de django:
-        <ul>
-          <li>
-            <p>Cambiamos la siguiente línea del fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
+      <li>
+        <p>Cargamos los datos y los cambios:</p>
 
-            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span>
-</code></pre></div>            </div>
-
-            <p>por:</p>
-
-            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span><span class="p">,</span> <span class="n">Persona</span>
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
-
-            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">Categoria</span><span class="p">)</span>
-</code></pre></div>            </div>
-          </li>
-        </ul>
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py loaddata db2.json
+  python3 manage.py migrate
+</code></pre></div>        </div>
       </li>
-      <li>Deplegamos el cambio en el entorno de producción.</li>
-    </ol>
+      <li>
+        <p>Realizamos de nuevo la recolección de los ficheros estáticos:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py collectstatic
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Reiniciamos el servicio:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart uwsgi-django
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>
+</ul>
+
+<p>Como podemos ver en las siguientes imágenes, los cambios se han realizado correctamente.</p>
+
+<p><img src="/assets/images/django/21.png" alt="21" /></p>
+
+<p><img src="/assets/images/django/22.png" alt="22" /></p>
+
+<p><img src="/assets/images/django/23.png" alt="23" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>
