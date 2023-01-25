@@ -725,9 +725,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario"></p>
 
-<h1 id="preparación-del-escenario">Preparación del escenario</h1>
+<h2 id="preparación-del-escenario">Preparación del escenario</h2>
 
-<p>Lo primero que deberemos hacer es instalar en cada una de las máquinas de nuestro escenario, incluyendo los contenedores de LXC el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>:</p>
+<p>Lo primero que deberemos hacer es instalar en cada una de las máquinas de nuestro escenario, incluyendo los contenedores de LXC, el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>:</p>
 
 <ul>
   <li>
@@ -741,15 +741,15 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p>BRAVO</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>systemd-journal-remote
+<div class="highlight"><pre class="highlight"><code>  dnf <span class="nb">install </span>systemd-journal-remote
 </code></pre></div>    </div>
   </li>
 </ul>
 
 <p><img src="/assets/images/journald/1.png" alt="1"></p>
 
-<h1 id="configuración-de-journald-en-alfa">Configuración de journald EN <strong>ALFA</strong>
-</h1>
+<h2 id="configuración-de-journald-en-alfa">Configuración de journald EN <strong>ALFA</strong>
+</h2>
 
 <p>En esta máquina, vamos a configurar el servicio <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code> para que recoga los logs de las demás máquinas. Al no hacer uso del https, vamos a desactivarlo en el fichero <code class="language-plaintext highlighter-rouge">/lib/systemd/system/systemd-journal-remote.service</code>:</p>
 
@@ -777,7 +777,7 @@ systemctl status systemd-journal-remote.socket
 
 <p><img src="/assets/images/journald/2.png" alt="2"></p>
 
-<p>Solo nos resta por cerciorarnos que el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> exista y tenga los permisos adecuados.De no ser así, lo creamos y le damos los permisos adecuados:</p>
+<p>Solo nos resta por cerciorarnos que el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> exista y tenga los permisos adecuados. De no ser así, lo creamos y le damos los permisos adecuados:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /var/log/journal/remote
 <span class="nb">chown </span>systemd-journal-remote:systemd-journal-remote /var/log/journal/remote
@@ -787,7 +787,7 @@ systemctl status systemd-journal-remote.socket
 
 <p>Como podemos ver, en mi caso, el directorio existe y con los permisos que le pertenece.</p>
 
-<h1 id="configuración-de-los-servidores-bravo-charlie-y-delta">Configuración de los servidores Bravo, Charlie y Delta</h1>
+<h2 id="configuración-de-los-servidores-bravo-charlie-y-delta">Configuración de los servidores Bravo, Charlie y Delta</h2>
 
 <p>Tras la configuración anterior, el siguiente paso es configurar los clientes para que envíen sus logs a la máquina ALFA. Por ello, vamos a crear un usuario en <code class="language-plaintext highlighter-rouge">bravo</code>, <code class="language-plaintext highlighter-rouge">charlie</code> y <code class="language-plaintext highlighter-rouge">delta</code> que se llame <code class="language-plaintext highlighter-rouge">systemd</code>, perteneciente al grupo <code class="language-plaintext highlighter-rouge">systemd-journal-upload</code> y al que le desactivaremos el login.</p>
 
@@ -802,16 +802,15 @@ systemctl status systemd-journal-remote.socket
 
 <p><img src="/assets/images/journald/4.png" alt="4"></p>
 
-<p>Una vez configurado el usuario en cada una de los clientes, vamos a configurar el fichero <code class="language-plaintext highlighter-rouge">/etc/systemd/journald-upload.conf</code> para que estos mismos clientes envíen sus logs a la máquina ALFA:</p>
+<p>Una vez configurado el usuario en cada una de los clientes, vamos a configurar el fichero <code class="language-plaintext highlighter-rouge">/etc/systemd/journal-upload.conf</code> para que estos mismos clientes envíen sus logs a la máquina ALFA:</p>
 
-<p>``bash
-URL=http://alfa.mariajesus.gonzalonazareno.org:19532</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-Activamos el servicio `systemd-journal-upload` en cada uno de los clientes:
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">URL</span><span class="o">=</span>http://alfa.mariajesus.gonzalonazareno.org:19532
+</code></pre></div></div>
 
-```bash
-#BRAVO, CHARLIE Y DELTA
-sudo systemctl restart systemd-journal-upload.service
+<p>Activamos el servicio <code class="language-plaintext highlighter-rouge">systemd-journal-upload</code> en cada uno de los clientes:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#BRAVO, CHARLIE Y DELTA</span>
+<span class="nb">sudo </span>systemctl restart systemd-journal-upload.service
 </code></pre></div></div>
 
 <p>Para finalizar, podemos comprobar que en el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> de la máquina ALFA, se han creado los ficheros generados por los logs de los clientes:</p>
@@ -847,10 +846,10 @@ sudo systemctl restart systemd-journal-upload.service
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="Desarrollo y despliegue de una aplicación Java simple">Infraestructura como código</a></li>
-<li><a class="post-link" href="/iaw/2023/01/09/java-simple.html" title="Desarrollo y despliegue de una aplicación Java simple">Desarrollo y despliegue de una aplicación Java simple</a></li>
-<li><a class="post-link" href="/aso/2023/01/04/journald.html" title="Desarrollo y despliegue de una aplicación Java simple">Recolección centralizada de logs de sistema, mediante journald</a></li>
-<li><a class="post-link" href="/aso/2022/11/16/centOS.html" title="Desarrollo y despliegue de una aplicación Java simple">Migración CentOS</a></li>
+        <li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Desarrollo y despliegue de una aplicación Java simple">Bienvenid@</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/12/12/talleres-dns.html" title="Desarrollo y despliegue de una aplicación Java simple">Talleres DNS</a></li>
+<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Desarrollo y despliegue de una aplicación Java simple">Montaje NFS mediante systemd</a></li>
+<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Desarrollo y despliegue de una aplicación Java simple">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
