@@ -722,22 +722,30 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <h2 id="configuramos-el-servidor-openvpn">Configuramos el servidor OpenVPN</h2>
 
 <ol>
-  <li>Instalamos el paquete openvpn:
+  <li>
+    <p>Instalamos el paquete openvpn:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Creamos el directorio de configuración:
+  <li>
+    <p>Creamos el directorio de configuración:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> /etc/openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Creamos el fichero de configuración del servidor:
+  <li>
+    <p>Creamos el fichero de configuración del servidor:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> nano /etc/openvpn/server.conf
 </code></pre></div>    </div>
   </li>
-  <li>Añadimos la siguiente configuración:
+  <li>
+    <p>Añadimos la siguiente configuración:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> dev tun
  remote vpn-maria
@@ -755,12 +763,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
  verb 3
 </code></pre></div>    </div>
   </li>
-  <li>Reinicio el servicio:
+  <li>
+    <p>Reinicio el servicio:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> systemctl restart openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Comprobamos que el servicio está activo:
+  <li>
+    <p>Comprobamos que el servicio está activo:</p>
+
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> ip route
 </code></pre></div>    </div>
@@ -818,10 +830,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/python/2022/11/06/github.html" title="Despliegue de aplicaciones Java">Introducción a GitHub</a></li>
+        <li><a class="post-link" href="/aso/2023/01/04/journald.html" title="Despliegue de aplicaciones Java">Recolección centralizada de logs de sistema, mediante journald</a></li>
 <li><a class="post-link" href="/iaw/2023/01/03/java.html" title="Despliegue de aplicaciones Java">Despliegue de aplicaciones Java</a></li>
-<li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="Despliegue de aplicaciones Java">Despliegue de aplicaciones Java</a></li>
-<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="Despliegue de aplicaciones Java">Certificados digitales. HTTPS</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/01/03/dns.html" title="Despliegue de aplicaciones Java">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack...</a></li>
+<li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="Despliegue de aplicaciones Java">Compilar dos2unix partiendo del código fuente</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

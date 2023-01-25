@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-24T20:28:33+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-25T14:35:43+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -323,19 +323,27 @@
 <h2 id="configuramos-el-servidor-openvpn">Configuramos el servidor OpenVPN</h2>
 
 <ol>
-  <li>Instalamos el paquete openvpn:
+  <li>
+    <p>Instalamos el paquete openvpn:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Creamos el directorio de configuración:
+  <li>
+    <p>Creamos el directorio de configuración:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> /etc/openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Creamos el fichero de configuración del servidor:
+  <li>
+    <p>Creamos el fichero de configuración del servidor:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano /etc/openvpn/server.conf
 </code></pre></div>    </div>
   </li>
-  <li>Añadimos la siguiente configuración:
+  <li>
+    <p>Añadimos la siguiente configuración:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> dev tun
  remote vpn-maria
  ifconfig ip_servidor ip_cliente
@@ -352,11 +360,15 @@
  verb 3
 </code></pre></div>    </div>
   </li>
-  <li>Reinicio el servicio:
+  <li>
+    <p>Reinicio el servicio:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> systemctl restart openvpn
 </code></pre></div>    </div>
   </li>
-  <li>Comprobamos que el servicio está activo:
+  <li>
+    <p>Comprobamos que el servicio está activo:</p>
+
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ip route
 </code></pre></div>    </div>
   </li>
@@ -599,50 +611,73 @@
   </li>
 </ul>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.]]></summary></entry><entry><title type="html">Recolección centralizada de logs de sistema, mediante journald</title><link href="/aso/2023/01/04/journald.html" rel="alternate" type="text/html" title="Recolección centralizada de logs de sistema, mediante journald" /><published>2023-01-04T11:59:07+01:00</published><updated>2023-01-04T11:59:07+01:00</updated><id>/aso/2023/01/04/journald</id><content type="html" xml:base="/aso/2023/01/04/journald.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>, o similares.</p>
 
+<table>
+  <thead>
+    <tr>
+      <th>Máquina</th>
+      <th>Distribución</th>
+      <th>IP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ALFA</td>
+      <td>Debian 11</td>
+      <td>172.22.201.46</td>
+    </tr>
+    <tr>
+      <td>BETA</td>
+      <td>Debian 11</td>
+      <td>172.16.0.200</td>
+    </tr>
+    <tr>
+      <td>CHARLIE</td>
+      <td>Debian 11</td>
+      <td>192.168.0.2</td>
+    </tr>
+    <tr>
+      <td>DELTA</td>
+      <td>Debian 11</td>
+      <td>192.168.0.6</td>
+    </tr>
+  </tbody>
+</table>
+
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
 <h1 id="preparación-del-escenario">Preparación del escenario</h1>
 
 <p>Lo primero que deberemos hacer es instalar en cada una de las máquinas de nuestro escenario, incluyendo los contenedores de LXC el paquete <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code>:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>systemd-journal-remote
-</code></pre></div></div>
-
 <ul>
   <li>
-    <p>ALFA</p>
+    <p>ALFA, CHARLIE y DELTA</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>systemd-journal-remote
+</code></pre></div>    </div>
   </li>
   <li>
-    <p>BETA</p>
-  </li>
-  <li>
-    <p>CHARLIE</p>
-  </li>
-  <li>
-    <p>DELTA</p>
+    <p>BRAVO</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>systemd-journal-remote
+</code></pre></div>    </div>
   </li>
 </ul>
+
+<p><img src="/assets/images/journald/1.png" alt="1" /></p>
 
 <h1 id="configuración-de-journald-en-alfa">Configuración de journald EN <strong>ALFA</strong></h1>
 
 <p>En esta máquina, vamos a configurar el servicio <code class="language-plaintext highlighter-rouge">systemd-journal-remote</code> para que recoga los logs de las demás máquinas. Al no hacer uso del https, vamos a desactivarlo en el fichero <code class="language-plaintext highlighter-rouge">/lib/systemd/system/systemd-journal-remote.service</code>:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span>Journal Remote Service
-Documentation
-<span class="nv">After</span><span class="o">=</span>network.target
-<span class="nv">Requires</span><span class="o">=</span>network.target
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo grep</span> <span class="nt">--color</span> <span class="nt">-E</span> <span class="nt">--</span> <span class="s1">'--listen-http'</span> /lib/systemd/system/systemd-journal-remote.service
+<span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s1">'s/--listen-https=-3/--listen-http=-3/g'</span> /lib/systemd/system/systemd-journal-remote.service
+<span class="nb">sudo grep</span> <span class="nt">--color</span> <span class="nt">-E</span> <span class="nt">--</span> <span class="s1">'--listen-http'</span> /lib/systemd/system/systemd-journal-remote.service
+</code></pre></div></div>
 
-<span class="o">[</span>Service]
-<span class="nv">Type</span><span class="o">=</span>simple
-<span class="nv">ExecStart</span><span class="o">=</span>/usr/lib/systemd/systemd-journal-remote
-<span class="nv">Restart</span><span class="o">=</span>on-failure
-<span class="nv">RestartSec</span><span class="o">=</span>5s
-<span class="nv">StandardOutput</span><span class="o">=</span>null
-<span class="nv">StandardError</span><span class="o">=</span>null
+<p>Reiniciamos el demonio:</p>
 
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
 </code></pre></div></div>
 
 <p>Activamos el servicio:</p>
@@ -657,11 +692,17 @@ systemctl <span class="nb">enable </span>systemd-journal-remote.socket
 systemctl status systemd-journal-remote.socket
 </code></pre></div></div>
 
-<p>Solo nos resta por cerciorarnos que el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> existe y tiene los permisos adecuados.De no ser así, lo creamos y le damos los permisos adecuados:</p>
+<p><img src="/assets/images/journald/2.png" alt="2" /></p>
+
+<p>Solo nos resta por cerciorarnos que el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> exista y tenga los permisos adecuados.De no ser así, lo creamos y le damos los permisos adecuados:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /var/log/journal/remote
 <span class="nb">chown </span>systemd-journal-remote:systemd-journal-remote /var/log/journal/remote
 </code></pre></div></div>
+
+<p><img src="/assets/images/journald/3.png" alt="3" /></p>
+
+<p>Como podemos ver, en mi caso, el directorio existe y con los permisos que le pertenece.</p>
 
 <h1 id="configuración-de-los-servidores-bravo-charlie-y-delta">Configuración de los servidores Bravo, Charlie y Delta</h1>
 
@@ -670,47 +711,48 @@ systemctl status systemd-journal-remote.socket
 <p>Algo a tener en cuenta será que el usuario <code class="language-plaintext highlighter-rouge">systemd</code> tendrá el directorio <code class="language-plaintext highlighter-rouge">home</code> en <code class="language-plaintext highlighter-rouge">/run/systemd</code>, por lo que deberemos crearlo y darle los permisos adecuados:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#BRAVO</span>
-<span class="nb">sudo </span>adduser <span class="nt">--system</span> <span class="nt">--home</span> /run/systemd <span class="nt">--no-create-home</span> <span class="nt">--user-group</span> systemd-journal-upload
+<span class="nb">sudo </span>adduser <span class="nt">--system</span> <span class="nt">--home-dir</span> /run/systemd <span class="nt">--no-create-home</span> <span class="nt">--user-group</span> systemd-journal-upload
 
-<span class="c">#CHARLIE</span>
-<span class="nb">sudo </span>adduser <span class="nt">--system</span> <span class="nt">--home</span> /run/systemd <span class="nt">--no-create-home</span> <span class="nt">--user-group</span> systemd-journal-upload
-
-<span class="c">#DELTA</span>
-<span class="nb">sudo </span>adduser <span class="nt">--system</span> <span class="nt">--home</span> /run/systemd <span class="nt">--no-create-home</span> <span class="nt">--user-group</span> systemd-journal-upload
+<span class="c">#CHARLIE y DELTA</span>
+<span class="nb">sudo </span>adduser <span class="nt">--system</span> <span class="nt">--home</span> /run/systemd <span class="nt">--no-create-home</span> <span class="nt">--disabled-login</span> <span class="nt">--group</span> systemd-journal-upload
 </code></pre></div></div>
+
+<p><img src="/assets/images/journald/4.png" alt="4" /></p>
 
 <p>Una vez configurado el usuario en cada una de los clientes, vamos a configurar el fichero <code class="language-plaintext highlighter-rouge">/etc/systemd/journald-upload.conf</code> para que estos mismos clientes envíen sus logs a la máquina ALFA:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s1">'s/#URL=/URL=http:\/\/alfa.maria.gonzalonazareno.org:19531/g'</span> /etc/systemd/journald-upload.conf
-</code></pre></div></div>
+<p>``bash
+URL=http://alfa.mariajesus.gonzalonazareno.org:19532</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Activamos el servicio `systemd-journal-upload` en cada uno de los clientes:
 
-<p>Como apreciamos en la siguiente imagen, los cambios se han efectuado correctamente:</p>
-
-<p><img src="/assets/images/journald/journald-upload.conf.png" alt="journald-upload.conf" /></p>
-
-<p>Comprobado esto, solo nos queda activar el servicio <code class="language-plaintext highlighter-rouge">systemd-journal-upload</code> en cada uno de los clientes:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#BRAVO, CHARLIE Y DELTA</span>
-<span class="nb">sudo </span>systemctl restart systemd-journal-upload.service
+```bash
+#BRAVO, CHARLIE Y DELTA
+sudo systemctl restart systemd-journal-upload.service
 </code></pre></div></div>
 
 <p>Para finalizar, podemos comprobar que en el directorio <code class="language-plaintext highlighter-rouge">/var/log/journal/remote</code> de la máquina ALFA, se han creado los ficheros generados por los logs de los clientes:</p>
 
-<p><img src="/assets/images/journald/remote.png" alt="remote" /></p>
+<p><img src="/assets/images/journald/5.png" alt="5" /></p>
 
 <p>Haciendo uso del comando journalctl, podemos ver los logs de cada cliente:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#BRAVO</span>
 <span class="nb">sudo </span>journalctl <span class="nt">--file</span> /var/log/journal/remote/remote-172.16.0.200.journal
+</code></pre></div></div>
+<p><img src="/assets/images/journald/6.png" alt="6" /></p>
 
-<span class="c">#CHARLIE</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#CHARLIE</span>
 <span class="nb">sudo </span>journalctl <span class="nt">--file</span> /var/log/journal/remote/remote-192.168.0.2.journal
+</code></pre></div></div>
 
-<span class="c">#DELTA</span>
+<p><img src="/assets/images/journald/7.png" alt="7" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#DELTA</span>
 <span class="nb">sudo </span>journalctl <span class="nt">--file</span> /var/log/journal/remote/remote-192.168.0.3.journal
 </code></pre></div></div>
 
-<p><img src="/assets/images/journald/journalctl.png" alt="journalctl" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete systemd-journal-remote, o similares.]]></summary></entry><entry><title type="html">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</title><link href="/hlc+sri/2023/01/03/dns.html" rel="alternate" type="text/html" title="Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack" /><published>2023-01-03T11:06:21+01:00</published><updated>2023-01-03T11:06:21+01:00</updated><id>/hlc+sri/2023/01/03/dns</id><content type="html" xml:base="/hlc+sri/2023/01/03/dns.html"><![CDATA[<p>Tomando como referencia el <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.</p>
+<p><img src="/assets/images/journald/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete systemd-journal-remote, o similares.]]></summary></entry><entry><title type="html">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</title><link href="/hlc+sri/2023/01/03/dns.html" rel="alternate" type="text/html" title="Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack" /><published>2023-01-03T11:06:21+01:00</published><updated>2023-01-03T11:06:21+01:00</updated><id>/hlc+sri/2023/01/03/dns</id><content type="html" xml:base="/hlc+sri/2023/01/03/dns.html"><![CDATA[<p>Tomando como referencia el <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.</p>
 
 <h1 id="servidor-dns">Servidor DNS</h1>
 <p>Vamos a instalar un servidor dns en <code class="language-plaintext highlighter-rouge">charlie</code> que nos permita gestionar la resolución directa e inversa de nuestros nombres. Vamos a poseer un servidor dns con autoridad sobre un subdominio de nuestro dominio principal gonzalonazareno.org, que se llamará <code class="language-plaintext highlighter-rouge">mariajesus.gonzalonazareno.org</code>.</p>
