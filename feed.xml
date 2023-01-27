@@ -1,4 +1,575 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-25T18:55:22+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-27T09:23:23+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar un servidor VPN con WireGuard. WireGuard es un protocolo de túnel de código abierto que se ha convertido en una alternativa a OpenVPN. WireGuard es más rápido, más ligero y más fácil de configurar que OpenVPN.</p>
+
+<h2 id="preparando-el-escenario">Preparando el escenario</h2>
+
+<p>El escenario estará compuesto por tres máquinas clientes:</p>
+
+<ul>
+  <li>Cliente 1: Máquina debian 11</li>
+  <li>Cliente 2: Máquina windows 10</li>
+  <li>Cliente 3: Máquina android 11</li>
+</ul>
+
+<p>La máquina servidor será una máquina debian 11, y en este caso será nuestra máquina anfitriona, aunque para las pruebas crearemos otra máquina debian 11 conectada a la red interna de la máquina anfitriona.</p>
+
+<p>El cliente interno se creará con vagrant y le cambiaremos la ruta por defecto para que se conecte a la red interna de la máquina anfitriona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+    nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Interno"</span>
+    nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+    </span>nodo1.vm.network :private_network,
+      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"vpn1"</span>,
+      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.10"</span>,
+      :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+end
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
+ip r add default via 192.168.10.1
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/0.png" alt="0" /></p>
+
+<h2 id="instalando-wireguard">Instalando WireGuard</h2>
+
+<p>Instalamos WireGuard en el servidor y configuramos el bit de forwarding.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Creamos los ficheros de configuración del servidor y generamos las claves.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /etc/wireguard/
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivatekey | wg pubkey <span class="o">&gt;</span> serverpublickey
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/1.png" alt="1" /></p>
+
+<p>Tras crear el par de claves, creamos el fichero de configuración del servidor.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Server config</span>
+<span class="o">[</span>Interface]
+<span class="c">#Direccion IP del servidor</span>
+Address <span class="o">=</span> 10.99.99.1
+<span class="c">#Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> qKbkP/TmF/VNr4rotbACobORgnScgXw6Ku/esS11ZW8<span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+<span class="c">#Reglas IPTables</span>
+PostUp <span class="o">=</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
+PostDown <span class="o">=</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-D</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/2.png" alt="2" /></p>
+
+<p>Terminado esto, activamos la interfaz y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/vpn/C/4.png" alt="4" /></p>
+
+<h2 id="configurando-el-cliente-externo">Configurando el cliente externo</h2>
+
+<p>Creamos el fichero vagrant para crear al cliente externo.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |v|
+        v.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+        nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+        nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Externo"</span>
+        nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+    </span>end
+end
+</code></pre></div></div>
+
+<p>Como hemos hecho en la máquina anterior, instalamos WireGuard y generamos las claves.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+</code></pre></div></div>
+
+<p>Creamos el fichero de configuración del cliente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#Direccion IP del cliente</span>
+Address <span class="o">=</span> 10.99.99.2
+<span class="c">#Clave privada del cliente</span>
+PrivateKey <span class="o">=</span> oPuAciROYYHY8uX6IqU3DcvU/WoybtBn7Y6zFOwOMH8<span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+<span class="c">#Reglas IPTables</span>
+PostUp <span class="o">=</span> ip route add 192.168.10.0/24 dev wg0
+PostDown <span class="o">=</span> ip route del 192.168.10.0/24 dev wg0
+
+<span class="o">[</span>Peer]
+<span class="c">#Clave publica del servidor</span>
+PublicKey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
+<span class="c">#Direccion IP del servidor</span>
+AllowedIPs <span class="o">=</span> 0.0.0.0/0
+<span class="c">#Endpoint del servidor</span>
+Endpoint <span class="o">=</span> 192.168.1.11:51820
+</code></pre></div></div>
+
+<p>Activamos la interfaz y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/5.png" alt="5" /></p>
+
+<p><strong>NOTA</strong>: Tras este paso, deberemos agregar la ruta por defecto en el cliente externo para que pueda acceder a la red interna.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
+Publickey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.2/32
+PersistentKeepAlive <span class="o">=</span> 25
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/6.png" alt="6" /></p>
+
+<p>Y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/7.png" alt="7" /></p>
+
+<p>Como podemos ver, el cliente externo puede acceder a la red interna.</p>
+
+<p><img src="/assets/images/vpn/C/9.png" alt="9" /></p>
+
+<p><img src="/assets/images/vpn/C/10.png" alt="10" /></p>
+
+<h2 id="configurando-el-cliente-windows">Configurando el cliente Windows</h2>
+
+<p>La configuración en windows es igual que en Linux, solo que en vez de usar el fichero de configuración, usaremos la aplicación WireGuard para Windows, que podremos descargarnos desde su <a href="https://www.wireguard.com/install/">página oficial</a>.</p>
+
+<p>Ya instalado, creamos un túnel vacñio y no tendremos que crear las claves, ya que las generará la aplicación.</p>
+
+<p><img src="/assets/images/vpn/C/11.png" alt="11" /></p>
+
+<p>Terminada la configuración en Windows, nos dirigimos de nuevo en el cliente interno y añadimos un nuevo peer.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Windows</span>
+<span class="o">[</span>Peer]
+Publickey <span class="o">=</span> <span class="nv">5pZtBRqvn9bceifMZypv1Z3F1CcQNLSGKRCBo1ooiVg</span><span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.3/32
+PersistentKeepAlive <span class="o">=</span> 25
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p>Tras esto, activamos el tunel en Windows.</p>
+
+<p><img src="/assets/images/vpn/C/12.png" alt="12" /></p>
+
+<p>Si nos dirigimos al servidor, podemos ver como se añade un nuevo peer.</p>
+
+<p><img src="/assets/images/vpn/C/13.png" alt="13" /></p>
+
+<h3 id="comprobaciones">Comprobaciones</h3>
+
+<ul>
+  <li>Comprobamos que el cliente windows puede acceder a la red interna.</li>
+</ul>
+
+<p><img src="/assets/images/vpn/C/14.png" alt="14" /></p>
+
+<ul>
+  <li>Comprobamos que el cliente interno tiene acceso a la red interna.</li>
+</ul>
+
+<p><img src="/assets/images/vpn/C/15.png" alt="15" /></p>
+
+<h2 id="cliente-android">Cliente Android</h2>
+
+<p>Descargamos la aplicación WireGuard desde la <a href="https://play.google.com/store/apps/details?id=com.wireguard.android&amp;hl=es&amp;gl=US">Play Store</a>.</p>
+
+<p>En la propia aplicación, nos da tres opciones para crear el tunel:</p>
+<ul>
+  <li>Importar desde archivo</li>
+  <li>Importar desde QR</li>
+  <li>Crear desde cero</li>
+</ul>
+
+<p>De las tres opciones, he eligido la de <code class="language-plaintext highlighter-rouge">importar desde QR</code>, ya que es la más sencilla. Por ello, nos dirigimos al servidor y ejecutamos el siguiente comando.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+</code></pre></div></div>
+
+<p>Generamos el fichero de configuración como lo realizamos con el cliente linux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano AndroidClient.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#Direccion IP del cliente</span>
+Address <span class="o">=</span> 10.99.99.4
+<span class="c">#Clave privada del cliente</span>
+PrivateKey <span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+
+<span class="o">[</span>Peer]
+<span class="c">#Clave publica del servidor</span>
+Publickey <span class="o">=</span> 
+<span class="c">#Direccion IP del servidor</span>
+AllowedIPs <span class="o">=</span>
+<span class="c">#Endpoint del servidor</span>
+Endpoint <span class="o">=</span>
+</code></pre></div></div>
+
+<p>Para generar el QR, nos instalaremos el paquete <code class="language-plaintext highlighter-rouge">qrencode</code> y lo ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qrencode <span class="nt">-t</span> ansiutf8 &lt; AndroidClient.conf
+</code></pre></div></div>
+
+<p>Escaneamos el QR con la aplicación WireGuard en Android y ya tendremos el tunel configurado. Solo nos quedaría configurar un nuevo bloque peer en el servidor linux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
+<span class="c">#Clave publica del cliente</span>
+Publickey <span class="o">=</span>
+<span class="c">#Direccion IP del cliente</span>
+AllowedIPs <span class="o">=</span>
+<span class="c">#Tiempo de espera</span>
+PersistentKeepAlive <span class="o">=</span>
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/16.png" alt="16" /></p>
+
+<h2 id="comprobaciones-1">Comprobaciones</h2>
+
+<p>Desde el propio cliente podemos comprobar el funcionamiento de la VPN.</p>
+
+<p><img src="/assets/images/vpn/C/17.png" alt="17" /></p>
+
+<p>Desde el servidor podemos comprobar que el cliente Android se ha conectado correctamente.</p>
+
+<p><img src="/assets/images/vpn/C/18.png" alt="18" /></p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>Comparando OpenVPN y WireGuard, podemos ver que WireGuard es mucho más sencillo de configurar y que tiene un rendimiento mucho mejor. Con Wireguard no es necesario que creamos un certificado para cada cliente, ya que solo necesitamos la clave pública del cliente y la clave privada del servidor.</p>
+
+<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado como <a href="https://ngrok.com/">ngrok</a> para que el servidor sea accesible desde internet.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p>En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:</p>
+
+<ul>
+  <li>Cada equipo estará conectado a dos redes, una de ellas en común</li>
+  <li>Para la autenticación de los extremos se usarán obligatoriamente certificados digitales, que se generarán utilizando openssl y se almacenarán en el directorio /etc/openvpn, junto con con los parámetros Diffie-Helman y el certificado de la propia Autoridad de Certificación.</li>
+  <li>Se utilizarán direcciones de la red 10.99.99.0/24 para las direcciones virtuales de la VPN.</li>
+  <li>Tras el establecimiento de la VPN, una máquina de cada red detrás de cada servidor VPN debe ser capaz de acceder a una máquina del otro extremo.</li>
+</ul>
+
+<p><img src="/assets/images/vpn/B/VPN.png" alt="escenario" /></p>
+
+<h2 id="preparando-el-escenario">Preparando el escenario</h2>
+
+<p>Vamos a dividir el escenario en dos, por una parte, un escenario que actuará de servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.10"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
+      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente"</span>
+      nodo2.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.11"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+  end
+</code></pre></div></div>
+
+<p>Y por otra parte, un escenario que actuará de cliente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor2"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.10"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
+      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente2"</span>
+      nodo2.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.11"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+end
+</code></pre></div></div>
+
+<h2 id="configurando-el-servidor">Configurando el servidor</h2>
+
+<p>Lo primero que tendremos que hacer es instalar el servicio openvpn y crearemos el fichero <code class="language-plaintext highlighter-rouge">.vars</code> que contendrá las variables que usaremos en el resto de la configuración:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>openvpn
+
+<span class="nb">cp</span> /usr/share/easy-rsa/vars.example /etc/openvpn/easy-rsa/vars
+</code></pre></div></div>
+
+<p>Ahora, vamos a editar el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/vars</code> y vamos a modificar las siguientes variables:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>set_var EASYRSA_REQ_COUNTRY     <span class="s2">"ES"</span>
+set_var EASYRSA_REQ_PROVINCE    <span class="s2">"Sevilla"</span>
+set_var EASYRSA_REQ_CITY        <span class="s2">"Dos Hermanas"</span>
+set_var EASYRSA_REQ_ORG         <span class="s2">"MJAR"</span>
+set_var EASYRSA_REQ_EMAIL       <span class="s2">"mariajesus.alloza@outlook.es"</span>
+set_var EASYRSA_REQ_OU          <span class="s2">"VPN site to site"</span>
+</code></pre></div></div>
+
+<p>Creamos eldirectorio donde almacenaremos la Autoridad Certificadore (CA) y generamos la clave Diffie-Helman:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /usr/share/easy-rsa
+./easyrsa init-pki
+<span class="nt">---</span>
+./easyrsa gen-dh
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/1.png" alt="1" /></p>
+
+<p><img src="/assets/images/vpn/B/2.png" alt="2" /></p>
+
+<p>Terminado esto, construimos la Autoridad certificadora:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-ca
+<span class="c">#Frase de paso: admin</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/3.png" alt="3" /></p>
+
+<p>El siguiente paso será que, ya teniendo nuestra Autoridad Certificadora, crearemos y firmaremos el certificado para <code class="language-plaintext highlighter-rouge">server</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-req server
+./easyrsa sign-req server server
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/4.png" alt="4" /></p>
+
+<p><img src="/assets/images/vpn/B/5.png" alt="5" /></p>
+
+<p>Ahora le toca el turno al segundo escenario, y comenzaremos firmando el certificado para <code class="language-plaintext highlighter-rouge">server2</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-req server2
+./easyrsa sign-req client server2
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/6.png" alt="6" /></p>
+
+<p><img src="/assets/images/vpn/B/7.png" alt="7" /></p>
+
+<p>Copiamos los certificados y claves generadas al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/server</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Copiamos los ficheros</span>
+<span class="nb">cp</span> <span class="nt">-rp</span> /etc/openvpn/easy-rsa/pki<span class="o">{</span>ca.crt,dh.pem,issued/server.crt,private/server.key<span class="o">}</span> /etc/openvpn/server
+
+<span class="c">#Enviamos por scp los ficheros</span>
+scp <span class="nt">-r</span> /etc/openvpn/server vagrant@192.168.121.21:
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/8.png" alt="8" /></p>
+
+<p><img src="/assets/images/vpn/B/9.png" alt="9" /></p>
+
+<p>Creamos el fichero de configuración del servidor VPN:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /usr/share/doc/openvpn/examples/sample-config-files/server.conf /etc/openvpn/server/server.conf
+</code></pre></div></div>
+
+<p>Y editamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/server/servidor.conf</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dev tun
+ifconfig 10.99.99.1 10.99.99.2
+route 172.20.0.0 255.255.255.0
+tls-server
+ca ca.crt
+cert server.crt
+key server.key
+dh dh.pem
+comp-lzo
+keepalive 10 120
+log /var/log/openvpn/server.log
+verb 3
+askpass contra.txt
+</code></pre></div></div>
+
+<p>Iniciamos el servicio y nos cercioramos de que está activo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-server@servidor
+systemctl start openvpn-server@servidor
+systemctl status openvpn-server@servidor
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/10.png" alt="10" /></p>
+
+<p>Configuramos el bit de forwarding en el servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Y configuramos el cliente del primer escenario cambiando la ruta por defecto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
+ip route add default via 172.20.0.20
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/11.png" alt="11" /></p>
+
+<h2 id="configurando-el-cliente">Configurando el cliente</h2>
+
+<p>Ahora le toca el turno a <code class="language-plaintext highlighter-rouge">servidor2</code> y comenzaremos moviendo los ficheros de los certificados y claves generadas al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/client</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Copiamos los ficheros</span>
+<span class="nb">mv </span>ca.crt /etc/openvpn/client
+<span class="nb">mv </span>server2.crt /etc/openvpn/client
+<span class="nb">mv </span>server2.key /etc/openvpn/client
+</code></pre></div></div>
+
+<p>Creamos el fichero de configuración tomando primero como referencia el fichero de configuración del servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /usr/share/doc/openvpn/examples/sample-config-files/client.conf /etc/openvpn/client/client.conf
+</code></pre></div></div>
+
+<p>Y editamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/client/cliente.conf</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dev tun
+
+remote 192.168.121.115
+ifconfig 10.99.99.2 10.99.99.1
+route 172.30.0.0 255.255.255.0
+tls-client
+ca ca.crt
+cert server.crt
+key server.key
+comp-lzo
+keepalive 10 120
+verb 3
+askpass contra2.txt
+</code></pre></div></div>
+
+<p>Iniciamos el servicio y nos cercioramos de que está activo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start openvpn-client@cliente
+systemctl status openvpn-client@cliente
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/B/12.png" alt="12" /></p>
+
+<p>Configuramos el bit de forwarding en el servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Y configuramos el cliente del primer escenario cambiando la ruta por defecto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
+ip route add default via 172.20.0.20
+</code></pre></div></div>
+
+<h2 id="comprobando-la-conexión">Comprobando la conexión</h2>
+
+<p>Comprobamos que el tunel se ha creado correctamente:</p>
+
+<ul>
+  <li>
+    <p>Rutas del escenario 1</p>
+
+    <p><img src="/assets/images/vpn/B/13.png" alt="13" /></p>
+  </li>
+  <li>
+    <p>Rutas del escenario 2</p>
+
+    <p><img src="/assets/images/vpn/B/14.png" alt="14" /></p>
+  </li>
+  <li>
+    <p>Conexión desde el cliente del escenario 1</p>
+
+    <p><img src="/assets/images/vpn/B/15.png" alt="15" /></p>
+  </li>
+  <li>
+    <p>Conexión desde el cliente del escenario 2</p>
+
+    <p><img src="/assets/images/vpn/B/16.png" alt="16" /></p>
+  </li>
+</ul>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>Una VPN site to site es una solución muy útil para conectar dos redes privadas de forma segura. En este caso, hemos utilizado OpenVPN, pero existen otras soluciones como IPsec, que también son muy interesantes.</p>
+
+<p>En este caso, hemos utilizado dos escenarios, pero también se podría utilizar un solo escenario, con dos clientes conectados a un servidor VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:]]></summary></entry><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
 
 <p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
 
@@ -292,125 +863,268 @@
 
 <p>Y si accedemos al Tomcat-Manager, veremos que la aplicación se ha desplegado correctamente.</p>
 
-<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry><entry><title type="html">VPN con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/09/vpn.html" rel="alternate" type="text/html" title="VPN con OpenVPN y certificados x509" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/seguridad/2023/01/09/vpn</id><content type="html" xml:base="/seguridad/2023/01/09/vpn.html"><![CDATA[<h1 id="qué-es-una-vpn-y-para-qué-sirve">Qué es una VPN y para qué sirve</h1>
+<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry><entry><title type="html">Acceso remoto con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/09/vpn.html" rel="alternate" type="text/html" title="Acceso remoto con OpenVPN y certificados x509" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/seguridad/2023/01/09/vpn</id><content type="html" xml:base="/seguridad/2023/01/09/vpn.html"><![CDATA[<h2 id="qué-es-una-vpn-y-para-qué-sirve">Qué es una VPN y para qué sirve</h2>
 
 <p>Una VPN (Virtual Private Network) es una red privada virtual que permite conectar dos o más redes privadas entre sí a través de una red pública como Internet. Las VPNs son muy útiles para conectar redes privadas a través de Internet de forma segura, ya que los datos que se transmiten a través de una VPN están cifrados y protegidos de forma que sólo los usuarios autorizados pueden acceder a ellos.</p>
 
-<h1 id="acceso-remoto-con-openvpn-y-certificados-x509">Acceso remoto con OpenVPN y certificados x509</h1>
+<h2 id="acceso-remoto-con-openvpn-y-certificados-x509">Acceso remoto con OpenVPN y certificados x509</h2>
 
 <p>En este apartado vamos a realizar un VPN de acceso remoto con OpenVPN y certificados x509. Para ello vamos a utilizar una máquina virtual en Proxmox con Debian 11.</p>
 
+<h2 id="preparando-el-escenario">Preparando el escenario</h2>
+
+<ol>
+  <li>
+    <p>Vamos a crear el escenario con 3 máquinas virtuales en Vagrant. Para ello, creamosun directorio y ejecutamos lo siguiente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> vagrant init
+</code></pre></div>    </div>
+
+    <p>Se nos creará el fichero Vagrantfile. Añadimos lo siguiente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+     config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+         libvirt.memory <span class="o">=</span> 1024
+     end
+     config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+       nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+       nodo1.vm.hostname <span class="o">=</span> <span class="s2">"VPNServer"</span>
+       nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+       </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN1"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.10"</span>,
+        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+       nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN2"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.11.10"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+     config.vm.define :nodo2 <span class="k">do</span> |nodo2|
+       nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+       </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+       nodo2.vm.hostname <span class="o">=</span> <span class="s2">"VPNClient1"</span>
+       nodo2.vm.network :private_network,
+         :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN1"</span>,
+         :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+         :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.11"</span>,
+         :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+     config.vm.define :nodo3 <span class="k">do</span> |nodo3|
+         nodo3.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+         </span>nodo3.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+         nodo3.vm.hostname <span class="o">=</span> <span class="s2">"VPNClient2"</span>
+         nodo3.vm.network :private_network,
+           :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN2"</span>,
+           :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+           :ip <span class="o">=&gt;</span> <span class="s2">"192.168.11.11"</span>,
+           :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+ end
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<ul>
+  <li>
+    <p>Instalamos <code class="language-plaintext highlighter-rouge">openvpn</code> en <code class="language-plaintext highlighter-rouge">VPNServer</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>openvpn
+</code></pre></div>    </div>
+
+    <p>Y activamos el bit de IP forwarding:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>La configuración que aparece en el fichero <code class="language-plaintext highlighter-rouge">/usr/share/easy-rsa</code> al fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cp</span> <span class="nt">-r</span> /usr/share/easy-rsa /etc/openvpn
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/</code> y ejecutamos en la consola <code class="language-plaintext highlighter-rouge">./easyrsa init-pki</code> para inicializar el PKI.</p>
+
+    <p><img src="/assets/images/vpn/A/1.png" alt="1" /></p>
+  </li>
+</ul>
+
 <h2 id="creamos-la-clave-privada-y-realizamos-la-firma-de-la-misma">Creamos la clave privada y realizamos la firma de la misma</h2>
 
-<ol>
-  <li>Creamos nuestra clave desde root:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openssl genrsa 4096 <span class="o">&gt;</span> /etc/ssl/private/openvpn.key
-</code></pre></div>    </div>
-  </li>
-  <li>Creamos el certificado de la clave privada:
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> openssl req <span class="nt">-new</span> <span class="nt">-key</span> /etc/ssl/private/openvpn.key <span class="nt">-out</span> /root/openvpn.csr
-
- Country Name <span class="o">(</span>2 letter code<span class="o">)</span> <span class="o">[</span>AU]:ES
- State or Province Name <span class="o">(</span>full name<span class="o">)</span> <span class="o">[</span>Some-State]:Sevilla
- Locality Name <span class="o">(</span>eg, city<span class="o">)</span> <span class="o">[]</span>:Dos Hermanas
- Organization Name <span class="o">(</span>eg, company<span class="o">)</span> <span class="o">[</span>Internet Widgits Pty Ltd]:Maria
- Organizational Unit Name <span class="o">(</span>eg, section<span class="o">)</span> <span class="o">[]</span>:ASIR2
- Common Name <span class="o">(</span>e.g. server FQDN or YOUR name<span class="o">)</span> <span class="o">[]</span>:vpn-maria
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<h2 id="configuramos-el-servidor-openvpn">Configuramos el servidor OpenVPN</h2>
-
-<ol>
+<ul>
   <li>
-    <p>Instalamos el paquete openvpn:</p>
+    <p>Ya completado el paso anterior, vamos a generar el certificado de la Autoridad de Certificación (CA) y la clave con la que vamos a firmar los certificados del servidor y los clientes.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>openvpn
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ./easyrsa build-ca
+    
+  <span class="c">#Frase de paso: admin</span>
 </code></pre></div>    </div>
+
+    <p><img src="/assets/images/vpn/A/2.png" alt="2" /></p>
+
+    <p><strong>NOTA</strong>: La clave privada la encontraremos en <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/pki/private/ca.key</code> y el certificado en <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/pki/ca.crt</code>.</p>
   </li>
-  <li>
-    <p>Creamos el directorio de configuración:</p>
+</ul>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> /etc/openvpn
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el fichero de configuración del servidor:</p>
+<p>Vamos a generar parámetros Diffie-Helman para la autenticación de los extremos de la VPN. Pero, ¿por qué es necesario? El fin de los parámetros Diffie-Helman es evitar que un atacante pueda descifrar los mensajes cifrados en la VPN. Para ello, se generan dos números primos grandes y se calcula el módulo de su producto. Este módulo se envía a los extremos de la VPN, que lo utilizan para generar una clave de sesión.</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano /etc/openvpn/server.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Añadimos la siguiente configuración:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-dh
+</code></pre></div></div>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> dev tun
- remote vpn-maria
- ifconfig ip_servidor ip_cliente
- pull
- proto tcp-client
- tls-client
- remote-cert-tls server
- ca /etc/ssl/certs/openvpn.crt
- cert /etc/openvpn/openvpn.crt
- key /etc/ssl/private/openvpn.key
- comp-lzo
- keepalive 10 60
- log /var/log/openvpn.log
- verb 3
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reinicio el servicio:</p>
+<p><img src="/assets/images/vpn/A/3.png" alt="3" /></p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> systemctl restart openvpn
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que el servicio está activo:</p>
+<p>Ahora le toca elturno al certificado y a la clave privada del servidor, teniendo en cuenta que deshabilitaremos la frase de paso. Para ello, ejecutamos:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ip route
-</code></pre></div>    </div>
-  </li>
-</ol>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-server-full server nopass
+</code></pre></div></div>
 
-<h2 id="configuracion-del-servidor-openvpn-entre-dos-equipos-en-el-cloud">Configuracion del servidor OpenVPN entre dos equipos en el cloud.</h2>
+<p><img src="/assets/images/vpn/A/4.png" alt="4" /></p>
 
-<p>Uno de los dos equipos (el que actuará como servidor) estará conectado a dos redes.</p>
+<p>Ya configurado el servidor, vamos a ponernos manos a la obra y le toca el turno a <code class="language-plaintext highlighter-rouge">VPNClient1</code>.</p>
 
-<p>Para la autenticación de los extremos se usarán obligatoriamente certificados digitales, que se generarán utilizando openssl y se almacenarán en el directorio /etc/openvpn, junto con  los parámetros Diffie-Helman y el certificado de la propia Autoridad de Certificación.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-client-full client1 nopass
+</code></pre></div></div>
 
-<p>Se utilizarán direcciones de la red 10.99.99.0/24 para las direcciones virtuales de la VPN. La dirección 10.99.99.1 se asignará al servidor VPN.</p>
+<p><img src="/assets/images/vpn/A/5.png" alt="5" /></p>
 
-<p>Los ficheros de configuración del servidor y del cliente se crearán en el directorio /etc/openvpn de cada máquina, y se llamarán servidor.conf y cliente.conf respectivamente.</p>
+<p>Realizados todos estos pasos, nos quedaría enviar los ficheros de configuración del servidor hacia el cliente. Por ello, (y para no caer en el desastre de no tener localizados los ficheros de configuración) vamos a crear un directorio en el que almacenarlos.</p>
 
-<p>Tras el establecimiento de la VPN, la máquina cliente debe ser capaz de acceder a una máquina que esté en la otra red a la que está conectado el servidor.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Creamos el directorio</span>
+<span class="nb">mkdir</span> /etc/openvpn/VPNClient1
 
-<h3 id="proceso-de-configuración-del-escenario">Proceso de configuración del escenario</h3>
+<span class="c">#Copiamos los ficheros</span>
+<span class="nb">cp</span> <span class="nt">-rp</span> /etc/openvpn/easy-rsa/pki<span class="o">{</span>ca.crt,issued/VPNClient1.crt,private/VPNClient1.key<span class="o">}</span>
 
-<ol>
-  <li></li>
-  <li></li>
-  <li></li>
-</ol>
+<span class="c">#Cambiamos los propietarios</span>
+<span class="nb">chown</span> <span class="nt">-R</span> vagrant: /etc/openvpn/VPNClient1/
 
-<h1 id="acceso-remoto-site-to-site-con-openvpn-y-certificados-x509">Acceso remoto site to site con OpenVPN y certificados x509</h1>
+<span class="c">#Enviamos por scp los ficheros al cliente</span>
+scp <span class="nt">-r</span> /home/vagrant/VPNClient1 vagrant@192.168.10.11:
+</code></pre></div></div>
 
-<p>En este apartado vamos a realizar un VPN de acceso remoto site to site con OpenVPN y certificados x509. Para ello vamos a utilizar una máquina virtual en Proxmox con Debian 11.</p>
+<p><img src="/assets/images/vpn/A/6.png" alt="6" /></p>
 
-<h2 id="configuracion-del-servidor-openvpn-entre-dos-equipos-en-el-cloud-1">Configuracion del servidor OpenVPN entre dos equipos en el cloud.</h2>
+<p><img src="/assets/images/vpn/A/7.png" alt="7" /></p>
 
-<p>Cada equipo estará conectado a dos redes, una de ellas en común</p>
+<p>Nos dirigimos al servidor y creamos el fichero de configuración con el que configuraremos (valga la redundancia), el tunel VPN.</p>
 
-<p>Para la autenticación de los extremos se usarán obligatoriamente certificados digitales, que se generarán utilizando openssl y se almacenarán en el directorio /etc/openvpn, junto con con los parámetros Diffie-Helman y el certificado de la propia Autoridad de Certificación.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/openvpn/server/server.conf
+</code></pre></div></div>
 
-<p>Se utilizarán direcciones de la red 10.99.99.0/24 para las direcciones virtuales de la VPN.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Configuracion del servidor</span>
 
-<p>Tras el establecimiento de la VPN, una máquina de cada red detrás de cada servidor VPN debe ser capaz de acceder a una máquina del otro extremo.</p>
+<span class="c">#Puerto de escucha, protocolo y dispositivo</span>
+port 1194
+proto udp
+dev tun
 
-<h1 id="acceso-remoto-con-wireguard">Acceso remoto con Wireguard</h1>
+<span class="c">#Autenticacion</span>
+ca /etc/openvpn/easy-rsa/pki/ca.crt
+cert /etc/openvpn/easy-rsa/pki/issued/server.crt
+key /etc/openvpn/easy-rsa/pki/private/server.key
+dh /etc/openvpn/easy-rsa/pki/dh.pem
 
-<p>En este apartado vamos amontar un acceso remoto, pero esta vez lo vamos a realizar con <strong>Wireguard</strong>. Para ello vamos a utilizar una máquina virtual en Proxmox con Debian 11. Para comprobar su funcionamiento vamos a utilizar clientes Windows, Linux y Android.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Qué es una VPN y para qué sirve]]></summary></entry><entry><title type="html">Despliegue de aplicaciones Java</title><link href="/iaw/2023/01/09/java-cms.html" rel="alternate" type="text/html" title="Despliegue de aplicaciones Java" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-cms</id><content type="html" xml:base="/iaw/2023/01/09/java-cms.html"><![CDATA[<p>En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.</p>
+<span class="c">#Topologia de red</span>
+topology subnet
+
+server 10.99.99.0 255.255.255.0
+ifconfig-pool-persist /var/log/openvpn/ipp.txt
+
+<span class="c">#Ruta hacia el cliente</span>
+push <span class="s2">"route 192.168.11.0 255.255.255.0"</span>
+
+
+keepalive 10 120
+cipher AES-256-CBC
+persist-key
+persist-tun
+status /var/log/openvpn/openvpn-status.log
+verb 3
+explicit-exit-notify 1
+</code></pre></div></div>
+
+<p>Tras toda esta configuración, vamos a habilitar el servicio de OpenVPN y a reiniciar el servicio.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-server@server
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/A/8.png" alt="8" /></p>
+
+<h2 id="configuración-del-cliente">Configuración del cliente</h2>
+
+<p>Ahora en nuestro VPNClient1 vamos a configurar el cliente, y empezaríamos instalando el paquete de OpenVPN y traspasamos los ficheros de configuración del servidor.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>openvpn
+<span class="nt">---</span>
+<span class="nb">mv </span>VPNClient1 /etc/openvpn/client/
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/A/9.png" alt="9" /></p>
+
+<p>Será necesario que cambiemos el propietario de los ficheros de configuración y, como hicimos en <code class="language-plaintext highlighter-rouge">VPNServer</code>, crearemos el fichero de configuración del cliente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Cambiamos el propietario</span>
+<span class="nb">chown </span>root: /etc//openvpn/client/<span class="k">*</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/openvpn/server/client1.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Configuracion del cliente</span>
+
+<span class="c">#Puerto de escucha, protocolo y dispositivo</span>
+client
+dev tun
+proto udp
+
+<span class="c">#Autenticacion</span>
+remote 192.168.10.10 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+
+<span class="c">#Autenticacion</span>
+ca /etc/openvpn/client/ca.crt
+cert /etc/openvpn/client/VPNClient1.crt
+key /etc/openvpn/client/VPNClient1.key
+
+<span class="c">#Topologia de red</span>
+remote-cert-tls server
+cipher AES-256-CBC
+verb 3
+</code></pre></div></div>
+
+<p>Habilitamos el servicio de OpenVPN y lo reiniciamos.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-client@client1
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/A/10.png" alt="10" /></p>
+
+<p>Como podemos ver en las siguientes imágenes, el tunel está creado y funcionando.</p>
+
+<p><img src="/assets/images/vpn/A/11.png" alt="11" /></p>
+
+<p>Por último, vamos a cambiar la ruta por defecto de nuestro cliente interno para que pueda usar el servidor como puerta de enlace.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
+ip route add default via 192.168.11.10
+</code></pre></div></div>
+
+<p>En las imágenes siguientes podemos ver que el cliente tiene acceso a Internet, y el servidor tiene acceso a la red interna del cliente.</p>
+
+<p><img src="/assets/images/vpn/A/12.png" alt="12" /></p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>En este ejercicio hemos configurado un servidor OpenVPN, y hemos creado un cliente que se conecta a él. El cliente tiene acceso a Internet, y el servidor tiene acceso a la red interna del cliente.</p>
+
+<p>Es importante destacar que, en este ejercicio, hemos utilizado certificados digitales para la autenticación de los extremos. Esto es debido a que, en la práctica, es la forma más segura de autenticar los extremos de la VPN.</p>
+
+<p>También es importante destacar que, en este ejercicio, hemos utilizado una topología de red en subredes, en la que cada extremo de la VPN tiene una dirección IP propia. Esto es debido a que es la forma más segura de configurar la VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Qué es una VPN y para qué sirve]]></summary></entry><entry><title type="html">Despliegue de aplicaciones Java</title><link href="/iaw/2023/01/09/java-cms.html" rel="alternate" type="text/html" title="Despliegue de aplicaciones Java" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-cms</id><content type="html" xml:base="/iaw/2023/01/09/java-cms.html"><![CDATA[<p>En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.</p>
 
 <h1 id="instalación-de-tomcat">Instalación de Tomcat</h1>
 
@@ -2112,1001 +2826,4 @@ systemctl status mariadb
       </li>
     </ul>
   </li>
-</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Certificado digital de persona física Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc. Tarea 1: Instalación del certificado NOTA: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico. Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito. Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador. A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado. Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente. Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado. Para ver las preferencias del navegador, accedemos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado. ¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta. Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad. En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado. Investiga como exportar la clave pública de tu certificado. Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS). Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil. Tarea 2: Validación del certificado Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación. Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador. Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Ingresamos en la página de VALIDe y seleccionamos la opción de Validar Certificado Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada. Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en Validar Como podemos ver, la clave es válida. Preparando el entorno de trabajo en Debian Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, sudo apt install libnss3-tools para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero .deb de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tarea 3: Firma electrónica Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero. Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma. echo "Hola. Soy Maria. Esto es una prueba de VALIDe." &gt; valide.txt echo "Hola. Soy Maria. Esto es una prueba de autofirma." &gt; autofirma.txt Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma. Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma Visualizar Firma y Verificar Firma. ¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero? Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma. ¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas. Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador. Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos. Tarea 4: Autenticación Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas. Accedemos a la web de la DGT para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos. Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos Cl@ave. El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos. HTTPS / SSL NOTA: Vamos a realizar esta práctica en una web que se acceda con el nombre maria.iesgn.org. Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa. Para ello, podemos hacer uso de los siguientes enlaces para buscar más información: Phil’s X509/SSL Guide How to setup your own CA with OpenSSL Crear autoridad certificadora (CA) y certificados autofirmados en Linux Creamos la Autoridad certificadora Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC. Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios. mkdir CA cd CA mkdir certs csr crl newcerts private chmod 700 private touch index.txt touch index.txt.attr echo 1000 &gt; serial Creamos las variables de entorno donde definiremos los datos de configuración de la CA. countryName_default="ES" stateOrProvinceName_default="Sevilla" localityName_default="Dos Hermanas" organizationName_default="Maria" organizationalUnitName_default="ASIR2" emailAddress_default="mariajesus.alloza@outlook.es" DIR_CA="./" Creamos el fichero de configuración. cat &lt;&lt;EOF&gt;$DIR_CA/openssl.conf [ ca ] # man ca default_ca = CA_default [ CA_default ] # Directory and file locations. dir = ${DIR_CA} certs = ${DIR_CA}certs crl_dir = ${DIR_CA}crl new_certs_dir = ${DIR_CA}newcerts database = ${DIR_CA}index.txt serial = ${DIR_CA}serial RANDFILE = ${DIR_CA}private/.rand # The root key and root certificate. private_key = ${DIR_CA}private/private.key certificate = ${DIR_CA}certs/cacert.crt # For certificate revocation lists. crlnumber = ${DIR_CA}crlnumber crl = ${DIR_CA}crl/ca.crl.pem crl_extensions = crl_ext default_crl_days = 30 # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 name_opt = ca_default cert_opt = ca_default default_days = 375 preserve = no policy = policy_strict [ policy_strict ] # The root CA should only sign intermediate certificates that match. # See the POLICY FORMAT section of man ca. countryName = match stateOrProvinceName = match organizationName = match organizationalUnitName = optional commonName = supplied emailAddress = optional [ policy_loose ] # Allow the intermediate CA to sign a more diverse range of certificates. # See the POLICY FORMAT section of the ca man page. countryName = optional stateOrProvinceName = optional localityName = optional organizationName = optional organizationalUnitName = optional commonName = supplied emailAddress = optional [ req ] # Options for the req tool (man req). default_bits = 2048 distinguished_name = req_distinguished_name string_mask = utf8only # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 # Extension to add when the -x509 option is used. x509_extensions = v3_ca # Extension for SANs req_extensions = v3_req [ v3_req ] # Extensions to add to a certificate request # Before invoke openssl use: export SAN=DNS:value1,DNS:value2 basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment xxxsubjectAltNamexxx = [ req_distinguished_name ] # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;. countryName = Country Name (2 letter code) stateOrProvinceName = State or Province Name localityName = Locality Name 0.organizationName = Organization Name organizationalUnitName = Organizational Unit Name commonName = Common Name emailAddress = Email Address # Optionally, specify some defaults. countryName_default = $countryName_default stateOrProvinceName_default = $stateOrProvinceName_default localityName_default = $localityName_default 0.organizationName_default = $organizationName_default organizationalUnitName_default = $organizationalUnitName_default emailAddress_default = $emailAddress_default [ v3_ca ] # Extensions for a typical CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ v3_intermediate_ca ] # Extensions for a typical intermediate CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true, pathlen:0 keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ usr_cert ] # Extensions for client certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = client, email nsComment = "OpenSSL Generated Client Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment extendedKeyUsage = clientAuth, emailProtection [ server_cert ] # Extensions for server certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = server nsComment = "OpenSSL Generated Server Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer:always keyUsage = critical, digitalSignature, keyEncipherment extendedKeyUsage = serverAuth [ crl_ext ] # Extension for CRLs (man x509v3_config). authorityKeyIdentifier=keyid:always [ ocsp ] # Extension for OCSP signing certificates (man ocsp). basicConstraints = CA:FALSE subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, digitalSignature extendedKeyUsage = critical, OCSPSigning EOF Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando: #Creación de la clave openssl genrsa -aes256 -out private/private.key 4096 sed -i 's|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g' openssl.conf URL=juanjesus.iesgn.org export SAN=DNS:$URL #Creación del certificado openssl req -config openssl.conf -key private/private.key -new -x509 -days 3650 -sha256 -extensions v3_ca -out certs/cacert.crt chmod 444 certs/cacert.crt Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero. Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta. #Firmar el certificado openssl ca -config openssl.conf -extensions v3_req -days 3650 -notext -md sha256 -in csr/juanjesus-mjca.csr -out certs/juanjesus-mjca.crt ¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado? Dentro de nuestro fichero openssl.conf nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son: countryName stateOrProvinceName localityName Administramos el servidor web Preparando el escenario Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos: Instalamos el servidor apache: sudo apt install apache2 Deshabilitamos el virtual host por defecto: sudo a2dissite 000-default.conf Creamos un nuevo virtual host y su fichero de configuración: sudo mkdir /var/www/html/maria.iesgn.org Creamos el fichero index.html dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Habilitamos el nuevo virtual host y reiniciamos el servicio apache: sudo a2ensite maria.iesgn.org.conf sudo systemctl restart apache2 Empezamos Crea una clave privada RSA de 4096 bits para identificar el servidor. sudo openssl genrsa -aes256 -out /etc/ssl/private/maria-priv.key 4096 sudo chmod 400 /etc/ssl/private/maria-priv.key Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (maria.iesgn.org). sudo openssl req -new -sha256 -key /etc/ssl/private/maria-priv.key -out maria.csr Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora. Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https). Modificamos el fichero de configuración: &lt;IfModule mod_ssl.c&gt; &lt;VirtualHost *:443&gt; ServerName maria.iesgn.org DocumentRoot /var/www/html/maria.iesgn.org ErrorLog ${APACHE_LOG_DIR}/error-maria.log CustomLog ${APACHE_LOG_DIR}/access-maria.log combined SSLEngine on SSLCertificateFile /etc/ssl/certs/maria.crt SSLCertificateKeyFile /etc/ssl/private/maria-priv.key SSLCertificateChainFile /etc/ssl/certs/cacert.crt &lt;Directory /var/www/html/maria.iesgn.org&gt; Options Indexes FollowSymLinks AllowOverride None Require all granted &lt;/Directory&gt; &lt;/VirtualHost&gt; &lt;/IfModule&gt; Movemos los ficheros que hemos generado a la carpeta /etc/ssl/certs y le proporcionamos los permisos necesarios: sudo mv maria.crt /etc/ssl/certs/ sudo mv cacert.crt /etc/ssl/certs/ sudo chown root:root /etc/ssl/certs/maria.crt sudo chown root:root /etc/ssl/certs/cacert.crt sudo chmod 644 /etc/ssl/certs/maria.crt sudo chmod 644 /etc/ssl/certs/cacert.crt Habilitamos el módulo ssl y reiniciamos el servicio apache: sudo a2enmod ssl sudo a2ensite ssl-maria.iesgn.org.conf sudo systemctl reload apache2 Modificamos el fichero para que realice una redirección de http a https: sudo nano /etc/apache2/sites-available/maria.iesgn.org.conf #Añadimos la siguiente línea: Redirect 301 / https://maria.iesgn.org/ Reiniciamos el servicio apache: sudo systemctl reload apache2 Comprobamos su funcionamiento: Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS. Deshabilitamos apache: sudo systemctl disable --now apache2 Instalamos el servidor nginx: sudo apt install nginx Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: server { listen 80; listen [::]:80; server_name maria.iesgn.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; server_name maria.iesgn.org; ssl_certificate /etc/ssl/certs/maria.crt; ssl_certificate_key /etc/ssl/private/maria-priv.key; ssl_trusted_certificate /etc/ssl/certs/cacert.crt; root /var/www/html/maria.iesgn.org; index index.html; location / { try_files $uri $uri/ =404; } } Modificamos el fichero index.html que hemos creado anteriormente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;p&gt;PRUEBA NGINX&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Realizamos la firma del certificado: sudo openssl rsa -in /etc/ssl/private/maria-priv.key -out /etc/ssl/private/maria-priv2.key Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx: sudo ln -s /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/ sudo systemctl restart nginx Comprobamos que el servidor funciona correctamente:]]></summary></entry><entry><title type="html">Montaje NFS mediante systemd</title><link href="/aso/2022/12/28/nfs-systemd.html" rel="alternate" type="text/html" title="Montaje NFS mediante systemd" /><published>2022-12-28T11:59:07+01:00</published><updated>2022-12-28T11:59:07+01:00</updated><id>/aso/2022/12/28/nfs-systemd</id><content type="html" xml:base="/aso/2022/12/28/nfs-systemd.html"><![CDATA[<p>En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd.</p>
-
-<h2 id="creamos-el-escenario">Creamos el escenario</h2>
-
-<h3 id="creamos-el-servidor">Creamos el servidor</h3>
-<p>Creamos una instancia en OpenStack con una imagen de Debian 11.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
-<span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
-<span class="nt">--key-name</span> pass <span class="se">\</span>
-<span class="nt">--security-group</span> default <span class="se">\</span>
-<span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
-NFS-Systemd
-</code></pre></div></div>
-
-<p>Le añadimos un volumen de 2GB</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--size</span> 2 <span class="se">\</span>
-<span class="nt">--description</span> <span class="s2">"Volumen NFS-Systemd"</span> <span class="se">\</span>
-<span class="nt">--availability-zone</span> <span class="s2">"nova"</span> <span class="se">\</span>
-<span class="nt">--bootable</span> <span class="se">\</span>
-nfs
-</code></pre></div></div>
-
-<p>Le asignamos una IP flotante.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack floating ip create ext-net
-<span class="c">#IP flotante asignada:</span>
-172.22.201.229
-</code></pre></div></div>
-
-<p><img src="/assets/images/nfs-systemd/1.png" alt="1" /></p>
-
-<h3 id="creamos-el-cliente">Creamos el cliente</h3>
-
-<p>Creamos una instancia en OpenStack con una imagen de Debian 11.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> m1.mini <span class="se">\</span>
-<span class="nt">--image</span> <span class="s2">"Debian 11 Bullseye"</span> <span class="se">\</span>
-<span class="nt">--key-name</span> pass <span class="se">\</span>
-<span class="nt">--security-group</span> default <span class="se">\</span>
-<span class="nt">--network</span> <span class="s2">"red de mariajesus.alloza"</span> <span class="se">\</span>
-NFS-Systemd-Cliente
-</code></pre></div></div>
-
-<p>Le asignamos una IP flotante.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack floating ip create ext-net
-<span class="c">#IP flotante asignada:</span>
-172.22.201.247
-</code></pre></div></div>
-
-<h2 id="configuración">Configuración</h2>
-
-<h3 id="configuramos-el-servicio-nfs">Configuramos el servicio NFS</h3>
-
-<p>En la máquina servidor,con ip <code class="language-plaintext highlighter-rouge">172.22.201.229</code> realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Instalamos el servicio NFS:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nfs-kernel-server
-  <span class="nb">sudo </span>apt <span class="nb">install </span>nfs-common
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Tras su instalación, vamos a habilitar y activar el servicio:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  systemctl start rpcbind nfs-server
-  systemctl <span class="nb">enable </span>rpcbind nfs-server
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que el servicio está activo:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  systemctl status rpcbind nfs-server
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/2.png" alt="2" /></p>
-
-    <p>En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049.</p>
-
-    <p><img src="/assets/images/nfs-systemd/3.png" alt="3" /></p>
-  </li>
-</ul>
-
-<h3 id="configuramos-el-punto-de-montaje">Configuramos el punto de montaje</h3>
-
-<p>Ahora le toca el turno a la máquina cliente, con ip <code class="language-plaintext highlighter-rouge">172.22.201.247</code>. En ella realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Creamos el punto de montaje:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir</span> /nfs
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el fichero de configuración del punto de montaje:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/systemd/system/nfs.mount
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Añadimos el siguiente contenido:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span>Unit]
-  <span class="c">#Descripción</span>
-  <span class="nv">Description</span><span class="o">=</span>Montaje NFS-Systemd
-
-  <span class="o">[</span>Mount]
-  <span class="c">#Volumen de 2GB añadido a la instancia</span>
-  <span class="nv">What</span><span class="o">=</span>/dev/vdb
-  <span class="c">#Directorio de montaje</span>
-  <span class="nv">Where</span><span class="o">=</span>/nfs
-  <span class="c">#Sistema de ficheros empleado</span>
-  <span class="nv">Type</span><span class="o">=</span>ext4
-  <span class="c">#Opciones de montaje</span>
-  <span class="nv">Options</span><span class="o">=</span>defaults
-
-  <span class="o">[</span>Install]
-  <span class="c">#Autoarranque</span>
-  <span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Vamos a formatear el volumen anexado a la instancia:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mkfs.ext4 /dev/vdb
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/5.png" alt="5" /></p>
-
-    <p>Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  systemctl daemon-reload
-  systemctl start nfs.mount
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que el punto de montaje está activo:</p>
-
-    <p><img src="/assets/images/nfs-systemd/6.png" alt="6" /></p>
-  </li>
-</ul>
-
-<h3 id="montaje-permanente-del-punto-de-montaje">Montaje permanente del punto de montaje</h3>
-
-<p>Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Añadimos el punto de montaje al fichero <code class="language-plaintext highlighter-rouge">/etc/fstab</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/fstab
-
-  <span class="c">#Añadimos la siguiente línea al final del fichero:</span>
-  /dev/vdb /nfs ext4 defaults 0 0
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">/etc/exports</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/exports
-
-  <span class="c">#Añadimos la siguiente línea al final del fichero:</span>
-  /nfs 10.0.0.0/24<span class="o">(</span>rw,sync,no_root_squash,no_subtree_check<span class="o">)</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/8.png" alt="8" /></p>
-
-    <p>La configuración anterior permite que todos los clientes de la red <code class="language-plaintext highlighter-rouge">10.0.0.0/24</code> puedan acceder al punto de montaje <code class="language-plaintext highlighter-rouge">/nfs</code> con permisos de lectura y escritura.</p>
-  </li>
-  <li>
-    <p>Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema.</p>
-
-    <p><img src="/assets/images/nfs-systemd/9.png" alt="9" /></p>
-  </li>
-</ul>
-
-<h3 id="configuración-del-cliente-nfs">Configuración del cliente NFS</h3>
-
-<p>Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip <code class="language-plaintext highlighter-rouge">172.22.201.247</code>, realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Instalamos el cliente NFS:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt update <span class="o">&amp;&amp;</span> apt upgrade <span class="nt">-y</span>
-  apt <span class="nb">install </span>nfs-common
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  showmount <span class="nt">-e</span> 10.0.0.215
-</code></pre></div>    </div>
-
-    <p>Lo que se nos mostrará es la exportación del servidor:</p>
-
-    <p><img src="/assets/images/nfs-systemd/10.png" alt="10" /></p>
-  </li>
-</ul>
-
-<h3 id="configuración-del-punto-de-montaje-del-cliente">Configuración del punto de montaje del cliente</h3>
-
-<p>Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip <code class="language-plaintext highlighter-rouge">172.22.201.247</code>, realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Creamos el directorio que usaremos como punto de montaje:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir</span> /cliente
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Y a continuación, creamos el fichero de configuración del punto de montaje:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/systemd/system/cliente.mount
-</code></pre></div>    </div>
-
-    <p>La configuración del fichero es la siguiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span>Unit]
-  <span class="nv">Description</span><span class="o">=</span>Montaje NFS-cliente
-
-  <span class="o">[</span>Mount]
-  <span class="c">#Dirección IP:Directorio de exportación</span>
-  <span class="nv">What</span><span class="o">=</span>10.0.0.215:/nfs
-  <span class="c">#Directorio del recurso compartido</span>
-  <span class="nv">Where</span><span class="o">=</span>/cliente
-  <span class="c">#Tipo de recurso</span>
-  <span class="nv">Type</span><span class="o">=</span>nfs
-  <span class="c">#Opciones de montaje</span>
-  <span class="nv">Options</span><span class="o">=</span>defaults
-
-  <span class="o">[</span>Install]
-  <span class="c">#Autoarranque</span>
-  <span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/11.png" alt="11" /></p>
-
-    <ul>
-      <li>
-        <p>Activamos y montamos el recurso que queremos compartir:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  systemctl <span class="nb">enable </span>NFS-cliente.mount
-  systemctl start NFS-cliente.mount
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Comprobamos que el punto de montaje está activo:</p>
-      </li>
-    </ul>
-
-    <p><img src="/assets/images/nfs-systemd/12.png" alt="12" /></p>
-  </li>
-</ul>
-
-<h3 id="montaje-permanente-del-punto-de-montaje-del-cliente">Montaje permanente del punto de montaje del cliente</h3>
-
-<p>Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones:</p>
-
-<ul>
-  <li>
-    <p>Añadimos el punto de montaje al fichero <code class="language-plaintext highlighter-rouge">/etc/fstab</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/fstab
-
-  <span class="c">#Añadimos la siguiente línea al final del fichero:</span>
-  10.0.0.215:/nfs /cliente nfs defaults 0 0
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/13.png" alt="13" /></p>
-  </li>
-  <li>
-    <p>Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema.</p>
-
-    <p><img src="/assets/images/nfs-systemd/14.png" alt="14" /></p>
-  </li>
-</ul>
-
-<h2 id="comprobación-del-funcionamiento-del-servicio-nfs">Comprobación del funcionamiento del servicio NFS</h2>
-
-<p>Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente.</p>
-
-<p><strong>¡NOTA!</strong> 
-Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar <code class="language-plaintext highlighter-rouge">sudo exportfs -ra</code> para que se actualicen los cambios.</p>
-
-<ul>
-  <li>
-    <p>Creamos un directorio y un fichero en el punto de montaje del servidor:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir</span> /NFS-Systemd/prueba
-  <span class="nb">echo</span> <span class="s2">"Esto es un texto escrito desde el servidor"</span> <span class="o">&gt;</span> /nfs/nfs-prueba.txt
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/15.png" alt="15" /></p>
-  </li>
-  <li>
-    <p>Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cd</span> /cliente
-  <span class="nb">ls
-  cat </span>nfs-prueba.txt
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/16.png" alt="16" /></p>
-  </li>
-  <li>
-    <p>Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Esto es un texto escrito desde el cliente"</span> <span class="o">&gt;</span> /cliente/prueba/prueba-cliente.txt
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/17.png" alt="17" /></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">ls</span> /nfs/prueba
-  <span class="nb">cat</span> /nfs/prueba/prueba-cliente.txt
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/nfs-systemd/18.png" alt="18" /></p>
-  </li>
-</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post vamos a crear una instancia en OpensStack y anexarle un volumen de 2GB. El objetivo será configurar un servicio NFS de exportación y en el volumen anexado, un punto de montaje de la exportación mediante systemd. Creamos el escenario Creamos el servidor Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd Le añadimos un volumen de 2GB openstack volume create --size 2 \ --description "Volumen NFS-Systemd" \ --availability-zone "nova" \ --bootable \ nfs Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.229 Creamos el cliente Creamos una instancia en OpenStack con una imagen de Debian 11. openstack server create --flavor m1.mini \ --image "Debian 11 Bullseye" \ --key-name pass \ --security-group default \ --network "red de mariajesus.alloza" \ NFS-Systemd-Cliente Le asignamos una IP flotante. openstack floating ip create ext-net #IP flotante asignada: 172.22.201.247 Configuración Configuramos el servicio NFS En la máquina servidor,con ip 172.22.201.229 realizamos las siguientes acciones: Instalamos el servicio NFS: sudo apt install nfs-kernel-server sudo apt install nfs-common Tras su instalación, vamos a habilitar y activar el servicio: systemctl start rpcbind nfs-server systemctl enable rpcbind nfs-server Comprobamos que el servicio está activo: systemctl status rpcbind nfs-server En la siguiente imagen podemos ver que el servicio está activo y que está a la escucha en el puerto 2049. Configuramos el punto de montaje Ahora le toca el turno a la máquina cliente, con ip 172.22.201.247. En ella realizamos las siguientes acciones: Creamos el punto de montaje: mkdir /nfs Creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/nfs.mount Añadimos el siguiente contenido: [Unit] #Descripción Description=Montaje NFS-Systemd [Mount] #Volumen de 2GB añadido a la instancia What=/dev/vdb #Directorio de montaje Where=/nfs #Sistema de ficheros empleado Type=ext4 #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Vamos a formatear el volumen anexado a la instancia: mkfs.ext4 /dev/vdb Y a continuación, reiniciamos el demonio e iniciamos el punto de montaje: systemctl daemon-reload systemctl start nfs.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: /dev/vdb /nfs ext4 defaults 0 0 Para que los clientes puedan acceder al punto de montaje, debemos añadir la siguiente línea al fichero /etc/exports: nano /etc/exports #Añadimos la siguiente línea al final del fichero: /nfs 10.0.0.0/24(rw,sync,no_root_squash,no_subtree_check) La configuración anterior permite que todos los clientes de la red 10.0.0.0/24 puedan acceder al punto de montaje /nfs con permisos de lectura y escritura. Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Configuración del cliente NFS Ahora vamos a configurar el cliente NFS. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Instalamos el cliente NFS: apt update &amp;&amp; apt upgrade -y apt install nfs-common Para comprobar que el cliente NFS está instalado, ejecutamos el siguiente comando: showmount -e 10.0.0.215 Lo que se nos mostrará es la exportación del servidor: Configuración del punto de montaje del cliente Ahora vamos a configurar el punto de montaje del cliente. En la máquina cliente, con ip 172.22.201.247, realizamos las siguientes acciones: Creamos el directorio que usaremos como punto de montaje: mkdir /cliente Y a continuación, creamos el fichero de configuración del punto de montaje: nano /etc/systemd/system/cliente.mount La configuración del fichero es la siguiente: [Unit] Description=Montaje NFS-cliente [Mount] #Dirección IP:Directorio de exportación What=10.0.0.215:/nfs #Directorio del recurso compartido Where=/cliente #Tipo de recurso Type=nfs #Opciones de montaje Options=defaults [Install] #Autoarranque WantedBy=multi-user.target Activamos y montamos el recurso que queremos compartir: systemctl enable NFS-cliente.mount systemctl start NFS-cliente.mount Comprobamos que el punto de montaje está activo: Montaje permanente del punto de montaje del cliente Para que el punto de montaje sea permanente, es decir, que se monte automáticamente al arrancar la máquina, realizamos las siguientes acciones: Añadimos el punto de montaje al fichero /etc/fstab: nano /etc/fstab #Añadimos la siguiente línea al final del fichero: 10.0.0.215:/nfs /cliente nfs defaults 0 0 Reiniciamos la máquina y comprobamos que el punto de montaje se monta de forma automática al iniciar el sistema. Comprobación del funcionamiento del servicio NFS Para comprobar que el servicio NFS está funcionando de forma correcta, vamos a crear un directorio y un fichero en el punto de montaje del servidor y comprobar que se reflejan en el punto de montaje del cliente. ¡NOTA! Recuerda que una vez realizados los cambios, para que el sercidor NFS los reconozca, debemos ejecutar sudo exportfs -ra para que se actualicen los cambios. Creamos un directorio y un fichero en el punto de montaje del servidor: mkdir /NFS-Systemd/prueba echo "Esto es un texto escrito desde el servidor" &gt; /nfs/nfs-prueba.txt Accederemos al punto de montaje del cliente y comprobaremos que el directorio y el fichero se han creado correctamente: cd /cliente ls cat nfs-prueba.txt Si lo que queremos es crear un fichero desde el cliente, lo crearemos en el punto de montaje del cliente y comprobaremos que se ha creado en el punto de montaje del servidor: echo "Esto es un texto escrito desde el cliente" &gt; /cliente/prueba/prueba-cliente.txt ls /nfs/prueba cat /nfs/prueba/prueba-cliente.txt]]></summary></entry><entry><title type="html">Despliegue de una aplicación Python</title><link href="/iaw/2022/12/19/despliegue-python.html" rel="alternate" type="text/html" title="Despliegue de una aplicación Python" /><published>2022-12-19T12:32:50+01:00</published><updated>2022-12-19T12:32:50+01:00</updated><id>/iaw/2022/12/19/despliegue-python</id><content type="html" xml:base="/iaw/2022/12/19/despliegue-python.html"><![CDATA[<h1 id="descripción">Descripción</h1>
-
-<p>En esta entrada vamos a desplegar una aplicación Python realizada en Django.</p>
-
-<h2 id="entorno-de-desarrollo">Entorno de desarrollo</h2>
-
-<ol>
-  <li>
-    <p>Utilizamos la máquina <code class="language-plaintext highlighter-rouge">bravo</code> de nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> que usa Rocky Linux 9.</p>
-  </li>
-  <li>
-    <p>Vamos a configurar nuestro escenario de la siguiente manera:</p>
-
-    <ul>
-      <li>
-        <p>Realizamos un fork del repositorio con la <a href="https://github.com/josedom24/django_tutorial">app</a>.</p>
-      </li>
-      <li>
-        <p>Creamos un entorno virtual de Python3 e instalamos las dependencias necesarias.</p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="realización-entorno-de-desarrollo">Realización Entorno de desarrollo</h3>
-
-<p>Para realizar el entorno de desarrollo vamos a utilizar la máquina <code class="language-plaintext highlighter-rouge">bravo</code> de nuestro escenario, que usa Rocky Linux 9.</p>
-
-<ul>
-  <li>
-    <p>Primero instalamos git para poder clonar el repositorio de la aplicación:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Realizamos un fork del repositorio con la <a href="https://github.com/josedom24/django_tutorial">app</a> y clonamos el repositorio en la máquina <code class="language-plaintext highlighter-rouge">bravo</code>, concretamente en eldirectorio <code class="language-plaintext highlighter-rouge">/var/www/html</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git clone https://github.com/Legnakra/Tutorial-Django.git
-</code></pre></div>    </div>
-
-    <p>E instalamos el entorno virtual de python:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 <span class="nt">-m</span> venv venv
-    
-  <span class="nb">source </span>venv/bin/activate
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instalamos las dependencias de la aplicación:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>¿Qué fichero tienes que consultar? ¿Cómo se llama la base de datos que vamos a crear?</p>
-
-    <p>Para consultar el fichero que tenemos que consultar, vamos a ver el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la aplicación, en el apartado de <code class="language-plaintext highlighter-rouge">DATABASES</code>:</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
-          <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.sqlite3'</span><span class="p">,</span>
-          <span class="s">'NAME'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'db.sqlite3'</span><span class="p">),</span>
-      <span class="p">}</span>
-  <span class="p">}</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/django/1.png" alt="1" /></p>
-
-    <p>Como podemos ver, la base de datos que vamos a crear es <code class="language-plaintext highlighter-rouge">db.sqlite3</code>.</p>
-  </li>
-  <li>
-    <p>Creamos la base de datos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py migrate
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/django/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Creamos el usuario Administrador:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py createsuperuser
-  <span class="nt">---</span>
-  password: admin
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/django/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="s">'*'</span><span class="p">]</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Ejecutamos el servidor web de desarrollo y entramos en la zona de administración para comprobar que los datos se han almacenado correctamente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py runserver 0.0.0.0:8000
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/django/4.png" alt="4" /></p>
-
-    <p><strong>NOTA</strong>: Para acceder a la página web desde el ordenador, tendremos que añadir una nueva regla DNAT en <code class="language-plaintext highlighter-rouge">alfa</code> para que redirija el tráfico de la máquina <code class="language-plaintext highlighter-rouge">bravo</code> al puerto 8000.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/network/interfaces.d/50-cloud-init
-  <span class="nt">---</span>
-  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 8000 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
-</code></pre></div>    </div>
-
-    <p>Seguidamente reiniciamos la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>reboot
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que podemos acceder a la aplicación desde el navegador, sobre todo en la zona de administración:</p>
-
-    <p><img src="/assets/images/django/5.png" alt="5" /></p>
-
-    <p><img src="/assets/images/django/6.png" alt="6" /></p>
-
-    <p><img src="/assets/images/django/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Creamos dos preguntas con varias respuestas.</p>
-
-    <p><img src="/assets/images/django/8.png" alt="8" /></p>
-
-    <p><img src="/assets/images/django/9.png" alt="9" /></p>
-
-    <p><img src="/assets/images/django/10.png" alt="10" /></p>
-
-    <p><img src="/assets/images/django/11.png" alt="11" /></p>
-
-    <p><img src="/assets/images/django/12.png" alt="12" /></p>
-  </li>
-</ul>
-
-<h3 id="configurar-el-servidor-web">Configurar el servidor web</h3>
-
-<p>Vamos a configurar el servidor web apache2 con el módulo wsgi para servir la página web. Al utilizar como entorno de desarrollo la máquina bravo, se accederá con el nombre python.mariajesus.gonzalonazareno.org.</p>
-
-<ul>
-  <li>
-    <p>Para reunir los ficheros estáticos, ejecutamos el siguiente comando:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python django_tutorial/manage.py collectstatic
-</code></pre></div>    </div>
-
-    <ul>
-      <li>
-        <p>Pero antes de ello, tenemos que modificar el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> para que el servidor web de desarrollo escuche en todas las interfaces:</p>
-
-        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="s">'/var/www/html/Django_Tutorial/static'</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Instalamos el módulo wsgi para apache2:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>dnf <span class="nb">install </span>mod_wsgi httpd
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el VirtualHost que servirá la web:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /etc/httpd/sites-available/django_tutorial.conf
-
-  <span class="nt">---</span>
-
-  &lt;VirtualHost <span class="k">*</span>:80&gt;
-      ServerName python.mariajesus.gonzalonazareno.org
-      DocumentRoot /var/www/html/django_tutorial
-      Alias /static/ /var/www/html/django_tutorial/static/
-      WSGIDaemonProcess django_tutorial python-path<span class="o">=</span>/var/www/html/django_tutorial:/var/www/html/django/lib/python3.9/site-packages
-      WSGIProcessGroup django_tutorial
-      WSGIScriptAlias / /var/www/html/django_tutorial/django_tutorial/wsgi.py
-      ErrorLog /var/log/httpd/django_tutorial_error.log
-      CustomLog /var/log/httpd/django_tutorial_access.log combined
-  &lt;/VirtualHost&gt;
-</code></pre></div>    </div>
-
-    <p>Lo activamos:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ```bash
-  ln -s /etc/httpd/sites-available/django_tutorial.conf /etc/httpd/sites-enabled/django_tutorial.conf
-  ```
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio apache2:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart httpd
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Nos dirigimos a la máquina <code class="language-plaintext highlighter-rouge">charlie</code>, que es el servidor DNS, y añadimos la nueva zona DNS:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  nano /var/cache/bind/db.interna.mariajesus.gonzalonazareno.org
-  nano /var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org
-  <span class="nt">---</span>
-  python  IN  A   bravo
-</code></pre></div>    </div>
-
-    <p>Refrescamos la zona DNS:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ```bash
-  rndc flush
-  systemctl restart bind9
-  ```
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que podemos acceder a la aplicación desde el navegador:</p>
-
-    <p><img src="/assets/images/django/12.png" alt="12" /></p>
-  </li>
-</ul>
-
-<h2 id="entorno-de-producción">Entorno de producción</h2>
-
-<p>Eneste apartado vamos a realizar el despliegue de nuestra aplicación en un entorno de producción, para ello vamos a utilizar nuestro VPS.</p>
-
-<p>Para ello:</p>
-
-<ol>
-  <li>
-    <p>Vamos a clonar el repositorio de la aplicación en el VPS.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone git@github.com:Legnakra/Tutorial-Django.git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos un entorno virtual e instalamos las dependencias de nuestra aplicación.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/
- python3 <span class="nt">-m</span> venv django
- <span class="nb">source </span>django/bin/activate
- pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instalamos el módulo que nos permitirá que python trabaje con mysql:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>python3-dev default-libmysqlclient-dev build-essential <span class="nt">-y</span>
- pip <span class="nb">install </span>mysqlclient
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos la base de datos y un usuario en mysql.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mysql <span class="nt">-u</span> root <span class="nt">-p</span>
-</code></pre></div>    </div>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">django</span><span class="p">;</span>
- <span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'django'</span><span class="o">@</span><span class="s1">'%'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'admin'</span><span class="p">;</span>
- <span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">django</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'%'</span><span class="p">;</span>
- <span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
- <span class="n">EXIT</span><span class="p">;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Configuramos la aplicación para trabajar con mysql, por ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la siguiente manera:</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
-     <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
-     <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
-     <span class="s">'NAME'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
-     <span class="s">'USER'</span><span class="p">:</span> <span class="s">'django'</span><span class="p">,</span>
-     <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="s">'admin'</span><span class="p">,</span>
-     <span class="s">'HOST'</span><span class="p">:</span> <span class="s">'localhost'</span><span class="p">,</span>
-     <span class="s">'PORT'</span><span class="p">:</span> <span class="s">''</span><span class="p">,</span>
-     <span class="p">}</span>
- <span class="p">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos una copia de seguridad de la base de datos, teniendo en cuenta que en el entorno de desarrollo hemos utilizado SQLite y en el de producción MySQL. Por ello, lo recomendable es realizar la copia de seguridad y recuperarla con los comandos adecuados.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> python3 manage.py dumpdata <span class="o">&gt;</span> db.json 
-</code></pre></div>    </div>
-
-    <p>Y la subimos al repositorio:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git add db.json
- git commit <span class="nt">-m</span> <span class="s2">"Copia de seguridad de la base de datos"</span>
- git push
-</code></pre></div>    </div>
-
-    <p>Nos conectamos a nuestro VPS y realizamos la migración de la base de datos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/django_tutorial
- git pull
- pip <span class="nb">install </span>pymysql
- python3 manage.py migrate
- python3 manage.py loaddata db.json
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Configuramos el servidor de aplicaciones uwsgi, creando una unidad de systemd (como hemos realizado en el paso 2 de <a href="https://sysmaria.netlify.app/iaw/2022/12/17/wsgi.html#h-despliegue-de-la-aplicaci%C3%B3n-flask">talleres wsgi</a> y configuramos nginx como proxy inverso para servir la aplicación.</p>
-
-    <ul>
-      <li>
-        <p>Instalamos el módulo uwsgi y lo configuramos</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pip <span class="nb">install </span>uwsgi
-  <span class="nt">---</span>
-  <span class="nb">sudo </span>nano /var/www/html/Tutorial-Django/django/uwsgi.ini
-</code></pre></div>        </div>
-
-        <p>Añadimos al fichero las siguientes líneas:</p>
-
-        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[uwsgi]</span>
-  <span class="py">http</span> <span class="p">=</span> <span class="s">:8080</span>
-  <span class="py">chdir</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django</span>
-  <span class="py">wsgi-file</span> <span class="p">=</span> <span class="s">/var/www/html/Tutorial-Django/django_tutorial/wsgi.py</span>
-  <span class="py">processes</span> <span class="p">=</span> <span class="s">4</span>
-  <span class="py">threads</span> <span class="p">=</span> <span class="s">2</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos la unidad de systemd para el servicio uwsgi:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/systemd/system/uwsgi.service
-</code></pre></div>        </div>
-
-        <p>Añadimos las siguientes líneas:</p>
-
-        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nn">[Unit]</span>
-  <span class="py">Description</span><span class="p">=</span><span class="s">uWSGI Emperor service</span>
-  <span class="py">After</span><span class="p">=</span><span class="s">network.target</span>
-
-  <span class="nn">[Install]</span>
-  <span class="py">User</span><span class="p">=</span><span class="s">www-data</span>
-  <span class="py">Group</span><span class="p">=</span><span class="s">www-data</span>
-  <span class="py">Restart</span><span class="p">=</span><span class="s">always</span>
-
-  <span class="py">ExecStart</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial/django/bin/uwsgi --ini /var/www/html/Tutorial-Django/django/uwsgi.ini</span>
-
-  <span class="py">ExecReload</span><span class="p">=</span><span class="s">/bin/kill -s HUP $MAINPID</span>
-  <span class="py">ExecStop</span><span class="p">=</span><span class="s">/bin/kill -s TERM $MAINPID</span>
-  <span class="py">WorkingDirectory</span><span class="p">=</span><span class="s">/var/www/html/django_tutorial</span>
-  <span class="py">Environment</span><span class="p">=</span><span class="s">PYTHONPATH='/var/www/html/Tutorial-Django/django_tutorial:/var/www/html/Tutorial-Django/django/lib/python3.9/site-packages'</span>
-  <span class="py">PrivateTmp</span><span class="p">=</span><span class="s">true</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Y lo activamos:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl daemon-reload
-  <span class="nb">sudo </span>systemctl <span class="nb">enable </span>uwsgi
-  <span class="nb">sudo </span>systemctl start uwsgi
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Debemos asegurarnos que el contenido estático se está sirviendo: ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
-
-    <ul>
-      <li>
-        <p>Creamos el VirtualHost de nginx:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/django
-</code></pre></div>        </div>
-
-        <p>Añadimos las siguientes líneas:</p>
-
-        <div class="language-ini highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="err">server</span> <span class="err">{</span>
-      <span class="err">listen</span> <span class="err">80</span><span class="c">;
-</span>      <span class="err">listen</span> <span class="nn">[::]</span><span class="err">:80</span><span class="c">;
-</span>
-      <span class="err">root</span> <span class="err">/var/www/html/Tutorial-Django/</span>
-
-      <span class="err">index</span> <span class="err">index.php</span>
-
-      <span class="err">server_name</span> <span class="err">python.mariatec.es</span><span class="c">;
-</span>
-      <span class="err">location</span> <span class="err">/</span> <span class="err">{</span>
-          <span class="err">proxy_pass</span> <span class="err">http://localhost:8080</span><span class="c">;
-</span>          <span class="err">include</span> <span class="err">proxy_params</span><span class="c">;
-</span>      <span class="err">}</span>
-
-      <span class="err">location</span> <span class="err">/static/</span> <span class="err">{</span>
-          <span class="err">alias</span> <span class="err">/var/www/html/Tutorial-Django/static/</span><span class="c">;
-</span>      <span class="err">}</span>
-  <span class="err">}</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
-
-    <ul>
-      <li>
-        <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
-
-        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos el enlace simbólico:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
-</code></pre></div>        </div>
-
-        <p>Y reiniciamos el servicio:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Realizamos los cambios necesarios en el DNS del VPS para que la URL <code class="language-plaintext highlighter-rouge">python.mariatec.es</code> apunte a la IP del VPS.</p>
-      </li>
-    </ul>
-
-    <p><img src="/assets/images/django/13.png" alt="13" /></p>
-  </li>
-  <li>
-    <p>La página web deberá ser accesible en la URL: <code class="language-plaintext highlighter-rouge">python.mariatec.es</code>. ¿Se muestra la imagen de fondo de la aplicación? ¿Se ve de forma adecuada la hoja de estilo de la zona de administración?</p>
-
-    <p>Como podemos ver en las siguientes imagenes, la página, su fondo y su hoja de estilo funcionan correctamente:</p>
-
-    <p>Como podemos ver en la siguiente imagen, la página funciona correctamente:</p>
-
-    <p><img src="/assets/images/django/14.png" alt="14" /></p>
-
-    <p><img src="/assets/images/django/15.png" alt="15" /></p>
-
-    <p><img src="/assets/images/django/16.png" alt="16" /></p>
-
-    <p><img src="/assets/images/django/17.png" alt="17" /></p>
-  </li>
-  <li>
-    <p>Instalamos el certificado SSL.</p>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Desactivamos la configuración el modo debug a <code class="language-plaintext highlighter-rouge">False</code>, para que los errores de ejecución no den información sensible de la aplicación.</p>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">settings.py</code>:</p>
-
-    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Cambiamos el VirtualHost:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server <span class="o">{</span>
-          listen 80<span class="p">;</span>
-          listen <span class="o">[</span>::]:80<span class="p">;</span>
-          server_name python.mariatec.es<span class="p">;</span>
-          <span class="k">return </span>301 https://<span class="nv">$server_name$request_uri</span><span class="p">;</span>
-  <span class="o">}</span>
-  server <span class="o">{</span>
-          listen 443 ssl<span class="p">;</span>
-          listen <span class="o">[</span>::]:443 ssl<span class="p">;</span>
-          server_name python.mariatec.es<span class="p">;</span>
-          ssl_certificate /etc/letsencrypt/live/mariatec.es/fullchain.pem<span class="p">;</span>
-          ssl_certificate_key /etc/letsencrypt/live/mariatec.es/privkey.pem<span class="p">;</span>
-          include /etc/letsencrypt/options-ssl-nginx.conf<span class="p">;</span>
-          ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem<span class="p">;</span>
-          root /var/www/html/Tutorial-Django<span class="p">;</span>
-          index index.php<span class="p">;</span>
-          location / <span class="o">{</span>
-                  proxy_pass http://localhost:8080<span class="p">;</span>
-                  include proxy_params<span class="p">;</span>
-          <span class="o">}</span>
-          location /static/ <span class="o">{</span>
-                  <span class="nb">alias</span> /var/www/html/Tutorial-Django/static/<span class="p">;</span>
-          <span class="o">}</span>
-  <span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Y reiniciamos el servicio:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que el certificado funciona correctamente:</p>
-
-    <p><img src="/assets/images/django/18.png" alt="18" /></p>
-  </li>
-</ul>
-
-<h2 id="modificación-de-la-aplicación-y-migración-de-los-cambios-a-producción">Modificación de la aplicación y migración de los cambios a producción</h2>
-
-<p>En este apartado vamos a realizar cambios en el entorno de desarrollo y posteriormente vamos a subirlas a producción. Vamos a realizar tres modificaciones.</p>
-
-<p>Primero vamosa realizar los cambios en el entorno de desarrollo, es decir, en <code class="language-plaintext highlighter-rouge">bravo</code>.</p>
-
-<ol>
-  <li>
-    <p>Modifica la página inicial donde se ven las encuestas para que aparezca tu nombre, para ello modifica el archivo <code class="language-plaintext highlighter-rouge">django_tutorial/polls/templates/polls/index.html</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">cd</span> /var/www/html/Tutorial-Django
- nano polls/templates/polls/index.html
-</code></pre></div>    </div>
-    <ul>
-      <li>
-        <p>Vamos a realizar los cambios necesarios para que aparezca mi nombre en la página principal:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      &lt;h2&gt;Maria Jesus&lt;/h2&gt;
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Modificamos la imagen que aparece como fondo de la aplicación. Para ello, vamos a buscar una imagen nueva, la descargamos y la antigua imagen por la nueva.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> wget https://i.imgur.com/rqzs4jU.jpeg <span class="nt">-O</span> fondo.jpg
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Modificamos el propietario del fichero para que el servidor web pueda acceder a él.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">chown</span> <span class="nt">-R</span> apache:apache static/polls/images/fondo.jpg
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Modificamos también el fichero de estilo para que apunte a la nueva imagen y para que la renderice.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano static/polls/style.css
- <span class="nt">---</span>
- li a <span class="o">{</span>
-     color: green<span class="p">;</span>
-     background-color: blanchedalmond<span class="p">;</span>
- <span class="o">}</span>
-
- body <span class="o">{</span>
-     background: white url<span class="o">(</span><span class="s2">"images/fondo.jpg"</span><span class="o">)</span><span class="p">;</span>
-     background-size: cover<span class="p">;</span>
- <span class="o">}</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Centrar la imagen de fondo y que sea responsive.</li>
-    </ul>
-
-    <div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">body</span> <span class="p">{</span>
-     <span class="nl">background</span><span class="p">:</span> <span class="no">white</span> <span class="sx">url("images/fondo.jpg")</span><span class="p">;</span>
-     <span class="nl">background-size</span><span class="p">:</span> <span class="n">cover</span><span class="p">;</span>
-     <span class="nl">background-position</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-     <span class="nl">background-repeat</span><span class="p">:</span> <span class="nb">no-repeat</span><span class="p">;</span>
-     <span class="nl">background-attachment</span><span class="p">:</span> <span class="nb">fixed</span><span class="p">;</span>
- <span class="p">}</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/django/19.png" alt="19" /></p>
-  </li>
-  <li>
-    <p>Vamos a crear una nueva tabla en la base de datos, para ello sigue los siguientes pasos:</p>
-
-    <ul>
-      <li>
-        <p>Añadimos un nuevo modelo al fichero <code class="language-plaintext highlighter-rouge">polls/models.py</code>:</p>
-
-        <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">class</span> <span class="nc">Categoria</span><span class="p">(</span><span class="n">models</span><span class="p">.</span><span class="n">Model</span><span class="p">):</span>	
-  	<span class="n">Abr</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-  	<span class="n">Nombre</span> <span class="o">=</span> <span class="n">models</span><span class="p">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
-
-  	<span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-  		<span class="k">return</span> <span class="bp">self</span><span class="p">.</span><span class="n">Abr</span><span class="o">+</span><span class="s">" - "</span><span class="o">+</span><span class="bp">self</span><span class="p">.</span><span class="n">Nombre</span> 		
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos una nueva migración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python manage.py makemigrations
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Aplicamos la migración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python manage.py migrate
-</code></pre></div>        </div>
-      </li>
-      <li>Añadimos el nuevomodelo al sitio de administración de django:
-        <ul>
-          <li>
-            <p>Cambiamos la siguiente línea del fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
-
-            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Choice</span><span class="p">,</span> <span class="n">Question</span><span class="p">,</span> <span class="n">Categoria</span>
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">polls/admin.py</code>:</p>
-
-            <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">admin</span><span class="p">.</span><span class="n">site</span><span class="p">.</span><span class="n">register</span><span class="p">(</span><span class="n">Categoria</span><span class="p">)</span>
-</code></pre></div>            </div>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <p>Comprobamos que el cambio se ha realizado correctamente:</p>
-
-        <p><img src="/assets/images/django/20.png" alt="20" /></p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Deplegamos los cambios en el entorno de producción.</p>
-
-    <ul>
-      <li>
-        <p>Realizamos un backup de la base de datos:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py dumpdata <span class="o">&gt;</span> db2.json
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Añadimos los ficheros que hemos cambiado al repositorio:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git status
-  git add <span class="nb">.</span>
-  git commit <span class="nt">-m</span> <span class="s2">"Tarea 3"</span>
-  git push
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Nos dirigimos al entorno de producción y actualizamos el repositorio:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cd</span> /var/www/html/Tutorial-Django
-  git pull
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Cargamos los datos y los cambios:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py loaddata db2.json
-  python3 manage.py migrate
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Realizamos de nuevo la recolección de los ficheros estáticos:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  python3 manage.py collectstatic
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Reiniciamos el servicio:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart uwsgi-django
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<p>Como podemos ver en las siguientes imágenes, los cambios se han realizado correctamente.</p>
-
-<p><img src="/assets/images/django/21.png" alt="21" /></p>
-
-<p><img src="/assets/images/django/22.png" alt="22" /></p>
-
-<p><img src="/assets/images/django/23.png" alt="23" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Descripción]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Certificado digital de persona física Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc. Tarea 1: Instalación del certificado NOTA: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico. Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito. Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador. A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado. Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente. Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado. Para ver las preferencias del navegador, accedemos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado. ¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta. Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad. En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado. Investiga como exportar la clave pública de tu certificado. Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS). Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil. Tarea 2: Validación del certificado Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación. Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador. Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Ingresamos en la página de VALIDe y seleccionamos la opción de Validar Certificado Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada. Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en Validar Como podemos ver, la clave es válida. Preparando el entorno de trabajo en Debian Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, sudo apt install libnss3-tools para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero .deb de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tarea 3: Firma electrónica Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero. Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma. echo "Hola. Soy Maria. Esto es una prueba de VALIDe." &gt; valide.txt echo "Hola. Soy Maria. Esto es una prueba de autofirma." &gt; autofirma.txt Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma. Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma Visualizar Firma y Verificar Firma. ¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero? Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma. ¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas. Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador. Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos. Tarea 4: Autenticación Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas. Accedemos a la web de la DGT para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos. Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos Cl@ave. El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos. HTTPS / SSL NOTA: Vamos a realizar esta práctica en una web que se acceda con el nombre maria.iesgn.org. Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa. Para ello, podemos hacer uso de los siguientes enlaces para buscar más información: Phil’s X509/SSL Guide How to setup your own CA with OpenSSL Crear autoridad certificadora (CA) y certificados autofirmados en Linux Creamos la Autoridad certificadora Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC. Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios. mkdir CA cd CA mkdir certs csr crl newcerts private chmod 700 private touch index.txt touch index.txt.attr echo 1000 &gt; serial Creamos las variables de entorno donde definiremos los datos de configuración de la CA. countryName_default="ES" stateOrProvinceName_default="Sevilla" localityName_default="Dos Hermanas" organizationName_default="Maria" organizationalUnitName_default="ASIR2" emailAddress_default="mariajesus.alloza@outlook.es" DIR_CA="./" Creamos el fichero de configuración. cat &lt;&lt;EOF&gt;$DIR_CA/openssl.conf [ ca ] # man ca default_ca = CA_default [ CA_default ] # Directory and file locations. dir = ${DIR_CA} certs = ${DIR_CA}certs crl_dir = ${DIR_CA}crl new_certs_dir = ${DIR_CA}newcerts database = ${DIR_CA}index.txt serial = ${DIR_CA}serial RANDFILE = ${DIR_CA}private/.rand # The root key and root certificate. private_key = ${DIR_CA}private/private.key certificate = ${DIR_CA}certs/cacert.crt # For certificate revocation lists. crlnumber = ${DIR_CA}crlnumber crl = ${DIR_CA}crl/ca.crl.pem crl_extensions = crl_ext default_crl_days = 30 # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 name_opt = ca_default cert_opt = ca_default default_days = 375 preserve = no policy = policy_strict [ policy_strict ] # The root CA should only sign intermediate certificates that match. # See the POLICY FORMAT section of man ca. countryName = match stateOrProvinceName = match organizationName = match organizationalUnitName = optional commonName = supplied emailAddress = optional [ policy_loose ] # Allow the intermediate CA to sign a more diverse range of certificates. # See the POLICY FORMAT section of the ca man page. countryName = optional stateOrProvinceName = optional localityName = optional organizationName = optional organizationalUnitName = optional commonName = supplied emailAddress = optional [ req ] # Options for the req tool (man req). default_bits = 2048 distinguished_name = req_distinguished_name string_mask = utf8only # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 # Extension to add when the -x509 option is used. x509_extensions = v3_ca # Extension for SANs req_extensions = v3_req [ v3_req ] # Extensions to add to a certificate request # Before invoke openssl use: export SAN=DNS:value1,DNS:value2 basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment xxxsubjectAltNamexxx = [ req_distinguished_name ] # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;. countryName = Country Name (2 letter code) stateOrProvinceName = State or Province Name localityName = Locality Name 0.organizationName = Organization Name organizationalUnitName = Organizational Unit Name commonName = Common Name emailAddress = Email Address # Optionally, specify some defaults. countryName_default = $countryName_default stateOrProvinceName_default = $stateOrProvinceName_default localityName_default = $localityName_default 0.organizationName_default = $organizationName_default organizationalUnitName_default = $organizationalUnitName_default emailAddress_default = $emailAddress_default [ v3_ca ] # Extensions for a typical CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ v3_intermediate_ca ] # Extensions for a typical intermediate CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true, pathlen:0 keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ usr_cert ] # Extensions for client certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = client, email nsComment = "OpenSSL Generated Client Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment extendedKeyUsage = clientAuth, emailProtection [ server_cert ] # Extensions for server certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = server nsComment = "OpenSSL Generated Server Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer:always keyUsage = critical, digitalSignature, keyEncipherment extendedKeyUsage = serverAuth [ crl_ext ] # Extension for CRLs (man x509v3_config). authorityKeyIdentifier=keyid:always [ ocsp ] # Extension for OCSP signing certificates (man ocsp). basicConstraints = CA:FALSE subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, digitalSignature extendedKeyUsage = critical, OCSPSigning EOF Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando: #Creación de la clave openssl genrsa -aes256 -out private/private.key 4096 sed -i 's|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g' openssl.conf URL=juanjesus.iesgn.org export SAN=DNS:$URL #Creación del certificado openssl req -config openssl.conf -key private/private.key -new -x509 -days 3650 -sha256 -extensions v3_ca -out certs/cacert.crt chmod 444 certs/cacert.crt Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero. Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta. #Firmar el certificado openssl ca -config openssl.conf -extensions v3_req -days 3650 -notext -md sha256 -in csr/juanjesus-mjca.csr -out certs/juanjesus-mjca.crt ¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado? Dentro de nuestro fichero openssl.conf nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son: countryName stateOrProvinceName localityName Administramos el servidor web Preparando el escenario Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos: Instalamos el servidor apache: sudo apt install apache2 Deshabilitamos el virtual host por defecto: sudo a2dissite 000-default.conf Creamos un nuevo virtual host y su fichero de configuración: sudo mkdir /var/www/html/maria.iesgn.org Creamos el fichero index.html dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Habilitamos el nuevo virtual host y reiniciamos el servicio apache: sudo a2ensite maria.iesgn.org.conf sudo systemctl restart apache2 Empezamos Crea una clave privada RSA de 4096 bits para identificar el servidor. sudo openssl genrsa -aes256 -out /etc/ssl/private/maria-priv.key 4096 sudo chmod 400 /etc/ssl/private/maria-priv.key Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (maria.iesgn.org). sudo openssl req -new -sha256 -key /etc/ssl/private/maria-priv.key -out maria.csr Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora. Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https). Modificamos el fichero de configuración: &lt;IfModule mod_ssl.c&gt; &lt;VirtualHost *:443&gt; ServerName maria.iesgn.org DocumentRoot /var/www/html/maria.iesgn.org ErrorLog ${APACHE_LOG_DIR}/error-maria.log CustomLog ${APACHE_LOG_DIR}/access-maria.log combined SSLEngine on SSLCertificateFile /etc/ssl/certs/maria.crt SSLCertificateKeyFile /etc/ssl/private/maria-priv.key SSLCertificateChainFile /etc/ssl/certs/cacert.crt &lt;Directory /var/www/html/maria.iesgn.org&gt; Options Indexes FollowSymLinks AllowOverride None Require all granted &lt;/Directory&gt; &lt;/VirtualHost&gt; &lt;/IfModule&gt; Movemos los ficheros que hemos generado a la carpeta /etc/ssl/certs y le proporcionamos los permisos necesarios: sudo mv maria.crt /etc/ssl/certs/ sudo mv cacert.crt /etc/ssl/certs/ sudo chown root:root /etc/ssl/certs/maria.crt sudo chown root:root /etc/ssl/certs/cacert.crt sudo chmod 644 /etc/ssl/certs/maria.crt sudo chmod 644 /etc/ssl/certs/cacert.crt Habilitamos el módulo ssl y reiniciamos el servicio apache: sudo a2enmod ssl sudo a2ensite ssl-maria.iesgn.org.conf sudo systemctl reload apache2 Modificamos el fichero para que realice una redirección de http a https: sudo nano /etc/apache2/sites-available/maria.iesgn.org.conf #Añadimos la siguiente línea: Redirect 301 / https://maria.iesgn.org/ Reiniciamos el servicio apache: sudo systemctl reload apache2 Comprobamos su funcionamiento: Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS. Deshabilitamos apache: sudo systemctl disable --now apache2 Instalamos el servidor nginx: sudo apt install nginx Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: server { listen 80; listen [::]:80; server_name maria.iesgn.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; server_name maria.iesgn.org; ssl_certificate /etc/ssl/certs/maria.crt; ssl_certificate_key /etc/ssl/private/maria-priv.key; ssl_trusted_certificate /etc/ssl/certs/cacert.crt; root /var/www/html/maria.iesgn.org; index index.html; location / { try_files $uri $uri/ =404; } } Modificamos el fichero index.html que hemos creado anteriormente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;p&gt;PRUEBA NGINX&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Realizamos la firma del certificado: sudo openssl rsa -in /etc/ssl/private/maria-priv.key -out /etc/ssl/private/maria-priv2.key Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx: sudo ln -s /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/ sudo systemctl restart nginx Comprobamos que el servidor funciona correctamente:]]></summary></entry></feed>

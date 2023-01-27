@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>VPN de acceso remoto con WireGuard (Windows, Linux, Android) | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="VPN de acceso remoto con WireGuard (Windows, Linux, Android)">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción">
+<meta property="og:description" content="Introducción">
+<link rel="canonical" href="/seguridad/2023/01/12/vpn-c.html">
+<meta property="og:url" content="/seguridad/2023/01/12/vpn-c.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-01-12T12:47:17+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="VPN de acceso remoto con WireGuard (Windows, Linux, Android)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-12T12:47:17+01:00","datePublished":"2023-01-12T12:47:17+01:00","description":"Introducción","headline":"VPN de acceso remoto con WireGuard (Windows, Linux, Android)","mainEntityOfPage":{"@type":"WebPage","@id":"/seguridad/2023/01/12/vpn-c.html"},"url":"/seguridad/2023/01/12/vpn-c.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/vpn.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/vpn.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-01-12T12:47:17+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 12, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar un servidor VPN con WireGuard. WireGuard es un protocolo de túnel de código abierto que se ha convertido en una alternativa a OpenVPN. WireGuard es más rápido, más ligero y más fácil de configurar que OpenVPN.</p>
+
+<h2 id="preparando-el-escenario">Preparando el escenario</h2>
+
+<p>El escenario estará compuesto por tres máquinas clientes:</p>
+
+<ul>
+  <li>Cliente 1: Máquina debian 11</li>
+  <li>Cliente 2: Máquina windows 10</li>
+  <li>Cliente 3: Máquina android 11</li>
+</ul>
+
+<p>La máquina servidor será una máquina debian 11, y en este caso será nuestra máquina anfitriona, aunque para las pruebas crearemos otra máquina debian 11 conectada a la red interna de la máquina anfitriona.</p>
+
+<p>El cliente interno se creará con vagrant y le cambiaremos la ruta por defecto para que se conecte a la red interna de la máquina anfitriona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+    nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Interno"</span>
+    nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+    </span>nodo1.vm.network :private_network,
+      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"vpn1"</span>,
+      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.10"</span>,
+      :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+end
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
+ip r add default via 192.168.10.1
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/0.png" alt="0"></p>
+
+<h2 id="instalando-wireguard">Instalando WireGuard</h2>
+
+<p>Instalamos WireGuard en el servidor y configuramos el bit de forwarding.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+<span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Creamos los ficheros de configuración del servidor y generamos las claves.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /etc/wireguard/
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivatekey | wg pubkey <span class="o">&gt;</span> serverpublickey
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/1.png" alt="1"></p>
+
+<p>Tras crear el par de claves, creamos el fichero de configuración del servidor.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Server config</span>
+<span class="o">[</span>Interface]
+<span class="c">#Direccion IP del servidor</span>
+Address <span class="o">=</span> 10.99.99.1
+<span class="c">#Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> qKbkP/TmF/VNr4rotbACobORgnScgXw6Ku/esS11ZW8<span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+<span class="c">#Reglas IPTables</span>
+PostUp <span class="o">=</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
+PostDown <span class="o">=</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-D</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/2.png" alt="2"></p>
+
+<p>Terminado esto, activamos la interfaz y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/3.png" alt="3"></p>
+
+<p><img src="/assets/images/vpn/C/4.png" alt="4"></p>
+
+<h2 id="configurando-el-cliente-externo">Configurando el cliente externo</h2>
+
+<p>Creamos el fichero vagrant para crear al cliente externo.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |v|
+        v.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+        nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+        nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Externo"</span>
+        nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+    </span>end
+end
+</code></pre></div></div>
+
+<p>Como hemos hecho en la máquina anterior, instalamos WireGuard y generamos las claves.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+</code></pre></div></div>
+
+<p>Creamos el fichero de configuración del cliente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#Direccion IP del cliente</span>
+Address <span class="o">=</span> 10.99.99.2
+<span class="c">#Clave privada del cliente</span>
+PrivateKey <span class="o">=</span> oPuAciROYYHY8uX6IqU3DcvU/WoybtBn7Y6zFOwOMH8<span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+<span class="c">#Reglas IPTables</span>
+PostUp <span class="o">=</span> ip route add 192.168.10.0/24 dev wg0
+PostDown <span class="o">=</span> ip route del 192.168.10.0/24 dev wg0
+
+<span class="o">[</span>Peer]
+<span class="c">#Clave publica del servidor</span>
+PublicKey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
+<span class="c">#Direccion IP del servidor</span>
+AllowedIPs <span class="o">=</span> 0.0.0.0/0
+<span class="c">#Endpoint del servidor</span>
+Endpoint <span class="o">=</span> 192.168.1.11:51820
+</code></pre></div></div>
+
+<p>Activamos la interfaz y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/5.png" alt="5"></p>
+
+<p><strong>NOTA</strong>: Tras este paso, deberemos agregar la ruta por defecto en el cliente externo para que pueda acceder a la red interna.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
+Publickey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.2/32
+PersistentKeepAlive <span class="o">=</span> 25
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/6.png" alt="6"></p>
+
+<p>Y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/7.png" alt="7"></p>
+
+<p>Como podemos ver, el cliente externo puede acceder a la red interna.</p>
+
+<p><img src="/assets/images/vpn/C/9.png" alt="9"></p>
+
+<p><img src="/assets/images/vpn/C/10.png" alt="10"></p>
+
+<h2 id="configurando-el-cliente-windows">Configurando el cliente Windows</h2>
+
+<p>La configuración en windows es igual que en Linux, solo que en vez de usar el fichero de configuración, usaremos la aplicación WireGuard para Windows, que podremos descargarnos desde su <a href="https://www.wireguard.com/install/">página oficial</a>.</p>
+
+<p>Ya instalado, creamos un túnel vacñio y no tendremos que crear las claves, ya que las generará la aplicación.</p>
+
+<p><img src="/assets/images/vpn/C/11.png" alt="11"></p>
+
+<p>Terminada la configuración en Windows, nos dirigimos de nuevo en el cliente interno y añadimos un nuevo peer.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Windows</span>
+<span class="o">[</span>Peer]
+Publickey <span class="o">=</span> <span class="nv">5pZtBRqvn9bceifMZypv1Z3F1CcQNLSGKRCBo1ooiVg</span><span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.3/32
+PersistentKeepAlive <span class="o">=</span> 25
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p>Tras esto, activamos el tunel en Windows.</p>
+
+<p><img src="/assets/images/vpn/C/12.png" alt="12"></p>
+
+<p>Si nos dirigimos al servidor, podemos ver como se añade un nuevo peer.</p>
+
+<p><img src="/assets/images/vpn/C/13.png" alt="13"></p>
+
+<h3 id="comprobaciones">Comprobaciones</h3>
+
+<ul>
+  <li>Comprobamos que el cliente windows puede acceder a la red interna.</li>
+</ul>
+
+<p><img src="/assets/images/vpn/C/14.png" alt="14"></p>
+
+<ul>
+  <li>Comprobamos que el cliente interno tiene acceso a la red interna.</li>
+</ul>
+
+<p><img src="/assets/images/vpn/C/15.png" alt="15"></p>
+
+<h2 id="cliente-android">Cliente Android</h2>
+
+<p>Descargamos la aplicación WireGuard desde la <a href="https://play.google.com/store/apps/details?id=com.wireguard.android&hl=es&gl=US">Play Store</a>.</p>
+
+<p>En la propia aplicación, nos da tres opciones para crear el tunel:</p>
+<ul>
+  <li>Importar desde archivo</li>
+  <li>Importar desde QR</li>
+  <li>Crear desde cero</li>
+</ul>
+
+<p>De las tres opciones, he eligido la de <code class="language-plaintext highlighter-rouge">importar desde QR</code>, ya que es la más sencilla. Por ello, nos dirigimos al servidor y ejecutamos el siguiente comando.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+</code></pre></div></div>
+
+<p>Generamos el fichero de configuración como lo realizamos con el cliente linux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano AndroidClient.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#Direccion IP del cliente</span>
+Address <span class="o">=</span> 10.99.99.4
+<span class="c">#Clave privada del cliente</span>
+PrivateKey <span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+
+<span class="o">[</span>Peer]
+<span class="c">#Clave publica del servidor</span>
+Publickey <span class="o">=</span> 
+<span class="c">#Direccion IP del servidor</span>
+AllowedIPs <span class="o">=</span>
+<span class="c">#Endpoint del servidor</span>
+Endpoint <span class="o">=</span>
+</code></pre></div></div>
+
+<p>Para generar el QR, nos instalaremos el paquete <code class="language-plaintext highlighter-rouge">qrencode</code> y lo ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qrencode <span class="nt">-t</span> ansiutf8 &lt; AndroidClient.conf
+</code></pre></div></div>
+
+<p>Escaneamos el QR con la aplicación WireGuard en Android y ya tendremos el tunel configurado. Solo nos quedaría configurar un nuevo bloque peer en el servidor linux.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
+<span class="c">#Clave publica del cliente</span>
+Publickey <span class="o">=</span>
+<span class="c">#Direccion IP del cliente</span>
+AllowedIPs <span class="o">=</span>
+<span class="c">#Tiempo de espera</span>
+PersistentKeepAlive <span class="o">=</span>
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
+wg-quick up wg0
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/16.png" alt="16"></p>
+
+<h2 id="comprobaciones-1">Comprobaciones</h2>
+
+<p>Desde el propio cliente podemos comprobar el funcionamiento de la VPN.</p>
+
+<p><img src="/assets/images/vpn/C/17.png" alt="17"></p>
+
+<p>Desde el servidor podemos comprobar que el cliente Android se ha conectado correctamente.</p>
+
+<p><img src="/assets/images/vpn/C/18.png" alt="18"></p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>Comparando OpenVPN y WireGuard, podemos ver que WireGuard es mucho más sencillo de configurar y que tiene un rendimiento mucho mejor. Con Wireguard no es necesario que creamos un certificado para cada cliente, ya que solo necesitamos la clave pública del cliente y la clave privada del servidor.</p>
+
+<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado como <a href="https://ngrok.com/">ngrok</a> para que el servidor sea accesible desde internet.</p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/seguridad/2023/01/11/vpn-b.html" title="VPN site to site con OpenVPN y certificados x509">VPN site to site con OpenVPN...</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="">Prueba: Introducción a la implantación de aplicaciones web</a></li>
+<li><a class="post-link" href="/iaw/2023/01/09/java-simple.html" title="">Desarrollo y despliegue de una aplicación Java simple</a></li>
+<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="">Montaje NFS mediante systemd</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="">Certificados digitales. HTTPS</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
