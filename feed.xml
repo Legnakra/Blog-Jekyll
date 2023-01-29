@@ -1,301 +1,354 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-27T09:23:23+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-29T23:59:17+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar un servidor VPN con WireGuard. WireGuard es un protocolo de túnel de código abierto que se ha convertido en una alternativa a OpenVPN. WireGuard es más rápido, más ligero y más fácil de configurar que OpenVPN.</p>
 
 <h2 id="preparando-el-escenario">Preparando el escenario</h2>
 
-<p>El escenario estará compuesto por tres máquinas clientes:</p>
+<h3 id="máquina-interno">Máquina <strong>Interno</strong></h3>
 
-<ul>
-  <li>Cliente 1: Máquina debian 11</li>
-  <li>Cliente 2: Máquina windows 10</li>
-  <li>Cliente 3: Máquina android 11</li>
-</ul>
-
-<p>La máquina servidor será una máquina debian 11, y en este caso será nuestra máquina anfitriona, aunque para las pruebas crearemos otra máquina debian 11 conectada a la red interna de la máquina anfitriona.</p>
-
-<p>El cliente interno se creará con vagrant y le cambiaremos la ruta por defecto para que se conecte a la red interna de la máquina anfitriona.</p>
+<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de cliente interno. Esta máquina tendrá una IP privada y no podrá acceder a internet.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
     config.vm.provider :libvirt <span class="k">do</span> |libvirt|
         libvirt.memory <span class="o">=</span> 1024
     end
     config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-    nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-    nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Interno"</span>
-    nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-    </span>nodo1.vm.network :private_network,
-      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"vpn1"</span>,
-      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.10"</span>,
-      :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Interno"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"Privada"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.20.10"</span>,
+        :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
+        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
     end
 end
 </code></pre></div></div>
+<p>Y le configuraremos la ruta por defecto para que vaya por la ip ‘192.168.20.1’ que es la ip del servidor VPN.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
-ip r add default via 192.168.10.1
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/0.png" alt="0" /></p>
-
-<h2 id="instalando-wireguard">Instalando WireGuard</h2>
-
-<p>Instalamos WireGuard en el servidor y configuramos el bit de forwarding.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
-<span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Creamos los ficheros de configuración del servidor y generamos las claves.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /etc/wireguard/
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivatekey | wg pubkey <span class="o">&gt;</span> serverpublickey
+ip r add default via 192.168.20.1
 </code></pre></div></div>
 
 <p><img src="/assets/images/vpn/C/1.png" alt="1" /></p>
 
-<p>Tras crear el par de claves, creamos el fichero de configuración del servidor.</p>
+<h3 id="maquina-servidor">Maquina <strong>Servidor</strong></h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de servidor VPN. Esta máquina tendrá una IP pública y podrá acceder a internet.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+
+    config.vm.provider :libvirt <span class="k">do</span> |v|
+      v.memory <span class="o">=</span> 1024
+      end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN3"</span>,
+      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.99.10"</span>,
+      :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
+      :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+      nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"Privada"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.20.1"</span>,
+        :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
+        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+end
 </code></pre></div></div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Server config</span>
-<span class="o">[</span>Interface]
-<span class="c">#Direccion IP del servidor</span>
-Address <span class="o">=</span> 10.99.99.1
-<span class="c">#Clave privada del servidor</span>
-PrivateKey <span class="o">=</span> qKbkP/TmF/VNr4rotbACobORgnScgXw6Ku/esS11ZW8<span class="o">=</span>
-<span class="c">#Puerto de escucha</span>
-ListenPort <span class="o">=</span> 51820
-<span class="c">#Reglas IPTables</span>
-PostUp <span class="o">=</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-A</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
-PostDown <span class="o">=</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-i</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-D</span> FORWARD <span class="nt">-o</span> %i <span class="nt">-j</span> ACCEPT<span class="p">;</span> iptables <span class="nt">-t</span> nat <span class="nt">-D</span> POSTROUTING <span class="nt">-o</span> wlp3s0 <span class="nt">-j</span> MASQUERADE
+<p>En esta máquina vamos a instalar WireGuard.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+</code></pre></div></div>
+
+<p>Activamos el bit de forwarding en el kernel.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Nos dirigimos al directorio de configuración de WireGuard, creamos las claves del servidor que nos servirán para configurar los clientes y el fichero de configuración del servidor.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivatekey | wg pubkey <span class="o">&gt;</span> serverpublickey
 </code></pre></div></div>
 
 <p><img src="/assets/images/vpn/C/2.png" alt="2" /></p>
 
-<p>Terminado esto, activamos la interfaz y comprobamos que funciona.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#IP del servidor</span>
+Address <span class="o">=</span> 10.99.99.1
+<span class="c">#Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
+<span class="c">#Puerto de escucha</span>
+ListenPort <span class="o">=</span> 51820
+</code></pre></div></div>
+
+<p>Activamos la interfaz de WireGuard.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
-wg
+</code></pre></div></div>
+
+<p>Y comprobamos que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg
 </code></pre></div></div>
 
 <p><img src="/assets/images/vpn/C/3.png" alt="3" /></p>
 
 <p><img src="/assets/images/vpn/C/4.png" alt="4" /></p>
 
-<h2 id="configurando-el-cliente-externo">Configurando el cliente externo</h2>
+<h3 id="cliente-linux">Cliente <strong>Linux</strong></h3>
 
-<p>Creamos el fichero vagrant para crear al cliente externo.</p>
+<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de cliente para la VPN.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+
     config.vm.provider :libvirt <span class="k">do</span> |v|
-        v.memory <span class="o">=</span> 1024
+      v.memory <span class="o">=</span> 1024
     end
     config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-        nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-        nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Externo"</span>
-        nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-    </span>end
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Linux"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN3"</span>,
+      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.99.11"</span>,
+      :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
+      :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
 end
 </code></pre></div></div>
 
-<p>Como hemos hecho en la máquina anterior, instalamos WireGuard y generamos las claves.</p>
+<p>Y le configuraremos la ruta por defecto para que vaya por la ip ‘192.168.20.1’ que es la ip del servidor VPN.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
-wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
+ip r add default via 192.168.99.10
 </code></pre></div></div>
 
-<p>Creamos el fichero de configuración del cliente.</p>
+<p>En esta máquina realizaremos la configuración de wireguard como hemos realizado en la máquina anterior.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
-</code></pre></div></div>
+<ul>
+  <li>
+    <p>Instalamos wireguard</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>wireguard
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Nos dirigimosal directorio <code class="language-plaintext highlighter-rouge">/etc/wireguard/</code>y creamos el par de claves:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/vpn/C/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de configuración del cliente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span>Interface]
+  Address <span class="o">=</span> 10.99.99.2/24
+  <span class="c">#Clave privada del cliente</span>
+  PrivateKey <span class="o">=</span> 8J4d+gUAoZMNPZ1unrMtPJ4p7a2aXAB24MXnlmx+CEU<span class="o">=</span>
+  <span class="c">#Puerto de escucha del servidor</span>
+  ListenPort <span class="o">=</span> 51820
+
+  <span class="o">[</span>Peer]
+  <span class="c">#Clave pública del servidor</span>
+  PublicKey <span class="o">=</span> <span class="nv">KGD20wvABWB20aj02aCsUfKxphiubQUa0iGOMSVqNHc</span><span class="o">=</span>
+  AllowedIPs <span class="o">=</span> 0.0.0.0/0
+  <span class="c">#Punto de acceso del servidor</span>
+  Endpoint <span class="o">=</span> 192.168.99.10:51820
+  <span class="c">#Tiempo de espera de la conexión</span>
+  PersistentKeepalive <span class="o">=</span> 25
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Activamos la interfaz de WireGuard.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wg-quick up wg0
+</code></pre></div>    </div>
+    <p><img src="/assets/images/vpn/C/6.png" alt="6" /></p>
+
+    <p><img src="/assets/images/vpn/C/7.png" alt="7" /></p>
+  </li>
+</ul>
+
+<p>Configurado el cliente, deberemos configurar en el fichero <code class="language-plaintext highlighter-rouge">wg0.cong</code>de <code class="language-plaintext highlighter-rouge">servidor</code> donde incluiremos el cliente que recientemente hemos configurado y el fichero quedaría de la siguiente manera:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-<span class="c">#Direccion IP del cliente</span>
-Address <span class="o">=</span> 10.99.99.2
-<span class="c">#Clave privada del cliente</span>
-PrivateKey <span class="o">=</span> oPuAciROYYHY8uX6IqU3DcvU/WoybtBn7Y6zFOwOMH8<span class="o">=</span>
+Address <span class="o">=</span> 10.99.99.1
+<span class="c">#Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
 <span class="c">#Puerto de escucha</span>
 ListenPort <span class="o">=</span> 51820
-<span class="c">#Reglas IPTables</span>
-PostUp <span class="o">=</span> ip route add 192.168.10.0/24 dev wg0
-PostDown <span class="o">=</span> ip route del 192.168.10.0/24 dev wg0
 
+<span class="c">#Bit de forwarding</span>
+PreUp <span class="o">=</span> sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1
+
+<span class="c"># Cliente Debian 11</span>
 <span class="o">[</span>Peer]
-<span class="c">#Clave publica del servidor</span>
-PublicKey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
-<span class="c">#Direccion IP del servidor</span>
-AllowedIPs <span class="o">=</span> 0.0.0.0/0
-<span class="c">#Endpoint del servidor</span>
-Endpoint <span class="o">=</span> 192.168.1.11:51820
+<span class="c">#Clave pública del cliente</span>
+Publickey <span class="o">=</span> pQLF6BndUY/V15vvCymgo+84qWp5YzLLjXpybSmMBDo<span class="o">=</span>
+<span class="c">#IP del cliente</span>
+AllowedIPs <span class="o">=</span> 10.99.99.2/32
+<span class="c">#Tiempo de espera de respuesta</span>
+PersistentKeepAlive <span class="o">=</span> 25
 </code></pre></div></div>
 
-<p>Activamos la interfaz y comprobamos que funciona.</p>
+<p>Reiniciaos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
 wg
 </code></pre></div></div>
+<p><img src="/assets/images/vpn/C/8.png" alt="8" /></p>
 
-<p><img src="/assets/images/vpn/C/5.png" alt="5" /></p>
+<p><img src="/assets/images/vpn/C/9.png" alt="9" /></p>
 
-<p><strong>NOTA</strong>: Tras este paso, deberemos agregar la ruta por defecto en el cliente externo para que pueda acceder a la red interna.</p>
+<h3 id="comprobaciones-de-funcionamiento">Comprobaciones de funcionamiento</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
-Publickey <span class="o">=</span> T6HZUpF7qb1wEV+nuZGErCwEq/vGO5G7Z/tv/Rq7Izw<span class="o">=</span>
+<p>Desde el propio cliente podemos comprobar el funcionamiento de la VPN.</p>
+
+<p><img src="/assets/images/vpn/C/10.png" alt="10" /></p>
+
+<p>Desde el servidor podemos comprobar que el cliente Android se ha conectado correctamente.</p>
+
+<p><img src="/assets/images/vpn/C/11.png" alt="11" /></p>
+
+<h2 id="configuración-del-cliente-windows">Configuración del cliente windows</h2>
+
+<p>Lo primero que deberemos realizar es el cambio de ip de la interfaz de red de la máquina virtual para que no haya conflictos con la ip de la VPN. Para ello, ejecutamos el administrador de sistema en modo administrador y escribimos en la consola:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netsh
+interface ip <span class="nb">set </span>address <span class="nv">name</span><span class="o">=</span><span class="s2">"Ethernet"</span> static 192.168.99.12 255.255.255.0 192.168.99.10
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/C/12.png" alt="12" /></p>
+
+<p>Descargamos wildguard desde su <a href="https://www.wireguard.com/install/">página oficial</a>, y una vez instalado, abrimos el programa y en la parte inferior izquierda, tenemos un menú desplegable donde seleccionamos <code class="language-plaintext highlighter-rouge">Añadir tunel vacío</code>.</p>
+
+<p>En la subventana que se abre, ya nos aparecen creadas ambas claves, la pública y la privada del servidor, por lo que solo tendremos que añadir la clave pública del servidor y la IP.</p>
+
+<p><img src="/assets/images/vpn/C/13.png" alt="13" /></p>
+
+<p>Nos dirigimos al servidor, y añadimos la clave pública del cliente y la IP, quedando el fichero de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+Address <span class="o">=</span> 10.99.99.1
+PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
+ListenPort <span class="o">=</span> 51820
+
+PreUp <span class="o">=</span> sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1
+
+<span class="c"># Cliente Debian 11</span>
+<span class="o">[</span>Peer]
+Publickey <span class="o">=</span> pQLF6BndUY/V15vvCymgo+84qWp5YzLLjXpybSmMBDo<span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.2/32
+PersistentKeepAlive <span class="o">=</span> 25
+
+<span class="c"># Cliente Windows</span>
+
+<span class="o">[</span>Peer]
+Publickey <span class="o">=</span> <span class="nv">SqFFutq1xAbGzj3POiHSRbbPpQAH1clUkyWikKjhojg</span><span class="o">=</span>
 AllowedIPs <span class="o">=</span> 10.99.99.2/32
 PersistentKeepAlive <span class="o">=</span> 25
 </code></pre></div></div>
 
-<p>Reiniciamos el servicio y comprobamos que funciona.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
-wg-quick up wg0
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/6.png" alt="6" /></p>
-
-<p>Y comprobamos que funciona.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/7.png" alt="7" /></p>
-
-<p>Como podemos ver, el cliente externo puede acceder a la red interna.</p>
-
-<p><img src="/assets/images/vpn/C/9.png" alt="9" /></p>
-
-<p><img src="/assets/images/vpn/C/10.png" alt="10" /></p>
-
-<h2 id="configurando-el-cliente-windows">Configurando el cliente Windows</h2>
-
-<p>La configuración en windows es igual que en Linux, solo que en vez de usar el fichero de configuración, usaremos la aplicación WireGuard para Windows, que podremos descargarnos desde su <a href="https://www.wireguard.com/install/">página oficial</a>.</p>
-
-<p>Ya instalado, creamos un túnel vacñio y no tendremos que crear las claves, ya que las generará la aplicación.</p>
-
-<p><img src="/assets/images/vpn/C/11.png" alt="11" /></p>
-
-<p>Terminada la configuración en Windows, nos dirigimos de nuevo en el cliente interno y añadimos un nuevo peer.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Windows</span>
-<span class="o">[</span>Peer]
-Publickey <span class="o">=</span> <span class="nv">5pZtBRqvn9bceifMZypv1Z3F1CcQNLSGKRCBo1ooiVg</span><span class="o">=</span>
-AllowedIPs <span class="o">=</span> 10.99.99.3/32
-PersistentKeepAlive <span class="o">=</span> 25
-</code></pre></div></div>
-
-<p>Reiniciamos el servicio y comprobamos que funciona.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
-wg-quick up wg0
-</code></pre></div></div>
-
-<p>Tras esto, activamos el tunel en Windows.</p>
-
-<p><img src="/assets/images/vpn/C/12.png" alt="12" /></p>
-
-<p>Si nos dirigimos al servidor, podemos ver como se añade un nuevo peer.</p>
-
-<p><img src="/assets/images/vpn/C/13.png" alt="13" /></p>
-
-<h3 id="comprobaciones">Comprobaciones</h3>
-
-<ul>
-  <li>Comprobamos que el cliente windows puede acceder a la red interna.</li>
-</ul>
+<p>Reiniciamos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
 
 <p><img src="/assets/images/vpn/C/14.png" alt="14" /></p>
 
-<ul>
-  <li>Comprobamos que el cliente interno tiene acceso a la red interna.</li>
-</ul>
-
 <p><img src="/assets/images/vpn/C/15.png" alt="15" /></p>
 
-<h2 id="cliente-android">Cliente Android</h2>
+<h3 id="comprobaciones-de-funcionamiento-1">Comprobaciones de funcionamiento</h3>
 
-<p>Descargamos la aplicación WireGuard desde la <a href="https://play.google.com/store/apps/details?id=com.wireguard.android&amp;hl=es&amp;gl=US">Play Store</a>.</p>
+<p>En las siguientes imágenes, podemos ver que el cliente windows puede acceder a la red interna y también con el cliente linux.</p>
 
-<p>En la propia aplicación, nos da tres opciones para crear el tunel:</p>
+<p><img src="/assets/images/vpn/C/16.png" alt="16" /></p>
+
+<p><img src="/assets/images/vpn/C/17.png" alt="17" /></p>
+
+<h2 id="configuración-del-cliente-android">Configuración del cliente Android</h2>
+
+<p>Para este punto del escenario, voy a usar mi máquina host como servidor VPN y mi móvil físico como cliente. Para ello, hemos instalado la aplicación WireGuard en el móvil y hemos configurado el servidor con la IP de mi móvil.</p>
+
+<p>Para hacerlo posible, vamos a realizar la configuración del cliente en la propia máquina servidor y luego pasaremos dicha configuración al móvil a través de un código QR que generaremos en nuestra consola.</p>
+
 <ul>
-  <li>Importar desde archivo</li>
-  <li>Importar desde QR</li>
-  <li>Crear desde cero</li>
-</ul>
+  <li>
+    <p>Creamos las claves pública y privada del cliente.</p>
 
-<p>De las tres opciones, he eligido la de <code class="language-plaintext highlighter-rouge">importar desde QR</code>, ya que es la más sencilla. Por ello, nos dirigimos al servidor y ejecutamos el siguiente comando.</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>androidprivate | wg pubkey <span class="o">&gt;</span> androidpublic
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el fichero de configuración del cliente.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
-</code></pre></div></div>
-
-<p>Generamos el fichero de configuración como lo realizamos con el cliente linux.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano AndroidClient.conf
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-<span class="c">#Direccion IP del cliente</span>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
 Address <span class="o">=</span> 10.99.99.4
-<span class="c">#Clave privada del cliente</span>
-PrivateKey <span class="o">=</span>
+PrivateKey <span class="o">=</span> wHf9pBV923/XKWPzFVPp39w3eUZ7wU7DsE6cvu36F2s<span class="o">=</span>
+ListenPort <span class="o">=</span> 51820
+  
+<span class="o">[</span>Peer]
+Publickey <span class="o">=</span><span class="nv">n9IjUHqVAQ9WEW80syWFYmgY5IG80kd5J9j2godvgm8</span><span class="o">=</span>
+AllowedIPs <span class="o">=</span> 0.0.0.0/0
+Endpoint <span class="o">=</span> 192.168.15.32:51820
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ahora generaremos el código QR con el que pasaremos la configuración al móvil.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qrencode <span class="nt">-t</span> ansiutf8 &lt; android.conf
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/vpn/C/18.png" alt="18" /></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero de configuración del servidor para añadir la clave pública del cliente y la IP.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+<span class="c">#IP del servidor</span>
+Address <span class="o">=</span> 10.99.99.1
+<span class="c">#Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
 <span class="c">#Puerto de escucha</span>
 ListenPort <span class="o">=</span> 51820
 
 <span class="o">[</span>Peer]
-<span class="c">#Clave publica del servidor</span>
-Publickey <span class="o">=</span> 
-<span class="c">#Direccion IP del servidor</span>
-AllowedIPs <span class="o">=</span>
-<span class="c">#Endpoint del servidor</span>
-Endpoint <span class="o">=</span>
-</code></pre></div></div>
+Publickey <span class="o">=</span> Iq47qp/TP8bx6v4qDJwTiHwWYSO7/y23FvK1SpIdzi0<span class="o">=</span>
+AllowedIPs <span class="o">=</span> 10.99.99.4/32
+PersistentKeepAlive <span class="o">=</span> 25
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Tras ello, reiniciamos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
 
-<p>Para generar el QR, nos instalaremos el paquete <code class="language-plaintext highlighter-rouge">qrencode</code> y lo ejecutamos:</p>
+    <p><img src="/assets/images/vpn/C/19.png" alt="19" /></p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qrencode <span class="nt">-t</span> ansiutf8 &lt; AndroidClient.conf
-</code></pre></div></div>
+    <p><img src="/assets/images/vpn/C/20.png" alt="20" /></p>
+  </li>
+</ul>
 
-<p>Escaneamos el QR con la aplicación WireGuard en Android y ya tendremos el tunel configurado. Solo nos quedaría configurar un nuevo bloque peer en el servidor linux.</p>
+<h3 id="comprobaciones-de-funcionamiento-2">Comprobaciones de funcionamiento</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
-</code></pre></div></div>
+<p>Para verificar que funciona correctamente, haremos ping desde el cliente interno al cliente android y desde el cliente android al servidor.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Peer]
-<span class="c">#Clave publica del cliente</span>
-Publickey <span class="o">=</span>
-<span class="c">#Direccion IP del cliente</span>
-AllowedIPs <span class="o">=</span>
-<span class="c">#Tiempo de espera</span>
-PersistentKeepAlive <span class="o">=</span>
-</code></pre></div></div>
+<p><img src="/assets/images/vpn/C/21.png" alt="21" /></p>
 
-<p>Reiniciamos el servicio y comprobamos que funciona.</p>
+<p><img src="/assets/images/vpn/C/22.png" alt="22" /></p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
-wg-quick up wg0
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/16.png" alt="16" /></p>
-
-<h2 id="comprobaciones-1">Comprobaciones</h2>
-
-<p>Desde el propio cliente podemos comprobar el funcionamiento de la VPN.</p>
-
-<p><img src="/assets/images/vpn/C/17.png" alt="17" /></p>
-
-<p>Desde el servidor podemos comprobar que el cliente Android se ha conectado correctamente.</p>
-
-<p><img src="/assets/images/vpn/C/18.png" alt="18" /></p>
+<p><img src="/assets/images/vpn/C/23.png" alt="23" /></p>
 
 <h2 id="conclusiones">Conclusiones</h2>
 
 <p>Comparando OpenVPN y WireGuard, podemos ver que WireGuard es mucho más sencillo de configurar y que tiene un rendimiento mucho mejor. Con Wireguard no es necesario que creamos un certificado para cada cliente, ya que solo necesitamos la clave pública del cliente y la clave privada del servidor.</p>
 
-<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado como <a href="https://ngrok.com/">ngrok</a> para que el servidor sea accesible desde internet.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 <p>En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:</p>
 
 <ul>
@@ -669,9 +722,15 @@ ip route add default via 172.20.0.20
  <span class="nt">---</span>
  @       IN      MX  10  alfa.mariajesus.gonzalonazareno.org.
 </code></pre></div>    </div>
-    <p>Reiniciamos <code class="language-plaintext highlighter-rouge">bind9</code> y ya podemos enviar correos desde <code class="language-plaintext highlighter-rouge">charlie</code> a <code class="language-plaintext highlighter-rouge">delta</code></p>
+  </li>
+  <li>
+    <p>Vamos a probar si hemos recibido algún correo, ejecutaremos lo siguiente</p>
 
     <p><img src="/assets/images/correo/6.png" alt="6" /></p>
+
+    <p><img src="/assets/images/correo/7.png" alt="7" /></p>
+
+    <p><img src="/assets/images/correo/8.png" alt="8" /></p>
   </li>
 </ul>
 
@@ -682,18 +741,25 @@ ip route add default via 172.20.0.20
 <h1 id="comprobación">Comprobación</h1>
 
 <ol>
-  <li>
-    <p>Prueba de funcionamiento del ejercicio1. Se debe mostrar el log para asegurarse que se ha enviado el correo.</p>
-  </li>
-  <li>
-    <p>Muestra las cabeceras del correo recibido en el ejercicio 2 mostrando las cabeceras donde vemos los servidores por los que ha pasado el correo</p>
-  </li>
-  <li>
-    <p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3</p>
-  </li>
-  <li>
-    <p><strong>Ejercicio propuesto por el profesor</strong>:</p>
-  </li>
+  <li>Prueba de funcionamiento del ejercicio1. Se debe mostrar el log para asegurarse que se ha enviado el correo.</li>
+</ol>
+
+<p><img src="/assets/images/correo/4.png" alt="4" /></p>
+
+<ol>
+  <li>Muestra las cabeceras del correo recibido en el ejercicio 2 mostrando las cabeceras donde vemos los servidores por los que ha pasado el correo.</li>
+</ol>
+
+<p><img src="/assets/images/correo/5.png" alt="5" /></p>
+
+<ol>
+  <li>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3.</li>
+</ol>
+
+<p><img src="/assets/images/correo/8.png" alt="8" /></p>
+
+<ol>
+  <li><strong>Ejercicio propuesto por el profesor</strong>:</li>
 </ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un servidor de correo.]]></summary></entry><entry><title type="html">Desarrollo y despliegue de una aplicación Java simple</title><link href="/iaw/2023/01/09/java-simple.html" rel="alternate" type="text/html" title="Desarrollo y despliegue de una aplicación Java simple" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-simple</id><content type="html" xml:base="/iaw/2023/01/09/java-simple.html"><![CDATA[<p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
 
 <p><strong>Tomcat</strong> es un servidor web que permite ejecutar aplicaciones Java. En este post vamos a ver como desplegar una aplicación Java en un servidor Tomcat.</p>
