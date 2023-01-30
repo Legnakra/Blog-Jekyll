@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Despliegue de aplicaciones Java | sysmaria</title>
+<title>Taller Docker - Almacenamiento y Redes | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Despliegue de aplicaciones Java">
+<meta property="og:title" content="Taller Docker - Almacenamiento y Redes">
 <meta property="og:locale" content="en_US">
-<meta name="description" content="En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.">
-<meta property="og:description" content="En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.">
-<link rel="canonical" href="/iaw/2023/01/09/java-cms.html">
-<meta property="og:url" content="/iaw/2023/01/09/java-cms.html">
+<meta name="description" content="Almacenamiento">
+<meta property="og:description" content="Almacenamiento">
+<link rel="canonical" href="/iaw/2023/01/12/docker-almacenamiento.html">
+<meta property="og:url" content="/iaw/2023/01/12/docker-almacenamiento.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2023-01-09T12:47:17+01:00">
+<meta property="article:published_time" content="2023-01-12T12:47:17+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Despliegue de aplicaciones Java">
+<meta property="twitter:title" content="Taller Docker - Almacenamiento y Redes">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-09T12:47:17+01:00","datePublished":"2023-01-09T12:47:17+01:00","description":"En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.","headline":"Despliegue de aplicaciones Java","mainEntityOfPage":{"@type":"WebPage","@id":"/iaw/2023/01/09/java-cms.html"},"url":"/iaw/2023/01/09/java-cms.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-12T12:47:17+01:00","datePublished":"2023-01-12T12:47:17+01:00","description":"Almacenamiento","headline":"Taller Docker - Almacenamiento y Redes","mainEntityOfPage":{"@type":"WebPage","@id":"/iaw/2023/01/12/docker-almacenamiento.html"},"url":"/iaw/2023/01/12/docker-almacenamiento.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -449,17 +449,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <section class="page-banner">
     <div class="page-banner-img">
-<div style="background-image: url(/assets/images/banners/java2.png)"></div>
-        <img class="img-placeholder" src="/assets/images/banners/java2.png">
+<div style="background-image: url(/assets/images/banners/docker.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/docker.png">
 </div>
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Despliegue de aplicaciones Java</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Taller Docker - Almacenamiento y Redes</h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
-    <time class="dt-published" datetime="2023-01-09T12:47:17+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 9, 2023
+    <time class="dt-published" datetime="2023-01-12T12:47:17+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 12, 2023
     </time>
 
     
@@ -689,234 +689,226 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <div class="post-content e-content" itemprop="articleBody">
 
-      <p>En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.</p>
+      <h2 id="almacenamiento">Almacenamiento</h2>
 
-<h1 id="instalación-de-tomcat">Instalación de Tomcat</h1>
+<h3 id="volúmenes-docker">Volúmenes docker:</h3>
 
-<p>Para instalar Tomcat, vamos a utilizar el gestor de paquetes de Debian, <code class="language-plaintext highlighter-rouge">apt-get</code>. Para ello, vamos a ejecutar el siguiente comando:</p>
+<ol>
+  <li>
+    <p>Crearemos un volumen docker que se llame miweb.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>tomcat9
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker volume create miweb
+</code></pre></div>    </div>
+
+    <p>Y mostramos que el volumen se ha creado correctamente.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker volume <span class="nb">ls</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/1.png" alt="1"></p>
+  </li>
+  <li>
+    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el volumen docker que has creado.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/2.png" alt="2"></p>
+  </li>
+  <li>
+    <p>Utiliza el comando docker cp para copiar un fichero index.html (donde aparece tu nombre) en el directorio /var/www/html.</p>
+
+    <div class="language-html highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
+ <span class="nt">&lt;html&gt;</span>
+     <span class="nt">&lt;body&gt;</span>
+         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
+         <span class="nt">&lt;h2&gt;</span>Prueba de docker<span class="nt">&lt;/h2&gt;</span>
+     <span class="nt">&lt;/body&gt;</span>
+ <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker <span class="nb">cp </span>index.html miweb:/var/www/html/index.html
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> http://localhost
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/3.png" alt="3"></p>
+  </li>
+  <li>
+    <p>Borra el contenedor</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/4.png" alt="4"></p>
+  </li>
+  <li>
+    <p>Crea un nuevo contenedor y monta el mismo volumen como en el ejercicio anterior.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/5.png" alt="5"></p>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Seguía existiendo ese fichero?</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/6.png" alt="6"></p>
+
+    <ul>
+      <li>El fichero sigue existiendo porque se ha creado un volumen docker que se ha montado en el contenedor.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="bind-mounts">Bind Mounts:</h3>
+
+<ol>
+  <li>
+    <p>Crea un directorio en tu host y dentro crea un fichero index.html (donde aparece tu nombre).</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> <span class="nt">-p</span> /home/maria/Documentos/2ASIR/IAW/Docker
+ <span class="nb">cd</span> /home/maria/Documentos/2ASIR/IAW/Docker
+ <span class="nb">touch </span>index.html
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el directorio que has creado por medio de bind mount.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/7.png" alt="7"></p>
+  </li>
+  <li>
+    <p>Modifica el contenido del fichero index.html en tu host y comprueba que al refrescar la página ofrecida por el contenedor, el contenido ha cambiado.</p>
+
+    <div class="language-html highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
+ <span class="nt">&lt;html&gt;</span>
+     <span class="nt">&lt;body&gt;</span>
+         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
+         <span class="nt">&lt;h2&gt;</span>Prueba Bind Mounts<span class="nt">&lt;/h2&gt;</span>
+     <span class="nt">&lt;/body&gt;</span>
+ <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/8.png" alt="8"></p>
+  </li>
+  <li>
+    <p>Borra el contenedor</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Crea un nuevo contenedor y monta el mismo directorio como en el ejercicio anterior.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/9.png" alt="9"></p>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Se sigue viendo el mismo contenido?</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/10.png" alt="10"></p>
+
+    <ul>
+      <li>El contenido sigue siendo el mismo porque se ha montado el directorio en el contenedor.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="redes">Redes</h2>
+
+<p>Despliegue de Nextcloud + mariadb/postgreSQL</p>
+
+<p>Vamos a desplegar la aplicación nextcloud con una base de datos. Para ello sigue los siguientes pasos:</p>
+
+<p>Crea una red de tipo bridge para que los contenedores se puedan comunicar entre ellos.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker network create nextcloud-net
+```
 </code></pre></div></div>
 
-<h2 id="tarea-1-desarrollo-y-despliegue-de-una-aplicación-java">Tarea 1: Desarrollo y despliegue de una aplicación Java</h2>
+<p><img src="/assets/images/docker/taller1/11.png" alt="11"></p>
 
-<p>De forma similar a lo que hemos hecho el <a href="https://sysmaria.netlify.app/iaw/2022/12/28/java-simple.html">despliegue simple</a>, despliegue de forma manual la aplicación Java que encontrarás en <a href="https://github.com/josedom24/rock-paper-scissors">siguiente repositorio</a>.</p>
+<p>Crea el contenedor de la base de datos conectado a la red que has creado. La base de datos se debe configurar para crear una base de dato y un usuario. Además el contenedor debe utilizar almacenamiento para guardar la información.</p>
 
-<ul>
-  <li>
-    <p>Instalamos git</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker run -d --name nextcloud-db -e MYSQL_ROOT_PASSWORD=nextcloud -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -v nextcloud-db:/var/lib/mysql --network nextcloud-net mariadb
+```
+</code></pre></div></div>
 
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Clonamos el repositorio</p>
+<p><img src="/assets/images/docker/taller1/12.png" alt="12"></p>
 
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  git clone https://github.com/josedom24/rock-paper-scissors.git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Nos dirigimos al directorio que se ha creado al clonar el repositorio y ejecutamos:</p>
+<p>A continuación, siguiendo la documentación de la imagen nextcloud, crea un contenedor conectado a la misma red, e indica las variables adecuadas para que se configure de forma adecuada y realice la conexión a la base de datos. El contenedor también debe ser persistente usando almacenamiento.</p>
 
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  mvn package
-</code></pre></div>    </div>
-  </li>
-</ul>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker run -d --name nextcloud -p 80:80 -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -e MYSQL_HOST=nextcloud-db -v nextcloud:/var/www/html --network nextcloud-net nextcloud
+```
+</code></pre></div></div>
 
-<p><strong>NOTA</strong>: Lo puedes realizar en el mismo escenario en el que hemos realizado este <a href="https://sysmaria.netlify.app/iaw/2023/01/09/java-simple.html">taller</a></p>
+<p><img src="/assets/images/docker/taller1/13.png" alt="13"></p>
 
-<ul>
-  <li>
-    <p>Nos transferimos el fichero generado en <code class="language-plaintext highlighter-rouge">/target</code> a nuestra máquina local.</p>
+<p>Accede a la aplicación usando un navegador web.</p>
 
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  scp <span class="nt">-r</span> roshambo.war maria@172.20.10.8:/home/maria/Documentos
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Abrimos en nuestro navegador el manager de tomcat, que en mi caso se encuentra en <code class="language-plaintext highlighter-rouge">http://192.168.122.93:8080/manager/html/</code>, nos dirigimos a la pestaña <code class="language-plaintext highlighter-rouge">WAR file to deploy</code> y seleccionamos el fichero que hemos transferido.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+http://localhost:8080
+```
+</code></pre></div></div>
 
-    <p><img src="/assets/images/despliegue-java/1.png" alt="1"></p>
-  </li>
-  <li>
-    <p>Una vez desplegada, podemos ver que la aplicación java funciona correctamente.</p>
+<p><img src="/assets/images/docker/taller1/14.png" alt="14"></p>
 
-    <p><img src="/assets/images/despliegue-java/2.png" alt="2"></p>
-  </li>
-</ul>
-
-<h2 id="tarea-2-despliegue-de-un-cms-java">Tarea 2: Despliegue de un CMS Java</h2>
-
-<ul>
-  <li>
-    <p>Nos descargamos el <a href="https://cloud.josedomingo.org/index.php/s/cwMj6NAZ4fNMoRA">fichero.war</a></p>
-  </li>
-  <li>
-    <p>Instalamos MySQL y los configuramos de la siguiente manera:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>mariadb-server
-</code></pre></div>    </div>
-
-    <p>Creamos el usuario:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  mysql <span class="nt">-u</span> root <span class="nt">-p</span>
-  <span class="nt">----</span>
-  CREATE USER <span class="s1">'java'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
-  GRANT ALL PRIVILEGES ON <span class="k">*</span> <span class="nb">.</span> <span class="k">*</span> TO <span class="s1">'java'</span>@<span class="s1">'localhost'</span> WITH GRANT OPTION<span class="p">;</span>
-  FLUSH PRIVILEGES<span class="p">;</span>
-  EXIT<span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/despliegue-java/3.png" alt="3"></p>
-  </li>
-  <li>
-    <p>Movemos el fichero.war a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code>. Como podemos ver en la siguiente imagen, en la tabla de aplicaciones, nos aparece nuestra aplicación <code class="language-plaintext highlighter-rouge">CMS</code>.</p>
-
-    <p><img src="/assets/images/despliegue-java/4.png" alt="4"></p>
-  </li>
-  <li>
-    <p>Una vez comrobado esto, en nuestro navegador accedemos a <code class="language-plaintext highlighter-rouge">http://&lt;ip-máquina&gt;:8080/opencms/setup/</code></p>
-
-    <p><img src="/assets/images/despliegue-java/5.png" alt="5"></p>
-  </li>
-  <li>
-    <p>Y procedemos con la instalación:</p>
-
-    <p><img src="/assets/images/despliegue-java/6.png" alt="6"></p>
-
-    <p><img src="/assets/images/despliegue-java/7.png" alt="7"></p>
-
-    <p><img src="/assets/images/despliegue-java/8.png" alt="8"></p>
-
-    <p><img src="/assets/images/despliegue-java/9.png" alt="9"></p>
-
-    <p><img src="/assets/images/despliegue-java/10.png" alt="10"></p>
-  </li>
-  <li>
-    <p>Tras toda la instalación, nos aparecerá la siguiente pantalla:</p>
-
-    <p><img src="/assets/images/despliegue-java/11.png" alt="11"></p>
-  </li>
-</ul>
-
-<h3 id="modificación-de-opencms">Modificación de OpenCms</h3>
-
-<p>En mi caso le he cambiado el fondo de la página principal, eltítulo y el subtítulo. Para realizarlo, debemos conectarnos como usuario <code class="language-plaintext highlighter-rouge">Admin</code> y contraseña <code class="language-plaintext highlighter-rouge">admin</code>.</p>
-
-<p>Una vez dentro, en las esquinas superiores derecha de cada contenido, nos aparecerá ⭕️ y al pulsar sobre él, nos aparecerá un menú desplegable con la opción <code class="language-plaintext highlighter-rouge">Edit</code>. Al pulsar sobre ella, nos aparecerá una ventana en la que podremos modificar el contenido.</p>
-
-<p>Tras ello, en la esquina superior izquierda, nos aparecerá un 🔄 (Publish) y al pulsar sobre él, se publicará el contenido.</p>
-
-<p><img src="/assets/images/despliegue-java/12.png" alt="12"></p>
-
-<p>En mi caso, ha quedado de la siguiente manera:</p>
-
-<p><img src="/assets/images/despliegue-java/13.png" alt="13"></p>
-
-<h2 id="tarea-3-acceso-a-las-aplicaciones">Tarea 3: Acceso a las aplicaciones</h2>
-
-<p>Cuando trabajamos con tomcat no se accedemos directamente al servidor de aplicaciones, se instala un proxy inverso que nos permita el acceso a las aplicaciones. Instala un proxy inverso para acceder a las aplicaciones con las siguientes urls:</p>
-
-<ul>
-  <li>
-    <p>A la aplicación rock-paper-scissors se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code>.</p>
-  </li>
-  <li>
-    <p>A la aplicación OpenCMS se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code>.</p>
-  </li>
-  <li>
-    <p>Lo primero que realizaremos será la instalación de Nginx en nuestra máquina.</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el VirtualHost:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/java.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Vamos a configurarlo de forma que al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code> nos redirija a la aplicación OpenCMS y al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code> nos redirija a la aplicación rock-paper-scissors.</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  server <span class="o">{</span>
-      listen 80<span class="p">;</span>
-      listen <span class="o">[</span>::]:80<span class="p">;</span>
-
-      index index.html index.htm index.nginx-debian.html<span class="p">;</span>
-
-      server_name java.mariajesus.org<span class="p">;</span>
-
-      location / <span class="o">{</span>
-          proxy_pass http://localhost:8080/opencms/<span class="p">;</span>
-          include proxy_params<span class="p">;</span>
-      <span class="o">}</span>
-
-      location /game <span class="o">{</span>
-          proxy_pass http://localhost:8080/roshambo/<span class="p">;</span>
-          include proxy_params<span class="p">;</span>
-      <span class="o">}</span>
-  <span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Realizamos el enlace simbólico:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/java.conf /etc/nginx/sites-enabled/java.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para que nos redirija a nuestra máquina:</p>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/hosts
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  192.168.122.93 java.mariajesus.org
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que funciona correctamente:</p>
-
-    <p><strong>OpenCMS</strong>
-  <img src="/assets/images/despliegue-java/14.png" alt="14"></p>
-
-    <p><strong>Rock-Paper-Scissors</strong>
-  <img src="/assets/images/despliegue-java/15.png" alt="15"></p>
-  </li>
-</ul>
+<p><img src="/assets/images/docker/taller1/15.png" alt="15"></p>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/seguridad/2023/01/09/vpn.html" title="Acceso remoto con OpenVPN y certificados x509">Acceso remoto con OpenVPN y certificados...</a><a class="next" href="/hlc+sri/2023/01/10/correo.html" title="Servidor de correo en los servidores de clase">Servidor de correo en los servidores...</a>
+<a class="previous" href="/seguridad/2023/01/12/vpn-c.html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)">VPN de acceso remoto con WireGuard...</a><a class="next" href="/seguridad/2023/01/13/vpn-d.html" title="VPN sitio a sitio con WireGuard">VPN sitio a sitio con WireGuard...</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Servidor de correo en los servidores de clase">Crear un sitio web estático con Jekyll</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="Servidor de correo en los servidores de clase">Infraestructura como código</a></li>
-<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="Servidor de correo en los servidores de clase">Certificados digitales. HTTPS</a></li>
-<li><a class="post-link" href="/asgdb/2022/11/08/interconexion.html" title="Servidor de correo en los servidores de clase">Interconexiones de servidores</a></li>
+        <li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="VPN sitio a sitio con WireGuard">Acceso remoto con OpenVPN y certificados x509</a></li>
+<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="VPN sitio a sitio con WireGuard">Configuración de HTTPS en nuestro VPS</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="VPN sitio a sitio con WireGuard">Introducción a GitHub</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="VPN sitio a sitio con WireGuard">Certificados digitales. HTTPS</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

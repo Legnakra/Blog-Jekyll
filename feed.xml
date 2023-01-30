@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T01:03:23+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T03:15:30+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
 
@@ -533,7 +533,195 @@ PersistentKeepAlive <span class="o">=</span> 25
 
 <p>Comparando OpenVPN y WireGuard, podemos ver que WireGuard es mucho más sencillo de configurar y que tiene un rendimiento mucho mejor. Con Wireguard no es necesario que creamos un certificado para cada cliente, ya que solo necesitamos la clave pública del cliente y la clave privada del servidor.</p>
 
-<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Docker - Almacenamiento y Redes</title><link href="/iaw/2023/01/12/docker-almacenamiento.html" rel="alternate" type="text/html" title="Taller Docker - Almacenamiento y Redes" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/iaw/2023/01/12/docker-almacenamiento</id><content type="html" xml:base="/iaw/2023/01/12/docker-almacenamiento.html"><![CDATA[<h2 id="almacenamiento">Almacenamiento</h2>
+
+<h3 id="volúmenes-docker">Volúmenes docker:</h3>
+
+<ol>
+  <li>
+    <p>Crearemos un volumen docker que se llame miweb.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume create miweb
+</code></pre></div>    </div>
+
+    <p>Y mostramos que el volumen se ha creado correctamente.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume <span class="nb">ls</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el volumen docker que has creado.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Utiliza el comando docker cp para copiar un fichero index.html (donde aparece tu nombre) en el directorio /var/www/html.</p>
+
+    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
+ <span class="nt">&lt;html&gt;</span>
+     <span class="nt">&lt;body&gt;</span>
+         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
+         <span class="nt">&lt;h2&gt;</span>Prueba de docker<span class="nt">&lt;/h2&gt;</span>
+     <span class="nt">&lt;/body&gt;</span>
+ <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">cp </span>index.html miweb:/var/www/html/index.html
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Borra el contenedor</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Crea un nuevo contenedor y monta el mismo volumen como en el ejercicio anterior.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Seguía existiendo ese fichero?</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/6.png" alt="6" /></p>
+
+    <ul>
+      <li>El fichero sigue existiendo porque se ha creado un volumen docker que se ha montado en el contenedor.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="bind-mounts">Bind Mounts:</h3>
+
+<ol>
+  <li>
+    <p>Crea un directorio en tu host y dentro crea un fichero index.html (donde aparece tu nombre).</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> <span class="nt">-p</span> /home/maria/Documentos/2ASIR/IAW/Docker
+ <span class="nb">cd</span> /home/maria/Documentos/2ASIR/IAW/Docker
+ <span class="nb">touch </span>index.html
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el directorio que has creado por medio de bind mount.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Modifica el contenido del fichero index.html en tu host y comprueba que al refrescar la página ofrecida por el contenedor, el contenido ha cambiado.</p>
+
+    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
+ <span class="nt">&lt;html&gt;</span>
+     <span class="nt">&lt;body&gt;</span>
+         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
+         <span class="nt">&lt;h2&gt;</span>Prueba Bind Mounts<span class="nt">&lt;/h2&gt;</span>
+     <span class="nt">&lt;/body&gt;</span>
+ <span class="nt">&lt;/html&gt;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p>Borra el contenedor</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Crea un nuevo contenedor y monta el mismo directorio como en el ejercicio anterior.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/9.png" alt="9" /></p>
+  </li>
+  <li>
+    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Se sigue viendo el mismo contenido?</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller1/10.png" alt="10" /></p>
+
+    <ul>
+      <li>El contenido sigue siendo el mismo porque se ha montado el directorio en el contenedor.</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="redes">Redes</h2>
+
+<p>Despliegue de Nextcloud + mariadb/postgreSQL</p>
+
+<p>Vamos a desplegar la aplicación nextcloud con una base de datos. Para ello sigue los siguientes pasos:</p>
+
+<p>Crea una red de tipo bridge para que los contenedores se puedan comunicar entre ellos.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker network create nextcloud-net
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/taller1/11.png" alt="11" /></p>
+
+<p>Crea el contenedor de la base de datos conectado a la red que has creado. La base de datos se debe configurar para crear una base de dato y un usuario. Además el contenedor debe utilizar almacenamiento para guardar la información.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker run -d --name nextcloud-db -e MYSQL_ROOT_PASSWORD=nextcloud -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -v nextcloud-db:/var/lib/mysql --network nextcloud-net mariadb
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/taller1/12.png" alt="12" /></p>
+
+<p>A continuación, siguiendo la documentación de la imagen nextcloud, crea un contenedor conectado a la misma red, e indica las variables adecuadas para que se configure de forma adecuada y realice la conexión a la base de datos. El contenedor también debe ser persistente usando almacenamiento.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+docker run -d --name nextcloud -p 80:80 -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -e MYSQL_HOST=nextcloud-db -v nextcloud:/var/www/html --network nextcloud-net nextcloud
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/taller1/13.png" alt="13" /></p>
+
+<p>Accede a la aplicación usando un navegador web.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+http://localhost:8080
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/taller1/14.png" alt="14" /></p>
+
+<p><img src="/assets/images/docker/taller1/15.png" alt="15" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Almacenamiento]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 <p>En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:</p>
 
 <ul>
@@ -2376,48 +2564,4 @@ systemctl status mariadb
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql - u mariajesus <span class="nt">-p</span> mariajesus <span class="nt">-h</span> bd <span class="nt">-p</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/dns-escenario/16.png" alt="16" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.]]></summary></entry><entry><title type="html">Despliegue de aplicaciones Java</title><link href="/iaw/2023/01/03/java.html" rel="alternate" type="text/html" title="Despliegue de aplicaciones Java" /><published>2023-01-03T11:06:21+01:00</published><updated>2023-01-03T11:06:21+01:00</updated><id>/iaw/2023/01/03/java</id><content type="html" xml:base="/iaw/2023/01/03/java.html"><![CDATA[<h2 id="tarea-1-desarrollo-y-despliegue-de-una-aplicación-java-simple">Tarea 1: Desarrollo y despliegue de una aplicación Java simple</h2>
-
-<h3 id="preparamos-el-escenario">Preparamos el escenario</h3>
-
-<ol>
-  <li>
-    <p>Habilitamos el puerto 8080 en el cortafuegos de la máquina virtual.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>ufw allow 8080
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instalamos el servidor web Tomcat y el administrador web de Tomcat.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>tomcat9 tomcat9-admin <span class="nt">-y</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/tomcat9/tomcat-users.xml</code> para añadir el usuario <code class="language-plaintext highlighter-rouge">admin</code> con contraseña <code class="language-plaintext highlighter-rouge">admin</code> y el rol <code class="language-plaintext highlighter-rouge">manager-gui</code>.</p>
-
-    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;tomcat-users&gt;</span>
-     <span class="nt">&lt;role</span> <span class="na">rolename=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
-     <span class="nt">&lt;user</span> <span class="na">username=</span><span class="s">"admin"</span> <span class="na">password=</span><span class="s">"admin"</span> <span class="na">roles=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
- <span class="nt">&lt;/tomcat-users&gt;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio Tomcat.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>systemctl restart tomcat9
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instalamos Maven.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>maven <span class="nt">-y</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Clonamos el repositorio de la aplicación Java.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone https://github.com/josedom24/rock-paper-scissors.git
-</code></pre></div>    </div>
-  </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Tarea 1: Desarrollo y despliegue de una aplicación Java simple]]></summary></entry></feed>
+<p><img src="/assets/images/dns-escenario/16.png" alt="16" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.]]></summary></entry></feed>
