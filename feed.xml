@@ -1,4 +1,96 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T03:15:30+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T11:26:29+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
+
+<p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
+
+<ol>
+  <li>
+    <p>Instala docker-compose en tu ordenador.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>docker-compose
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Dentro de un directorio crea un fichero docker-compose.yml para realizar el despliegue de nextcloud con una base de datos. Recuerda las variables de entorno y la persistencia de información.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir </span>nextcloud
+ <span class="nb">cd </span>nextcloud
+ nano docker-compose.yml
+</code></pre></div>    </div>
+
+    <p>Dentro del fichero docker-compose.yml debes definir los siguientes servicios:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```yaml
+ version: '3.7'
+ services:
+   nextcloud:
+     image: nextcloud:latest
+     container_name: nextcloud
+     restart: always
+     ports:
+       - 8080:80
+     volumes:
+       - nextcloud:/var/www/html
+   db:
+     image: mariadb:latest
+     container_name: nextcloud-db
+     restart: always
+     volumes:
+       - nextcloud-db:/var/lib/mysql
+     environment:
+       - MYSQL_DATABASE=nextcloud
+       - MYSQL_USER=nextcloud
+       - MYSQL_PASSWORD=admin
+       - MYSQL_ROOT_PASSWORD=nextcloud
+ volumes:
+     nextcloud:
+     nextcloud-db:
+     ```
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Levanta el escenario con docker-compose.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose up <span class="nt">-d</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller2/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Muestra los contenedores con docker-compose.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose ps
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller2/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Accede a la aplicación y comprueba que funciona.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller2/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Comprueba el almacenamiento que has definido y que se ha creado una nueva red de tipo bridge.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume <span class="nb">ls
+ </span>docker network <span class="nb">ls</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller2/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Borra el escenario con docker-compose.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose down
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/docker/taller2/5.png" alt="5" /></p>
+
+    <p><img src="/assets/images/docker/taller2/6.png" alt="6" /></p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Despliegue de Nextcloud en Docker]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
 
@@ -535,7 +627,7 @@ PersistentKeepAlive <span class="o">=</span> 25
 
 <p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Docker - Almacenamiento y Redes</title><link href="/iaw/2023/01/12/docker-almacenamiento.html" rel="alternate" type="text/html" title="Taller Docker - Almacenamiento y Redes" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/iaw/2023/01/12/docker-almacenamiento</id><content type="html" xml:base="/iaw/2023/01/12/docker-almacenamiento.html"><![CDATA[<h2 id="almacenamiento">Almacenamiento</h2>
 
-<h3 id="volúmenes-docker">Volúmenes docker:</h3>
+<h3 id="volúmenes-docker">Volúmenes docker</h3>
 
 <ol>
   <li>
@@ -612,7 +704,7 @@ PersistentKeepAlive <span class="o">=</span> 25
   </li>
 </ol>
 
-<h3 id="bind-mounts">Bind Mounts:</h3>
+<h3 id="bind-mounts">Bind Mounts</h3>
 
 <ol>
   <li>
@@ -1904,664 +1996,4 @@ systemctl status systemd-journal-remote.socket
 <span class="nb">sudo </span>journalctl <span class="nt">--file</span> /var/log/journal/remote/remote-192.168.0.3.journal
 </code></pre></div></div>
 
-<p><img src="/assets/images/journald/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete systemd-journal-remote, o similares.]]></summary></entry><entry><title type="html">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</title><link href="/hlc+sri/2023/01/03/dns.html" rel="alternate" type="text/html" title="Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack" /><published>2023-01-03T11:06:21+01:00</published><updated>2023-01-03T11:06:21+01:00</updated><id>/hlc+sri/2023/01/03/dns</id><content type="html" xml:base="/hlc+sri/2023/01/03/dns.html"><![CDATA[<p>Tomando como referencia el <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.</p>
-
-<h1 id="servidor-dns">Servidor DNS</h1>
-<p>Vamos a instalar un servidor dns en <code class="language-plaintext highlighter-rouge">charlie</code> que nos permita gestionar la resolución directa e inversa de nuestros nombres. Vamos a poseer un servidor dns con autoridad sobre un subdominio de nuestro dominio principal gonzalonazareno.org, que se llamará <code class="language-plaintext highlighter-rouge">mariajesus.gonzalonazareno.org</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>bind9
-</code></pre></div></div>
-
-<h2 id="creamos-las-vistas">Creamos las vistas</h2>
-
-<p>Para ello, vamos a crear vistas pero, ¿qué es una vista? Una vista es una forma de organizar las zonas de resolución en un servidor DNS. Una vista es una zona de resolución que se puede configurar de forma independiente. Por ejemplo, podemos tener una vista para la resolución de los nombres de las máquinas de la red interna y otra vista para la resolución de los nombres de las máquinas de la red externa.</p>
-
-<p>De esta forma, podemos tener un servidor DNS que resuelva los nombres de las máquinas de la red interna y otro servidor DNS que resuelva los nombres de las máquinas de la red externa.</p>
-
-<p>En nuestro caso, vamos a crear cinco vistas:</p>
-
-<ul>
-  <li>Una vista que será la que tendrán <code class="language-plaintext highlighter-rouge">alfa</code>, <code class="language-plaintext highlighter-rouge">charlie</code> y <code class="language-plaintext highlighter-rouge">delta</code> con la IP <code class="language-plaintext highlighter-rouge">192.168.0.0</code>.</li>
-  <li>Una vista DMZ que resuelva a bravo con la IP <code class="language-plaintext highlighter-rouge">172.16.0.0</code>.</li>
-  <li>Una vista externa que se muestre al exterior con la IP <code class="language-plaintext highlighter-rouge">172.22.0.0</code>.</li>
-  <li>Dos vistas para la resolución inversa, una para la vista interna y otra para la vista DMZ.</li>
-</ul>
-
-<p>Para realizar la configuración, debemos realizarla en el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code>, quedando de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>view interna <span class="o">{</span>
-    match-clients <span class="o">{</span> 192.168.0.0/24<span class="p">;</span> 127.0.0.1<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.interna.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"0.168.192.in-addr.arpa"</span> 
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"16.172.in-addr.arpa"</span> 
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.16.172"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
-<span class="o">}</span><span class="p">;</span>
-
-view externa <span class="o">{</span>
-    match-clients <span class="o">{</span> 172.22.0.0/16<span class="p">;</span> 192.168.202.2<span class="p">;</span> 172.29.0.0/16<span class="p">;</span><span class="o">}</span><span class="p">;</span>
-    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.externa.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
-<span class="o">}</span><span class="p">;</span>
-
-view dmz <span class="o">{</span>
-    match-clients <span class="o">{</span> 172.16.0.0/16<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span>
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.dmz.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"16.172.in-addr.arpa"</span>
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.16.172"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        zone <span class="s2">"0.168.192.in-addr.arpa"</span>
-        <span class="o">{</span>
-               <span class="nb">type </span>master<span class="p">;</span>
-               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
-        <span class="o">}</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
-        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
-<span class="o">}</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/1.png" alt="1" /></p>
-
-<p>Y también modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf</code> de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// This is the primary configuration file <span class="k">for </span>the BIND DNS server named.
-//
-// Please <span class="nb">read</span> /usr/share/doc/bind9/README.Debian.gz <span class="k">for </span>information on the
-// structure of BIND configuration files <span class="k">in </span>Debian, <span class="k">*</span>BEFORE<span class="k">*</span> you customize
-// this configuration file.
-//
-// If you are just adding zones, please <span class="k">do </span>that <span class="k">in</span> /etc/bind/named.conf.local
-
-include <span class="s2">"/etc/bind/named.conf.options"</span><span class="p">;</span>
-include <span class="s2">"/etc/bind/named.conf.local"</span><span class="p">;</span>
-//include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/2.png" alt="2" /></p>
-
-<h2 id="creamos-las-zonas">Creamos las zonas</h2>
-
-<h3 id="zona-externa">Zona Externa</h3>
-
-<p>Para crear la zona externa, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.externa.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
-@       IN      SOA     alfa.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
-                              1         <span class="p">;</span> Serial
-                         604800         <span class="p">;</span> Refresh
-                          86400         <span class="p">;</span> Retry
-                        2419200         <span class="p">;</span> Expire
-                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
-<span class="p">;</span>
-@       IN      NS      alfa.mariajesus.gonzalonazareno.org.
-
-<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
-
-alfa        IN      A       172.22.201.46
-dns         IN      CNAME   alfa
-www         IN      CNAME   alfa
-
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/3.png" alt="3" /></p>
-
-<h3 id="zona-interna">Zona Interna</h3>
-
-<p>Para crear la zona interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.interna.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
-@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
-                              1         <span class="p">;</span> Serial
-                         604800         <span class="p">;</span> Refresh
-                          86400         <span class="p">;</span> Retry
-                        2419200         <span class="p">;</span> Expire
-                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
-<span class="p">;</span>
-@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
-
-<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
-
-alfa        IN      A       192.168.0.1
-bravo       IN      A       172.16.0.200
-charlie     IN      A       192.168.0.2
-delta       IN      A       192.168.0.3
-bd          IN      CNAME   delta
-dns         IN      CNAME   charlie
-www         IN      CNAME   bravo
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/4.png" alt="4" /></p>
-
-<h3 id="zona-dmz">Zona DMZ</h3>
-
-<p>Para crear la zona DMZ, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
-@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
-                              1         <span class="p">;</span> Serial
-                         604800         <span class="p">;</span> Refresh
-                          86400         <span class="p">;</span> Retry
-                        2419200         <span class="p">;</span> Expire
-                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
-<span class="p">;</span>
-@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
-
-<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
-
-alfa        IN      A       172.16.0.1
-bravo       IN      A       172.16.0.200
-charlie     IN      A       192.168.0.2
-delta       IN      A       192.168.0.3
-bd          IN      CNAME   delta
-dns         IN      CNAME   charlie
-www         IN      CNAME   bravo
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/5.png" alt="5" /></p>
-
-<h3 id="zona-inversa-interna">Zona Inversa Interna</h3>
-
-<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.0.168.192</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
-@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
-                              1         <span class="p">;</span> Serial
-                         604800         <span class="p">;</span> Refresh
-                          86400         <span class="p">;</span> Retry
-                        2419200         <span class="p">;</span> Expire
-                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
-<span class="p">;</span>
-@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
-
-<span class="nv">$ORIGIN</span> 0.168.192.in-addr.arpa.
-
-1       IN      PTR     alfa.mariajesus.gonzalonazareno.org.
-2       IN      PTR     charlie.mariajesus.gonzalonazareno.org.
-3       IN      PTR     delta.mariajesus.gonzalonazareno.org.
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/6.png" alt="6" /></p>
-
-<h3 id="zona-inversa-dmz">Zona Inversa DMZ</h3>
-
-<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.16.172</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$TTL</span>    86400
-@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
-                              1         <span class="p">;</span> Serial
-                         604800         <span class="p">;</span> Refresh
-                          86400         <span class="p">;</span> Retry
-                        2419200         <span class="p">;</span> Expire
-                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
-<span class="p">;</span>
-@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
-
-<span class="nv">$ORIGIN</span> 16.172.in-addr.arpa.
-
-1.0     IN      PTR     alfa.mariajesus.gonzalonazareno.org.
-200.0   IN      PTR     bravo.mariajesus.gonzalonazareno.org.
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/7.png" alt="7" /></p>
-
-<p>No debemos olvidar que también debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/zones.rfc1918</code> para desactivar las zonas inversas por defecto:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zone <span class="s2">"10.in-addr.arpa"</span>      <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-
-//zone <span class="s2">"16.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"17.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"18.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"19.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"20.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"21.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-//zone <span class="s2">"22.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"23.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"24.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"25.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"26.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"27.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"28.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"29.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"30.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-zone <span class="s2">"31.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/8.png" alt="8" /></p>
-
-<h3 id="configuración-del-forwarder">Configuración del forwarder</h3>
-
-<p>Vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code> para que el servidor <code class="language-plaintext highlighter-rouge">papión</code> actúe como forwarder:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>       forwarders <span class="o">{</span>
-              192.168.202.2<span class="p">;</span>
-       <span class="o">}</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/9.png" alt="9" /></p>
-
-<p>Reiniciamos el servicio bind9:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart bind9
-</code></pre></div></div>
-
-<h2 id="servidor-web">Servidor Web</h2>
-
-<p>En <code class="language-plaintext highlighter-rouge">bravo</code> vamos a instalar un servidor web apache. Recuerda que es una máquina con rocky linux. Para ello, debemos ejecutar los siguientes comandos:</p>
-
-<p>Recordemos que esta máquina es una máquina con un sistema Rocky Linux.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>dnf <span class="nb">install </span>httpd php php-mysqlnd php-gd php-fpm
-</code></pre></div></div>
-
-<p>Iniciamos, habilitamos el servicio apache y comprobamos que está en ejecución:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>httpd
-<span class="nb">sudo </span>systemctl <span class="nb">enable </span>php-fpm
-<span class="nb">sudo </span>systemctl status httpd
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/10.png" alt="10" /></p>
-
-<h3 id="configuración-del-virtualhost">Configuración del VirtualHost</h3>
-
-<ul>
-  <li>Creamos los directorios <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-available</code> y <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-enabled</code>:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /etc/httpd/sites-available /etc/httpd/sites-enabled
-</code></pre></div></div>
-
-<ul>
-  <li>Configuramos <code class="language-plaintext highlighter-rouge">/etc/httpd/conf/httpd.conf</code> para que cargue los ficheros de configuración de los VirtualHosts:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Añadimos esta línea al final del fichero</span>
-IncludeOptional sites-enabled/<span class="k">*</span>.conf
-</code></pre></div></div>
-
-<ul>
-  <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf</code>. Recordemos también que debemos incluir la configuración para agregar php al servidor web, por lo que el fichero quedaría con el siguiente contenido:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;VirtualHost <span class="k">*</span>:80&gt;
-    ServerName www.mariajesus.gonzalonazareno.org
-    DocumentRoot /var/www/html/mariajesus
-    ErrorLog /var/www/html/mariajesus/log/error.log
-    CustomLog /var/www/html/mariajesus/log/access.log combined
-    &lt;FilesMatch <span class="se">\.</span>php<span class="nv">$&gt;</span>
-        SetHandler <span class="s2">"proxy:unix:/run/php-fpm/www.sock|fcgi://localhost"</span>
-    &lt;/FilesMatch&gt;
-&lt;/VirtualHost&gt;
-</code></pre></div></div>
-
-<ul>
-  <li>Creamos el enlace simbólico en <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-enabled</code>:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf /etc/httpd/sites-enabled/www.mariajesus.gonzalonazareno.org.conf
-</code></pre></div></div>
-
-<ul>
-  <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus/info.php</code>:</li>
-</ul>
-
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="nb">phpinfo</span><span class="p">();</span>
-<span class="cp">?&gt;</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Creamos el index.html en <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus</code>:</li>
-</ul>
-
-<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;html&gt;</span>
-<span class="nt">&lt;head&gt;</span>
-    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">'utf-8'</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">'viewport'</span> <span class="na">content=</span><span class="s">'width=device-width, initial-scale=1'</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;title&gt;</span>www.mariajesus.gonzalonazareno.org<span class="nt">&lt;/title&gt;</span>
-       <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">"text/css"</span><span class="nt">&gt;</span>
-      <span class="o">/*&lt;![</span><span class="nt">CDATA</span><span class="o">[*/</span>
-
-            <span class="nt">html</span> <span class="p">{</span>
-             <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-             <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-           <span class="p">}</span>  
-             <span class="nt">body</span> <span class="p">{</span>
-       <span class="nl">background</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="m">72</span><span class="p">,</span><span class="m">50</span><span class="p">);</span>
-       <span class="nl">background</span><span class="p">:</span> <span class="n">-moz-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span>  <span class="p">;</span>
-       <span class="nl">background</span><span class="p">:</span> <span class="n">-webkit-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span> <span class="p">;</span>
-       <span class="nl">background</span><span class="p">:</span> <span class="n">linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">);</span>
-       <span class="nl">background-repeat</span><span class="p">:</span> <span class="nb">no-repeat</span><span class="p">;</span>
-       <span class="nl">background-attachment</span><span class="p">:</span> <span class="nb">fixed</span><span class="p">;</span>
-       <span class="nl">filter</span><span class="p">:</span> <span class="n">progid</span><span class="p">:</span><span class="n">DXImageTransform</span><span class="p">.</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">startColorstr</span><span class="err">=</span><span class="s1">"#3c6eb4"</span><span class="p">,</span><span class="n">endColorstr</span><span class="err">=</span><span class="s1">"#3c95b4"</span><span class="p">,</span><span class="n">GradientType</span><span class="err">=</span><span class="m">1</span><span class="p">);</span> 
-             <span class="nl">color</span><span class="p">:</span> <span class="no">white</span><span class="p">;</span>
-             <span class="nl">font-size</span><span class="p">:</span> <span class="m">0.9em</span><span class="p">;</span>
-             <span class="nl">font-weight</span><span class="p">:</span> <span class="m">400</span><span class="p">;</span>
-             <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-             <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-             <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">6em</span> <span class="m">10em</span> <span class="m">6em</span><span class="p">;</span>
-             <span class="nl">box-sizing</span><span class="p">:</span> <span class="n">border-box</span><span class="p">;</span>      
-           <span class="p">}</span>
-                   <span class="nt">h1</span> <span class="p">{</span>
-         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-         <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">0.6em</span> <span class="m">2em</span> <span class="m">0.4em</span><span class="p">;</span>
-         <span class="nl">color</span><span class="p">:</span> <span class="m">#fff</span><span class="p">;</span>
-         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
-         <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-         <span class="nl">font-size</span><span class="p">:</span> <span class="m">2em</span><span class="p">;</span>
-       <span class="p">}</span>
-       <span class="nt">h1</span> <span class="nt">strong</span> <span class="p">{</span>
-         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bolder</span><span class="p">;</span>
-         <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-       <span class="p">}</span>
-       <span class="nt">h2</span> <span class="p">{</span>
-         <span class="nl">font-size</span><span class="p">:</span> <span class="m">1.5em</span><span class="p">;</span>
-         <span class="nl">font-weight</span><span class="p">:</span><span class="nb">bold</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nc">.title</span> <span class="p">{</span>
-         <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="no">black</span><span class="p">;</span>
-         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
-         <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
-         <span class="nl">float</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
-         <span class="nl">width</span><span class="p">:</span> <span class="m">150px</span><span class="p">;</span>
-         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span><span class="p">;</span>
-         <span class="nl">margin-top</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nc">.description</span> <span class="p">{</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">45px</span> <span class="m">10px</span> <span class="m">5px</span> <span class="m">10px</span><span class="p">;</span>
-         <span class="nl">clear</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">15px</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nc">.section</span> <span class="p">{</span>
-         <span class="nl">padding-left</span><span class="p">:</span> <span class="m">3%</span><span class="p">;</span>
-        <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nt">img</span> <span class="p">{</span>
-               <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-         <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-       <span class="p">}</span>
-       <span class="nt">a</span><span class="nd">:hover</span> <span class="nt">img</span> <span class="p">{</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-         <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nd">:link</span> <span class="p">{</span>
-         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">199</span><span class="p">,</span> <span class="m">252</span><span class="p">,</span> <span class="m">77</span><span class="p">);</span>
-         <span class="nl">text-shadow</span><span class="p">:</span>
-       <span class="p">}</span>
-       <span class="nd">:visited</span> <span class="p">{</span>
-         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">122</span><span class="p">,</span> <span class="m">206</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
-       <span class="p">}</span>
-       <span class="nt">a</span><span class="nd">:hover</span> <span class="p">{</span>
-         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">16</span><span class="p">,</span> <span class="m">44</span><span class="p">,</span> <span class="m">122</span><span class="p">);</span>
-       <span class="p">}</span>
-       <span class="nc">.row</span> <span class="p">{</span>
-         <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-         <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nt">footer</span> <span class="p">{</span>
-         <span class="nl">padding-top</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
-         <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
-         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-         <span class="nl">font-size</span><span class="p">:</span> <span class="nb">xx-small</span><span class="p">;</span>
-         <span class="nl">overflow</span><span class="p">:</span><span class="nb">hidden</span><span class="p">;</span>
-         <span class="nl">clear</span><span class="p">:</span> <span class="nb">both</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nc">.summary</span> <span class="p">{</span>
-         <span class="nl">font-size</span><span class="p">:</span> <span class="m">140%</span><span class="p">;</span>
-         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nf">#rocky-poweredby</span> <span class="nt">img</span> <span class="p">{</span>
-         <span class="nl">margin-left</span><span class="p">:</span> <span class="m">-10px</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="nf">#logos</span> <span class="nt">img</span> <span class="p">{</span>
-         <span class="nl">vertical-align</span><span class="p">:</span> <span class="nb">top</span><span class="p">;</span>
-       <span class="p">}</span>
-             <span class="c">/* Desktop  View Options */</span>
-             <span class="k">@media</span> <span class="p">(</span><span class="n">min-width</span><span class="p">:</span> <span class="m">768px</span><span class="p">)</span>  <span class="p">{</span>
-               <span class="nt">body</span> <span class="p">{</span>
-           <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">20%</span> <span class="cp">!important</span><span class="p">;</span>
-         <span class="p">}</span>
-               <span class="nc">.col-md-1</span><span class="o">,</span> <span class="nc">.col-md-2</span><span class="o">,</span> <span class="nc">.col-md-3</span><span class="o">,</span> <span class="nc">.col-md-4</span><span class="o">,</span> <span class="nc">.col-md-5</span><span class="o">,</span> <span class="nc">.col-md-6</span><span class="o">,</span>
-         <span class="nc">.col-md-7</span><span class="o">,</span> <span class="nc">.col-md-8</span><span class="o">,</span> <span class="nc">.col-md-9</span><span class="o">,</span> <span class="nc">.col-md-10</span><span class="o">,</span> <span class="nc">.col-md-11</span><span class="o">,</span> <span class="nc">.col-md-12</span> <span class="p">{</span>
-           <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
-         <span class="p">}</span>
-               <span class="nc">.col-md-1</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-2</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-3</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-4</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-5</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-6</span> <span class="p">{</span>
-           <span class="nl">border-left</span><span class="p">:</span><span class="m">3px</span> <span class="p">;</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
-                     <span class="p">}</span>
-         <span class="nc">.col-md-7</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-8</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-9</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-10</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-11</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-md-12</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-         <span class="p">}</span>
-       <span class="p">}</span>
-             <span class="c">/* Mobile View Options */</span>
-       <span class="k">@media</span> <span class="p">(</span><span class="n">max-width</span><span class="p">:</span> <span class="m">767px</span><span class="p">)</span> <span class="p">{</span>
-         <span class="nc">.col-sm-1</span><span class="o">,</span> <span class="nc">.col-sm-2</span><span class="o">,</span> <span class="nc">.col-sm-3</span><span class="o">,</span> <span class="nc">.col-sm-4</span><span class="o">,</span> <span class="nc">.col-sm-5</span><span class="o">,</span> <span class="nc">.col-sm-6</span><span class="o">,</span>
-         <span class="nc">.col-sm-7</span><span class="o">,</span> <span class="nc">.col-sm-8</span><span class="o">,</span> <span class="nc">.col-sm-9</span><span class="o">,</span> <span class="nc">.col-sm-10</span><span class="o">,</span> <span class="nc">.col-sm-11</span><span class="o">,</span> <span class="nc">.col-sm-12</span> <span class="p">{</span>
-           <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
-         <span class="p">}</span>
-               <span class="nc">.col-sm-1</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-2</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-3</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-4</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-5</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-6</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-7</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-8</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-9</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-10</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-11</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nc">.col-sm-12</span> <span class="p">{</span>
-           <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-         <span class="p">}</span>
-         <span class="nt">h1</span> <span class="p">{</span>
-           <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="cp">!important</span><span class="p">;</span>
-         <span class="p">}</span>
-       <span class="p">}</span>
-             <span class="nt">&lt;/style&gt;</span>
-       <span class="nt">&lt;/head&gt;</span>
-       <span class="nt">&lt;body&gt;</span>
-              <span class="nt">&lt;h1&gt;</span>¡Bienvenid@ a la web!<span class="nt">&lt;/h1&gt;</span>
-              <span class="nt">&lt;h2&gt;</span>Esta es una web de prueba en Rocky Linux <span class="nt">&lt;/h2&gt;</span>
-              <span class="nt">&lt;p&gt;</span>Podemos comprobar la información de este sitio web de forma más detallada en <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"info.php"</span><span class="nt">&gt;</span>info.php<span class="nt">&lt;/a&gt;</span>.<span class="nt">&lt;/p&gt;</span>
-       <span class="nt">&lt;/body&gt;</span>
-<span class="nt">&lt;/html&gt;</span>
-</code></pre></div></div>
-
-<p><strong>IMPORTANTE</strong></p>
-
-<p>Estamos ante un escenario con una máquina Rocky Linux 9, por lo que debemos hacer una modificación en el fichero <code class="language-plaintext highlighter-rouge">/etc/sysconfig/selinux</code> para que el servidor web funcione correctamente. Tras ello, reiniciamos la máquina.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SELINUX</span><span class="o">=</span>diabled
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/11.png" alt="11" /></p>
-
-<p><img src="/assets/images/dns-escenario/12.png" alt="12" /></p>
-
-<h2 id="servidor-de-base-de-datos">Servidor de Base de Datos</h2>
-
-<p>En <code class="language-plaintext highlighter-rouge">delta</code> vamos a instalar un servidor de base de datos mariajesusdb (<code class="language-plaintext highlighter-rouge">bd.mariajesus.gonzalonazareno.org</code>). A este seervidor de base de datos se debe permitir el acceso desde todas las máquinas del escenario.</p>
-
-<h3 id="instalación-y-configuración-remota-de-mariadb">Instalación y configuración remota de MariaDB</h3>
-
-<ul>
-  <li>Instalamos el servidor de base de datos, en este caso MariaDB.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>mariadb-server
-</code></pre></div></div>
-
-<ul>
-  <li>Configuramos MariaDB para conectarnos de forma remota.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
-      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
-In order to log into MariaDB to secure it, we ll need the current password <span class="k">for </span>the root user. If you ve just installed MariaDB, and you haven t <span class="nb">set </span>the root password yet, the password will be blank, so you should just press enter here.
-Enter current password <span class="k">for </span>root <span class="o">(</span>enter <span class="k">for </span>none<span class="o">)</span>:<span class="k">********</span>
-OK, successfully used password, moving on...
-Setting the root password ensures that nobody can log into the MariaDB root user without the proper authorisation.
-You already have a root password <span class="nb">set</span>, so you can safely answer <span class="s1">'n'</span><span class="nb">.</span>
-Change the root password? <span class="o">[</span>Y/n] Y
-New password:<span class="k">********</span>
-Re-enter new password:<span class="k">********</span>
-Password updated successfully!
-Reloading privilege tables..
- ... Success!
-By default, a MariaDB installation has an anonymous user, allowing anyone to log into MariaDB without having to have a user account created <span class="k">for </span>them. This is intended only <span class="k">for </span>testing, and to make the installation go a bit smoother. You should remove them before moving into a production environment.
-Remove anonymous <span class="nb">users</span>? <span class="o">[</span>Y/n] Y
- ... Success!
-Normally, root should only be allowed to connect from localhost. This ensures that someone cannot guess at the root password from the network.
-Disallow root login remotely? <span class="o">[</span>Y/n] Y
- ... Success!
-By default, MariaDB comes with a database named <span class="nb">test </span>that anyone can access. This is also intended only <span class="k">for </span>testing, and should be removed before moving into a production environment.
-Remove <span class="nb">test </span>database and access to it? <span class="o">[</span>Y/n] Y
- - Dropping <span class="nb">test </span>database...
- ... Success!
- - Removing privileges on <span class="nb">test </span>database...
- ... Success!
-Reloading the privilege tables will ensure that all changes made so far will take effect immediately.
-Reload privilege tables now? <span class="o">[</span>Y/n] Y
- ... Success!
-Cleaning up...
-All <span class="k">done</span><span class="o">!</span> If you ve completed all of the above steps, your MariaDB installation should now be secure.
-Thanks <span class="k">for </span>using MariaDB!
-</code></pre></div></div>
-
-<ul>
-  <li>Creamos el usuario:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mysql <span class="nt">-u</span> root <span class="nt">-p</span>
-<span class="nt">----</span>
-CREATE USER <span class="s1">'mariajesus'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
-GRANT ALL PRIVILEGES ON <span class="k">*</span>.<span class="k">*</span> TO <span class="s1">'mariajesus'</span>@<span class="s1">'%'</span><span class="p">;</span>
-FLUSH PRIVILEGES<span class="p">;</span>
-<span class="nb">exit</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/13.png" alt="13" /></p>
-
-<ul>
-  <li>Habilitamos el acceso remoto a la base de datos modificando el fichero <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code> y lo modificamos de la siguiente manera:</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bind-address <span class="o">=</span> 0.0.0.0
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/14.png" alt="14" /></p>
-
-<ul>
-  <li>Reiniciamos el servicio de MariaDB y comprobamos su estado.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart mariadb
-systemctl status mariadb
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/15.png" alt="15" /></p>
-
-<h3 id="configuración-del-acceso-remoto-a-la-base-de-datos-desde-bravo">Configuración del acceso remoto a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code></h3>
-
-<ul>
-  <li>Instalamos el cliente de MariaDB en <code class="language-plaintext highlighter-rouge">bravo</code>.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>mariadb-server
-</code></pre></div></div>
-
-<ul>
-  <li>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> donde pondremos la ip de <code class="language-plaintext highlighter-rouge">charlie</code> como servidor DNS.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nameserver 192.168.0.2
-</code></pre></div></div>
-
-<ul>
-  <li>Comprobamos que podemos acceder a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code>.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql - u mariajesus <span class="nt">-p</span> mariajesus <span class="nt">-h</span> bd <span class="nt">-p</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/dns-escenario/16.png" alt="16" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.]]></summary></entry></feed>
+<p><img src="/assets/images/journald/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un sistema de recolección de log mediante journald. Para ello debes, implementar un sistema de recolección de log mediante el paquete systemd-journal-remote, o similares.]]></summary></entry></feed>
