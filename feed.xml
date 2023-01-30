@@ -1,4 +1,189 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-29T23:59:17+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T01:03:23+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
+
+<h2 id="escenario">Escenario</h2>
+
+<p>Vamos a dividir el escenario en dos, por una parte, un escenario que actuará de servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.10"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
+      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente"</span>
+      nodo2.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.11"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+end
+</code></pre></div></div>
+
+<p>Y por otra parte, un escenario que actuará de cliente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
+        libvirt.memory <span class="o">=</span> 1024
+    end
+    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
+      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor2"</span>
+      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo1.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.10"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+    end
+    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
+      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
+      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente2"</span>
+      nodo2.vm.network :private_network,
+        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
+        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
+        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.11"</span>,
+        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
+        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
+     end
+end
+</code></pre></div></div>
+
+<p>Comenzaremos cambiando las rutas por defecto en las máquinas <code class="language-plaintext highlighter-rouge">cliente1</code> y <code class="language-plaintext highlighter-rouge">cliente2</code> para que se dirijan a la máquina <code class="language-plaintext highlighter-rouge">servidor1</code> y <code class="language-plaintext highlighter-rouge">servidor2</code> respectivamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#cliente1</span>
+ip r del default
+ip r add default via 172.30.0.10
+
+<span class="c">#cliente2</span>
+ip r del default
+ip r add default via 172.20.0.10
+</code></pre></div></div>
+
+<h2 id="configuración-del-servidor-1">Configuración del servidor 1</h2>
+
+<p>Instalaremos wireguard en el <code class="language-plaintext highlighter-rouge">servidor1</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+</code></pre></div></div>
+
+<p>Y activamos el bit de forwarding en el kernel:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Tras ello, generaremos el par de claves pública y privada para el servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivate | wg pubkey <span class="o">&gt;</span> serverpublic
+</code></pre></div></div>
+
+<p>Ya obtenidas, crearemos el fichero de configuración del servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<p>Y añadiremos lo siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+Address <span class="o">=</span> 10.99.99.1
+PrivateKey <span class="o">=</span> IHIpGRRZZ/GPIHCL8d9K+Ukd3hcav2Cki9MmOIf5Xns<span class="o">=</span>
+ListenPort <span class="o">=</span> 51820
+</code></pre></div></div>
+
+<p>Levantamos el servicio y comprobamos que está funcionando correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/D/1.png" alt="1" /></p>
+
+<h2 id="configuración-del-servidor-2">Configuración del servidor 2</h2>
+
+<p>Instalaremos wireguard en el <code class="language-plaintext highlighter-rouge">servidor2</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
+</code></pre></div></div>
+
+<p>Y activamos el bit de forwarding en el kernel:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
+</code></pre></div></div>
+
+<p>Tras ello, generaremos el par de claves pública y privada para el servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>clientprivate | wg pubkey <span class="o">&gt;</span> clientpublic
+</code></pre></div></div>
+
+<p>Ya obtenidas, crearemos el fichero de configuración del servidor:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
+</code></pre></div></div>
+
+<p>Y añadiremos lo siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
+Address <span class="o">=</span> 10.99.99.2 
+<span class="c"># Clave privada del servidor</span>
+PrivateKey <span class="o">=</span> yO6u4QrwRwHef6WfPkZlcE6k/FET8ZnhcH2JUpp4VGI<span class="o">=</span>
+ListenPort <span class="o">=</span> 51820
+
+<span class="o">[</span>Peer]
+<span class="c"># Clave pública del cliente</span>
+PublicKey <span class="o">=</span> <span class="nv">FzKmyNQaz9UdnkB4J0oH6WoPAp2XRP4ZerqfZM5k0h4</span><span class="o">=</span>
+AllowedIPs <span class="o">=</span> 0.0.0.0/0
+Endpoint <span class="o">=</span> 192.168.121.98:51820
+</code></pre></div></div>
+
+<p>Levantamos el servicio y comprobamos que está funcionando correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
+wg
+</code></pre></div></div>
+
+<p><img src="/assets/images/vpn/D/2.png" alt="2" /></p>
+
+<h2 id="comprobación-de-la-conexión">Comprobación de la conexión</h2>
+
+<p>Para comprobar que la conexión funciona correctamente, ejecutaremos el comando <code class="language-plaintext highlighter-rouge">ping</code> desde el <code class="language-plaintext highlighter-rouge">cliente1</code> hacia el <code class="language-plaintext highlighter-rouge">cliente2</code>:</p>
+
+<p><img src="/assets/images/vpn/D/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/vpn/D/4.png" alt="4" /></p>
+
+<h2 id="comparando-con-openvpn">Comparando con OpenVPN</h2>
+
+<p>Tras haber realizado el mismo escenario con OpenVPN, hemos obtenido los siguientes resultados:</p>
+<ul>
+  <li>El tiempo de conexión es mucho mayor en OpenVPN que en Wireguard.</li>
+  <li>El ancho de banda es mucho mayor en Wireguard que en OpenVPN.</li>
+  <li>El consumo de CPU es mucho menor en Wireguard que en OpenVPN.</li>
+</ul>
+
+<p>Todo esto podemos traducirlo en que Wireguard es mucho más rápido y eficiente que OpenVPN. Además, Wireguard es mucho más sencillo de configurar que OpenVPN.</p>
+
+<p>Es cierto que Wiereguard no es tan seguro como OpenVPN, pero para la mayoría de los usuarios, la seguridad no es un problema. Además, Wireguard está en constante desarrollo y se espera que en un futuro sea mucho más seguro que OpenVPN.</p>
+
+<p>Además de su seguridad, OpenVPN tiene una gran ventaja sobre Wireguard: es multiplataforma. Esto quiere decir que podemos utilizar OpenVPN en cualquier sistema operativo, mientras que Wireguard solo está disponible para Linux.</p>
+
+<p>En resumen, Wireguar es una muy buena alternativa frente a OpenVPN y se espera que en un futuro de bastante prontitud, Wireguard se convierta en la VPN por defecto de Linux. Es de facil configuración, y es mucho mas eficiente que OpenVPN en cuanto a rendimiento y consumo de recursos.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar un servidor VPN con WireGuard. WireGuard es un protocolo de túnel de código abierto que se ha convertido en una alternativa a OpenVPN. WireGuard es más rápido, más ligero y más fácil de configurar que OpenVPN.</p>
 
@@ -2235,661 +2420,4 @@ systemctl status mariadb
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> git clone https://github.com/josedom24/rock-paper-scissors.git
 </code></pre></div>    </div>
   </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Tarea 1: Desarrollo y despliegue de una aplicación Java simple]]></summary></entry><entry><title type="html">Certificados digitales. HTTPS</title><link href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" rel="alternate" type="text/html" title="Certificados digitales. HTTPS" /><published>2023-01-02T16:45:16+01:00</published><updated>2023-01-02T16:45:16+01:00</updated><id>/seguridad/2023/01/02/Criptograf%C3%ADa3</id><content type="html" xml:base="/seguridad/2023/01/02/Criptograf%C3%ADa3.html"><![CDATA[<h2 id="certificado-digital-de-persona-física">Certificado digital de persona física</h2>
-
-<p><img src="/assets/images/certificado/cert.png" alt="certificado" /></p>
-
-<p>Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc.</p>
-
-<h3 id="tarea-1-instalación-del-certificado">Tarea 1: Instalación del certificado</h3>
-
-<p><strong>NOTA</strong>: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico.</p>
-
-<ol>
-  <li>
-    <p>Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito.</p>
-
-    <ul>
-      <li>
-        <p>Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador.</p>
-
-        <p><img src="/assets/images/certificado/1.png" alt="1" /></p>
-      </li>
-      <li>
-        <p>A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
-
-        <p><img src="/assets/images/certificado/2.png" alt="2" /></p>
-      </li>
-      <li>
-        <p>Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado.</p>
-
-        <p><img src="/assets/images/certificado/3.png" alt="3" /></p>
-      </li>
-      <li>
-        <p>Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente.</p>
-
-        <p><img src="/assets/images/certificado/4.png" alt="4" /></p>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado.</p>
-
-    <ul>
-      <li>Para ver las preferencias del navegador, accedemos a <code class="language-plaintext highlighter-rouge">Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados</code>. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado.</li>
-    </ul>
-
-    <p><img src="/assets/images/certificado/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta.</p>
-
-    <ul>
-      <li>Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a <code class="language-plaintext highlighter-rouge">Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados</code>. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad.</li>
-    </ul>
-
-    <p>En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado.</p>
-
-    <p><img src="/assets/images/certificado/6.png" alt="6" /></p>
-  </li>
-  <li>
-    <p>Investiga como exportar la clave pública de tu certificado.</p>
-
-    <ul>
-      <li>
-        <p>Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS).</p>
-      </li>
-      <li>
-        <p>Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil.</p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="tarea-2-validación-del-certificado">Tarea 2: Validación del certificado</h3>
-
-<ol>
-  <li>
-    <p>Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación.</p>
-
-    <ul>
-      <li>
-        <p>Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador.</p>
-      </li>
-      <li>
-        <p>Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
-      </li>
-      <li>
-        <p>Ingresamos en la página de VALIDe y seleccionamos la opción de <code class="language-plaintext highlighter-rouge">Validar Certificado</code></p>
-
-        <p><img src="/assets/images/certificado/7.png" alt="7" /></p>
-      </li>
-      <li>
-        <p>Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada.</p>
-
-        <p><img src="/assets/images/certificado/8.png" alt="8" /></p>
-      </li>
-      <li>
-        <p>Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en <code class="language-plaintext highlighter-rouge">Validar</code></p>
-
-        <p><img src="/assets/images/certificado/9.png" alt="9" /></p>
-      </li>
-      <li>
-        <p>Como podemos ver, la clave es válida.</p>
-
-        <p><img src="/assets/images/certificado/10.png" alt="10" /></p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="preparando-el-entorno-de-trabajo-en-debian">Preparando el entorno de trabajo en Debian</h3>
-
-<p>Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, <code class="language-plaintext highlighter-rouge">sudo apt install libnss3-tools</code> para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero <code class="language-plaintext highlighter-rouge">.deb</code> de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo.</p>
-
-<h3 id="tarea-3-firma-electrónica">Tarea 3: Firma electrónica</h3>
-
-<ol>
-  <li>
-    <p>Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero.</p>
-
-    <ul>
-      <li>
-        <p>Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola. Soy Maria. Esto es una prueba de VALIDe."</span> <span class="o">&gt;</span> valide.txt
-  <span class="nb">echo</span> <span class="s2">"Hola. Soy Maria. Esto es una prueba de autofirma."</span> <span class="o">&gt;</span> autofirma.txt
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma.</p>
-
-        <p><img src="/assets/images/certificado/11.png" alt="11" /></p>
-
-        <p><img src="/assets/images/certificado/12.png" alt="12" /></p>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma <code class="language-plaintext highlighter-rouge">Visualizar Firma</code> y <code class="language-plaintext highlighter-rouge">Verificar Firma</code>.</p>
-
-    <ul>
-      <li>¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero?
-        <ul>
-          <li>Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma.</li>
-        </ul>
-      </li>
-      <li>¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas.
-        <ul>
-          <li>Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador.</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos.</p>
-
-    <p><img src="/assets/images/certificado/13.png" alt="13" /></p>
-
-    <p><img src="/assets/images/certificado/14.png" alt="14" /></p>
-  </li>
-</ol>
-
-<h3 id="tarea-4-autenticación">Tarea 4: Autenticación</h3>
-
-<ol>
-  <li>
-    <p>Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas.</p>
-
-    <ul>
-      <li>
-        <p>Accedemos a la web de la <a href="https://www.dgt.es/nuestros-servicios/permisos-de-conducir/tus-puntos-y-tus-permisos/consulta-y-certificado-de-puntos/">DGT</a> para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos.</p>
-
-        <p><img src="/assets/images/certificado/dgt1.png" alt="dgt" /></p>
-      </li>
-      <li>
-        <p>Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos <code class="language-plaintext highlighter-rouge">Cl@ave</code>.</p>
-
-        <p><img src="/assets/images/certificado/dgt2.png" alt="dgt2" /></p>
-      </li>
-      <li>
-        <p>El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos.</p>
-
-        <p><img src="/assets/images/certificado/dgt3.png" alt="dgt3" /></p>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<h2 id="https--ssl">HTTPS / SSL</h2>
-
-<p><img src="/assets/images/certificado/https.png" alt="https" /></p>
-
-<p><strong>NOTA</strong>: Vamos a realizar esta práctica en una web que se acceda con el nombre <code class="language-plaintext highlighter-rouge">maria.iesgn.org</code>.</p>
-
-<p>Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa.</p>
-
-<p>Para ello, podemos hacer uso de los siguientes enlaces para buscar más información:</p>
-
-<ul>
-  <li><a href="https://www.phildev.net/ssl/">Phil’s X509/SSL Guide</a></li>
-  <li><a href="https://gist.github.com/Soarez/9688998">How to setup your own CA with OpenSSL</a></li>
-  <li><a href="https://blog.guillen.io/2018/09/29/crear-autoridad-certificadora-ca-y-certificados-autofirmados-en-linux/">Crear autoridad certificadora (CA) y certificados autofirmados en Linux</a></li>
-</ul>
-
-<h3 id="creamos-la-autoridad-certificadora">Creamos la Autoridad certificadora</h3>
-
-<ol>
-  <li>
-    <p>Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC.</p>
-
-    <ul>
-      <li>
-        <p>Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mkdir </span>CA
-  <span class="nb">cd </span>CA
-  <span class="nb">mkdir </span>certs csr crl newcerts private 
-  <span class="nb">chmod </span>700 private
-  <span class="nb">touch </span>index.txt
-  <span class="nb">touch </span>index.txt.attr
-  <span class="nb">echo </span>1000 <span class="o">&gt;</span> serial
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos las variables de entorno donde definiremos los datos de configuración de la CA.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">countryName_default</span><span class="o">=</span><span class="s2">"ES"</span>
-  <span class="nv">stateOrProvinceName_default</span><span class="o">=</span><span class="s2">"Sevilla"</span>
-  <span class="nv">localityName_default</span><span class="o">=</span><span class="s2">"Dos Hermanas"</span>
-  <span class="nv">organizationName_default</span><span class="o">=</span><span class="s2">"Maria"</span>
-  <span class="nv">organizationalUnitName_default</span><span class="o">=</span><span class="s2">"ASIR2"</span>
-  <span class="nv">emailAddress_default</span><span class="o">=</span><span class="s2">"mariajesus.alloza@outlook.es"</span>
-  <span class="nv">DIR_CA</span><span class="o">=</span><span class="s2">"./"</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos el fichero de configuración.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">&gt;</span><span class="nv">$DIR_CA</span><span class="sh">/openssl.conf
-  [ ca ]
-  # man ca
-  default_ca = CA_default
-
-  [ CA_default ]
-  # Directory and file locations.
-  dir               = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">
-  certs             = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">certs
-  crl_dir           = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crl
-  new_certs_dir     = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">newcerts
-  database          = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">index.txt
-  serial            = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">serial
-  RANDFILE          = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">private/.rand
-
-  # The root key and root certificate.
-  private_key       = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">private/private.key
-  certificate       = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">certs/cacert.crt
-
-  # For certificate revocation lists.
-  crlnumber         = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crlnumber
-  crl               = </span><span class="k">${</span><span class="nv">DIR_CA</span><span class="k">}</span><span class="sh">crl/ca.crl.pem
-  crl_extensions    = crl_ext
-  default_crl_days  = 30
-
-  # SHA-1 is deprecated, so use SHA-2 instead.
-  default_md        = sha256
-
-  name_opt          = ca_default
-  cert_opt          = ca_default
-  default_days      = 375
-  preserve          = no
-  policy            = policy_strict
-
-  [ policy_strict ]
-  # The root CA should only sign intermediate certificates that match.
-  # See the POLICY FORMAT section of man ca.
-  countryName             = match
-  stateOrProvinceName     = match
-  organizationName        = match
-  organizationalUnitName  = optional
-  commonName              = supplied
-  emailAddress            = optional
-
-  [ policy_loose ]
-  # Allow the intermediate CA to sign a more diverse range of certificates.
-  # See the POLICY FORMAT section of the ca man page.
-  countryName             = optional
-  stateOrProvinceName     = optional
-  localityName            = optional
-  organizationName        = optional
-  organizationalUnitName  = optional
-  commonName              = supplied
-  emailAddress            = optional
-
-  [ req ]
-  # Options for the req tool (man req).
-  default_bits        = 2048
-  distinguished_name  = req_distinguished_name
-  string_mask         = utf8only
-  # SHA-1 is deprecated, so use SHA-2 instead.
-  default_md          = sha256
-  # Extension to add when the -x509 option is used.
-  x509_extensions     = v3_ca
-  # Extension for SANs
-  req_extensions      = v3_req
-
-  [ v3_req ]
-  # Extensions to add to a certificate request
-  # Before invoke openssl use: export SAN=DNS:value1,DNS:value2
-  basicConstraints = CA:FALSE
-  keyUsage = nonRepudiation, digitalSignature, keyEncipherment
-  xxxsubjectAltNamexxx =
-
-  [ req_distinguished_name ]
-  # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;.
-  countryName                     = Country Name (2 letter code)
-  stateOrProvinceName             = State or Province Name
-  localityName                    = Locality Name
-  0.organizationName              = Organization Name
-  organizationalUnitName          = Organizational Unit Name
-  commonName                      = Common Name
-  emailAddress                    = Email Address
-
-  # Optionally, specify some defaults.
-  countryName_default             = </span><span class="nv">$countryName_default</span><span class="sh">
-  stateOrProvinceName_default     = </span><span class="nv">$stateOrProvinceName_default</span><span class="sh">
-  localityName_default            = </span><span class="nv">$localityName_default</span><span class="sh">
-  0.organizationName_default      = </span><span class="nv">$organizationName_default</span><span class="sh">
-  organizationalUnitName_default  = </span><span class="nv">$organizationalUnitName_default</span><span class="sh">
-  emailAddress_default            = </span><span class="nv">$emailAddress_default</span><span class="sh">
-
-  [ v3_ca ]
-  # Extensions for a typical CA (man x509v3_config).
-  subjectKeyIdentifier = hash
-  authorityKeyIdentifier = keyid:always,issuer
-  basicConstraints = critical, CA:true
-  keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-
-  [ v3_intermediate_ca ]
-  # Extensions for a typical intermediate CA (man x509v3_config).
-  subjectKeyIdentifier = hash
-  authorityKeyIdentifier = keyid:always,issuer
-  basicConstraints = critical, CA:true, pathlen:0
-  keyUsage = critical, digitalSignature, cRLSign, keyCertSign
-
-  [ usr_cert ]
-  # Extensions for client certificates (man x509v3_config).
-  basicConstraints = CA:FALSE
-  nsCertType = client, email
-  nsComment = "OpenSSL Generated Client Certificate"
-  subjectKeyIdentifier = hash
-  authorityKeyIdentifier = keyid,issuer
-  keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment
-  extendedKeyUsage = clientAuth, emailProtection
-
-  [ server_cert ]
-  # Extensions for server certificates (man x509v3_config).
-  basicConstraints = CA:FALSE
-  nsCertType = server
-  nsComment = "OpenSSL Generated Server Certificate"
-  subjectKeyIdentifier = hash
-  authorityKeyIdentifier = keyid,issuer:always
-  keyUsage = critical, digitalSignature, keyEncipherment
-  extendedKeyUsage = serverAuth
-
-  [ crl_ext ]
-  # Extension for CRLs (man x509v3_config).
-  authorityKeyIdentifier=keyid:always
-
-  [ ocsp ]
-  # Extension for OCSP signing certificates (man ocsp).
-  basicConstraints = CA:FALSE
-  subjectKeyIdentifier = hash
-  authorityKeyIdentifier = keyid,issuer
-  keyUsage = critical, digitalSignature
-  extendedKeyUsage = critical, OCSPSigning
-</span><span class="no">  EOF
-</span></code></pre></div>        </div>
-
-        <ul>
-          <li>Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando:</li>
-        </ul>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">#Creación de la clave</span>
-  openssl genrsa <span class="nt">-aes256</span> <span class="nt">-out</span> private/private.key 4096
-  <span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g'</span> openssl.conf
-  <span class="nv">URL</span><span class="o">=</span>juanjesus.iesgn.org
-  <span class="nb">export </span><span class="nv">SAN</span><span class="o">=</span>DNS:<span class="nv">$URL</span>
-        
-  <span class="c">#Creación del certificado</span>
-  openssl req <span class="nt">-config</span> openssl.conf <span class="nt">-key</span> private/private.key <span class="nt">-new</span> <span class="nt">-x509</span> <span class="nt">-days</span> 3650 <span class="nt">-sha256</span> <span class="nt">-extensions</span> v3_ca <span class="nt">-out</span> certs/cacert.crt
-  <span class="nb">chmod </span>444 certs/cacert.crt
-    
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero.</p>
-
-    <ul>
-      <li>Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c">#Firmar el certificado</span>
- openssl ca <span class="nt">-config</span> openssl.conf <span class="nt">-extensions</span> v3_req <span class="nt">-days</span> 3650 <span class="nt">-notext</span> <span class="nt">-md</span> sha256 <span class="nt">-in</span> csr/juanjesus-mjca.csr <span class="nt">-out</span> certs/juanjesus-mjca.crt
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado?</p>
-
-    <ul>
-      <li>Dentro de nuestro fichero <code class="language-plaintext highlighter-rouge">openssl.conf</code> nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son:
-        <ul>
-          <li><code class="language-plaintext highlighter-rouge">countryName</code></li>
-          <li><code class="language-plaintext highlighter-rouge">stateOrProvinceName</code></li>
-          <li><code class="language-plaintext highlighter-rouge">localityName</code></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="administramos-el-servidor-web">Administramos el servidor web</h3>
-
-<h4 id="preparando-el-escenario">Preparando el escenario</h4>
-
-<p>Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos:</p>
-
-<ul>
-  <li>
-    <p>Instalamos el servidor apache:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>apache2
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Deshabilitamos el virtual host por defecto:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2dissite 000-default.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos un nuevo virtual host y su fichero de configuración:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo mkdir</span> /var/www/html/maria.iesgn.org
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code> dentro de la carpeta que hemos creado anteriormente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /var/www/html/maria.iesgn.org/index.html
-</code></pre></div>    </div>
-    <ul>
-      <li>
-        <p>Y dentro de este fichero, escribimos lo siguiente:</p>
-
-        <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
-      <span class="nt">&lt;html&gt;</span>
-          <span class="nt">&lt;head&gt;</span>
-          <span class="nt">&lt;title&gt;</span>maria.iesgn.org<span class="nt">&lt;/title&gt;</span>
-          <span class="nt">&lt;/head&gt;</span>
-      <span class="nt">&lt;body&gt;</span>
-          <span class="nt">&lt;h1&gt;</span>maria.iesgn.org<span class="nt">&lt;/h1&gt;</span>
-          <span class="nt">&lt;p&gt;</span>Web de prueba para cripto 3 - HTTPS<span class="nt">&lt;/p&gt;</span>
-      <span class="nt">&lt;/body&gt;</span>
-  <span class="nt">&lt;/html&gt;</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Habilitamos el nuevo virtual host y reiniciamos el servicio apache:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2ensite maria.iesgn.org.conf
-  <span class="nb">sudo </span>systemctl restart apache2
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<h4 id="empezamos">Empezamos</h4>
-
-<ol>
-  <li>
-    <p>Crea una clave privada RSA de 4096 bits para identificar el servidor.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>openssl genrsa <span class="nt">-aes256</span> <span class="nt">-out</span> /etc/ssl/private/maria-priv.key 4096
- <span class="nb">sudo chmod </span>400 /etc/ssl/private/maria-priv.key
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (<code class="language-plaintext highlighter-rouge">maria.iesgn.org</code>).</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>openssl req <span class="nt">-new</span> <span class="nt">-sha256</span> <span class="nt">-key</span> /etc/ssl/private/maria-priv.key <span class="nt">-out</span> maria.csr
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora.</p>
-  </li>
-  <li>
-    <p>Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https).</p>
-
-    <ul>
-      <li>
-        <p>Modificamos el fichero de configuración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &lt;IfModule mod_ssl.c&gt;
-      &lt;VirtualHost <span class="k">*</span>:443&gt;
-          ServerName maria.iesgn.org
-          DocumentRoot /var/www/html/maria.iesgn.org
-          ErrorLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/error-maria.log
-          CustomLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/access-maria.log combined
-
-          SSLEngine on
-          SSLCertificateFile /etc/ssl/certs/maria.crt
-          SSLCertificateKeyFile /etc/ssl/private/maria-priv.key
-          SSLCertificateChainFile /etc/ssl/certs/cacert.crt
-
-          &lt;Directory /var/www/html/maria.iesgn.org&gt;
-              Options Indexes FollowSymLinks
-              AllowOverride None
-              Require all granted
-          &lt;/Directory&gt;
-      &lt;/VirtualHost&gt;
-  &lt;/IfModule&gt;
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Movemos los ficheros que hemos generado a la carpeta <code class="language-plaintext highlighter-rouge">/etc/ssl/certs</code> y le proporcionamos los permisos necesarios:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo mv </span>maria.crt /etc/ssl/certs/
-  <span class="nb">sudo mv </span>cacert.crt /etc/ssl/certs/
-  <span class="nb">sudo chown </span>root:root /etc/ssl/certs/maria.crt
-  <span class="nb">sudo chown </span>root:root /etc/ssl/certs/cacert.crt
-  <span class="nb">sudo chmod </span>644 /etc/ssl/certs/maria.crt
-  <span class="nb">sudo chmod </span>644 /etc/ssl/certs/cacert.crt
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Habilitamos el módulo ssl y reiniciamos el servicio apache:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>a2enmod ssl
-  <span class="nb">sudo </span>a2ensite ssl-maria.iesgn.org.conf
-  <span class="nb">sudo </span>systemctl reload apache2
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Modificamos el fichero para que realice una redirección de http a https:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/apache2/sites-available/maria.iesgn.org.conf
-
-  <span class="c">#Añadimos la siguiente línea:</span>
-  Redirect 301 / https://maria.iesgn.org/
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Reiniciamos el servicio apache:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl reload apache2
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Comprobamos su funcionamiento:</p>
-
-        <p><img src="/assets/images/certificado/15.png" alt="15" /></p>
-
-        <p><img src="/assets/images/certificado/16.png" alt="16" /></p>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS.</p>
-
-    <ul>
-      <li>
-        <p>Deshabilitamos apache:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl disable <span class="nt">--now</span> apache2
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Instalamos el servidor nginx:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nginx
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /var/www/html/maria.iesgn.org/index.html
-</code></pre></div>        </div>
-        <ul>
-          <li>
-            <p>Y dentro de este fichero, escribimos lo siguiente:</p>
-
-            <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server {
-      listen 80;
-      listen [::]:80;
-      server_name maria.iesgn.org;
-      return 301 https://$server_name$request_uri;
-  }
-
-  server {
-      listen 443 ssl http2;
-      listen [::]:443 ssl http2;
-      server_name maria.iesgn.org;
-
-      ssl_certificate /etc/ssl/certs/maria.crt;
-      ssl_certificate_key /etc/ssl/private/maria-priv.key;
-      ssl_trusted_certificate /etc/ssl/certs/cacert.crt;
-
-      root /var/www/html/maria.iesgn.org;
-      index index.html;
-
-      location / {
-          try_files $uri $uri/ =404;
-      }
-  }
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code> que hemos creado anteriormente:</p>
-
-            <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cp">&lt;!DOCTYPE html&gt;</span>
-      <span class="nt">&lt;html&gt;</span>
-          <span class="nt">&lt;head&gt;</span>
-          <span class="nt">&lt;title&gt;</span>maria.iesgn.org<span class="nt">&lt;/title&gt;</span>
-          <span class="nt">&lt;/head&gt;</span>
-      <span class="nt">&lt;body&gt;</span>
-          <span class="nt">&lt;h1&gt;</span>maria.iesgn.org<span class="nt">&lt;/h1&gt;</span>
-          <span class="nt">&lt;p&gt;</span>Web de prueba para cripto 3 - HTTPS<span class="nt">&lt;/p&gt;</span>
-          <span class="nt">&lt;p&gt;</span>PRUEBA NGINX<span class="nt">&lt;/p&gt;</span>
-      <span class="nt">&lt;/body&gt;</span>
-  <span class="nt">&lt;/html&gt;</span>
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Realizamos la firma del certificado:</p>
-
-            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>openssl rsa <span class="nt">-in</span> /etc/ssl/private/maria-priv.key <span class="nt">-out</span> /etc/ssl/private/maria-priv2.key
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx:</p>
-
-            <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/
-  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>            </div>
-          </li>
-          <li>
-            <p>Comprobamos que el servidor funciona correctamente:</p>
-
-            <p><img src="/assets/images/certificado/17.png" alt="17" /></p>
-
-            <p><img src="/assets/images/certificado/18.png" alt="18" /></p>
-          </li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ol>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Certificado digital de persona física Un certificado digital es un documento electrónico que contiene información sobre la identidad de una persona física o jurídica, y que se utiliza para firmar documentos electrónicos. El certificado digital contiene información sobre la persona que lo solicita, como su nombre, apellidos, DNI, fecha de nacimiento, etc. Además, contiene información sobre la entidad que lo emite, como el nombre de la entidad, el CIF, la dirección, etc. Tarea 1: Instalación del certificado NOTA: Para solicitar el certificado, podemos hacerlo a través de una acreditación presencial en una oficina de la FNMT o usando el DNI electrónico. Una vez que hayas obtenido tu certificado, explica brevemente como se instala en tu navegador favorito. Instalamos el certificado en el navegador. Para ello, accedemos a la página de la FNMT y descargamos el certificado. Nos pedirá nuestro DNI, nuestro primer apellido y un código de validación que nos han mandado a nuestro correo, con el que hemos solicitado el certificado. Una vez descargado, lo instalamos en el navegador. A continuación, tras aceptar los términos y condiciones, nos pedirá que introduzcamos la contraseña que hemos establecido al solicitar el certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tras la descarga, nos preguntará si queremos crear una copia de seguridad del certificado. Finalmente, nos confirmará que la copia de seguridad se ha realizado correctamente. Muestra una captura de pantalla donde se vea las preferencias del navegador donde se ve instalado tu certificado. Para ver las preferencias del navegador, accedemos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se abrirá una ventana con todos los certificados instalados en nuestro navegador. En ella, podemos ver el certificado que hemos instalado. ¿Cómo puedes hacer una copia de tu certificado?¿Como vas a realizar la copia de seguridad de tu certificado?. Razona la respuesta. Para hacer una copia de seguridad de nuestro certificado, debemos dirigirnos a Ajustes &gt; Privacidad y Seguridad &gt; Certificados &gt; Ver Certificados. Se nos abrirá la misma ventana de la imagen anterior. Clicamos en el certificado que queremos hacer una copia de seguridad y pulsamos en “Hacer copia”. Se nos abrirá una ventana en la que nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos una contraseña para proteger nuestra copia de seguridad. Finalmente, tendremos nuestra copia de seguridad. En mi caso, he almacenado mi clave en un NAS privado, en un directorio cifrado con clave alfanumérica. De esta forma, si alguien accede a mi NAS, no podrá acceder a mi clave privada, ya que no conoce la clave de cifrado. Investiga como exportar la clave pública de tu certificado. Con la copia de seguridad que tenemos de nuestra clave, y en mi caso, teniendo acceso a mi NAS, tanto en local como por VPN, puedo exportar mi clave a otros dispositivos. En mi caso, he exportado mi clave a mi móvil, (teniedo este sistema operativo iOS). Para la comprobación, he instalado la aplicación de la DGT y poder tener mi documentación en mi dispositivo móvil. Tarea 2: Validación del certificado Instala en tu ordenador el software autofirma y desde la página de VALIDe valida tu certificado. Muestra capturas de pantalla donde se comprueba la validación. Para instalar autofirma, debemos dirigirnos a la página de autofirma y descargar el instalador. Una vez descargado, lo instalamos en nuestro ordenador. Una vez instalado, abrimos la aplicación y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Ingresamos en la página de VALIDe y seleccionamos la opción de Validar Certificado Al ser la primera vez, autorizamos a autofirma a acceder a nuestra clave privada. Elegimos la clave que queremos validar, escribimos el captcha y pulsamos en Validar Como podemos ver, la clave es válida. Preparando el entorno de trabajo en Debian Como anteriormente he realizado los ejercicios en Windows, a partir de ahora vamos a realizarlo desde Debian. Para ello, sudo apt install libnss3-tools para instalar Java y las herramientas de Mozilla. Una vez instalado, ejecutamos el fichero .deb de autofirma y nos pedirá que introduzcamos la contraseña de nuestro certificado. Una vez introducida, nos pedirá que introduzcamos la contraseña de nuestro certificado para poder instalarlo. Tarea 3: Firma electrónica Utilizando la página VALIDe y el programa autofirma, firma un documento con tu certificado y envíalo por correo a un compañero. Creamos dos documentos de texto: uno para la comprobación de la página VALIDe y otro para la aplicación de autofirma. echo "Hola. Soy Maria. Esto es una prueba de VALIDe." &gt; valide.txt echo "Hola. Soy Maria. Esto es una prueba de autofirma." &gt; autofirma.txt Una vez creados los documentos, los firmamos, uno con VALIDe y otro con autofirma. Tu debes recibir otro documento firmado por un compañero y utilizando las herramientas anteriores debes visualizar la firma Visualizar Firma y Verificar Firma. ¿Puedes verificar la firma aunque no tengas la clave pública de tu compañero? Si,debido a que la clave pública de mi compañero se adjunta en el fichero ya firmado, por lo que puedo verificar la firma. ¿Es necesario estar conectado a internet para hacer la validación de la firma?. Razona tus respuestas. Para VALIDe si que es necesario estar conectado a internet, ya que es una página web. Para autofirma, no es necesario estar conectado a internet, ya que es una aplicación que se ejecuta en nuestro ordenador. Entre dos compañeros, firmar los dos un documento, verificar la firma para comprobar que está firmado por los dos. Tarea 4: Autenticación Utilizando tu certificado accede a alguna página de la administración pública (cita médica, becas, puntos del carnet,…). Entrega capturas de pantalla donde se demuestre el acceso a ellas. Accedemos a la web de la DGT para verificar el funcionamiento de nuestro certificado digital accediendo a nuestro historial de puntos. Nos redigirá a una página donde podremos elegir entre los distintos tipos de acceso y elegimos Cl@ave. El navegador, en mi caso, requiere de la aplicación de autofirma para poder acceder a la contraseña. Una vez introducida, nos redirige a la página de la DGT donde podemos ver nuestro historial de puntos. HTTPS / SSL NOTA: Vamos a realizar esta práctica en una web que se acceda con el nombre maria.iesgn.org. Para realizar esta tarea, vamos a necesitar la colaboración de un compañero, ya que fimraré una Autoridad Certificadora y mi compañero la firmará, y viceversa. Para ello, podemos hacer uso de los siguientes enlaces para buscar más información: Phil’s X509/SSL Guide How to setup your own CA with OpenSSL Crear autoridad certificadora (CA) y certificados autofirmados en Linux Creamos la Autoridad certificadora Crear su autoridad certificadora (generar el certificado digital de la CA). Mostrar el fichero de configuración de la AC. Creamos el directorio donde alojaremos todo lo necesario para la CA, dándole los permisos necesarios. mkdir CA cd CA mkdir certs csr crl newcerts private chmod 700 private touch index.txt touch index.txt.attr echo 1000 &gt; serial Creamos las variables de entorno donde definiremos los datos de configuración de la CA. countryName_default="ES" stateOrProvinceName_default="Sevilla" localityName_default="Dos Hermanas" organizationName_default="Maria" organizationalUnitName_default="ASIR2" emailAddress_default="mariajesus.alloza@outlook.es" DIR_CA="./" Creamos el fichero de configuración. cat &lt;&lt;EOF&gt;$DIR_CA/openssl.conf [ ca ] # man ca default_ca = CA_default [ CA_default ] # Directory and file locations. dir = ${DIR_CA} certs = ${DIR_CA}certs crl_dir = ${DIR_CA}crl new_certs_dir = ${DIR_CA}newcerts database = ${DIR_CA}index.txt serial = ${DIR_CA}serial RANDFILE = ${DIR_CA}private/.rand # The root key and root certificate. private_key = ${DIR_CA}private/private.key certificate = ${DIR_CA}certs/cacert.crt # For certificate revocation lists. crlnumber = ${DIR_CA}crlnumber crl = ${DIR_CA}crl/ca.crl.pem crl_extensions = crl_ext default_crl_days = 30 # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 name_opt = ca_default cert_opt = ca_default default_days = 375 preserve = no policy = policy_strict [ policy_strict ] # The root CA should only sign intermediate certificates that match. # See the POLICY FORMAT section of man ca. countryName = match stateOrProvinceName = match organizationName = match organizationalUnitName = optional commonName = supplied emailAddress = optional [ policy_loose ] # Allow the intermediate CA to sign a more diverse range of certificates. # See the POLICY FORMAT section of the ca man page. countryName = optional stateOrProvinceName = optional localityName = optional organizationName = optional organizationalUnitName = optional commonName = supplied emailAddress = optional [ req ] # Options for the req tool (man req). default_bits = 2048 distinguished_name = req_distinguished_name string_mask = utf8only # SHA-1 is deprecated, so use SHA-2 instead. default_md = sha256 # Extension to add when the -x509 option is used. x509_extensions = v3_ca # Extension for SANs req_extensions = v3_req [ v3_req ] # Extensions to add to a certificate request # Before invoke openssl use: export SAN=DNS:value1,DNS:value2 basicConstraints = CA:FALSE keyUsage = nonRepudiation, digitalSignature, keyEncipherment xxxsubjectAltNamexxx = [ req_distinguished_name ] # See &lt;https://en.wikipedia.org/wiki/Certificate_signing_request&gt;. countryName = Country Name (2 letter code) stateOrProvinceName = State or Province Name localityName = Locality Name 0.organizationName = Organization Name organizationalUnitName = Organizational Unit Name commonName = Common Name emailAddress = Email Address # Optionally, specify some defaults. countryName_default = $countryName_default stateOrProvinceName_default = $stateOrProvinceName_default localityName_default = $localityName_default 0.organizationName_default = $organizationName_default organizationalUnitName_default = $organizationalUnitName_default emailAddress_default = $emailAddress_default [ v3_ca ] # Extensions for a typical CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ v3_intermediate_ca ] # Extensions for a typical intermediate CA (man x509v3_config). subjectKeyIdentifier = hash authorityKeyIdentifier = keyid:always,issuer basicConstraints = critical, CA:true, pathlen:0 keyUsage = critical, digitalSignature, cRLSign, keyCertSign [ usr_cert ] # Extensions for client certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = client, email nsComment = "OpenSSL Generated Client Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, nonRepudiation, digitalSignature, keyEncipherment extendedKeyUsage = clientAuth, emailProtection [ server_cert ] # Extensions for server certificates (man x509v3_config). basicConstraints = CA:FALSE nsCertType = server nsComment = "OpenSSL Generated Server Certificate" subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer:always keyUsage = critical, digitalSignature, keyEncipherment extendedKeyUsage = serverAuth [ crl_ext ] # Extension for CRLs (man x509v3_config). authorityKeyIdentifier=keyid:always [ ocsp ] # Extension for OCSP signing certificates (man ocsp). basicConstraints = CA:FALSE subjectKeyIdentifier = hash authorityKeyIdentifier = keyid,issuer keyUsage = critical, digitalSignature extendedKeyUsage = critical, OCSPSigning EOF Creamos tanto la clavecomoel certificado de a AC (autoridad de certificación) con el siguiente comando: #Creación de la clave openssl genrsa -aes256 -out private/private.key 4096 sed -i 's|xxxsubjectAltNamexxx =|subjectAltName = ${ENV::SAN}|g' openssl.conf URL=juanjesus.iesgn.org export SAN=DNS:$URL #Creación del certificado openssl req -config openssl.conf -key private/private.key -new -x509 -days 3650 -sha256 -extensions v3_ca -out certs/cacert.crt chmod 444 certs/cacert.crt Debe recibir el fichero CSR (Solicitud de Firmar un Certificado) de su compañero, debe firmarlo y enviar el certificado generado a su compañero. Mi compañero me envía mir fichero CSR, lo firmo y lo envío de vuelta. #Firmar el certificado openssl ca -config openssl.conf -extensions v3_req -days 3650 -notext -md sha256 -in csr/juanjesus-mjca.csr -out certs/juanjesus-mjca.crt ¿Qué otra información debes aportar a tu compañero para que éste configure de forma adecuada su servidor web con el certificado generado? Dentro de nuestro fichero openssl.conf nos encontraremos con los datos que nuestro compañero debe rellenar para configurar su servidor web, que son: countryName stateOrProvinceName localityName Administramos el servidor web Preparando el escenario Para realizar este punto, deberemos crear un servidor apache, y configurarlo para que nos sirva una página web con https. Para ello, deberemos seguir los siguientes pasos: Instalamos el servidor apache: sudo apt install apache2 Deshabilitamos el virtual host por defecto: sudo a2dissite 000-default.conf Creamos un nuevo virtual host y su fichero de configuración: sudo mkdir /var/www/html/maria.iesgn.org Creamos el fichero index.html dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Habilitamos el nuevo virtual host y reiniciamos el servicio apache: sudo a2ensite maria.iesgn.org.conf sudo systemctl restart apache2 Empezamos Crea una clave privada RSA de 4096 bits para identificar el servidor. sudo openssl genrsa -aes256 -out /etc/ssl/private/maria-priv.key 4096 sudo chmod 400 /etc/ssl/private/maria-priv.key Utiliza la clave anterior para generar un CSR, considerando que deseas acceder al servidor con el FQDN (maria.iesgn.org). sudo openssl req -new -sha256 -key /etc/ssl/private/maria-priv.key -out maria.csr Envía la solicitud de firma a la entidad certificadora (su compañero). Recibe como respuesta un certificado X.509 para el servidor firmado y el certificado de la autoridad certificadora. Configura tu servidor web con https en el puerto 443, haciendo que las peticiones http se redireccionen a https (forzar https). Modificamos el fichero de configuración: &lt;IfModule mod_ssl.c&gt; &lt;VirtualHost *:443&gt; ServerName maria.iesgn.org DocumentRoot /var/www/html/maria.iesgn.org ErrorLog ${APACHE_LOG_DIR}/error-maria.log CustomLog ${APACHE_LOG_DIR}/access-maria.log combined SSLEngine on SSLCertificateFile /etc/ssl/certs/maria.crt SSLCertificateKeyFile /etc/ssl/private/maria-priv.key SSLCertificateChainFile /etc/ssl/certs/cacert.crt &lt;Directory /var/www/html/maria.iesgn.org&gt; Options Indexes FollowSymLinks AllowOverride None Require all granted &lt;/Directory&gt; &lt;/VirtualHost&gt; &lt;/IfModule&gt; Movemos los ficheros que hemos generado a la carpeta /etc/ssl/certs y le proporcionamos los permisos necesarios: sudo mv maria.crt /etc/ssl/certs/ sudo mv cacert.crt /etc/ssl/certs/ sudo chown root:root /etc/ssl/certs/maria.crt sudo chown root:root /etc/ssl/certs/cacert.crt sudo chmod 644 /etc/ssl/certs/maria.crt sudo chmod 644 /etc/ssl/certs/cacert.crt Habilitamos el módulo ssl y reiniciamos el servicio apache: sudo a2enmod ssl sudo a2ensite ssl-maria.iesgn.org.conf sudo systemctl reload apache2 Modificamos el fichero para que realice una redirección de http a https: sudo nano /etc/apache2/sites-available/maria.iesgn.org.conf #Añadimos la siguiente línea: Redirect 301 / https://maria.iesgn.org/ Reiniciamos el servicio apache: sudo systemctl reload apache2 Comprobamos su funcionamiento: Instala ahora un servidor nginx, y realiza la misma configuración que anteriormente para que se sirva la página con HTTPS. Deshabilitamos apache: sudo systemctl disable --now apache2 Instalamos el servidor nginx: sudo apt install nginx Creamos el fichero de configuración dentro de la carpeta que hemos creado anteriormente: sudo nano /var/www/html/maria.iesgn.org/index.html Y dentro de este fichero, escribimos lo siguiente: server { listen 80; listen [::]:80; server_name maria.iesgn.org; return 301 https://$server_name$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; server_name maria.iesgn.org; ssl_certificate /etc/ssl/certs/maria.crt; ssl_certificate_key /etc/ssl/private/maria-priv.key; ssl_trusted_certificate /etc/ssl/certs/cacert.crt; root /var/www/html/maria.iesgn.org; index index.html; location / { try_files $uri $uri/ =404; } } Modificamos el fichero index.html que hemos creado anteriormente: &lt;!DOCTYPE html&gt; &lt;html&gt; &lt;head&gt; &lt;title&gt;maria.iesgn.org&lt;/title&gt; &lt;/head&gt; &lt;body&gt; &lt;h1&gt;maria.iesgn.org&lt;/h1&gt; &lt;p&gt;Web de prueba para cripto 3 - HTTPS&lt;/p&gt; &lt;p&gt;PRUEBA NGINX&lt;/p&gt; &lt;/body&gt; &lt;/html&gt; Realizamos la firma del certificado: sudo openssl rsa -in /etc/ssl/private/maria-priv.key -out /etc/ssl/private/maria-priv2.key Realizamos el enlace simbólico del fichero de configuración y reiniciamos el servicio nginx: sudo ln -s /etc/nginx/sites-available/maria.iesgn.org.conf /etc/nginx/sites-enabled/ sudo systemctl restart nginx Comprobamos que el servidor funciona correctamente:]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Tarea 1: Desarrollo y despliegue de una aplicación Java simple]]></summary></entry></feed>
