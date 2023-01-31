@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-30T15:06:21+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-31T22:21:19+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
 
 <p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
 
@@ -477,7 +477,253 @@
 
     <p><img src="/assets/images/docker/taller3/15.png" alt="15" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
+
+<p>iSCSI es un protocolo de red que permite compartir almacenamiento entre servidores. iSCSI es una abreviatura de Internet Small Computer System Interface. Sirve para conectar servidores y almacenamiento de forma que se pueda compartir el almacenamiento entre ellos. Es una abreviatura de Internet Small Computer System Interface.</p>
+
+<p>En este Taller vamos a configurar un servidor iSCSI y un cliente iSCSI. Para ello, vamos a usar un <a href="https://fp.josedomingo.org/sri2223/7_almacenamiento/files/iscsi/Vagrantfile">vagrantfile</a></p>
+
+<h2 id="configuración-del-servidor-iscsi">Configuración del servidor iSCSI</h2>
+
+<p>Primero instalaremos una herramienta que nos permitirá poder utilizar iSCSI, que es <code class="language-plaintext highlighter-rouge">tgt</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>tgt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/1.png" alt="1" /></p>
+
+<p>Una vez finalizada la instalación, empezaremos con la creación del target para debian, que para ello deberemos crear un archivo de configuración:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target1.conf
+</code></pre></div></div>
+
+<p>Y dentro de este archivo, pondremos lo siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;target iqn.2023-01-target1&gt;
+    backing-store /dev/vdb
+&lt;/target&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/2.png" alt="2" /></p>
+
+<p>Vamos a realizarlo en un solo LUN, que es lo mismo que en un solo disco duro. Para ello, vamos a reiniciar el servicio y comprobar que se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart tgt
+<span class="nt">---</span>
+<span class="nb">sudo </span>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/3.png" alt="3" /></p>
+
+<h2 id="configuración-del-cliente-iscsi">Configuración del cliente iSCSI</h2>
+
+<p>Para configurar el cliente iSCSI, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">open-iscsi</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>open-iscsi
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/4.png" alt="4" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> discovery <span class="nt">--type</span> sendtargets <span class="nt">--portal</span> 192.168.121.117
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/5.png" alt="5" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">--portal</span> 192.168.121.117 <span class="nt">-l</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/6.png" alt="6" /></p>
+
+<p><strong>NOTA:</strong> Para desmontar el target, utilizaremos la opción <code class="language-plaintext highlighter-rouge">-u</code> en el comando anterior (<code class="language-plaintext highlighter-rouge">sudo iscsiadm --mode node -T iqn.2023-01-target1 --portal 192.168.121.117 -u</code>).</p>
+
+<p>Una vez instalado, podemos comprobar la conexión del target:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-k</span> <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/7.png" alt="7" /></p>
+
+<h2 id="formateo-del-disco">Formateo del disco</h2>
+
+<p>Podemos hacer uso del nuevo dispositivo que hemos creado como si se tratase de un disco duro más. Para ello, vamos a formatearlo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkfs.ext4 /dev/sda
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/8.png" alt="8" /></p>
+
+<p>Una vez realizado elformateo, comprobaremos que se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/9.png" alt="9" /></p>
+
+<p>El siguiente paso será montarlo, para poder escribir datos en él:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount <span class="nt">-t</span> ext4 /dev/sda /mnt
+</code></pre></div></div>
+
+<p>Y como podemos comprobar en la siguiente imagen, podemos ver que está montado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/10.png" alt="10" /></p>
+
+<p>Para comprobar que podemos escribir en él, vamos a crear un archivo de texto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo echo</span> <span class="s2">"Prueba de funcionamiento iSCSI."</span> <span class="o">&gt;</span> /mnt/prueba.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/11.png" alt="11" /></p>
+
+<h2 id="montaje-automático">Montaje automático</h2>
+
+<p>Para que el disco se monte automáticamente, vamos a cargar el target en el arranque del sistema. Para ello, ejecutaremos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
+<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
+</code></pre></div></div>
+
+<p>Modificaremos fichero <code class="language-plaintext highlighter-rouge">/etc/iscsi/iscsid.conf</code> y añadiremos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node.startup <span class="o">=</span> automatic
+</code></pre></div></div>
+
+<p>Y reiniciaremos el servicio:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart iscsid.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/12.png" alt="12" /></p>
+
+<p>Para habilitarlo de forma permanente, ejecutaremos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>iscsid open-iscsi.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/13.png" alt="13" /></p>
+
+<p>El siguiente paso que realizaremos será crear una unidad de systemd para que se monte el disco automáticamente. Para ello, crearemos un directorio donde crearemos las unidades iSCSI:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /media/iscsi
+</code></pre></div></div>
+
+<p>Tras esto, crearemos el archivo de configuración de la unidad en <code class="language-plaintext highlighter-rouge">/etc/systemd/system/media-target1-iscsi.mount</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>Mount iSCSI target1
+<span class="nv">After</span><span class="o">=</span>open-iscsi.service
+
+<span class="o">[</span>Mount]
+<span class="nv">What</span><span class="o">=</span>/dev/disk/by-uuid/0ec438bc-620e-4bde-b8ca-d880b5d5358c
+<span class="nv">Where</span><span class="o">=</span>/media/iscsi/target1
+<span class="nv">Type</span><span class="o">=</span>ext4
+<span class="nv">Options</span><span class="o">=</span>defaults
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/14.png" alt="14" /></p>
+
+<p><strong>NOTA:</strong> El nombre del fichero debe ser la ruta completa del directorio donde se montará el disco, pero separado por guiones. Por ejemplo, si queremos montar el disco en <code class="language-plaintext highlighter-rouge">/mnt/target1</code>, el nombre del fichero será <code class="language-plaintext highlighter-rouge">/etc/systemd/system/mnt-target1.mount</code>.</p>
+
+<p>Reiniciaremos los demonios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
+</code></pre></div></div>
+
+<p>Habilitaremos la unidad:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>media-iscsi-target1.mount
+</code></pre></div></div>
+
+<p>Y por último, la iniciamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start media-iscsi-target1.mount
+</code></pre></div></div>
+
+<p>Como podemos comprobar en la siguiente imagen, se ha montado correctamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/15.png" alt="15" /></p>
+
+<h2 id="creamos-un-target-para-windows">Creamos un target para Windows</h2>
+
+<p>Para este punto, vamos a realizar los mismos pasos que para las configuraciones anteriores, pero en este caso, vamos a crear un target con 2 LUN y autenticación por CHAP.</p>
+
+<ul>
+  <li>Creamors el fichero de configuración:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target2.conf
+<span class="nt">---</span>
+
+&lt;target iqn.2023-01-target2&gt;
+    backing-store /dev/vdc
+    backing-store /dev/vdd
+    incominguser maria maria32061164s
+&lt;/target&gt;
+</code></pre></div></div>
+
+<p><strong>NOTA:</strong> La contraseña debe de tener entre 12 y 16 caracteres para que no se error.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/16.png" alt="16" /></p>
+
+<ul>
+  <li>Reiniciamos el servicio:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart tgt
+</code></pre></div></div>
+
+<ul>
+  <li>Comprobamos que se ha creado correctamente:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/17.png" alt="17" /></p>
+
+<h3 id="cliente-windows">Cliente Windows</h3>
+
+<p>En la barra de búsqueda de Windows, escribimos <code class="language-plaintext highlighter-rouge">iSCSI</code> y seleccionamos la opción <code class="language-plaintext highlighter-rouge">Iniciador iSCSI</code>. Una vez seleccionado nos aparecerá la siguiente ventana:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/18.png" alt="18" /></p>
+
+<p>Para poder conectar el target desde Windows, nos vamos a <code class="language-plaintext highlighter-rouge">Inicio</code> → <code class="language-plaintext highlighter-rouge">Buscador iSCSI</code> → <code class="language-plaintext highlighter-rouge">Seleccionar "Iniciador iSCSI"</code> → <code class="language-plaintext highlighter-rouge">Destinos</code>. En esta subpestaña, introducimos los datos del servidor, pulsamos actualizar y se nos mostrarán los targets disponibles. En nuestro caso, seleccionaremos el target <code class="language-plaintext highlighter-rouge">iqn.2023-01-target2</code> y le daremos a <code class="language-plaintext highlighter-rouge">Conectar</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/19.png" alt="19" /></p>
+
+<p>Tras esto, nos aparecerá una ventana de autenticación, donde deberemos introducir las credenciales que hemos configurado en el target. En nuestro caso, <code class="language-plaintext highlighter-rouge">maria</code> y <code class="language-plaintext highlighter-rouge">maria32061164s</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/20.png" alt="20" /></p>
+
+<p>Y como podemos ver en la siguiente imagen, se ha conectado correctamente.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/21.png" alt="21" /></p>
+
+<h3 id="formateo-y-iso-de-la-unidad-iscsi-desde-windows">Formateo y iso de la unidad iSCSI desde Windows</h3>
+
+<p>Nos dirigimos de nuevo a la barra de búsqueda de Windows y escribimos <code class="language-plaintext highlighter-rouge">Administración de discos</code>. Una vez seleccionado, nos aparecerá la siguiente ventana:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/22.png" alt="22" /></p>
+
+<p>En la ventana de <code class="language-plaintext highlighter-rouge">Inicializar disco</code> donde aparecerán los dos discos que hemos configurado en el target. Seleccionaremos los dos y le daremos a <code class="language-plaintext highlighter-rouge">Aceptar</code>.</p>
+
+<p>Nos aparecen los discos sin formato, por lo que, en la barra superior de la ventana, seleccionamos <code class="language-plaintext highlighter-rouge">Acción</code> → <code class="language-plaintext highlighter-rouge">Añadir volumen simple</code>. Seleccionaremos el formato NTFS y le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code>.  En la siguiente ventana, le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code> y en la siguiente, a <code class="language-plaintext highlighter-rouge">Finalizar</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/23.png" alt="23" /></p>
+
+<p>Tras finalizar, podemos ver que se han creado dos unidades de disco, una para cada LUN.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/24.png" alt="24" /></p>
+
+<p>Como podemos comprobar finalmente, ambos discos se han formateado correctamente y podemos acceder a ellos desde Windows.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción a iSCSI]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
 
@@ -1590,6 +1836,15 @@ ip route add default via 172.20.0.20
 
 <p>Vamos a mandarle un correo electrónico al profesor, comprobando que el correo se ha recibido con éxito y puede ser respondido, por lo que la respuesta nos llegará a nuestra cuenta de correo personal.</p>
 
+<ul>
+  <li>
+    <p>Enviamos un correo al profesor</p>
+
+    <p>```bash
+  echo "Hola Jose Domingo. Le mando este correo como prueba de funcionamiento del servidor de correo en delta." | mail -s "Prueba" -r "josedomingo@</p>
+  </li>
+</ul>
+
 <h1 id="comprobación">Comprobación</h1>
 
 <ol>
@@ -2042,203 +2297,4 @@ ip route add default via 192.168.11.10
 
 <p>Es importante destacar que, en este ejercicio, hemos utilizado certificados digitales para la autenticación de los extremos. Esto es debido a que, en la práctica, es la forma más segura de autenticar los extremos de la VPN.</p>
 
-<p>También es importante destacar que, en este ejercicio, hemos utilizado una topología de red en subredes, en la que cada extremo de la VPN tiene una dirección IP propia. Esto es debido a que es la forma más segura de configurar la VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Qué es una VPN y para qué sirve]]></summary></entry><entry><title type="html">Despliegue de aplicaciones Java</title><link href="/iaw/2023/01/09/java-cms.html" rel="alternate" type="text/html" title="Despliegue de aplicaciones Java" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-cms</id><content type="html" xml:base="/iaw/2023/01/09/java-cms.html"><![CDATA[<p>En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.</p>
-
-<h1 id="instalación-de-tomcat">Instalación de Tomcat</h1>
-
-<p>Para instalar Tomcat, vamos a utilizar el gestor de paquetes de Debian, <code class="language-plaintext highlighter-rouge">apt-get</code>. Para ello, vamos a ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>tomcat9
-</code></pre></div></div>
-
-<h2 id="tarea-1-desarrollo-y-despliegue-de-una-aplicación-java">Tarea 1: Desarrollo y despliegue de una aplicación Java</h2>
-
-<p>De forma similar a lo que hemos hecho el <a href="https://sysmaria.netlify.app/iaw/2022/12/28/java-simple.html">despliegue simple</a>, despliegue de forma manual la aplicación Java que encontrarás en <a href="https://github.com/josedom24/rock-paper-scissors">siguiente repositorio</a>.</p>
-
-<ul>
-  <li>
-    <p>Instalamos git</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Clonamos el repositorio</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git clone https://github.com/josedom24/rock-paper-scissors.git
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Nos dirigimos al directorio que se ha creado al clonar el repositorio y ejecutamos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mvn package
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<p><strong>NOTA</strong>: Lo puedes realizar en el mismo escenario en el que hemos realizado este <a href="https://sysmaria.netlify.app/iaw/2023/01/09/java-simple.html">taller</a></p>
-
-<ul>
-  <li>
-    <p>Nos transferimos el fichero generado en <code class="language-plaintext highlighter-rouge">/target</code> a nuestra máquina local.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  scp <span class="nt">-r</span> roshambo.war maria@172.20.10.8:/home/maria/Documentos
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Abrimos en nuestro navegador el manager de tomcat, que en mi caso se encuentra en <code class="language-plaintext highlighter-rouge">http://192.168.122.93:8080/manager/html/</code>, nos dirigimos a la pestaña <code class="language-plaintext highlighter-rouge">WAR file to deploy</code> y seleccionamos el fichero que hemos transferido.</p>
-
-    <p><img src="/assets/images/despliegue-java/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Una vez desplegada, podemos ver que la aplicación java funciona correctamente.</p>
-
-    <p><img src="/assets/images/despliegue-java/2.png" alt="2" /></p>
-  </li>
-</ul>
-
-<h2 id="tarea-2-despliegue-de-un-cms-java">Tarea 2: Despliegue de un CMS Java</h2>
-
-<ul>
-  <li>
-    <p>Nos descargamos el <a href="https://cloud.josedomingo.org/index.php/s/cwMj6NAZ4fNMoRA">fichero.war</a></p>
-  </li>
-  <li>
-    <p>Instalamos MySQL y los configuramos de la siguiente manera:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>mariadb-server
-</code></pre></div>    </div>
-
-    <p>Creamos el usuario:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mysql <span class="nt">-u</span> root <span class="nt">-p</span>
-  <span class="nt">----</span>
-  CREATE USER <span class="s1">'java'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
-  GRANT ALL PRIVILEGES ON <span class="k">*</span> <span class="nb">.</span> <span class="k">*</span> TO <span class="s1">'java'</span>@<span class="s1">'localhost'</span> WITH GRANT OPTION<span class="p">;</span>
-  FLUSH PRIVILEGES<span class="p">;</span>
-  EXIT<span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/despliegue-java/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Movemos el fichero.war a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code>. Como podemos ver en la siguiente imagen, en la tabla de aplicaciones, nos aparece nuestra aplicación <code class="language-plaintext highlighter-rouge">CMS</code>.</p>
-
-    <p><img src="/assets/images/despliegue-java/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Una vez comrobado esto, en nuestro navegador accedemos a <code class="language-plaintext highlighter-rouge">http://&lt;ip-máquina&gt;:8080/opencms/setup/</code></p>
-
-    <p><img src="/assets/images/despliegue-java/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Y procedemos con la instalación:</p>
-
-    <p><img src="/assets/images/despliegue-java/6.png" alt="6" /></p>
-
-    <p><img src="/assets/images/despliegue-java/7.png" alt="7" /></p>
-
-    <p><img src="/assets/images/despliegue-java/8.png" alt="8" /></p>
-
-    <p><img src="/assets/images/despliegue-java/9.png" alt="9" /></p>
-
-    <p><img src="/assets/images/despliegue-java/10.png" alt="10" /></p>
-  </li>
-  <li>
-    <p>Tras toda la instalación, nos aparecerá la siguiente pantalla:</p>
-
-    <p><img src="/assets/images/despliegue-java/11.png" alt="11" /></p>
-  </li>
-</ul>
-
-<h3 id="modificación-de-opencms">Modificación de OpenCms</h3>
-
-<p>En mi caso le he cambiado el fondo de la página principal, eltítulo y el subtítulo. Para realizarlo, debemos conectarnos como usuario <code class="language-plaintext highlighter-rouge">Admin</code> y contraseña <code class="language-plaintext highlighter-rouge">admin</code>.</p>
-
-<p>Una vez dentro, en las esquinas superiores derecha de cada contenido, nos aparecerá ⭕️ y al pulsar sobre él, nos aparecerá un menú desplegable con la opción <code class="language-plaintext highlighter-rouge">Edit</code>. Al pulsar sobre ella, nos aparecerá una ventana en la que podremos modificar el contenido.</p>
-
-<p>Tras ello, en la esquina superior izquierda, nos aparecerá un 🔄 (Publish) y al pulsar sobre él, se publicará el contenido.</p>
-
-<p><img src="/assets/images/despliegue-java/12.png" alt="12" /></p>
-
-<p>En mi caso, ha quedado de la siguiente manera:</p>
-
-<p><img src="/assets/images/despliegue-java/13.png" alt="13" /></p>
-
-<h2 id="tarea-3-acceso-a-las-aplicaciones">Tarea 3: Acceso a las aplicaciones</h2>
-
-<p>Cuando trabajamos con tomcat no se accedemos directamente al servidor de aplicaciones, se instala un proxy inverso que nos permita el acceso a las aplicaciones. Instala un proxy inverso para acceder a las aplicaciones con las siguientes urls:</p>
-
-<ul>
-  <li>
-    <p>A la aplicación rock-paper-scissors se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code>.</p>
-  </li>
-  <li>
-    <p>A la aplicación OpenCMS se accede con la url <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code>.</p>
-  </li>
-  <li>
-    <p>Lo primero que realizaremos será la instalación de Nginx en nuestra máquina.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el VirtualHost:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/nginx/sites-available/java.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Vamos a configurarlo de forma que al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org</code> nos redirija a la aplicación OpenCMS y al acceder a <code class="language-plaintext highlighter-rouge">java.mariajesus.org/game</code> nos redirija a la aplicación rock-paper-scissors.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  server <span class="o">{</span>
-      listen 80<span class="p">;</span>
-      listen <span class="o">[</span>::]:80<span class="p">;</span>
-
-      index index.html index.htm index.nginx-debian.html<span class="p">;</span>
-
-      server_name java.mariajesus.org<span class="p">;</span>
-
-      location / <span class="o">{</span>
-          proxy_pass http://localhost:8080/opencms/<span class="p">;</span>
-          include proxy_params<span class="p">;</span>
-      <span class="o">}</span>
-
-      location /game <span class="o">{</span>
-          proxy_pass http://localhost:8080/roshambo/<span class="p">;</span>
-          include proxy_params<span class="p">;</span>
-      <span class="o">}</span>
-  <span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Realizamos el enlace simbólico:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/java.conf /etc/nginx/sites-enabled/java.conf
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart nginx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para que nos redirija a nuestra máquina:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/hosts
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  192.168.122.93 java.mariajesus.org
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que funciona correctamente:</p>
-
-    <p><strong>OpenCMS</strong>
-  <img src="/assets/images/despliegue-java/14.png" alt="14" /></p>
-
-    <p><strong>Rock-Paper-Scissors</strong>
-  <img src="/assets/images/despliegue-java/15.png" alt="15" /></p>
-  </li>
-</ul>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a realizar el despliegue de una aplicación Java en nuestro VPS. Para ello, vamos a utilizar el servidor web Apache Tomcat.]]></summary></entry></feed>
+<p>También es importante destacar que, en este ejercicio, hemos utilizado una topología de red en subredes, en la que cada extremo de la VPN tiene una dirección IP propia. Esto es debido a que es la forma más segura de configurar la VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Qué es una VPN y para qué sirve]]></summary></entry></feed>
