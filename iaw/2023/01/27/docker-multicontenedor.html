@@ -724,6 +724,12 @@ document.addEventListener('DOMContentLoaded', function(event) {
        - 8080:80
      volumes:
        - nextcloud:/var/www/html
+     environment:
+       - MYSQL_HOST=mariadb
+       - MYSQL_DATABASE=nextcloud
+       - MYSQL_USER=nextcloud
+       - MYSQL_PASSWORD=admin
+       - MYSQL_ROOT_PASSWORD=nextcloud
    db:
      image: mariadb:latest
      container_name: nextcloud-db
@@ -801,10 +807,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/12/19/despliegue-python.html" title="Taller Docker - Creación de imágenes Docker">Despliegue de una aplicación Python</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller Docker - Creación de imágenes Docker">Cloud Computing IaaS. OpenStack</a></li>
-<li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="Taller Docker - Creación de imágenes Docker">Compilar dos2unix partiendo del código fuente</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Taller Docker - Creación de imágenes Docker">Virtualización en Linux</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller Docker - Creación de imágenes Docker">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Docker - Creación de imágenes Docker">Acceso remoto con OpenVPN y certificados x509</a></li>
+<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Taller Docker - Creación de imágenes Docker">Bienvenid@</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/13/integridad.html" title="Taller Docker - Creación de imágenes Docker"> Integridad, firmas y autenticación </a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

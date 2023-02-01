@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-31T22:39:19+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-01T13:49:29+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
 
 <p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
 
@@ -30,6 +30,12 @@
        - 8080:80
      volumes:
        - nextcloud:/var/www/html
+     environment:
+       - MYSQL_HOST=mariadb
+       - MYSQL_DATABASE=nextcloud
+       - MYSQL_USER=nextcloud
+       - MYSQL_PASSWORD=admin
+       - MYSQL_ROOT_PASSWORD=nextcloud
    db:
      image: mariadb:latest
      container_name: nextcloud-db
@@ -477,7 +483,75 @@
 
     <p><img src="/assets/images/docker/taller3/15.png" alt="15" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Configuración de un servidor de correo</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será <code class="language-plaintext highlighter-rouge">mail.mariatec.es</code>, que será el nombre que aparecerá en el registro MX.</p>
+
+<h2 id="gestión-de-correos-desde-el-servidor">Gestión de correos desde el servidor</h2>
+
+<p>El envío y recepción se hará desde el servidor a trávés de laherramienta <code class="language-plaintext highlighter-rouge">mail</code>.</p>
+
+<h3 id="tarea-1">Tarea 1</h3>
+
+<p>Lo primero que deberemos hacer es realizar un registro DNS en nuestro dominio y añadir un registro <code class="language-plaintext highlighter-rouge">A</code> con el nombre <code class="language-plaintext highlighter-rouge">mail</code> y la IP del servidor.</p>
+
+<p>🔲 mail.mariatec.es     A       82.223.1.72</p>
+
+<p>Y agregamos un registro SPF para evitar que nuestro servidor sea utilizado como servidor de spam.</p>
+
+<p>🔲 mariatec.es     SPF     “v=spf1 lp4:82.223.1.72 -all”</p>
+
+<p>Abrimos el puerto 25 en el cortafuegos del servidor y configuramos el registro PTR con el fqdn de nuestro VPS.</p>
+
+<p><img src="/assets/images/correo/correo/1.png" alt="1" /></p>
+
+<p>Una vez terminado esto, nos conectamos anuestro VPS y comentamos conlaconfiguración:</p>
+
+<ul>
+  <li>
+    <p>Instalamos postfix y bsd-mailx</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>postfix bsd-mailx
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p><strong>NOTA</strong>: Recuerda que al instalar postfix te pedirá que configures el servidor de correo. En nuestro caso, seleccionamos la opción <code class="language-plaintext highlighter-rouge">Internet Site</code> y el nombre del dominio será <code class="language-plaintext highlighter-rouge">mariatec.es</code>.</p>
+
+<ul>
+  <li>
+    <p>Enviaremos un correo a nuestro correo personal para comprobar que todo funciona correctamente.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola, esto es una prueba"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span>
+</code></pre></div>    </div>
+
+    <p>Como podemos ver en la siguiente imagen, en el log del correo aparece el correo que hemos enviado y que ha sido recibido correctamente.</p>
+
+    <p><img src="/assets/images/correo/correo/2.png" alt="2" /></p>
+
+    <p><img src="/assets/images/correo/correo/3.png" alt="3" /></p>
+  </li>
+</ul>
+
+<h3 id="tarea-2">Tarea 2</h3>
+
+<p>En esta tarea, deberemos cerciorarnos de que podemos recibir correos ennuestro servidor VPS y por ello, vamos a usar el servicio de correo de gmail. Para que esto sea posible, deberemos realizar un nuevo registro MX 10 en nuestro dominio.</p>
+
+<p>🔲 mariatec.es     MX 10    mail.mariatec.es</p>
+
+<p>Para comprobar qeu funciona, accedemos a nuestra cuenta personal de correo y enviamos un correo a nuestro servidor.</p>
+
+<p><img src="/assets/images/correo/correo/4.png" alt="4" /></p>
+
+<p>Y desde nuestra consola, podemos ver que ha llegado correctamente:</p>
+
+<p><img src="/assets/images/correo/correo/5.png" alt="5" /></p>
+
+<p><img src="/assets/images/correo/correo/6.png" alt="6" /></p>
+
+<h3 id="tarea-3">Tarea 3</h3>
+
+<p>Para completar esta tarea, configuraremos, mediante <code class="language-plaintext highlighter-rouge">cron</code>, un script que nos permita enviar un correo cada minutos con la fecha y hora actual.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
 
 <p>iSCSI es un protocolo de red que permite compartir almacenamiento entre servidores. iSCSI es una abreviatura de Internet Small Computer System Interface. Sirve para conectar servidores y almacenamiento de forma que se pueda compartir el almacenamiento entre ellos. Es una abreviatura de Internet Small Computer System Interface.</p>
 
@@ -582,8 +656,8 @@
 
 <p>Para que el disco se monte automáticamente, vamos a cargar el target en el arranque del sistema. Para ello, ejecutaremos el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
-<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
+<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
 </code></pre></div></div>
 
 <p>Modificaremos fichero <code class="language-plaintext highlighter-rouge">/etc/iscsi/iscsid.conf</code> y añadiremos la siguiente línea:</p>
@@ -593,7 +667,7 @@
 
 <p>Y reiniciaremos el servicio:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart iscsid.service
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart iscsid.service
 </code></pre></div></div>
 
 <p><img src="/assets/images/almacenamiento/taller2/12.png" alt="12" /></p>
@@ -614,7 +688,8 @@
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
 <span class="nv">Description</span><span class="o">=</span>Mount iSCSI target1
-<span class="nv">After</span><span class="o">=</span>open-iscsi.service
+<span class="nv">Requires</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target, iscsid.service
 
 <span class="o">[</span>Mount]
 <span class="nv">What</span><span class="o">=</span>/dev/disk/by-uuid/0ec438bc-620e-4bde-b8ca-d880b5d5358c
@@ -649,12 +724,16 @@
 
 <p><img src="/assets/images/almacenamiento/taller2/15.png" alt="15" /></p>
 
+<p>Y si reiniciamos la máquina, se montará automáticamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/15-1.png" alt="15-1" /></p>
+
 <h2 id="creamos-un-target-para-windows">Creamos un target para Windows</h2>
 
 <p>Para este punto, vamos a realizar los mismos pasos que para las configuraciones anteriores, pero en este caso, vamos a crear un target con 2 LUN y autenticación por CHAP.</p>
 
 <ul>
-  <li>Creamors el fichero de configuración:</li>
+  <li>Creamos el fichero de configuración:</li>
 </ul>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target2.conf
@@ -2036,265 +2115,4 @@ ip route add default via 172.20.0.20
 
 <p>Y si accedemos al Tomcat-Manager, veremos que la aplicación se ha desplegado correctamente.</p>
 
-<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry><entry><title type="html">Acceso remoto con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/09/vpn.html" rel="alternate" type="text/html" title="Acceso remoto con OpenVPN y certificados x509" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/seguridad/2023/01/09/vpn</id><content type="html" xml:base="/seguridad/2023/01/09/vpn.html"><![CDATA[<h2 id="qué-es-una-vpn-y-para-qué-sirve">Qué es una VPN y para qué sirve</h2>
-
-<p>Una VPN (Virtual Private Network) es una red privada virtual que permite conectar dos o más redes privadas entre sí a través de una red pública como Internet. Las VPNs son muy útiles para conectar redes privadas a través de Internet de forma segura, ya que los datos que se transmiten a través de una VPN están cifrados y protegidos de forma que sólo los usuarios autorizados pueden acceder a ellos.</p>
-
-<h2 id="acceso-remoto-con-openvpn-y-certificados-x509">Acceso remoto con OpenVPN y certificados x509</h2>
-
-<p>En este apartado vamos a realizar un VPN de acceso remoto con OpenVPN y certificados x509. Para ello vamos a utilizar una máquina virtual en Proxmox con Debian 11.</p>
-
-<h2 id="preparando-el-escenario">Preparando el escenario</h2>
-
-<ol>
-  <li>
-    <p>Vamos a crear el escenario con 3 máquinas virtuales en Vagrant. Para ello, creamosun directorio y ejecutamos lo siguiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> vagrant init
-</code></pre></div>    </div>
-
-    <p>Se nos creará el fichero Vagrantfile. Añadimos lo siguiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-     config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-         libvirt.memory <span class="o">=</span> 1024
-     end
-     config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-       nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-       nodo1.vm.hostname <span class="o">=</span> <span class="s2">"VPNServer"</span>
-       nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-       </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN1"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.10"</span>,
-        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-       nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN2"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.11.10"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
-     config.vm.define :nodo2 <span class="k">do</span> |nodo2|
-       nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-       </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-       nodo2.vm.hostname <span class="o">=</span> <span class="s2">"VPNClient1"</span>
-       nodo2.vm.network :private_network,
-         :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN1"</span>,
-         :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-         :ip <span class="o">=&gt;</span> <span class="s2">"192.168.10.11"</span>,
-         :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
-     config.vm.define :nodo3 <span class="k">do</span> |nodo3|
-         nodo3.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-         </span>nodo3.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-         nodo3.vm.hostname <span class="o">=</span> <span class="s2">"VPNClient2"</span>
-         nodo3.vm.network :private_network,
-           :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN2"</span>,
-           :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-           :ip <span class="o">=&gt;</span> <span class="s2">"192.168.11.11"</span>,
-           :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
- end
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<ul>
-  <li>
-    <p>Instalamos <code class="language-plaintext highlighter-rouge">openvpn</code> en <code class="language-plaintext highlighter-rouge">VPNServer</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>openvpn
-</code></pre></div>    </div>
-
-    <p>Y activamos el bit de IP forwarding:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>La configuración que aparece en el fichero <code class="language-plaintext highlighter-rouge">/usr/share/easy-rsa</code> al fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn</code>:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cp</span> <span class="nt">-r</span> /usr/share/easy-rsa /etc/openvpn
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Nos dirigimos al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/</code> y ejecutamos en la consola <code class="language-plaintext highlighter-rouge">./easyrsa init-pki</code> para inicializar el PKI.</p>
-
-    <p><img src="/assets/images/vpn/A/1.png" alt="1" /></p>
-  </li>
-</ul>
-
-<h2 id="creamos-la-clave-privada-y-realizamos-la-firma-de-la-misma">Creamos la clave privada y realizamos la firma de la misma</h2>
-
-<ul>
-  <li>
-    <p>Ya completado el paso anterior, vamos a generar el certificado de la Autoridad de Certificación (CA) y la clave con la que vamos a firmar los certificados del servidor y los clientes.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  ./easyrsa build-ca
-    
-  <span class="c">#Frase de paso: admin</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/vpn/A/2.png" alt="2" /></p>
-
-    <p><strong>NOTA</strong>: La clave privada la encontraremos en <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/pki/private/ca.key</code> y el certificado en <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/pki/ca.crt</code>.</p>
-  </li>
-</ul>
-
-<p>Vamos a generar parámetros Diffie-Helman para la autenticación de los extremos de la VPN. Pero, ¿por qué es necesario? El fin de los parámetros Diffie-Helman es evitar que un atacante pueda descifrar los mensajes cifrados en la VPN. Para ello, se generan dos números primos grandes y se calcula el módulo de su producto. Este módulo se envía a los extremos de la VPN, que lo utilizan para generar una clave de sesión.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-dh
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/3.png" alt="3" /></p>
-
-<p>Ahora le toca elturno al certificado y a la clave privada del servidor, teniendo en cuenta que deshabilitaremos la frase de paso. Para ello, ejecutamos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-server-full server nopass
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/4.png" alt="4" /></p>
-
-<p>Ya configurado el servidor, vamos a ponernos manos a la obra y le toca el turno a <code class="language-plaintext highlighter-rouge">VPNClient1</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-client-full client1 nopass
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/5.png" alt="5" /></p>
-
-<p>Realizados todos estos pasos, nos quedaría enviar los ficheros de configuración del servidor hacia el cliente. Por ello, (y para no caer en el desastre de no tener localizados los ficheros de configuración) vamos a crear un directorio en el que almacenarlos.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Creamos el directorio</span>
-<span class="nb">mkdir</span> /etc/openvpn/VPNClient1
-
-<span class="c">#Copiamos los ficheros</span>
-<span class="nb">cp</span> <span class="nt">-rp</span> /etc/openvpn/easy-rsa/pki<span class="o">{</span>ca.crt,issued/VPNClient1.crt,private/VPNClient1.key<span class="o">}</span>
-
-<span class="c">#Cambiamos los propietarios</span>
-<span class="nb">chown</span> <span class="nt">-R</span> vagrant: /etc/openvpn/VPNClient1/
-
-<span class="c">#Enviamos por scp los ficheros al cliente</span>
-scp <span class="nt">-r</span> /home/vagrant/VPNClient1 vagrant@192.168.10.11:
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/6.png" alt="6" /></p>
-
-<p><img src="/assets/images/vpn/A/7.png" alt="7" /></p>
-
-<p>Nos dirigimos al servidor y creamos el fichero de configuración con el que configuraremos (valga la redundancia), el tunel VPN.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/openvpn/server/server.conf
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Configuracion del servidor</span>
-
-<span class="c">#Puerto de escucha, protocolo y dispositivo</span>
-port 1194
-proto udp
-dev tun
-
-<span class="c">#Autenticacion</span>
-ca /etc/openvpn/easy-rsa/pki/ca.crt
-cert /etc/openvpn/easy-rsa/pki/issued/server.crt
-key /etc/openvpn/easy-rsa/pki/private/server.key
-dh /etc/openvpn/easy-rsa/pki/dh.pem
-
-<span class="c">#Topologia de red</span>
-topology subnet
-
-server 10.99.99.0 255.255.255.0
-ifconfig-pool-persist /var/log/openvpn/ipp.txt
-
-<span class="c">#Ruta hacia el cliente</span>
-push <span class="s2">"route 192.168.11.0 255.255.255.0"</span>
-
-
-keepalive 10 120
-cipher AES-256-CBC
-persist-key
-persist-tun
-status /var/log/openvpn/openvpn-status.log
-verb 3
-explicit-exit-notify 1
-</code></pre></div></div>
-
-<p>Tras toda esta configuración, vamos a habilitar el servicio de OpenVPN y a reiniciar el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-server@server
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/8.png" alt="8" /></p>
-
-<h2 id="configuración-del-cliente">Configuración del cliente</h2>
-
-<p>Ahora en nuestro VPNClient1 vamos a configurar el cliente, y empezaríamos instalando el paquete de OpenVPN y traspasamos los ficheros de configuración del servidor.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>openvpn
-<span class="nt">---</span>
-<span class="nb">mv </span>VPNClient1 /etc/openvpn/client/
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/9.png" alt="9" /></p>
-
-<p>Será necesario que cambiemos el propietario de los ficheros de configuración y, como hicimos en <code class="language-plaintext highlighter-rouge">VPNServer</code>, crearemos el fichero de configuración del cliente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Cambiamos el propietario</span>
-<span class="nb">chown </span>root: /etc//openvpn/client/<span class="k">*</span>
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/openvpn/server/client1.conf
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Configuracion del cliente</span>
-
-<span class="c">#Puerto de escucha, protocolo y dispositivo</span>
-client
-dev tun
-proto udp
-
-<span class="c">#Autenticacion</span>
-remote 192.168.10.10 1194
-resolv-retry infinite
-nobind
-persist-key
-persist-tun
-
-<span class="c">#Autenticacion</span>
-ca /etc/openvpn/client/ca.crt
-cert /etc/openvpn/client/VPNClient1.crt
-key /etc/openvpn/client/VPNClient1.key
-
-<span class="c">#Topologia de red</span>
-remote-cert-tls server
-cipher AES-256-CBC
-verb 3
-</code></pre></div></div>
-
-<p>Habilitamos el servicio de OpenVPN y lo reiniciamos.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-client@client1
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/A/10.png" alt="10" /></p>
-
-<p>Como podemos ver en las siguientes imágenes, el tunel está creado y funcionando.</p>
-
-<p><img src="/assets/images/vpn/A/11.png" alt="11" /></p>
-
-<p>Por último, vamos a cambiar la ruta por defecto de nuestro cliente interno para que pueda usar el servidor como puerta de enlace.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
-ip route add default via 192.168.11.10
-</code></pre></div></div>
-
-<p>En las imágenes siguientes podemos ver que el cliente tiene acceso a Internet, y el servidor tiene acceso a la red interna del cliente.</p>
-
-<p><img src="/assets/images/vpn/A/12.png" alt="12" /></p>
-
-<h2 id="conclusiones">Conclusiones</h2>
-
-<p>En este ejercicio hemos configurado un servidor OpenVPN, y hemos creado un cliente que se conecta a él. El cliente tiene acceso a Internet, y el servidor tiene acceso a la red interna del cliente.</p>
-
-<p>Es importante destacar que, en este ejercicio, hemos utilizado certificados digitales para la autenticación de los extremos. Esto es debido a que, en la práctica, es la forma más segura de autenticar los extremos de la VPN.</p>
-
-<p>También es importante destacar que, en este ejercicio, hemos utilizado una topología de red en subredes, en la que cada extremo de la VPN tiene una dirección IP propia. Esto es debido a que es la forma más segura de configurar la VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Qué es una VPN y para qué sirve]]></summary></entry></feed>
+<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry></feed>

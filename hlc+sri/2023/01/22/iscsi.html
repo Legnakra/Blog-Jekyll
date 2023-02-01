@@ -794,8 +794,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Para que el disco se monte automáticamente, vamos a cargar el target en el arranque del sistema. Para ello, ejecutaremos el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
-<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
+<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
 </code></pre></div></div>
 
 <p>Modificaremos fichero <code class="language-plaintext highlighter-rouge">/etc/iscsi/iscsid.conf</code> y añadiremos la siguiente línea:</p>
@@ -805,7 +805,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Y reiniciaremos el servicio:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart iscsid.service
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart iscsid.service
 </code></pre></div></div>
 
 <p><img src="/assets/images/almacenamiento/taller2/12.png" alt="12"></p>
@@ -826,7 +826,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
 <span class="nv">Description</span><span class="o">=</span>Mount iSCSI target1
-<span class="nv">After</span><span class="o">=</span>open-iscsi.service
+<span class="nv">Requires</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target, iscsid.service
 
 <span class="o">[</span>Mount]
 <span class="nv">What</span><span class="o">=</span>/dev/disk/by-uuid/0ec438bc-620e-4bde-b8ca-d880b5d5358c
@@ -861,12 +862,16 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p><img src="/assets/images/almacenamiento/taller2/15.png" alt="15"></p>
 
+<p>Y si reiniciamos la máquina, se montará automáticamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/15-1.png" alt="15-1"></p>
+
 <h2 id="creamos-un-target-para-windows">Creamos un target para Windows</h2>
 
 <p>Para este punto, vamos a realizar los mismos pasos que para las configuraciones anteriores, pero en este caso, vamos a crear un target con 2 LUN y autenticación por CHAP.</p>
 
 <ul>
-  <li>Creamors el fichero de configuración:</li>
+  <li>Creamos el fichero de configuración:</li>
 </ul>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target2.conf
@@ -942,15 +947,15 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/seguridad/2023/01/13/vpn-d.html" title="VPN sitio a sitio con WireGuard">VPN sitio a sitio con WireGuard...</a><a class="next" href="/iaw/2023/01/27/docker-multicontenedor.html" title="Taller Docker - Escenarios multicontenedor en Docker">Taller Docker - Escenarios multicontenedor en...</a>
+<a class="previous" href="/hlc+sri/2023/01/22/servidor-correo.html" title="Configuración de un servidor de correo">Configuración de un servidor de correo...</a><a class="next" href="/iaw/2023/01/27/docker-multicontenedor.html" title="Taller Docker - Escenarios multicontenedor en Docker">Taller Docker - Escenarios multicontenedor en...</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Taller Docker - Escenarios multicontenedor en Docker">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
-<li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Taller Docker - Escenarios multicontenedor en Docker">Compilación de un kernel a medida</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Taller Docker - Escenarios multicontenedor en Docker">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Taller Docker - Escenarios multicontenedor en Docker">Virtualización en Linux</a></li>
+        <li><a class="post-link" href="/hlc+sri/2023/01/22/iscsi.html" title="Taller Docker - Escenarios multicontenedor en Docker">Taller de Almacenamiento - Introducción a iSCSI </a></li>
+<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Taller Docker - Escenarios multicontenedor en Docker">Instalación y migración de una aplicación web PHP</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Docker - Escenarios multicontenedor en Docker">Acceso remoto con OpenVPN y certificados x509</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Taller Docker - Escenarios multicontenedor en Docker">Apache como proxy inverso</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
