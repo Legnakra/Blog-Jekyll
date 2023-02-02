@@ -7,9 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Configuración de un servidor de correo | sysmaria</title>
+<title>Configuración de un servidor de correo en un VPS | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Configuración de un servidor de correo">
+<meta property="og:title" content="Configuración de un servidor de correo en un VPS">
 <meta property="og:locale" content="en_US">
 <meta name="description" content="Introducción">
 <meta property="og:description" content="Introducción">
@@ -19,9 +19,9 @@
 <meta property="og:type" content="article">
 <meta property="article:published_time" content="2023-01-22T12:47:17+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Configuración de un servidor de correo">
+<meta property="twitter:title" content="Configuración de un servidor de correo en un VPS">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-22T12:47:17+01:00","datePublished":"2023-01-22T12:47:17+01:00","description":"Introducción","headline":"Configuración de un servidor de correo","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/01/22/servidor-correo.html"},"url":"/hlc+sri/2023/01/22/servidor-correo.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-22T12:47:17+01:00","datePublished":"2023-01-22T12:47:17+01:00","description":"Introducción","headline":"Configuración de un servidor de correo en un VPS","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/01/22/servidor-correo.html"},"url":"/hlc+sri/2023/01/22/servidor-correo.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Configuración de un servidor de correo</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Configuración de un servidor de correo en un VPS</h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
   </p></header>
 </div>
     </div>
@@ -695,7 +695,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <h2 id="gestión-de-correos-desde-el-servidor">Gestión de correos desde el servidor</h2>
 
-<p>El envío y recepción se hará desde el servidor a trávés de laherramienta <code class="language-plaintext highlighter-rouge">mail</code>.</p>
+<p>El envío y recepción se hará desde el servidor a trávés de la herramienta <code class="language-plaintext highlighter-rouge">mail</code>.</p>
+
+<h2 id="gestión-de-correos-desde-el-servidor-1">Gestión de correos desde el servidor</h2>
 
 <h3 id="tarea-1">Tarea 1</h3>
 
@@ -757,9 +759,538 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p><img src="/assets/images/correo/correo/6.png" alt="6"></p>
 
+<h2 id="uso-de-alias-y-redirecciones">Uso de alias y redirecciones</h2>
+
 <h3 id="tarea-3">Tarea 3</h3>
 
-<p>Para completar esta tarea, configuraremos, mediante <code class="language-plaintext highlighter-rouge">cron</code>, un script que nos permita enviar un correo cada minutos con la fecha y hora actual.</p>
+<p>Para completar esta tarea, configuraremos, mediante <code class="language-plaintext highlighter-rouge">cron</code>, un script que nos permita enviar un correo cada minuto con la fecha y hora actual. Para ello, crearemos un script en <code class="language-plaintext highlighter-rouge">/usr/local/bin</code> que se llame <code class="language-plaintext highlighter-rouge">cronmail.sh</code> y que tenga el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
+<span class="nb">echo</span> <span class="s2">"Fecha y hora actual: </span><span class="si">$(</span><span class="nb">date</span><span class="si">)</span><span class="s2">"</span>
+<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
+<span class="nb">echo</span> <span class="s2">"Uptime: </span><span class="si">$(</span><span class="nb">uptime</span><span class="si">)</span><span class="s2">"</span>
+<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
+<span class="nb">echo</span> <span class="s2">"Estado de los procesos:"</span>
+ps
+</code></pre></div></div>
+
+<p>Le damos permisos de ejecución y comprobamos que funciona correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/cronmail.sh
+<span class="nt">---</span>
+bash /root/cronmail.sh
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/7.png" alt="7"></p>
+
+<p>Ahora, crearemos un archivo en <code class="language-plaintext highlighter-rouge">/etc/cron.d</code> que se llame <code class="language-plaintext highlighter-rouge">cronmail</code> y que tenga el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">MAILTO</span><span class="o">=</span>root
+<span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> root /root/cronmail.sh
+</code></pre></div></div>
+
+<p>Esperamos un minuto y comprobamos que el correo ha llegado correctamente:</p>
+
+<p><img src="/assets/images/correo/correo/8.png" alt="8"></p>
+
+<p>Lo que hemos hecho es crear un script que se ejecuta cada minuto y que envía un correo con la fecha y hora actual, el uptime del servidor y el estado de los procesos.</p>
+
+<p>El paso que viene ahora crear un alias para que los correos que se envíen a <code class="language-plaintext highlighter-rouge">root</code> se envíen a nuestro correo personal.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/aliases
+<span class="nt">---</span>
+root:   mariajesus
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/9.png" alt="9"></p>
+
+<p>Ejecutamos <code class="language-plaintext highlighter-rouge">newaliases</code> para que se actualice el archivo de alias y comprobamos que funciona correctamente:</p>
+
+<p><img src="/assets/images/correo/correo/10.png" alt="10"></p>
+
+<p>Por último, creamos una redirección para que los correos que se envíen a <code class="language-plaintext highlighter-rouge">root</code> se envíen a nuestro correo personal.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /home/mariajesus/.forward
+<span class="nt">---</span>
+correo@gmail.com
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/11.png" alt="11"></p>
+
+<h2 id="para-asegurar-el-envío">Para asegurar el envío</h2>
+
+<h3 id="tarea-4">Tarea 4</h3>
+
+<p>En esta tarea, deberemos configurar el DomainKeys Identified Mail (DKIM) para que los correos que envíe nuestro servidor sean firmados digitalmente. Para ello, instalaremos el paquete <code class="language-plaintext highlighter-rouge">opendkim</code> y crearemos un archivo de configuración en <code class="language-plaintext highlighter-rouge">/etc/opendkim.conf</code> que tenga el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Domain mariatec.es
+Selector dkim2023
+KeyFile /etc/dkimkeys/dkim2023.private
+<span class="c">#Socket local:/var/opendkim/opendkim.sock</span>
+Socket inet:8891@localhost
+PidFile /var/opendkim/opendkim.pid
+TrustAnchorFile /usr/share/dns/root.key
+</code></pre></div></div>
+
+<p>Tras esto, modificaremos el archivo <code class="language-plaintext highlighter-rouge">/etc/default/opendkim</code> para que se ejecute en el puerto 8891 y no en el socket local.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SOCKET</span><span class="o">=</span>inet:8891@localhost
+</code></pre></div></div>
+
+<p>Y modificamos el archivo <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para señalar el modo de firma de los correos y el puerto en el que se ejecuta el servicio de <code class="language-plaintext highlighter-rouge">opendkim</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>milter_default_action <span class="o">=</span> accept
+milter_protocol <span class="o">=</span> 6
+smtpd_milters <span class="o">=</span> inet:localhost:8891
+non_smtpd_milters <span class="o">=</span> <span class="nv">$smtpd_milters</span>
+</code></pre></div></div>
+
+<p>Cuando tengamos todo esto configurado, generamos la clave privada y pública para el selector <code class="language-plaintext highlighter-rouge">dkim2023</code>. También le cambiamos el propietario al usuario <code class="language-plaintext highlighter-rouge">opendkim</code> y reiniciamos los servicios.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /etc/dkimkeys
+opendkim-genkey <span class="nt">-s</span> dkim2023 <span class="nt">-d</span> mariatec.es <span class="nt">-b</span> 2048
+<span class="nb">chown </span>opendkim:opendkim dkim2023.private dkim2023.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/12.png" alt="12"></p>
+
+<p>Para que postfix pueda usar la clave, deberá tener la siguiente estructura:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dkim2023._domainkey	IN	TXT	<span class="o">(</span> <span class="s2">"v=DKIM1; h=sha256; k=rsa; "</span>
+	  <span class="s2">"p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArt81o+j9F0C2Xwsyr0XfYogqIk+ZbpHgMzuu8QGSER9vPp0U3vDVF2Uqev1z2T0ohduE93X9MOoo0j6gIZWtF2se/I4frrzk9RPnp1vn4HXHgpzYHb5TT+/j0LincSs5UznuTcB9+CST0QCYP4LR6hDDIgH7JZ3kuKTFQi+5EfHrl4RPDNRuZSN1soAyaEr7tWuCnfJ5miYVVw"</span>
+	  <span class="s2">"5ZtBY74oMpjAxI8QsfhLYpWNBUUUHIJmq7+dbTYkrG02z8xzM8tlgA/bM4oVQXCKKizU7DRu+AjcRuZ+Wy+TEyyYzksPph0UUMpWXKELNF7u/AkEcoBU+X/kWdkUZbsZtkFgdwMQIDAQAB"</span> <span class="o">)</span>  <span class="p">;</span> <span class="nt">-----</span> DKIM key dkim2023 <span class="k">for </span>mariatec.es
+</code></pre></div></div>
+
+<p>Y en el registro TXT del DNS colocaremos la clave pública:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">v</span><span class="o">=</span>DKIM1<span class="p">;</span> <span class="nv">h</span><span class="o">=</span>sha256<span class="p">;</span> <span class="nv">k</span><span class="o">=</span>rsa<span class="p">;</span> <span class="nv">p</span><span class="o">=</span>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArt81o+j9F0C2Xwsyr0XfYogqIk+ZbpHgMzuu8QGSER9vPp0U3vDVF2Uqev1z2T0ohduE93X9MOoo0j6gIZWtF2se/I4frrzk9RPnp1vn4HXHgpzYHb5TT+/j0LincSs5UznuTcB9+CST0QCYP4LR6hDDIgH7JZ3kuKTFQi+5EfHrl4RPDNRuZSN1soAyaEr7tWuCnfJ5miYVVw5ZtBY74oMpjAxI8QsfhLYpWNBUUUHIJmq7+dbTYkrG02z8xzM8tlgA/bM4oVQXCKKizU7DRu+AjcRuZ+Wy+TEyyYzksPph0UUMpWXKELNF7u/AkEcoBU+X/kWdkUZbsZtkFgdwMQIDAQAB
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/13.png" alt="13"></p>
+
+<p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart opendkim postfix
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/14.png" alt="14"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>8891
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/15.png" alt="15"></p>
+
+<p>Como podemos ver en las siguientes capturas, en la cabecera del correo se añade la información de la firma.</p>
+
+<p><img src="/assets/images/correo/correo/16.png" alt="16"></p>
+
+<p>Y en la web de <a href="https://dkimvalidator.com/">dkimvalidator</a> podemos comprobar que la firma es correcta.</p>
+
+<p><img src="/assets/images/correo/correo/17.png" alt="17"></p>
+
+<h2 id="para-luchar-contra-el-spam">Para luchar contra el SPAM</h2>
+
+<h3 id="tarea-5">Tarea 5</h3>
+
+<p>Le ha llegado el turno a la tarea 5. En esta tarea vamos a configurar Postfix para que tenga en cuenta el registro SPF de los correos que recibe. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">postfix-policyd-spf-python</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>postfix-policyd-spf-python <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Modificaremos el archivo <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para que se ejecute el servicio de <code class="language-plaintext highlighter-rouge">policyd-spf</code> y para que se ejecute el servicio de <code class="language-plaintext highlighter-rouge">opendkim</code>. Con la siguiente sentencia le estaremos indicando a postfix para comprobar el SPF de los correos que recibe.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>policy-spf  unix  -       n       n       -       0       spawn
+    <span class="nv">user</span><span class="o">=</span>policyd-spf <span class="nv">argv</span><span class="o">=</span>/usr/bin/policyd-spf
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/18.png" alt="18"></p>
+
+<p>Reiniciamos el servicio de postfix y comprobamos que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix
+
+<span class="nb">tail</span> <span class="nt">-f</span> /var/log/mail.log
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/19.png" alt="19"></p>
+
+<h3 id="tarea-6">Tarea 6</h3>
+
+<p>Le toca el turno a la protección contra el SPAM. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">spamassassin</code> y habilitaremos el servicio.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>spamassassin spamc <span class="nt">-y</span>
+<span class="nb">sudo </span>systemctl <span class="nb">enable</span> <span class="nt">--now</span> spamassassin
+</code></pre></div></div>
+
+<p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/default/spamassassin</code> y agregaremos las líneas necesarias para que se actualice la base de datos de spamassassin.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">CRON</span><span class="o">=</span>1
+</code></pre></div></div>
+
+<p>Y en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/master.cf</code> agregaremos la siguiente línea para que el servicio de postfix ejecute el servicio de spamassassin.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smtp      inet  n       -       y       -       -       smtpd
+  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
+submission inet n       -       y       -       -       smtpd
+  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
+spamassassin unix -     n       n       -       -       pipe
+  <span class="nv">user</span><span class="o">=</span>debian-spamd <span class="nv">argv</span><span class="o">=</span>/usr/bin/spamc <span class="nt">-f</span> <span class="nt">-e</span> /usr/sbin/sendmail <span class="nt">-oi</span> <span class="nt">-f</span> <span class="k">${</span><span class="nv">sender</span><span class="k">}</span> <span class="k">${</span><span class="nv">recipient</span><span class="k">}</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/20.png" alt="20"></p>
+
+<p>Y para configurar que los emails que se detecten como SPAM, reciban una etiqueta en el asunto, modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/spamassassin/local.cf</code> y agregaremos la siguiente línea.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rewrite_header Subject <span class="k">*****</span>SPAM<span class="k">*****</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/21.png" alt="21"></p>
+
+<p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix spamassassin
+</code></pre></div></div>
+
+<p>Comprobaremos que funciona, enviando un correo a nuestro email en nuestro VPS y comprobando que se ha etiquetado como SPAM. Por ello, usaremos <a href="https://spamassassin.apache.org/gtube/">The GTUBE</a> para enviar un correo que se detecte como SPAM.</p>
+
+<p><img src="/assets/images/correo/correo/22.png" alt="22"></p>
+
+<p>Comprobando que el email se ha etiquetado como SPAM, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de spamassassin.</p>
+
+<p><img src="/assets/images/correo/correo/23.png" alt="23"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tail</span> <span class="nt">-f</span> /var/log/mail.log <span class="nt">-n</span> 26
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/24.png" alt="24"></p>
+
+<h3 id="tarea-7">Tarea 7</h3>
+
+<p>Nuestro servidor de correo deberá tener antivirus que se encargue de detectar y eliminar los virus que se encuentren en los correos que recibe. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">clamav</code> y habilitaremos el servicio.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>clamsmtp clamav-daemon arc arj bzip2 cabextract lzop nomarch p7zip pax tnef unrar-free unzip <span class="nt">-y</span>
+
+systemctl <span class="nb">enable</span> <span class="nt">--now</span> clamav-daemon
+</code></pre></div></div>
+
+<p>El siguiente paso el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/master.cf</code> y agregaremos la siguiente línea para que el servicio de postfix ejecute el servicio de clamav.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scan unix -       -       n       -       16       smtp
+  <span class="nt">-o</span> <span class="nv">smtp_data_done_timeout</span><span class="o">=</span>1200
+  <span class="nt">-o</span> <span class="nv">smtp_send_xforward_command</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nt">-o</span> <span class="nv">disable_dns_lookups</span><span class="o">=</span><span class="nb">yes
+</span>127.0.0.1:10025 inet n       -       n       -       16       smtpd
+  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">local_recipient_maps</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">relay_recipient_maps</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_restriction_classes</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>permit_mynetworks,reject
+  <span class="nt">-o</span> <span class="nv">mynetworks_style</span><span class="o">=</span>host
+  <span class="nt">-o</span> <span class="nv">smtpd_authorized_xforward_hosts</span><span class="o">=</span>127.0.0.0/8
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/25.png" alt="25"></p>
+
+<p>Y en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> y le indicamos el socket que usará el servicio de clamav.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>content_filter <span class="o">=</span> scan:127.0.0.1:10026
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/26.png" alt="26"></p>
+
+<p>Reconfiguramos <code class="language-plaintext highlighter-rouge">clamav-daemon</code> de forma que le indiquemos los hilos de procesador que usará y el resto de parámetros.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dpkg-reconfigure clamav-daemon
+</code></pre></div></div>
+
+<p>Y reiniciamos los servicios.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix clamav-daemon
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/27.png" alt="27"></p>
+
+<p><strong>NOTA</strong> : Será normal que <code class="language-plaintext highlighter-rouge">ClamAV</code> tarde un poco en arrancar, ya que tiene que actualizar la base de datos de virus.</p>
+
+<p>Para probarlo, enviaremos un correo con <code class="language-plaintext highlighter-rouge">X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*</code> para probar que se detecta como virus.</p>
+
+<p><img src="/assets/images/correo/correo/28.png" alt="28"></p>
+
+<p>Comprobando que el email se ha etiquetado como virus, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de clamav.</p>
+
+<p><img src="/assets/images/correo/correo/29.png" alt="29"></p>
+
+<h2 id="gestión-de-correos-desde-un-cliente">Gestión de correos desde un cliente</h2>
+
+<h3 id="tarea-8">Tarea 8</h3>
+
+<p>Aquí vamos a configurar el buzón de los usuarios para que puedan acceder a él desde un cliente de correo. Y para ello, el primer paso es modificar la configuración de <code class="language-plaintext highlighter-rouge">postfix</code>, en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para que use el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> añadiendo al final del fichero <code class="language-plaintext highlighter-rouge">home_mailbox = Maildir/</code>.</p>
+
+<p><img src="/assets/images/correo/correo/30.png" alt="30"></p>
+
+<p>Reiniciamos el servicio de postfix y tras esto, la función <code class="language-plaintext highlighter-rouge">mail</code> dejará de funcionar, ya que no encontrará el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> en el directorio <code class="language-plaintext highlighter-rouge">/var/mail</code>. Para ello, instalaremos <code class="language-plaintext highlighter-rouge">mutt</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>mutt <span class="nt">-y</span>
+systemctl restart postfix
+</code></pre></div></div>
+
+<p>Y configuramos <code class="language-plaintext highlighter-rouge">mutt</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set </span><span class="nv">mbox_type</span><span class="o">=</span>Maildir
+<span class="nb">set </span><span class="nv">mbox</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
+<span class="nb">set </span><span class="nv">folder</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
+<span class="nb">set </span><span class="nv">spoolfile</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
+<span class="nb">set </span><span class="nv">record</span><span class="o">=</span><span class="s2">"+.Sent"</span>
+<span class="nb">set </span><span class="nv">postponed</span><span class="o">=</span><span class="s2">"+.Drafts"</span>
+<span class="nb">set </span><span class="nv">mask</span><span class="o">=</span><span class="s2">"!^</span><span class="se">\\</span><span class="s2">.[^.]"</span>
+</code></pre></div></div>
+
+<p>Para probar que funciona, enviaremos un correo a nuestro buzón y comprobaremos que se ha recibido correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/31.png" alt="31"></p>
+
+<p><img src="/assets/images/correo/correo/32.png" alt="32"></p>
+
+<p>Realizado esto, podemos decir que tenemos un buzón de correo funcionando correctamente como <code class="language-plaintext highlighter-rouge">Maildir</code> en vez de <code class="language-plaintext highlighter-rouge">mbox</code>.</p>
+
+<h3 id="tarea-9">Tarea 9</h3>
+
+<p>Vamos a configurar el protocolo IMAP instalando el paquete <code class="language-plaintext highlighter-rouge">dovecot-imapd</code> y habilitaremos el servicio.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>dovecot-imapd <span class="nt">-y</span>
+systemctl <span class="nb">enable</span> <span class="nt">--now</span> dovecot
+netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>dovecot
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/33.png" alt="33"></p>
+
+<p>Paramos nginx para que no interfiera con el puerto 80.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl stop nginx
+</code></pre></div></div>
+
+<p>Y generamos un certificado SSL para el servidor de correo.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> mail.mariatec.es
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/34.png" alt="34"></p>
+
+<p>Modificamos la configuración de <code class="language-plaintext highlighter-rouge">dovecot</code> en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/dovecot.conf</code> para que use el certificado SSL que hemos generado. Una vez configurado, reiniciamos el servicio y también el servicio de nginx.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssl_cert <span class="o">=</span> &lt;/etc/letsencrypt/live/mail.mariatec.es/fullchain.pem
+ssl_key <span class="o">=</span> &lt;/etc/letsencrypt/live/mail.mariatec.es/privkey.pem
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/35.png" alt="35"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart dovecot
+systemctl restart nginx
+</code></pre></div></div>
+
+<p><strong>INCISO</strong>: Vamos a realizar primero la configuración de postfix para que mande correos desde un cliente remoto, ya que si no, no podremos probar el servicio de IMAP. Después de esto, instalaremos un webmail.</p>
+
+<h3 id="tarea-11">Tarea 11</h3>
+
+<p>Los mismos certificados que hemos generado antes para cifrar los emails enviados y recibidos. Para ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> y añadimos las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smtpd_tls_cert_file <span class="o">=</span> /etc/letsencrypt/live/mail.mariatec.es/fullchain.pem
+smtpd_tls_key_file <span class="o">=</span> /etc/letsencrypt/live/mail.mariatec.es/privkey.pem
+
+smtpd_sasl_auth_enable <span class="o">=</span> <span class="nb">yes
+</span>smtpd_sasl_type <span class="o">=</span> dovecot
+smtpd_sasl_path <span class="o">=</span> private/auth
+smtpd_sasl_authenticated_header <span class="o">=</span> <span class="nb">yes
+</span>broken_sasl_auth_clients <span class="o">=</span> <span class="nb">yes</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/36.png" alt="36"></p>
+
+<p>Acto seguido, configuraremos el fichero <code class="language-plaintext highlighter-rouge">master.cf</code> y modificamos la directiva submission para que use el puerto 587 y el fichero <code class="language-plaintext highlighter-rouge">smtpd.conf</code> para que use el puerto 465.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+submission inet n       -       y       -       -       smtpd
+  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
+  <span class="nt">-o</span> <span class="nv">syslog_name</span><span class="o">=</span>postfix/submission
+  <span class="nt">-o</span> <span class="nv">smtpd_tls_security_level</span><span class="o">=</span>encrypt
+  <span class="nt">-o</span> <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_tls_auth_only</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_reject_unlisted_recipient</span><span class="o">=</span>no
+  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span><span class="nv">$mua_client_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span><span class="nv">$mua_helo_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span><span class="nv">$mua_sender_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_relay_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
+  <span class="nt">-o</span> <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
+
+smtps     inet  n       -       y       -       -       smtpd
+  <span class="nt">-o</span> <span class="nv">syslog_name</span><span class="o">=</span>postfix/smtps
+  <span class="nt">-o</span> <span class="nv">smtpd_tls_wrappermode</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_reject_unlisted_recipient</span><span class="o">=</span>no
+  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span><span class="nv">$mua_client_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span><span class="nv">$mua_helo_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span><span class="nv">$mua_sender_restrictions</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>
+  <span class="nt">-o</span> <span class="nv">smtpd_relay_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
+  <span class="nt">-o</span> <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/37.png" alt="37"></p>
+
+<p>Ahora, a <code class="language-plaintext highlighter-rouge">dovecot</code>, le indicamos qué debe hacer para autenticarse. Lo haremos en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-master.conf</code> y añadimos las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>service auth <span class="o">{</span>
+  ...
+  <span class="c"># Postfix smtp-auth</span>
+  unix_listener /var/spool/postfix/private/auth <span class="o">{</span>
+    mode <span class="o">=</span> 0666
+  <span class="o">}</span>
+  ...
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/38.png" alt="38"></p>
+
+<p>Reiniciamos los servicios y comprobamos que todo funciona correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/39.png" alt="39"></p>
+
+<p>Para comprobar que funciona correctamente, he usado <code class="language-plaintext highlighter-rouge">Thunderbird</code>, configuramos el correo y comprobamos que funciona correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/40.png" alt="40"></p>
+
+<p><img src="/assets/images/correo/correo/41.png" alt="41"></p>
+
+<p>Ya podemos decir que los correos están sincronizados correctamente entre el servidor y el cliente. También probaremos que, desde <code class="language-plaintext highlighter-rouge">Thunderbird</code>, podemos enviar un correo a mi cuenta de gmail y que llega correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/42.png" alt="42"></p>
+
+<p>También vamos a probar que podemos responder al email y que se sincronizan correctamente los emails de mi servidor y los emailsdel cliente de correo.</p>
+
+<p><img src="/assets/images/correo/correo/43.png" alt="43"></p>
+
+<h3 id="tarea-10">Tarea 10</h3>
+
+<p>Ha llegado la hora de instalar un webmail. Para ello, vamos a instalar <code class="language-plaintext highlighter-rouge">Roundcube</code>. Para ello, prepararemos el VPS para que pueda instalar <code class="language-plaintext highlighter-rouge">Roundcube</code> y sus dependencias.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>docker.io
+</code></pre></div></div>
+
+<p>Agregaremos un registro CNAME en nuestro DNS para que el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> apunte a la IP del servidor.</p>
+
+<p><img src="/assets/images/correo/correo/44.png" alt="44"></p>
+
+<p>Le toca el turno a roundcube y a su configuración, y para eso empezaremos por crear un directorio en el depositaremos los ficheros de configuración de <code class="language-plaintext highlighter-rouge">Roundcube</code> y lo estrenaremos creando el fichero <code class="language-plaintext highlighter-rouge">custom.inc.php</code> que contendrá la configuración de la base de datos.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /root/config-roundcube
+
+nano /root/config-roundcube/custom.inc.php
+</code></pre></div></div>
+
+<p>Dentro del fichero, añadiremos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?php
+<span class="nv">$config</span><span class="o">[</span><span class="s1">'mail_domain'</span><span class="o">]</span> <span class="o">=</span> array<span class="o">(</span>
+    <span class="s1">'mail.mariatec.es'</span> <span class="o">=&gt;</span> <span class="s1">'mariatec.es'</span>
+<span class="o">)</span><span class="p">;</span>
+?&gt;
+</code></pre></div></div>
+
+<p>Echamos a andar el contenedor de docker donde tenemos la aplicación de <code class="language-plaintext highlighter-rouge">Roundcube</code> y le pasamos los parámetros necesarios para que funcione correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-v</span> /root/config-roundcube/:/var/roundcube/config/ <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_HOST</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_SERVER</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_PORT</span><span class="o">=</span>465 <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_PORT</span><span class="o">=</span>993 <span class="nt">-p</span> 8001:80 <span class="nt">-d</span> roundcube/roundcubemail
+</code></pre></div></div>
+
+<p>Y en lasiguiente imagen podemos ver como el contenedor se ha levantado correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/45.png" alt="45"></p>
+
+<p>Paramos de nuevo <code class="language-plaintext highlighter-rouge">Nginx</code> y creamos un certificado para el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> y lo instalamos en el servidor.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop nginx
+
+certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> webmail.mariatec.es
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/46.png" alt="46"></p>
+
+<p>Ya terminada toda la configuración anterior, tendremos que crear un VirtualHost para <code class="language-plaintext highlighter-rouge">Nginx</code> que redirija las peticiones a <code class="language-plaintext highlighter-rouge">Roundcube</code> y que esté protegido por <code class="language-plaintext highlighter-rouge">Let's Encrypt</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/nginx/sites-available/webmail.mariatec.es
+</code></pre></div></div>
+
+<p>Dentro del fichero, añadiremos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
+        listen 80<span class="p">;</span>
+        listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+        server_name webmail.mariatec.es<span class="p">;</span>
+
+        <span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+        listen 443 ssl http2<span class="p">;</span>
+        listen <span class="o">[</span>::]:443 ssl http2<span class="p">;</span>
+
+        ssl    on<span class="p">;</span>
+        ssl_certificate /etc/letsencrypt/live/webmail.mariatec.es/fullchain.pem<span class="p">;</span>
+        ssl_certificate_key     /etc/letsencrypt/live/webmail.mariatec.es/privkey.pem<span class="p">;</span>
+
+        index index.html index.php index.htm index.nginx-debian.html<span class="p">;</span>
+
+        server_name webmail.mariatec.es<span class="p">;</span>
+
+        location / <span class="o">{</span>
+                proxy_pass http://localhost:8001<span class="p">;</span>
+                include proxy_params<span class="p">;</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Para que esté habilitado el VirtualHost, tendremos que crear un enlace simbólico en <code class="language-plaintext highlighter-rouge">/etc/nginx/sites-enabled/</code> y reiniciar el servicio de <code class="language-plaintext highlighter-rouge">Nginx</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/webmail.mariatec.es /etc/nginx/sites-enabled/webmail.mariatec.es
+
+systemctl restart nginx
+</code></pre></div></div>
+
+<p><img src="/assets/images/correo/correo/47.png" alt="47"></p>
+
+<p>Ahora, ya podemos acceder a <code class="language-plaintext highlighter-rouge">Roundcube</code> desde el navegador.</p>
+
+<p><img src="/assets/images/correo/correo/48.png" alt="48"></p>
+
+<p><img src="/assets/images/correo/correo/49.png" alt="49"></p>
+
+<p>Hacemos una prueba de envío de correo desde <code class="language-plaintext highlighter-rouge">Roundcube</code> y comprobamos que funciona correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/50.png" alt="50"></p>
+
+<p>En gmail podemos verificar que el correo ha llegado correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/51.png" alt="51"></p>
+
+<p>Ahora probamos que podemos responder a ese email y que efectivamente se sincroniza correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/52.png" alt="52"></p>
+
+<h3 id="tarea-12">Tarea 12</h3>
+
+<h2 id="comprobación-final">Comprobación final</h2>
+
+<h3 id="tarea-13">Tarea 13</h3>
+
+<p>Última tarea, comprobación final. Para ello, vamos a comprobar que el servidor de correo funciona correctamente y que podemos enviar y recibir correos desde el servidor. Comprobaremos con un correo generado por <a href="https://www.mail-tester.com/">mail-tester.com</a> y que, con la puntuación que nos da, podemos ver que el servidor de correo funciona correctamente.</p>
+
+<p><img src="/assets/images/correo/correo/53.png" alt="53"></p>
+
 
 
     </div>
@@ -772,9 +1303,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
       <div>Related Articles</div>
       <ul>
         <li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Certificados digitales. HTTPS</a></li>
-<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Bienvenid@</a></li>
-<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Montaje NFS mediante systemd</a></li>
-<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Crear un sitio web estático con Jekyll</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Cifrado asimétrico con gpg y openssl </a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Cloud Computing IaaS. OpenStack</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
