@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-02T12:24:52+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-04T16:50:21+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
 
 <p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
 
@@ -501,13 +501,15 @@
 
 <p>Y agregamos un registro SPF para evitar que nuestro servidor sea utilizado como servidor de spam.</p>
 
-<p>🔲 mariatec.es     SPF     “v=spf1 lp4:82.223.1.72 -all”</p>
-
-<p>Abrimos el puerto 25 en el cortafuegos del servidor y configuramos el registro PTR con el fqdn de nuestro VPS.</p>
+<p>🔲 mariatec.es     SPF     “v=spf1 ip4:82.223.1.72 -all”</p>
 
 <p><img src="/assets/images/correo/correo/1.png" alt="1" /></p>
 
-<p>Una vez terminado esto, nos conectamos anuestro VPS y comentamos conlaconfiguración:</p>
+<p>Abrimos el puerto 25 en el cortafuegos del servidor y configuramos el registro PTR con el fqdn de nuestro VPS.</p>
+
+<p><img src="/assets/images/correo/correo/2.png" alt="2" /></p>
+
+<p>Una vez terminado esto, nos conectamos a nuestro VPS y comentamos con la configuración:</p>
 
 <ul>
   <li>
@@ -529,9 +531,9 @@
 
     <p>Como podemos ver en la siguiente imagen, en el log del correo aparece el correo que hemos enviado y que ha sido recibido correctamente.</p>
 
-    <p><img src="/assets/images/correo/correo/2.png" alt="2" /></p>
-
     <p><img src="/assets/images/correo/correo/3.png" alt="3" /></p>
+
+    <p><img src="/assets/images/correo/correo/4.png" alt="4" /></p>
   </li>
 </ul>
 
@@ -545,7 +547,7 @@
 
 <p><img src="/assets/images/correo/correo/4.png" alt="4" /></p>
 
-<p>Y desde nuestra consola, podemos ver que ha llegado correctamente:</p>
+<p>Y desde nuestra consola, nos enviaremos un correo y podemos ver que ha llegado correctamente:</p>
 
 <p><img src="/assets/images/correo/correo/5.png" alt="5" /></p>
 
@@ -569,7 +571,7 @@ ps
 
 <p>Le damos permisos de ejecución y comprobamos que funciona correctamente:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /usr/local/bin/cronmail.sh
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /root/cronmail.sh
 <span class="nt">---</span>
 bash /root/cronmail.sh
 </code></pre></div></div>
@@ -582,9 +584,11 @@ bash /root/cronmail.sh
 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> root /root/cronmail.sh
 </code></pre></div></div>
 
+<p><img src="/assets/images/correo/correo/8.png" alt="8" /></p>
+
 <p>Esperamos un minuto y comprobamos que el correo ha llegado correctamente:</p>
 
-<p><img src="/assets/images/correo/correo/8.png" alt="8" /></p>
+<p><img src="/assets/images/correo/correo/9.png" alt="9" /></p>
 
 <p>Lo que hemos hecho es crear un script que se ejecuta cada minuto y que envía un correo con la fecha y hora actual, el uptime del servidor y el estado de los procesos.</p>
 
@@ -595,11 +599,13 @@ bash /root/cronmail.sh
 root:   mariajesus
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/9.png" alt="9" /></p>
+<p><img src="/assets/images/correo/correo/10.png" alt="10" /></p>
 
 <p>Ejecutamos <code class="language-plaintext highlighter-rouge">newaliases</code> para que se actualice el archivo de alias y comprobamos que funciona correctamente:</p>
 
-<p><img src="/assets/images/correo/correo/10.png" alt="10" /></p>
+<p><img src="/assets/images/correo/correo/11.png" alt="11" /></p>
+
+<p><img src="/assets/images/correo/correo/12.png" alt="12" /></p>
 
 <p>Por último, creamos una redirección para que los correos que se envíen a <code class="language-plaintext highlighter-rouge">root</code> se envíen a nuestro correo personal.</p>
 
@@ -608,13 +614,16 @@ root:   mariajesus
 correo@gmail.com
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/11.png" alt="11" /></p>
+<p><img src="/assets/images/correo/correo/13.png" alt="13" /></p>
 
 <h2 id="para-asegurar-el-envío">Para asegurar el envío</h2>
 
 <h3 id="tarea-4">Tarea 4</h3>
 
-<p>En esta tarea, deberemos configurar el DomainKeys Identified Mail (DKIM) para que los correos que envíe nuestro servidor sean firmados digitalmente. Para ello, instalaremos el paquete <code class="language-plaintext highlighter-rouge">opendkim</code> y crearemos un archivo de configuración en <code class="language-plaintext highlighter-rouge">/etc/opendkim.conf</code> que tenga el siguiente contenido:</p>
+<p>En esta tarea, deberemos configurar el DomainKeys Identified Mail (DKIM) para que los correos que envíe nuestro servidor sean firmados digitalmente. Para ello, instalaremos el paquete <code class="language-plaintext highlighter-rouge">opendkim</code> y <code class="language-plaintext highlighter-rouge">opendkim-tools</code> y crearemos un archivo de configuración en <code class="language-plaintext highlighter-rouge">/etc/opendkim.conf</code> que tenga el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>opendkim opendkim-tools <span class="nt">-y</span>
+</code></pre></div></div>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Domain mariatec.es
 Selector dkim2023
@@ -633,7 +642,7 @@ TrustAnchorFile /usr/share/dns/root.key
 <p>Y modificamos el archivo <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para señalar el modo de firma de los correos y el puerto en el que se ejecuta el servicio de <code class="language-plaintext highlighter-rouge">opendkim</code>.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>milter_default_action <span class="o">=</span> accept
-milter_protocol <span class="o">=</span> 6
+milter_protocol <span class="o">=</span> 2
 smtpd_milters <span class="o">=</span> inet:localhost:8891
 non_smtpd_milters <span class="o">=</span> <span class="nv">$smtpd_milters</span>
 </code></pre></div></div>
@@ -645,41 +654,39 @@ opendkim-genkey <span class="nt">-s</span> dkim2023 <span class="nt">-d</span> m
 <span class="nb">chown </span>opendkim:opendkim dkim2023.private dkim2023.txt
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/12.png" alt="12" /></p>
+<p><img src="/assets/images/correo/correo/14.png" alt="14" /></p>
 
 <p>Para que postfix pueda usar la clave, deberá tener la siguiente estructura:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dkim2023._domainkey	IN	TXT	<span class="o">(</span> <span class="s2">"v=DKIM1; h=sha256; k=rsa; "</span>
-	  <span class="s2">"p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArt81o+j9F0C2Xwsyr0XfYogqIk+ZbpHgMzuu8QGSER9vPp0U3vDVF2Uqev1z2T0ohduE93X9MOoo0j6gIZWtF2se/I4frrzk9RPnp1vn4HXHgpzYHb5TT+/j0LincSs5UznuTcB9+CST0QCYP4LR6hDDIgH7JZ3kuKTFQi+5EfHrl4RPDNRuZSN1soAyaEr7tWuCnfJ5miYVVw"</span>
-	  <span class="s2">"5ZtBY74oMpjAxI8QsfhLYpWNBUUUHIJmq7+dbTYkrG02z8xzM8tlgA/bM4oVQXCKKizU7DRu+AjcRuZ+Wy+TEyyYzksPph0UUMpWXKELNF7u/AkEcoBU+X/kWdkUZbsZtkFgdwMQIDAQAB"</span> <span class="o">)</span>  <span class="p">;</span> <span class="nt">-----</span> DKIM key dkim2023 <span class="k">for </span>mariatec.es
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dkim2023._domainkey     IN      TXT     <span class="o">(</span> <span class="s2">"v=DKIM1; h=sha256; k=rsa; "</span>
+          <span class="s2">"p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3gaVO68xhAlj7yNqNHEPh2zJDF+Mz5Zt9nsb54fElkvjUhAWUc+YiQ2yb+5tSo2EXjZV8LZCogkdKWkJniAmID/ZcyxZZB3XDa7nWpVJGF1JlOPXw+gJonq3Pdii945bIBR91ZcPR9KBL2TUZX0mHs1I1DlyXEALjajI5v2qbUFIVVCM6Kvv2qHB1FKhbkXozOW/ILoQr6unUp"</span>
+          <span class="s2">"Y4pFGzgZBkUUWQVTHCJ/J9d2VIjN1lp1Ro3sV788PoU8Mk9piRmyW3+p1hoh6qeTqFv9QekD4jsiWBHuWM7mo3vLBoO4lzMsvcyPuAgaqsy2oEuq3RvtO23mNoqwtA5QmNGrQsBwIDAQAB"</span> <span class="o">)</span>  <span class="p">;</span> <span class="nt">-----</span> DKIM key dkim2023 <span class="k">for </span>mariatec.es
 </code></pre></div></div>
 
 <p>Y en el registro TXT del DNS colocaremos la clave pública:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">v</span><span class="o">=</span>DKIM1<span class="p">;</span> <span class="nv">h</span><span class="o">=</span>sha256<span class="p">;</span> <span class="nv">k</span><span class="o">=</span>rsa<span class="p">;</span> <span class="nv">p</span><span class="o">=</span>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArt81o+j9F0C2Xwsyr0XfYogqIk+ZbpHgMzuu8QGSER9vPp0U3vDVF2Uqev1z2T0ohduE93X9MOoo0j6gIZWtF2se/I4frrzk9RPnp1vn4HXHgpzYHb5TT+/j0LincSs5UznuTcB9+CST0QCYP4LR6hDDIgH7JZ3kuKTFQi+5EfHrl4RPDNRuZSN1soAyaEr7tWuCnfJ5miYVVw5ZtBY74oMpjAxI8QsfhLYpWNBUUUHIJmq7+dbTYkrG02z8xzM8tlgA/bM4oVQXCKKizU7DRu+AjcRuZ+Wy+TEyyYzksPph0UUMpWXKELNF7u/AkEcoBU+X/kWdkUZbsZtkFgdwMQIDAQAB
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">v</span><span class="o">=</span>DKIM1<span class="p">;</span> <span class="nv">h</span><span class="o">=</span>sha256<span class="p">;</span> <span class="nv">k</span><span class="o">=</span>rsa<span class="p">;</span> <span class="nv">p</span><span class="o">=</span><span class="nv">p</span><span class="o">=</span>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3gaVO68xhAlj7yNqNHEPh2zJDF+Mz5Zt9nsb54fElkvjUhAWUc+YiQ2yb+5tSo2EXjZV8LZCogkdKWkJniAmID/ZcyxZZB3XDa7nWpVJGF1JlOPXw+gJonq3Pdii945bIBR91ZcPR9KBL2TUZX0mHs1I1DlyXEALjajI5v2qbUFIVVCM6Kvv2qHB1FKhbkXozOW/ILoQr6unUp
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/13.png" alt="13" /></p>
+<p><img src="/assets/images/correo/correo/15.png" alt="15" /></p>
 
 <p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart opendkim postfix
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/14.png" alt="14" /></p>
-
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>8891
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/15.png" alt="15" /></p>
+<p><img src="/assets/images/correo/correo/16.png" alt="16" /></p>
 
 <p>Como podemos ver en las siguientes capturas, en la cabecera del correo se añade la información de la firma.</p>
 
-<p><img src="/assets/images/correo/correo/16.png" alt="16" /></p>
+<p><img src="/assets/images/correo/correo/17.png" alt="17" /></p>
 
 <p>Y en la web de <a href="https://dkimvalidator.com/">dkimvalidator</a> podemos comprobar que la firma es correcta.</p>
 
-<p><img src="/assets/images/correo/correo/17.png" alt="17" /></p>
+<p><img src="/assets/images/correo/correo/18.png" alt="18" /></p>
 
 <h2 id="para-luchar-contra-el-spam">Para luchar contra el SPAM</h2>
 
@@ -695,8 +702,6 @@ opendkim-genkey <span class="nt">-s</span> dkim2023 <span class="nt">-d</span> m
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>policy-spf  unix  -       n       n       -       0       spawn
     <span class="nv">user</span><span class="o">=</span>policyd-spf <span class="nv">argv</span><span class="o">=</span>/usr/bin/policyd-spf
 </code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/18.png" alt="18" /></p>
 
 <p>Reiniciamos el servicio de postfix y comprobamos que funciona correctamente.</p>
 
@@ -730,14 +735,12 @@ spamassassin unix -     n       n       -       -       pipe
   <span class="nv">user</span><span class="o">=</span>debian-spamd <span class="nv">argv</span><span class="o">=</span>/usr/bin/spamc <span class="nt">-f</span> <span class="nt">-e</span> /usr/sbin/sendmail <span class="nt">-oi</span> <span class="nt">-f</span> <span class="k">${</span><span class="nv">sender</span><span class="k">}</span> <span class="k">${</span><span class="nv">recipient</span><span class="k">}</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/20.png" alt="20" /></p>
-
-<p>Y para configurar que los emails que se detecten como SPAM, reciban una etiqueta en el asunto, modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/spamassassin/local.cf</code> y agregaremos la siguiente línea.</p>
+<p>Y para configurar que los emails que se detecten como SPAM, reciban una etiqueta en el asunto, modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/spamassassin/local.cf</code> y descomentamos la siguiente línea.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rewrite_header Subject <span class="k">*****</span>SPAM<span class="k">*****</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/21.png" alt="21" /></p>
+<p><img src="/assets/images/correo/correo/20.png" alt="20" /></p>
 
 <p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
 
@@ -746,16 +749,12 @@ spamassassin unix -     n       n       -       -       pipe
 
 <p>Comprobaremos que funciona, enviando un correo a nuestro email en nuestro VPS y comprobando que se ha etiquetado como SPAM. Por ello, usaremos <a href="https://spamassassin.apache.org/gtube/">The GTUBE</a> para enviar un correo que se detecte como SPAM.</p>
 
-<p><img src="/assets/images/correo/correo/22.png" alt="22" /></p>
-
 <p>Comprobando que el email se ha etiquetado como SPAM, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de spamassassin.</p>
-
-<p><img src="/assets/images/correo/correo/23.png" alt="23" /></p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tail</span> <span class="nt">-f</span> /var/log/mail.log <span class="nt">-n</span> 26
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/24.png" alt="24" /></p>
+<p><img src="/assets/images/correo/correo/21.png" alt="21" /></p>
 
 <h3 id="tarea-7">Tarea 7</h3>
 
@@ -785,14 +784,10 @@ systemctl <span class="nb">enable</span> <span class="nt">--now</span> clamav-da
   <span class="nt">-o</span> <span class="nv">smtpd_authorized_xforward_hosts</span><span class="o">=</span>127.0.0.0/8
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/25.png" alt="25" /></p>
-
 <p>Y en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> y le indicamos el socket que usará el servicio de clamav.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>content_filter <span class="o">=</span> scan:127.0.0.1:10026
 </code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/26.png" alt="26" /></p>
 
 <p>Reconfiguramos <code class="language-plaintext highlighter-rouge">clamav-daemon</code> de forma que le indiquemos los hilos de procesador que usará y el resto de parámetros.</p>
 
@@ -804,25 +799,19 @@ systemctl <span class="nb">enable</span> <span class="nt">--now</span> clamav-da
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix clamav-daemon
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/27.png" alt="27" /></p>
-
 <p><strong>NOTA</strong> : Será normal que <code class="language-plaintext highlighter-rouge">ClamAV</code> tarde un poco en arrancar, ya que tiene que actualizar la base de datos de virus.</p>
 
 <p>Para probarlo, enviaremos un correo con <code class="language-plaintext highlighter-rouge">X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*</code> para probar que se detecta como virus.</p>
 
-<p><img src="/assets/images/correo/correo/28.png" alt="28" /></p>
-
 <p>Comprobando que el email se ha etiquetado como virus, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de clamav.</p>
 
-<p><img src="/assets/images/correo/correo/29.png" alt="29" /></p>
+<p><img src="/assets/images/correo/correo/22.png" alt="22" /></p>
 
 <h2 id="gestión-de-correos-desde-un-cliente">Gestión de correos desde un cliente</h2>
 
 <h3 id="tarea-8">Tarea 8</h3>
 
 <p>Aquí vamos a configurar el buzón de los usuarios para que puedan acceder a él desde un cliente de correo. Y para ello, el primer paso es modificar la configuración de <code class="language-plaintext highlighter-rouge">postfix</code>, en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para que use el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> añadiendo al final del fichero <code class="language-plaintext highlighter-rouge">home_mailbox = Maildir/</code>.</p>
-
-<p><img src="/assets/images/correo/correo/30.png" alt="30" /></p>
 
 <p>Reiniciamos el servicio de postfix y tras esto, la función <code class="language-plaintext highlighter-rouge">mail</code> dejará de funcionar, ya que no encontrará el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> en el directorio <code class="language-plaintext highlighter-rouge">/var/mail</code>. Para ello, instalaremos <code class="language-plaintext highlighter-rouge">mutt</code>:</p>
 
@@ -843,9 +832,9 @@ systemctl restart postfix
 
 <p>Para probar que funciona, enviaremos un correo a nuestro buzón y comprobaremos que se ha recibido correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/31.png" alt="31" /></p>
+<p><img src="/assets/images/correo/correo/23.png" alt="23" /></p>
 
-<p><img src="/assets/images/correo/correo/32.png" alt="32" /></p>
+<p><img src="/assets/images/correo/correo/24.png" alt="24" /></p>
 
 <p>Realizado esto, podemos decir que tenemos un buzón de correo funcionando correctamente como <code class="language-plaintext highlighter-rouge">Maildir</code> en vez de <code class="language-plaintext highlighter-rouge">mbox</code>.</p>
 
@@ -858,7 +847,7 @@ systemctl <span class="nb">enable</span> <span class="nt">--now</span> dovecot
 netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>dovecot
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/33.png" alt="33" /></p>
+<p><img src="/assets/images/correo/correo/25.png" alt="25" /></p>
 
 <p>Paramos nginx para que no interfiera con el puerto 80.</p>
 
@@ -870,7 +859,7 @@ netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>dovecot
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> mail.mariatec.es
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/34.png" alt="34" /></p>
+<p><img src="/assets/images/correo/correo/26.png" alt="26" /></p>
 
 <p>Modificamos la configuración de <code class="language-plaintext highlighter-rouge">dovecot</code> en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/dovecot.conf</code> para que use el certificado SSL que hemos generado. Una vez configurado, reiniciamos el servicio y también el servicio de nginx.</p>
 
@@ -878,7 +867,7 @@ netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>dovecot
 ssl_key <span class="o">=</span> &lt;/etc/letsencrypt/live/mail.mariatec.es/privkey.pem
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/35.png" alt="35" /></p>
+<p><img src="/assets/images/correo/correo/27.png" alt="27" /></p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart dovecot
 systemctl restart nginx
@@ -900,7 +889,7 @@ smtpd_sasl_authenticated_header <span class="o">=</span> <span class="nb">yes
 </span>broken_sasl_auth_clients <span class="o">=</span> <span class="nb">yes</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/36.png" alt="36" /></p>
+<p><img src="/assets/images/correo/correo/28.png" alt="28" /></p>
 
 <p>Acto seguido, configuraremos el fichero <code class="language-plaintext highlighter-rouge">master.cf</code> y modificamos la directiva submission para que use el puerto 587 y el fichero <code class="language-plaintext highlighter-rouge">smtpd.conf</code> para que use el puerto 465.</p>
 
@@ -932,7 +921,7 @@ smtps     inet  n       -       y       -       -       smtpd
   <span class="nt">-o</span> <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/37.png" alt="37" /></p>
+<p><img src="/assets/images/correo/correo/29.png" alt="29" /></p>
 
 <p>Ahora, a <code class="language-plaintext highlighter-rouge">dovecot</code>, le indicamos qué debe hacer para autenticarse. Lo haremos en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-master.conf</code> y añadimos las siguientes líneas:</p>
 
@@ -946,25 +935,21 @@ smtps     inet  n       -       y       -       -       smtpd
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/38.png" alt="38" /></p>
+<p><img src="/assets/images/correo/correo/30.png" alt="30" /></p>
 
-<p>Reiniciamos los servicios y comprobamos que todo funciona correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/39.png" alt="39" /></p>
+<p>Reiniciamos los servicios y comprobamos que todo funciona correctamente. Deberemos abrir los puertos 465 y 993 en el firewall de nuestro VPS.</p>
 
 <p>Para comprobar que funciona correctamente, he usado <code class="language-plaintext highlighter-rouge">Thunderbird</code>, configuramos el correo y comprobamos que funciona correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/40.png" alt="40" /></p>
-
-<p><img src="/assets/images/correo/correo/41.png" alt="41" /></p>
+<p><img src="/assets/images/correo/correo/31.png" alt="31" /></p>
 
 <p>Ya podemos decir que los correos están sincronizados correctamente entre el servidor y el cliente. También probaremos que, desde <code class="language-plaintext highlighter-rouge">Thunderbird</code>, podemos enviar un correo a mi cuenta de gmail y que llega correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/42.png" alt="42" /></p>
+<p><img src="/assets/images/correo/correo/32.png" alt="32" /></p>
 
 <p>También vamos a probar que podemos responder al email y que se sincronizan correctamente los emails de mi servidor y los emailsdel cliente de correo.</p>
 
-<p><img src="/assets/images/correo/correo/43.png" alt="43" /></p>
+<p><img src="/assets/images/correo/correo/33.png" alt="33" /></p>
 
 <h3 id="tarea-10">Tarea 10</h3>
 
@@ -975,13 +960,13 @@ smtps     inet  n       -       y       -       -       smtpd
 
 <p>Agregaremos un registro CNAME en nuestro DNS para que el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> apunte a la IP del servidor.</p>
 
-<p><img src="/assets/images/correo/correo/44.png" alt="44" /></p>
+<p>🔲 webmail.mariatec.es     CNAME      mariatec.es</p>
 
 <p>Le toca el turno a roundcube y a su configuración, y para eso empezaremos por crear un directorio en el depositaremos los ficheros de configuración de <code class="language-plaintext highlighter-rouge">Roundcube</code> y lo estrenaremos creando el fichero <code class="language-plaintext highlighter-rouge">custom.inc.php</code> que contendrá la configuración de la base de datos.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /root/config-roundcube
 
-nano /root/config-roundcube/custom.inc.php
+nano /root/configs-roundcube/custom.inc.php
 </code></pre></div></div>
 
 <p>Dentro del fichero, añadiremos:</p>
@@ -993,14 +978,16 @@ nano /root/config-roundcube/custom.inc.php
 ?&gt;
 </code></pre></div></div>
 
+<p><img src="/assets/images/correo/correo/34.png" alt="34" /></p>
+
 <p>Echamos a andar el contenedor de docker donde tenemos la aplicación de <code class="language-plaintext highlighter-rouge">Roundcube</code> y le pasamos los parámetros necesarios para que funcione correctamente.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-v</span> /root/config-roundcube/:/var/roundcube/config/ <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_HOST</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_SERVER</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_PORT</span><span class="o">=</span>465 <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_PORT</span><span class="o">=</span>993 <span class="nt">-p</span> 8001:80 <span class="nt">-d</span> roundcube/roundcubemail
 </code></pre></div></div>
 
-<p>Y en lasiguiente imagen podemos ver como el contenedor se ha levantado correctamente.</p>
+<p>Y en la siguiente imagen podemos ver como el contenedor se ha levantado correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/45.png" alt="45" /></p>
+<p><img src="/assets/images/correo/correo/35.png" alt="35" /></p>
 
 <p>Paramos de nuevo <code class="language-plaintext highlighter-rouge">Nginx</code> y creamos un certificado para el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> y lo instalamos en el servidor.</p>
 
@@ -1008,8 +995,6 @@ nano /root/config-roundcube/custom.inc.php
 
 certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> webmail.mariatec.es
 </code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/46.png" alt="46" /></p>
 
 <p>Ya terminada toda la configuración anterior, tendremos que crear un VirtualHost para <code class="language-plaintext highlighter-rouge">Nginx</code> que redirija las peticiones a <code class="language-plaintext highlighter-rouge">Roundcube</code> y que esté protegido por <code class="language-plaintext highlighter-rouge">Let's Encrypt</code>.</p>
 
@@ -1053,27 +1038,25 @@ server <span class="o">{</span>
 systemctl restart nginx
 </code></pre></div></div>
 
-<p><img src="/assets/images/correo/correo/47.png" alt="47" /></p>
+<p><img src="/assets/images/correo/correo/36.png" alt="36" /></p>
 
 <p>Ahora, ya podemos acceder a <code class="language-plaintext highlighter-rouge">Roundcube</code> desde el navegador.</p>
 
-<p><img src="/assets/images/correo/correo/48.png" alt="48" /></p>
+<p><img src="/assets/images/correo/correo/37.png" alt="37" /></p>
 
-<p><img src="/assets/images/correo/correo/49.png" alt="49" /></p>
+<p><img src="/assets/images/correo/correo/38.png" alt="38" /></p>
 
 <p>Hacemos una prueba de envío de correo desde <code class="language-plaintext highlighter-rouge">Roundcube</code> y comprobamos que funciona correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/50.png" alt="50" /></p>
+<p><img src="/assets/images/correo/correo/39.png" alt="39" /></p>
 
 <p>En gmail podemos verificar que el correo ha llegado correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/51.png" alt="51" /></p>
-
-<p>Ahora probamos que podemos responder a ese email y que efectivamente se sincroniza correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/52.png" alt="52" /></p>
+<p><img src="/assets/images/correo/correo/40.png" alt="40" /></p>
 
 <h3 id="tarea-12">Tarea 12</h3>
+
+<p>En la tarea 10 ya hemos comprobado que ya hemos podido enviar y recibir correos desde el servidor de correo. Ahora, vamos a comprobar que el servidor de correo funciona correctamente y que podemos enviar y recibir correos desde el servidor.</p>
 
 <h2 id="comprobación-final">Comprobación final</h2>
 
@@ -1081,7 +1064,13 @@ systemctl restart nginx
 
 <p>Última tarea, comprobación final. Para ello, vamos a comprobar que el servidor de correo funciona correctamente y que podemos enviar y recibir correos desde el servidor. Comprobaremos con un correo generado por <a href="https://www.mail-tester.com/">mail-tester.com</a> y que, con la puntuación que nos da, podemos ver que el servidor de correo funciona correctamente.</p>
 
-<p><img src="/assets/images/correo/correo/53.png" alt="53" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
+<p>Para ello, modificaremos nuestro DNS y añadiremos un registro TXT con el valor que nos da <code class="language-plaintext highlighter-rouge">mail-tester.com</code> y que nos permitirá que el servidor de correo sea verificado por <code class="language-plaintext highlighter-rouge">mail-tester.com</code>.</p>
+
+<p>🔲 _dmarc.mariatec.es     TXT      v=DMARC1; p=none;</p>
+
+<p><img src="/assets/images/correo/correo/41.png" alt="41" /></p>
+
+<p><img src="/assets/images/correo/correo/42.png" alt="42" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
 
 <p>iSCSI es un protocolo de red que permite compartir almacenamiento entre servidores. iSCSI es una abreviatura de Internet Small Computer System Interface. Sirve para conectar servidores y almacenamiento de forma que se pueda compartir el almacenamiento entre ellos. Es una abreviatura de Internet Small Computer System Interface.</p>
 
@@ -2441,7 +2430,7 @@ ip route add default via 172.20.0.20
   </li>
 </ul>
 
-<h1 id="ejercicio-extra">Ejercicio Extra</h1>
+<h2 id="ejercicio-extra">Ejercicio Extra</h2>
 
 <p>Vamos a mandarle un correo electrónico al profesor, comprobando que el correo se ha recibido con éxito y puede ser respondido, por lo que la respuesta nos llegará a nuestra cuenta de correo personal.</p>
 
@@ -2449,33 +2438,36 @@ ip route add default via 172.20.0.20
   <li>
     <p>Enviamos un correo al profesor</p>
 
-    <p>```bash
-  echo "Hola Jose Domingo. Le mando este correo como prueba de funcionamiento del servidor de correo en delta." | mail -s "Prueba" -r "josedomingo@</p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Jose Domingo. Le mando este correo como prueba de funcionamiento del servidor de correo en delta."</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span> <span class="nt">-r</span> <span class="s2">"josedomingo@
+</span></code></pre></div>    </div>
   </li>
 </ul>
 
-<h1 id="comprobación">Comprobación</h1>
+<h2 id="comprobación">Comprobación</h2>
 
 <ol>
-  <li>Prueba de funcionamiento del ejercicio1. Se debe mostrar el log para asegurarse que se ha enviado el correo.</li>
-</ol>
+  <li>
+    <p>Prueba de funcionamiento del ejercicio1. Se debe mostrar el log para asegurarse que se ha enviado el correo.</p>
 
-<p><img src="/assets/images/correo/4.png" alt="4" /></p>
+    <p><img src="/assets/images/correo/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Muestra las cabeceras del correo recibido en el ejercicio 2 mostrando las cabeceras donde vemos los servidores por los que ha pasado el correo.</p>
 
-<ol>
-  <li>Muestra las cabeceras del correo recibido en el ejercicio 2 mostrando las cabeceras donde vemos los servidores por los que ha pasado el correo.</li>
-</ol>
+    <p><img src="/assets/images/correo/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3.</p>
 
-<p><img src="/assets/images/correo/5.png" alt="5" /></p>
+    <p><img src="/assets/images/correo/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p><strong>EXTRA: Ejercicio propuesto por el profesor</strong>:</p>
 
-<ol>
-  <li>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3.</li>
-</ol>
+    <p><img src="/assets/images/correo/9.png" alt="9" /></p>
 
-<p><img src="/assets/images/correo/8.png" alt="8" /></p>
-
-<ol>
-  <li><strong>Ejercicio propuesto por el profesor</strong>:</li>
+    <p><img src="/assets/images/correo/10.png" alt="10" /></p>
+  </li>
 </ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un servidor de correo.]]></summary></entry><entry><title type="html">Desarrollo y despliegue de una aplicación Java simple</title><link href="/iaw/2023/01/09/java-simple.html" rel="alternate" type="text/html" title="Desarrollo y despliegue de una aplicación Java simple" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-simple</id><content type="html" xml:base="/iaw/2023/01/09/java-simple.html"><![CDATA[<p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
 
 <p><strong>Tomcat</strong> es un servidor web que permite ejecutar aplicaciones Java. En este post vamos a ver como desplegar una aplicación Java en un servidor Tomcat.</p>
