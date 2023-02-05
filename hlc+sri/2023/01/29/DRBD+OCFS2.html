@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2 | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción">
+<meta property="og:description" content="Introducción">
+<link rel="canonical" href="/hlc+sri/2023/01/29/DRBD+OCFS2.html">
+<meta property="og:url" content="/hlc+sri/2023/01/29/DRBD+OCFS2.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-01-29T17:47:32+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-01-29T17:47:32+01:00","datePublished":"2023-01-29T17:47:32+01:00","description":"Introducción","headline":"Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/01/29/DRBD+OCFS2.html"},"url":"/hlc+sri/2023/01/29/DRBD+OCFS2.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/almacenamiento.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/almacenamiento.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-01-29T17:47:32+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 29, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
+
+<h2 id="creación-de-las-máquinas-virtuales">Creación de las máquinas virtuales</h2>
+
+<p>Para crear las máquinas virtuales, vamos a montarlas con Vagrant con el siguiente fichero:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="ss">:mac1</span> <span class="k">do</span> <span class="o">|</span><span class="n">mac1</span><span class="o">|</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">hostname</span> <span class="o">=</span> <span class="s2">"mac1"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">synced_folder</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"/vagrant"</span><span class="p">,</span> <span class="ss">disabled: </span><span class="kp">true</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"private_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"10.0.0.20"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="ss">:libvirt</span> <span class="k">do</span> <span class="o">|</span><span class="n">libvirt</span><span class="o">|</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="ss">:mac2</span> <span class="k">do</span> <span class="o">|</span><span class="n">mac2</span><span class="o">|</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">hostname</span> <span class="o">=</span> <span class="s2">"mac2"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">synced_folder</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"/vagrant"</span><span class="p">,</span> <span class="ss">disabled: </span><span class="kp">true</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"private_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"10.0.0.30"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="ss">:libvirt</span> <span class="k">do</span> <span class="o">|</span><span class="n">libvirt</span><span class="o">|</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+  <span class="k">end</span>
+ <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="instalación">Instalación</h2>
+
+<p>Para realizar este establecimiento, instalar el paquete DRBD:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>drbd-utils <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Y para la implementación del sistema de ficheros, vamos a instalar OCFS2:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>ocfs2-tools <span class="nt">-y</span>
+</code></pre></div></div>
+
+<h2 id="creación-de-los-recursos-drdb">Creación de los recursos DRDB</h2>
+
+<p>Una vez realizada la instalación de ambos paquetes, vamos a configurar el DRBD. Para ello, vamos a editar el fichero <code class="language-plaintext highlighter-rouge">/etc/drbd.d/wwwdata.res</code>. Deberemos añadir los dos discos que hemos creado en las máquinas virtuales, y añadir la siguiente configuración:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource wwwdata <span class="o">{</span>
+  protocol C<span class="p">;</span>
+  meta-disk internal<span class="p">;</span>
+  device /dev/drbd1<span class="p">;</span>
+  syncer <span class="o">{</span>
+    verify-alg sha1<span class="p">;</span>
+  <span class="o">}</span>
+  net <span class="o">{</span>
+    allow-two-primaries<span class="p">;</span>
+  <span class="o">}</span>
+  on mac1 <span class="o">{</span>
+    disk /dev/vdb<span class="p">;</span>
+    address 10.0.0.20:7789<span class="p">;</span>
+  <span class="o">}</span>
+  on mac2 <span class="o">{</span>
+    disk /dev/vdb<span class="p">;</span>
+    address 10.0.0.30:7789<span class="p">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Creado el fichero anterior, lo siguiente es crear el recurso en ambas máquinas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm create-md wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/1.png" alt="1"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/2.png" alt="2"></p>
+
+<p>Lo mismo que hemos hecho ahora lo haremos con el segundo recurso, que se llamará <code class="language-plaintext highlighter-rouge">dbdata.res</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource dbdata <span class="o">{</span>
+  protocol C<span class="p">;</span>
+  meta-disk internal<span class="p">;</span>
+  device /dev/drbd2<span class="p">;</span>
+  syncer <span class="o">{</span>
+    verify-alg sha1<span class="p">;</span>
+  <span class="o">}</span>
+  net <span class="o">{</span>
+    allow-two-primaries<span class="p">;</span>
+  <span class="o">}</span>
+  on mac1 <span class="o">{</span>
+    disk /dev/vdc<span class="p">;</span>
+    address 10.0.0.20:7790<span class="p">;</span>
+  <span class="o">}</span>
+  on mac2 <span class="o">{</span>
+    disk /dev/vdc<span class="p">;</span>
+    address 10.0.0.30:7790<span class="p">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Creado el fichero anterior, lo siguientees crear el recurso en ambas máquinas:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm create-md dbdata
+</code></pre></div></div>
+<p><img src="/assets/images/almacenamiento/taller3/3.png" alt="3"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/4.png" alt="4"></p>
+
+<h2 id="configuración-single-primary-de-wwwdata">Configuración Single-Primary de wwwdata</h2>
+<p>Ahora vamos a configurar <code class="language-plaintext highlighter-rouge">wwwdata</code> en modo <code class="language-plaintext highlighter-rouge">Single Primary</code>. Para ello, los activamos con el comando <code class="language-plaintext highlighter-rouge">drbdadm up wwwdata</code> y miramos el estado en ambas máquinas:</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/5.png" alt="5"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/6.png" alt="6"></p>
+
+<p>Como podemos ver en las imágenes anteriores, ambos recursos están en modo <code class="language-plaintext highlighter-rouge">Secondary/Secondary</code>. Para cambiar esto, vamos a hacer que uno de los recursos sea primario, en este caso, <code class="language-plaintext highlighter-rouge">wwwdata</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm primary <span class="nt">--force</span> wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/7.png" alt="7"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/8.png" alt="8"></p>
+
+<p>Al pasar escaso tiempo, podemos ver que el estado del recurso pasará a <code class="language-plaintext highlighter-rouge">UpToDate/UpToDate</code>. Esto quiere decir están sincronizados.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/9.png" alt="9"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/10.png" alt="10"></p>
+
+<p>El siguiente paso que deberíamos hacer es darle formato al recurso que acabamos de crear, de momento en la primera máquina:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>xfsprogs
+
+mkfs.xfs /dev/drbd1
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/11.png" alt="11"></p>
+
+<p>Lo montamos y creamos un fichero para comprobar su funcionamiento:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd1 /mnt
+
+<span class="nb">echo</span> <span class="s2">"Hola mundo"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/12.png" alt="12"></p>
+
+<p>Si intentásemos montar el mismo recurso en la segunda máquina, no podríamos, ya que el recurso está en modo <code class="language-plaintext highlighter-rouge">Secondary</code>. Para poder montarlo, deberíamos desmontar el recurso, cambiar los roles y volver a montarlo pero en la segunda máquina:</p>
+
+<ul>
+  <li>Error de montaje:</li>
+</ul>
+
+<p><img src="/assets/images/almacenamiento/taller3/13.png" alt="13"></p>
+
+<ul>
+  <li>Desmontaje del recurso en <code class="language-plaintext highlighter-rouge">mac1</code>:</li>
+</ul>
+
+<p><img src="/assets/images/almacenamiento/taller3/14.png" alt="14"></p>
+
+<ul>
+  <li>Cambiamos los roles, ponemos la <code class="language-plaintext highlighter-rouge">mac1</code> en modo secundaria y la <code class="language-plaintext highlighter-rouge">mac2</code> en modo primario:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#mac1</span>
+drbdadm secondary wwwdata
+<span class="c">#mac2</span>
+drbdadm primary <span class="nt">--force</span> wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/15.png" alt="15"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/16.png" alt="16"></p>
+
+<p>El mismo montaje que hemos realizado en la primera máquina, lo haremos en la segunda:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd1 /mnt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/17.png" alt="17"></p>
+
+<p>Y como podemos ver en la imagen anterior, el fichero que creamos en la primera máquina, podemos ver que sigue existiendo.</p>
+
+<h2 id="configuración-del-recurso-dbdata-en-modo-dual-primary">Configuración del recurso dbdata en modo Dual-Primary</h2>
+
+<p>Ahora vamos a configurar el recurso <code class="language-plaintext highlighter-rouge">dbdata</code> en modo <code class="language-plaintext highlighter-rouge">Dual-Primary</code>. Para ello, vamor a levantar el recurso en ambas máquinas.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm up dbdata
+drbdadm status dbdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/18.png" alt="18"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/19.png" alt="19"></p>
+
+<p>Ya con el recurso levantado vamos a configurarlo en modo <code class="language-plaintext highlighter-rouge">Dual-Primary</code>. Para ello vamos a configurar el recurso en ambos nodos como primarios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm primary <span class="nt">--force</span> dbdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/20.png" alt="20"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/21.png" alt="21"></p>
+
+<p>Para poder hacer que los dos recursos sean primarios, deberemos cambiar el sistema de ficheros por <code class="language-plaintext highlighter-rouge">OCFS2</code>. Pero, ¿qué es OCFS2?</p>
+
+<p><strong>O</strong>racle <strong>C</strong>luster <strong>F</strong>ile System (OCFS2) es un sistema de archivos de código abierto que se basa en el sistema de archivos de Linux. Es un sistema de archivos de cluster de alto rendimiento que se puede utilizar para crear un sistema de archivos distribuido en un cluster de Linux.</p>
+
+<p>Una vez entendido esto, instalamos el paquete <code class="language-plaintext highlighter-rouge">ocfs2-tools</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>ocfs2-tools
+</code></pre></div></div>
+
+<p>Creamos el cluster y añadimos los nodos a este mismo de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Creación del cluster</span>
+o2cb add-cluster tclust
+<span class="c">#Añadir nodos al cluster</span>
+o2cb add-node tclust mac1 <span class="nt">--ip</span> 10.0.0.20
+o2cb add-node tclust mac2 <span class="nt">--ip</span> 10.0.0.30
+</code></pre></div></div>
+
+<p>Todo esto lo realizaremos en el <code class="language-plaintext highlighter-rouge">mac1</code>. Y como podemos ver en la imagen, el cluster se ha creado correctamente y los nodos están añadidos.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/22.png" alt="22"></p>
+
+<p>El contenido que vemos en esta imagen, será el contenido del mismo fichero en la máquina <code class="language-plaintext highlighter-rouge">mac2</code> ya que hemos copiado el fichero de configuración del cluster de la máquina <code class="language-plaintext highlighter-rouge">mac1</code> a la máquina <code class="language-plaintext highlighter-rouge">mac2</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/23.png" alt="23"></p>
+
+<p>Ahora vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/default/o2cb</code> en ambas máquinas de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># O2CB_ENABLED: 'true' means to load the driver on boot.</span>
+<span class="nv">O2CB_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c"># O2CB_BOOTCLUSTER: If not empty, the name of a cluster to start.</span>
+<span class="nv">O2CB_BOOTCLUSTER</span><span class="o">=</span>tclust
+
+<span class="c"># O2CB_HEARTBEAT_THRESHOLD: Iterations before a node is considered dead.</span>
+<span class="nv">O2CB_HEARTBEAT_THRESHOLD</span><span class="o">=</span>31
+
+<span class="c"># O2CB_IDLE_TIMEOUT_MS: Time in ms before a network connection is considered dead.</span>
+<span class="nv">O2CB_IDLE_TIMEOUT_MS</span><span class="o">=</span>30000
+
+<span class="c"># O2CB_KEEPALIVE_DELAY_MS: Max. time in ms before a keepalive packet is sent.</span>
+<span class="nv">O2CB_KEEPALIVE_DELAY_MS</span><span class="o">=</span>2000
+
+<span class="c"># O2CB_RECONNECT_DELAY_MS: Min. time in ms between connection attempts.</span>
+<span class="nv">O2CB_RECONNECT_DELAY_MS</span><span class="o">=</span>2000
+</code></pre></div></div>
+
+<p>Para que funciones de forma correcta, deberemos modificar el kernel con ciertos parámetros en ambas máquinas. Para eso, modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/sysctl.conf</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kernel.panic <span class="o">=</span> 30
+kernel.panic_on_oops <span class="o">=</span> 1
+</code></pre></div></div>
+
+<p>Aplicamos los cambios con un <code class="language-plaintext highlighter-rouge">sysctl -p</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/24.png" alt="24"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/25.png" alt="25"></p>
+
+<p>Para finalizar, ponemos en marcha el cluster en ambas máquinas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>o2cb register-cluster tclust
+o2cb cluster-status tclust
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/26.png" alt="26"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/27.png" alt="27"></p>
+
+<p>Tras verificar que el estado de nuestro cluster es <code class="language-plaintext highlighter-rouge">online</code>, vamos a crear el sistema de ficheros <code class="language-plaintext highlighter-rouge">OCFS2</code> en el recurso <code class="language-plaintext highlighter-rouge">dbdata</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mkfs.ocfs2 <span class="nt">--cluster-stack</span><span class="o">=</span>o2cb <span class="nt">--cluster-name</span><span class="o">=</span>tclust /dev/drbd2
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/28.png" alt="28"></p>
+
+<p>Desde la <code class="language-plaintext highlighter-rouge">mac2</code> podemos verificr que el sistema de ficheros <code class="language-plaintext highlighter-rouge">OCFS2</code> se ha creado correctamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/29.png" alt="29"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/30.png" alt="30"></p>
+
+<p>Una vez realizado el formateo del sistema de ficheros, montamos los nodos en el directorio <code class="language-plaintext highlighter-rouge">/mnt</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd2 /mnt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/31.png" alt="31"></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/32.png" alt="32"></p>
+
+<p>Para comprobar que funciona correctamente, vamos a crear un fichero en <code class="language-plaintext highlighter-rouge">mac1</code> y lo vamos a editar desde <code class="language-plaintext highlighter-rouge">mac2</code>. Tras ello, comprobamos los cambios en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+<ul>
+  <li>
+    <p>Creamos el fichero en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"Hola mundo"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/33.png" alt="33"></p>
+  </li>
+  <li>
+    <p>Comprobamos su contenido y lo editamos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /mnt/hola.txt
+<span class="nb">echo</span> <span class="s2">"Hola mundo 2"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/34.png" alt="34"></p>
+  </li>
+  <li>
+    <p>Comprobamos los cambios en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/35.png" alt="35"></p>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hlc+sri/2023/01/28/iscsi.html" title="Taller de Almacenamiento - Introducción a iSCSI ">Taller de Almacenamiento - Introducción a...</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/iaw/2022/12/19/despliegue-python.html" title="">Despliegue de una aplicación Python</a></li>
+<li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="">Despliegue de aplicaciones Java</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="">Apache como proxy inverso</a></li>
+<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="">Bienvenid@</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

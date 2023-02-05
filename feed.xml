@@ -1,4 +1,580 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-04T16:50:21+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-05T03:01:22+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
+
+<h2 id="creación-de-las-máquinas-virtuales">Creación de las máquinas virtuales</h2>
+
+<p>Para crear las máquinas virtuales, vamos a montarlas con Vagrant con el siguiente fichero:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="s2">"2"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="ss">:mac1</span> <span class="k">do</span> <span class="o">|</span><span class="n">mac1</span><span class="o">|</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">hostname</span> <span class="o">=</span> <span class="s2">"mac1"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">synced_folder</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"/vagrant"</span><span class="p">,</span> <span class="ss">disabled: </span><span class="kp">true</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"private_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"10.0.0.20"</span>
+    <span class="n">mac1</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="ss">:libvirt</span> <span class="k">do</span> <span class="o">|</span><span class="n">libvirt</span><span class="o">|</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="ss">:mac2</span> <span class="k">do</span> <span class="o">|</span><span class="n">mac2</span><span class="o">|</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">hostname</span> <span class="o">=</span> <span class="s2">"mac2"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">synced_folder</span> <span class="s2">"."</span><span class="p">,</span> <span class="s2">"/vagrant"</span><span class="p">,</span> <span class="ss">disabled: </span><span class="kp">true</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">network</span> <span class="s2">"private_network"</span><span class="p">,</span> <span class="ss">ip: </span><span class="s2">"10.0.0.30"</span>
+    <span class="n">mac2</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provider</span> <span class="ss">:libvirt</span> <span class="k">do</span> <span class="o">|</span><span class="n">libvirt</span><span class="o">|</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+        <span class="n">libvirt</span><span class="p">.</span><span class="nf">storage</span> <span class="ss">:file</span><span class="p">,</span> <span class="ss">:size</span> <span class="o">=&gt;</span> <span class="s1">'2G'</span>
+  <span class="k">end</span>
+ <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="instalación">Instalación</h2>
+
+<p>Para realizar este establecimiento, instalar el paquete DRBD:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>drbd-utils <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Y para la implementación del sistema de ficheros, vamos a instalar OCFS2:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>ocfs2-tools <span class="nt">-y</span>
+</code></pre></div></div>
+
+<h2 id="creación-de-los-recursos-drdb">Creación de los recursos DRDB</h2>
+
+<p>Una vez realizada la instalación de ambos paquetes, vamos a configurar el DRBD. Para ello, vamos a editar el fichero <code class="language-plaintext highlighter-rouge">/etc/drbd.d/wwwdata.res</code>. Deberemos añadir los dos discos que hemos creado en las máquinas virtuales, y añadir la siguiente configuración:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource wwwdata <span class="o">{</span>
+  protocol C<span class="p">;</span>
+  meta-disk internal<span class="p">;</span>
+  device /dev/drbd1<span class="p">;</span>
+  syncer <span class="o">{</span>
+    verify-alg sha1<span class="p">;</span>
+  <span class="o">}</span>
+  net <span class="o">{</span>
+    allow-two-primaries<span class="p">;</span>
+  <span class="o">}</span>
+  on mac1 <span class="o">{</span>
+    disk /dev/vdb<span class="p">;</span>
+    address 10.0.0.20:7789<span class="p">;</span>
+  <span class="o">}</span>
+  on mac2 <span class="o">{</span>
+    disk /dev/vdb<span class="p">;</span>
+    address 10.0.0.30:7789<span class="p">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Creado el fichero anterior, lo siguiente es crear el recurso en ambas máquinas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm create-md wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/1.png" alt="1" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/2.png" alt="2" /></p>
+
+<p>Lo mismo que hemos hecho ahora lo haremos con el segundo recurso, que se llamará <code class="language-plaintext highlighter-rouge">dbdata.res</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource dbdata <span class="o">{</span>
+  protocol C<span class="p">;</span>
+  meta-disk internal<span class="p">;</span>
+  device /dev/drbd2<span class="p">;</span>
+  syncer <span class="o">{</span>
+    verify-alg sha1<span class="p">;</span>
+  <span class="o">}</span>
+  net <span class="o">{</span>
+    allow-two-primaries<span class="p">;</span>
+  <span class="o">}</span>
+  on mac1 <span class="o">{</span>
+    disk /dev/vdc<span class="p">;</span>
+    address 10.0.0.20:7790<span class="p">;</span>
+  <span class="o">}</span>
+  on mac2 <span class="o">{</span>
+    disk /dev/vdc<span class="p">;</span>
+    address 10.0.0.30:7790<span class="p">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Creado el fichero anterior, lo siguientees crear el recurso en ambas máquinas:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm create-md dbdata
+</code></pre></div></div>
+<p><img src="/assets/images/almacenamiento/taller3/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/4.png" alt="4" /></p>
+
+<h2 id="configuración-single-primary-de-wwwdata">Configuración Single-Primary de wwwdata</h2>
+<p>Ahora vamos a configurar <code class="language-plaintext highlighter-rouge">wwwdata</code> en modo <code class="language-plaintext highlighter-rouge">Single Primary</code>. Para ello, los activamos con el comando <code class="language-plaintext highlighter-rouge">drbdadm up wwwdata</code> y miramos el estado en ambas máquinas:</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/5.png" alt="5" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/6.png" alt="6" /></p>
+
+<p>Como podemos ver en las imágenes anteriores, ambos recursos están en modo <code class="language-plaintext highlighter-rouge">Secondary/Secondary</code>. Para cambiar esto, vamos a hacer que uno de los recursos sea primario, en este caso, <code class="language-plaintext highlighter-rouge">wwwdata</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm primary <span class="nt">--force</span> wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/7.png" alt="7" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/8.png" alt="8" /></p>
+
+<p>Al pasar escaso tiempo, podemos ver que el estado del recurso pasará a <code class="language-plaintext highlighter-rouge">UpToDate/UpToDate</code>. Esto quiere decir están sincronizados.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/9.png" alt="9" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/10.png" alt="10" /></p>
+
+<p>El siguiente paso que deberíamos hacer es darle formato al recurso que acabamos de crear, de momento en la primera máquina:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>xfsprogs
+
+mkfs.xfs /dev/drbd1
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/11.png" alt="11" /></p>
+
+<p>Lo montamos y creamos un fichero para comprobar su funcionamiento:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd1 /mnt
+
+<span class="nb">echo</span> <span class="s2">"Hola mundo"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/12.png" alt="12" /></p>
+
+<p>Si intentásemos montar el mismo recurso en la segunda máquina, no podríamos, ya que el recurso está en modo <code class="language-plaintext highlighter-rouge">Secondary</code>. Para poder montarlo, deberíamos desmontar el recurso, cambiar los roles y volver a montarlo pero en la segunda máquina:</p>
+
+<ul>
+  <li>Error de montaje:</li>
+</ul>
+
+<p><img src="/assets/images/almacenamiento/taller3/13.png" alt="13" /></p>
+
+<ul>
+  <li>Desmontaje del recurso en <code class="language-plaintext highlighter-rouge">mac1</code>:</li>
+</ul>
+
+<p><img src="/assets/images/almacenamiento/taller3/14.png" alt="14" /></p>
+
+<ul>
+  <li>Cambiamos los roles, ponemos la <code class="language-plaintext highlighter-rouge">mac1</code> en modo secundaria y la <code class="language-plaintext highlighter-rouge">mac2</code> en modo primario:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#mac1</span>
+drbdadm secondary wwwdata
+<span class="c">#mac2</span>
+drbdadm primary <span class="nt">--force</span> wwwdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/15.png" alt="15" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/16.png" alt="16" /></p>
+
+<p>El mismo montaje que hemos realizado en la primera máquina, lo haremos en la segunda:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd1 /mnt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/17.png" alt="17" /></p>
+
+<p>Y como podemos ver en la imagen anterior, el fichero que creamos en la primera máquina, podemos ver que sigue existiendo.</p>
+
+<h2 id="configuración-del-recurso-dbdata-en-modo-dual-primary">Configuración del recurso dbdata en modo Dual-Primary</h2>
+
+<p>Ahora vamos a configurar el recurso <code class="language-plaintext highlighter-rouge">dbdata</code> en modo <code class="language-plaintext highlighter-rouge">Dual-Primary</code>. Para ello, vamor a levantar el recurso en ambas máquinas.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm up dbdata
+drbdadm status dbdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/18.png" alt="18" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/19.png" alt="19" /></p>
+
+<p>Ya con el recurso levantado vamos a configurarlo en modo <code class="language-plaintext highlighter-rouge">Dual-Primary</code>. Para ello vamos a configurar el recurso en ambos nodos como primarios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>drbdadm primary <span class="nt">--force</span> dbdata
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/20.png" alt="20" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/21.png" alt="21" /></p>
+
+<p>Para poder hacer que los dos recursos sean primarios, deberemos cambiar el sistema de ficheros por <code class="language-plaintext highlighter-rouge">OCFS2</code>. Pero, ¿qué es OCFS2?</p>
+
+<p><strong>O</strong>racle <strong>C</strong>luster <strong>F</strong>ile System (OCFS2) es un sistema de archivos de código abierto que se basa en el sistema de archivos de Linux. Es un sistema de archivos de cluster de alto rendimiento que se puede utilizar para crear un sistema de archivos distribuido en un cluster de Linux.</p>
+
+<p>Una vez entendido esto, instalamos el paquete <code class="language-plaintext highlighter-rouge">ocfs2-tools</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>ocfs2-tools
+</code></pre></div></div>
+
+<p>Creamos el cluster y añadimos los nodos a este mismo de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Creación del cluster</span>
+o2cb add-cluster tclust
+<span class="c">#Añadir nodos al cluster</span>
+o2cb add-node tclust mac1 <span class="nt">--ip</span> 10.0.0.20
+o2cb add-node tclust mac2 <span class="nt">--ip</span> 10.0.0.30
+</code></pre></div></div>
+
+<p>Todo esto lo realizaremos en el <code class="language-plaintext highlighter-rouge">mac1</code>. Y como podemos ver en la imagen, el cluster se ha creado correctamente y los nodos están añadidos.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/22.png" alt="22" /></p>
+
+<p>El contenido que vemos en esta imagen, será el contenido del mismo fichero en la máquina <code class="language-plaintext highlighter-rouge">mac2</code> ya que hemos copiado el fichero de configuración del cluster de la máquina <code class="language-plaintext highlighter-rouge">mac1</code> a la máquina <code class="language-plaintext highlighter-rouge">mac2</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/23.png" alt="23" /></p>
+
+<p>Ahora vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/default/o2cb</code> en ambas máquinas de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># O2CB_ENABLED: 'true' means to load the driver on boot.</span>
+<span class="nv">O2CB_ENABLED</span><span class="o">=</span><span class="nb">true</span>
+
+<span class="c"># O2CB_BOOTCLUSTER: If not empty, the name of a cluster to start.</span>
+<span class="nv">O2CB_BOOTCLUSTER</span><span class="o">=</span>tclust
+
+<span class="c"># O2CB_HEARTBEAT_THRESHOLD: Iterations before a node is considered dead.</span>
+<span class="nv">O2CB_HEARTBEAT_THRESHOLD</span><span class="o">=</span>31
+
+<span class="c"># O2CB_IDLE_TIMEOUT_MS: Time in ms before a network connection is considered dead.</span>
+<span class="nv">O2CB_IDLE_TIMEOUT_MS</span><span class="o">=</span>30000
+
+<span class="c"># O2CB_KEEPALIVE_DELAY_MS: Max. time in ms before a keepalive packet is sent.</span>
+<span class="nv">O2CB_KEEPALIVE_DELAY_MS</span><span class="o">=</span>2000
+
+<span class="c"># O2CB_RECONNECT_DELAY_MS: Min. time in ms between connection attempts.</span>
+<span class="nv">O2CB_RECONNECT_DELAY_MS</span><span class="o">=</span>2000
+</code></pre></div></div>
+
+<p>Para que funciones de forma correcta, deberemos modificar el kernel con ciertos parámetros en ambas máquinas. Para eso, modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/sysctl.conf</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kernel.panic <span class="o">=</span> 30
+kernel.panic_on_oops <span class="o">=</span> 1
+</code></pre></div></div>
+
+<p>Aplicamos los cambios con un <code class="language-plaintext highlighter-rouge">sysctl -p</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/24.png" alt="24" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/25.png" alt="25" /></p>
+
+<p>Para finalizar, ponemos en marcha el cluster en ambas máquinas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>o2cb register-cluster tclust
+o2cb cluster-status tclust
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/26.png" alt="26" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/27.png" alt="27" /></p>
+
+<p>Tras verificar que el estado de nuestro cluster es <code class="language-plaintext highlighter-rouge">online</code>, vamos a crear el sistema de ficheros <code class="language-plaintext highlighter-rouge">OCFS2</code> en el recurso <code class="language-plaintext highlighter-rouge">dbdata</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mkfs.ocfs2 <span class="nt">--cluster-stack</span><span class="o">=</span>o2cb <span class="nt">--cluster-name</span><span class="o">=</span>tclust /dev/drbd2
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/28.png" alt="28" /></p>
+
+<p>Desde la <code class="language-plaintext highlighter-rouge">mac2</code> podemos verificr que el sistema de ficheros <code class="language-plaintext highlighter-rouge">OCFS2</code> se ha creado correctamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller3/29.png" alt="29" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/30.png" alt="30" /></p>
+
+<p>Una vez realizado el formateo del sistema de ficheros, montamos los nodos en el directorio <code class="language-plaintext highlighter-rouge">/mnt</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd2 /mnt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller3/31.png" alt="31" /></p>
+
+<p><img src="/assets/images/almacenamiento/taller3/32.png" alt="32" /></p>
+
+<p>Para comprobar que funciona correctamente, vamos a crear un fichero en <code class="language-plaintext highlighter-rouge">mac1</code> y lo vamos a editar desde <code class="language-plaintext highlighter-rouge">mac2</code>. Tras ello, comprobamos los cambios en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+<ul>
+  <li>
+    <p>Creamos el fichero en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"Hola mundo"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/33.png" alt="33" /></p>
+  </li>
+  <li>
+    <p>Comprobamos su contenido y lo editamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /mnt/hola.txt
+<span class="nb">echo</span> <span class="s2">"Hola mundo 2"</span> <span class="o">&gt;</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/34.png" alt="34" /></p>
+  </li>
+  <li>
+    <p>Comprobamos los cambios en <code class="language-plaintext highlighter-rouge">mac1</code>:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /mnt/hola.txt
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller3/35.png" alt="35" /></p>
+  </li>
+</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/28/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-28T12:47:17+01:00</published><updated>2023-01-28T12:47:17+01:00</updated><id>/hlc+sri/2023/01/28/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/28/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
+
+<p>iSCSI es un protocolo de red que permite compartir almacenamiento entre servidores. iSCSI es una abreviatura de Internet Small Computer System Interface. Sirve para conectar servidores y almacenamiento de forma que se pueda compartir el almacenamiento entre ellos. Es una abreviatura de Internet Small Computer System Interface.</p>
+
+<p>En este Taller vamos a configurar un servidor iSCSI y un cliente iSCSI. Para ello, vamos a usar un <a href="https://fp.josedomingo.org/sri2223/7_almacenamiento/files/iscsi/Vagrantfile">vagrantfile</a></p>
+
+<h2 id="configuración-del-servidor-iscsi">Configuración del servidor iSCSI</h2>
+
+<p>Primero instalaremos una herramienta que nos permitirá poder utilizar iSCSI, que es <code class="language-plaintext highlighter-rouge">tgt</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>tgt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/1.png" alt="1" /></p>
+
+<p>Una vez finalizada la instalación, empezaremos con la creación del target para debian, que para ello deberemos crear un archivo de configuración:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target1.conf
+</code></pre></div></div>
+
+<p>Y dentro de este archivo, pondremos lo siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;target iqn.2023-01-target1&gt;
+    backing-store /dev/vdb
+&lt;/target&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/2.png" alt="2" /></p>
+
+<p>Vamos a realizarlo en un solo LUN, que es lo mismo que en un solo disco duro. Para ello, vamos a reiniciar el servicio y comprobar que se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart tgt
+<span class="nt">---</span>
+<span class="nb">sudo </span>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/3.png" alt="3" /></p>
+
+<h2 id="configuración-del-cliente-iscsi">Configuración del cliente iSCSI</h2>
+
+<p>Para configurar el cliente iSCSI, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">open-iscsi</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>open-iscsi
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/4.png" alt="4" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> discovery <span class="nt">--type</span> sendtargets <span class="nt">--portal</span> 192.168.121.117
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/5.png" alt="5" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">--portal</span> 192.168.121.117 <span class="nt">-l</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/6.png" alt="6" /></p>
+
+<p><strong>NOTA:</strong> Para desmontar el target, utilizaremos la opción <code class="language-plaintext highlighter-rouge">-u</code> en el comando anterior (<code class="language-plaintext highlighter-rouge">sudo iscsiadm --mode node -T iqn.2023-01-target1 --portal 192.168.121.117 -u</code>).</p>
+
+<p>Una vez instalado, podemos comprobar la conexión del target:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-k</span> <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/7.png" alt="7" /></p>
+
+<h2 id="formateo-del-disco">Formateo del disco</h2>
+
+<p>Podemos hacer uso del nuevo dispositivo que hemos creado como si se tratase de un disco duro más. Para ello, vamos a formatearlo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkfs.ext4 /dev/sda
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/8.png" alt="8" /></p>
+
+<p>Una vez realizado elformateo, comprobaremos que se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/9.png" alt="9" /></p>
+
+<p>El siguiente paso será montarlo, para poder escribir datos en él:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount <span class="nt">-t</span> ext4 /dev/sda /mnt
+</code></pre></div></div>
+
+<p>Y como podemos comprobar en la siguiente imagen, podemos ver que está montado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/10.png" alt="10" /></p>
+
+<p>Para comprobar que podemos escribir en él, vamos a crear un archivo de texto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo echo</span> <span class="s2">"Prueba de funcionamiento iSCSI."</span> <span class="o">&gt;</span> /mnt/prueba.txt
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/11.png" alt="11" /></p>
+
+<h2 id="montaje-automático">Montaje automático</h2>
+
+<p>Para que el disco se monte automáticamente, vamos a cargar el target en el arranque del sistema. Para ello, ejecutaremos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
+<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
+</code></pre></div></div>
+
+<p>Modificaremos fichero <code class="language-plaintext highlighter-rouge">/etc/iscsi/iscsid.conf</code> y añadiremos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node.startup <span class="o">=</span> automatic
+</code></pre></div></div>
+
+<p>Y reiniciaremos el servicio:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart iscsid.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/12.png" alt="12" /></p>
+
+<p>Para habilitarlo de forma permanente, ejecutaremos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>iscsid open-iscsi.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/13.png" alt="13" /></p>
+
+<p>El siguiente paso que realizaremos será crear una unidad de systemd para que se monte el disco automáticamente. Para ello, crearemos un directorio donde crearemos las unidades iSCSI:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /media/iscsi
+</code></pre></div></div>
+
+<p>Tras esto, crearemos el archivo de configuración de la unidad en <code class="language-plaintext highlighter-rouge">/etc/systemd/system/media-target1-iscsi.mount</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>Mount iSCSI target1
+<span class="nv">Requires</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target, iscsid.service
+
+<span class="o">[</span>Mount]
+<span class="nv">What</span><span class="o">=</span>/dev/disk/by-uuid/0ec438bc-620e-4bde-b8ca-d880b5d5358c
+<span class="nv">Where</span><span class="o">=</span>/media/iscsi/target1
+<span class="nv">Type</span><span class="o">=</span>ext4
+<span class="nv">Options</span><span class="o">=</span>defaults
+
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/14.png" alt="14" /></p>
+
+<p><strong>NOTA:</strong> El nombre del fichero debe ser la ruta completa del directorio donde se montará el disco, pero separado por guiones. Por ejemplo, si queremos montar el disco en <code class="language-plaintext highlighter-rouge">/mnt/target1</code>, el nombre del fichero será <code class="language-plaintext highlighter-rouge">/etc/systemd/system/mnt-target1.mount</code>.</p>
+
+<p>Reiniciaremos los demonios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
+</code></pre></div></div>
+
+<p>Habilitaremos la unidad:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>media-iscsi-target1.mount
+</code></pre></div></div>
+
+<p>Y por último, la iniciamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start media-iscsi-target1.mount
+</code></pre></div></div>
+
+<p>Como podemos comprobar en la siguiente imagen, se ha montado correctamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/15.png" alt="15" /></p>
+
+<p>Y si reiniciamos la máquina, se montará automáticamente:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/15-1.png" alt="15-1" /></p>
+
+<h2 id="creamos-un-target-para-windows">Creamos un target para Windows</h2>
+
+<p>Para este punto, vamos a realizar los mismos pasos que para las configuraciones anteriores, pero en este caso, vamos a crear un target con 2 LUN y autenticación por CHAP.</p>
+
+<ul>
+  <li>Creamos el fichero de configuración:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target2.conf
+<span class="nt">---</span>
+
+&lt;target iqn.2023-01-target2&gt;
+    backing-store /dev/vdc
+    backing-store /dev/vdd
+    incominguser maria maria32061164s
+&lt;/target&gt;
+</code></pre></div></div>
+
+<p><strong>NOTA:</strong> La contraseña debe de tener entre 12 y 16 caracteres para que no se error.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/16.png" alt="16" /></p>
+
+<ul>
+  <li>Reiniciamos el servicio:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart tgt
+</code></pre></div></div>
+
+<ul>
+  <li>Comprobamos que se ha creado correctamente:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
+</code></pre></div></div>
+
+<p><img src="/assets/images/almacenamiento/taller2/17.png" alt="17" /></p>
+
+<h3 id="cliente-windows">Cliente Windows</h3>
+
+<p>En la barra de búsqueda de Windows, escribimos <code class="language-plaintext highlighter-rouge">iSCSI</code> y seleccionamos la opción <code class="language-plaintext highlighter-rouge">Iniciador iSCSI</code>. Una vez seleccionado nos aparecerá la siguiente ventana:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/18.png" alt="18" /></p>
+
+<p>Para poder conectar el target desde Windows, nos vamos a <code class="language-plaintext highlighter-rouge">Inicio</code> → <code class="language-plaintext highlighter-rouge">Buscador iSCSI</code> → <code class="language-plaintext highlighter-rouge">Seleccionar "Iniciador iSCSI"</code> → <code class="language-plaintext highlighter-rouge">Destinos</code>. En esta subpestaña, introducimos los datos del servidor, pulsamos actualizar y se nos mostrarán los targets disponibles. En nuestro caso, seleccionaremos el target <code class="language-plaintext highlighter-rouge">iqn.2023-01-target2</code> y le daremos a <code class="language-plaintext highlighter-rouge">Conectar</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/19.png" alt="19" /></p>
+
+<p>Tras esto, nos aparecerá una ventana de autenticación, donde deberemos introducir las credenciales que hemos configurado en el target. En nuestro caso, <code class="language-plaintext highlighter-rouge">maria</code> y <code class="language-plaintext highlighter-rouge">maria32061164s</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/20.png" alt="20" /></p>
+
+<p>Y como podemos ver en la siguiente imagen, se ha conectado correctamente.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/21.png" alt="21" /></p>
+
+<h3 id="formateo-y-iso-de-la-unidad-iscsi-desde-windows">Formateo y iso de la unidad iSCSI desde Windows</h3>
+
+<p>Nos dirigimos de nuevo a la barra de búsqueda de Windows y escribimos <code class="language-plaintext highlighter-rouge">Administración de discos</code>. Una vez seleccionado, nos aparecerá la siguiente ventana:</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/22.png" alt="22" /></p>
+
+<p>En la ventana de <code class="language-plaintext highlighter-rouge">Inicializar disco</code> donde aparecerán los dos discos que hemos configurado en el target. Seleccionaremos los dos y le daremos a <code class="language-plaintext highlighter-rouge">Aceptar</code>.</p>
+
+<p>Nos aparecen los discos sin formato, por lo que, en la barra superior de la ventana, seleccionamos <code class="language-plaintext highlighter-rouge">Acción</code> → <code class="language-plaintext highlighter-rouge">Añadir volumen simple</code>. Seleccionaremos el formato NTFS y le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code>.  En la siguiente ventana, le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code> y en la siguiente, a <code class="language-plaintext highlighter-rouge">Finalizar</code>.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/23.png" alt="23" /></p>
+
+<p>Tras finalizar, podemos ver que se han creado dos unidades de disco, una para cada LUN.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/24.png" alt="24" /></p>
+
+<p>Como podemos comprobar finalmente, ambos discos se han formateado correctamente y podemos acceder a ellos desde Windows.</p>
+
+<p><img src="/assets/images/almacenamiento/taller2/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción a iSCSI]]></summary></entry><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
 
 <p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
 
@@ -1070,258 +1646,138 @@ systemctl restart nginx
 
 <p><img src="/assets/images/correo/correo/41.png" alt="41" /></p>
 
-<p><img src="/assets/images/correo/correo/42.png" alt="42" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Introducción a iSCSI</title><link href="/hlc+sri/2023/01/22/iscsi.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Introducción a iSCSI" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/iscsi</id><content type="html" xml:base="/hlc+sri/2023/01/22/iscsi.html"><![CDATA[<h2 id="introducción-a-iscsi">Introducción a iSCSI</h2>
-
-<p>iSCSI es un protocolo de red que permite compartir almacenamiento entre servidores. iSCSI es una abreviatura de Internet Small Computer System Interface. Sirve para conectar servidores y almacenamiento de forma que se pueda compartir el almacenamiento entre ellos. Es una abreviatura de Internet Small Computer System Interface.</p>
-
-<p>En este Taller vamos a configurar un servidor iSCSI y un cliente iSCSI. Para ello, vamos a usar un <a href="https://fp.josedomingo.org/sri2223/7_almacenamiento/files/iscsi/Vagrantfile">vagrantfile</a></p>
-
-<h2 id="configuración-del-servidor-iscsi">Configuración del servidor iSCSI</h2>
-
-<p>Primero instalaremos una herramienta que nos permitirá poder utilizar iSCSI, que es <code class="language-plaintext highlighter-rouge">tgt</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>tgt
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/1.png" alt="1" /></p>
-
-<p>Una vez finalizada la instalación, empezaremos con la creación del target para debian, que para ello deberemos crear un archivo de configuración:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target1.conf
-</code></pre></div></div>
-
-<p>Y dentro de este archivo, pondremos lo siguiente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;target iqn.2023-01-target1&gt;
-    backing-store /dev/vdb
-&lt;/target&gt;
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/2.png" alt="2" /></p>
-
-<p>Vamos a realizarlo en un solo LUN, que es lo mismo que en un solo disco duro. Para ello, vamos a reiniciar el servicio y comprobar que se ha creado correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart tgt
-<span class="nt">---</span>
-<span class="nb">sudo </span>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/3.png" alt="3" /></p>
-
-<h2 id="configuración-del-cliente-iscsi">Configuración del cliente iSCSI</h2>
-
-<p>Para configurar el cliente iSCSI, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">open-iscsi</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt-get <span class="nb">install </span>open-iscsi
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/4.png" alt="4" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> discovery <span class="nt">--type</span> sendtargets <span class="nt">--portal</span> 192.168.121.117
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/5.png" alt="5" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">--mode</span> node <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">--portal</span> 192.168.121.117 <span class="nt">-l</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/6.png" alt="6" /></p>
-
-<p><strong>NOTA:</strong> Para desmontar el target, utilizaremos la opción <code class="language-plaintext highlighter-rouge">-u</code> en el comando anterior (<code class="language-plaintext highlighter-rouge">sudo iscsiadm --mode node -T iqn.2023-01-target1 --portal 192.168.121.117 -u</code>).</p>
-
-<p>Una vez instalado, podemos comprobar la conexión del target:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-k</span> <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/7.png" alt="7" /></p>
-
-<h2 id="formateo-del-disco">Formateo del disco</h2>
-
-<p>Podemos hacer uso del nuevo dispositivo que hemos creado como si se tratase de un disco duro más. Para ello, vamos a formatearlo:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkfs.ext4 /dev/sda
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/8.png" alt="8" /></p>
-
-<p>Una vez realizado elformateo, comprobaremos que se ha creado correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/9.png" alt="9" /></p>
-
-<p>El siguiente paso será montarlo, para poder escribir datos en él:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount <span class="nt">-t</span> ext4 /dev/sda /mnt
-</code></pre></div></div>
-
-<p>Y como podemos comprobar en la siguiente imagen, podemos ver que está montado correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsblk <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/10.png" alt="10" /></p>
-
-<p>Para comprobar que podemos escribir en él, vamos a crear un archivo de texto:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo echo</span> <span class="s2">"Prueba de funcionamiento iSCSI."</span> <span class="o">&gt;</span> /mnt/prueba.txt
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/11.png" alt="11" /></p>
-
-<h2 id="montaje-automático">Montaje automático</h2>
-
-<p>Para que el disco se monte automáticamente, vamos a cargar el target en el arranque del sistema. Para ello, ejecutaremos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-p</span> 192.168.121.117 <span class="nt">-u</span>
-<span class="nb">sudo </span>iscsiadm <span class="nt">-m</span> discovery <span class="nt">-T</span> iqn.2023-01-target1 <span class="nt">-o</span> update <span class="nt">-n</span> node.startup <span class="nt">-v</span> automatic
-</code></pre></div></div>
-
-<p>Modificaremos fichero <code class="language-plaintext highlighter-rouge">/etc/iscsi/iscsid.conf</code> y añadiremos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node.startup <span class="o">=</span> automatic
-</code></pre></div></div>
-
-<p>Y reiniciaremos el servicio:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart iscsid.service
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/12.png" alt="12" /></p>
-
-<p>Para habilitarlo de forma permanente, ejecutaremos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>iscsid open-iscsi.service
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/13.png" alt="13" /></p>
-
-<p>El siguiente paso que realizaremos será crear una unidad de systemd para que se monte el disco automáticamente. Para ello, crearemos un directorio donde crearemos las unidades iSCSI:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /media/iscsi
-</code></pre></div></div>
-
-<p>Tras esto, crearemos el archivo de configuración de la unidad en <code class="language-plaintext highlighter-rouge">/etc/systemd/system/media-target1-iscsi.mount</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span>Mount iSCSI target1
-<span class="nv">Requires</span><span class="o">=</span>network-online.target
-<span class="nv">After</span><span class="o">=</span>network-online.target, iscsid.service
-
-<span class="o">[</span>Mount]
-<span class="nv">What</span><span class="o">=</span>/dev/disk/by-uuid/0ec438bc-620e-4bde-b8ca-d880b5d5358c
-<span class="nv">Where</span><span class="o">=</span>/media/iscsi/target1
-<span class="nv">Type</span><span class="o">=</span>ext4
-<span class="nv">Options</span><span class="o">=</span>defaults
-
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/14.png" alt="14" /></p>
-
-<p><strong>NOTA:</strong> El nombre del fichero debe ser la ruta completa del directorio donde se montará el disco, pero separado por guiones. Por ejemplo, si queremos montar el disco en <code class="language-plaintext highlighter-rouge">/mnt/target1</code>, el nombre del fichero será <code class="language-plaintext highlighter-rouge">/etc/systemd/system/mnt-target1.mount</code>.</p>
-
-<p>Reiniciaremos los demonios:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
-</code></pre></div></div>
-
-<p>Habilitaremos la unidad:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl <span class="nb">enable </span>media-iscsi-target1.mount
-</code></pre></div></div>
-
-<p>Y por último, la iniciamos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start media-iscsi-target1.mount
-</code></pre></div></div>
-
-<p>Como podemos comprobar en la siguiente imagen, se ha montado correctamente:</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/15.png" alt="15" /></p>
-
-<p>Y si reiniciamos la máquina, se montará automáticamente:</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/15-1.png" alt="15-1" /></p>
-
-<h2 id="creamos-un-target-para-windows">Creamos un target para Windows</h2>
-
-<p>Para este punto, vamos a realizar los mismos pasos que para las configuraciones anteriores, pero en este caso, vamos a crear un target con 2 LUN y autenticación por CHAP.</p>
+<p><img src="/assets/images/correo/correo/42.png" alt="42" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt</title><link href="/hlc+sri/2023/01/21/almacenamiento.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt" /><published>2023-01-21T12:47:17+01:00</published><updated>2023-01-21T12:47:17+01:00</updated><id>/hlc+sri/2023/01/21/almacenamiento</id><content type="html" xml:base="/hlc+sri/2023/01/21/almacenamiento.html"><![CDATA[<h2 id="taller-1-gestión-de-pool-de-almacenamiento-lógico-en-kvmlibvirt">Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt</h2>
+
+<ol>
+  <li>Vamos a crear un pool de almacenamiento lógico. Para ello, lo más fácil, es tener un grupo de volúmenes con espacio libre.</li>
+</ol>
 
 <ul>
-  <li>Creamos el fichero de configuración:</li>
+  <li>
+    <p>Listamos los grupos de volúmenes.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  vgs
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Creamos un pool de almacenamiento lógico.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  virsh <span class="nt">-c</span> qemu:///system pool-define-as <span class="nt">--name</span> pool-t1 <span class="nt">--type</span> logical <span class="nt">--source-name</span> debian
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Activamos el pool.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  virsh <span class="nt">-c</span> qemu:///system pool-start pool-t1
+  virsh <span class="nt">-c</span> qemu:///system pool-autostart pool-t1
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/2.png" alt="2" /></p>
+  </li>
 </ul>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/tgt/conf.d/target2.conf
-<span class="nt">---</span>
+<ol>
+  <li>
+    <p>Ahora vamos a crear un volumen dentro de ese pool.</p>
 
-&lt;target iqn.2023-01-target2&gt;
-    backing-store /dev/vdc
-    backing-store /dev/vdd
-    incominguser maria maria32061164s
-&lt;/target&gt;
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system vol-create-as <span class="nt">--pool</span> pool-t1 <span class="nt">--name</span> vol1 <span class="nt">--capacity</span> 5G <span class="nt">--format</span> qcow2
+</code></pre></div>    </div>
 
-<p><strong>NOTA:</strong> La contraseña debe de tener entre 12 y 16 caracteres para que no se error.</p>
+    <p><img src="/assets/images/almacenamiento/taller1/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Ahora, usaremos <code class="language-plaintext highlighter-rouge">virt-install</code>para crear ua máquina virtual cuyo disco corresponda al volumen que hemos creado anteriormente.</p>
 
-<p><img src="/assets/images/almacenamiento/taller2/16.png" alt="16" /></p>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virt-install <span class="nt">--connect</span> qemu:///system <span class="se">\</span>
+ <span class="nt">--virt-type</span> kvm <span class="se">\</span>
+ <span class="nt">--name</span> taller1 <span class="se">\</span>
+ <span class="nt">--cdrom</span> ~/Documentos/ISO/debian-11.5.0-amd64-netinst.iso <span class="se">\</span>
+ <span class="nt">--os-variant</span> debian10 <span class="se">\</span>
+ <span class="nt">--disk</span><span class="o">=</span>/dev/mapper/debian-vol1 <span class="se">\</span>
+ <span class="nt">--memory</span> 2048 <span class="se">\</span>
+ <span class="nt">--network</span> <span class="nv">network</span><span class="o">=</span>default <span class="se">\</span>
+ <span class="nt">--vcpus</span> 1
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Una vez que la máquina esté funcionando, creamos un nuevo volumen y lo añadimos a la máquina.</p>
+
+    <ul>
+      <li>Iniciamos la máquina.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system start taller1
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Creamos un nuevo volumen.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system vol-create-as <span class="nt">--pool</span> pool-t1 <span class="nt">--name</span> vol2 <span class="nt">--capacity</span> 5G <span class="nt">--format</span> qcow2
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Añadimos el nuevo volumen a la máquina.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system attach-disk taller1 /dev/mapper/debian-vol2 vdb <span class="nt">--targetbus</span> virtio <span class="nt">--persistent</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/5.png" alt="5" /></p>
+
+    <p><img src="/assets/images/almacenamiento/taller1/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Apagamos la máquina, montamos la partición del disco de la máquina en nuestro anfitrión para acceder al sistema de archivos.</p>
+
+    <ul>
+      <li>Apagamos la máquina.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system shutdown taller1
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/7.png" alt="7" /></p>
+
+    <ul>
+      <li>Montamos la partición del disco de la máquina en nuestro anfitrión para acceder al sistema de archivos.</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kpartx <span class="nt">-va</span> /dev/mapper/debian-vol1
+
+ mount /dev/mapper/debian-vol1p1 /mnt/taller1
+
+ <span class="nb">ls</span> <span class="nt">-Shail</span> /mnt/taller1
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/almacenamiento/taller1/8.png" alt="8" /></p>
+  </li>
+</ol>
+
+<h2 id="extra">Extra</h2>
+
+<p>Vamos a desmontar la partición del disco de la máquina y a eliminar el volumen.</p>
 
 <ul>
-  <li>Reiniciamos el servicio:</li>
-</ul>
+  <li>
+    <p>Desmontamos la partición del disco de la máquina.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart tgt
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  umount /mnt/taller1
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Borramos las particiones del volumen que hemos mapeado</p>
 
-<ul>
-  <li>Comprobamos que se ha creado correctamente:</li>
-</ul>
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kpartx <span class="nt">-dv</span> /dev/mapper/debian-vol1
+</code></pre></div>    </div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>tgtadm <span class="nt">--mode</span> target <span class="nt">--op</span> show
-</code></pre></div></div>
-
-<p><img src="/assets/images/almacenamiento/taller2/17.png" alt="17" /></p>
-
-<h3 id="cliente-windows">Cliente Windows</h3>
-
-<p>En la barra de búsqueda de Windows, escribimos <code class="language-plaintext highlighter-rouge">iSCSI</code> y seleccionamos la opción <code class="language-plaintext highlighter-rouge">Iniciador iSCSI</code>. Una vez seleccionado nos aparecerá la siguiente ventana:</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/18.png" alt="18" /></p>
-
-<p>Para poder conectar el target desde Windows, nos vamos a <code class="language-plaintext highlighter-rouge">Inicio</code> → <code class="language-plaintext highlighter-rouge">Buscador iSCSI</code> → <code class="language-plaintext highlighter-rouge">Seleccionar "Iniciador iSCSI"</code> → <code class="language-plaintext highlighter-rouge">Destinos</code>. En esta subpestaña, introducimos los datos del servidor, pulsamos actualizar y se nos mostrarán los targets disponibles. En nuestro caso, seleccionaremos el target <code class="language-plaintext highlighter-rouge">iqn.2023-01-target2</code> y le daremos a <code class="language-plaintext highlighter-rouge">Conectar</code>.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/19.png" alt="19" /></p>
-
-<p>Tras esto, nos aparecerá una ventana de autenticación, donde deberemos introducir las credenciales que hemos configurado en el target. En nuestro caso, <code class="language-plaintext highlighter-rouge">maria</code> y <code class="language-plaintext highlighter-rouge">maria32061164s</code>.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/20.png" alt="20" /></p>
-
-<p>Y como podemos ver en la siguiente imagen, se ha conectado correctamente.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/21.png" alt="21" /></p>
-
-<h3 id="formateo-y-iso-de-la-unidad-iscsi-desde-windows">Formateo y iso de la unidad iSCSI desde Windows</h3>
-
-<p>Nos dirigimos de nuevo a la barra de búsqueda de Windows y escribimos <code class="language-plaintext highlighter-rouge">Administración de discos</code>. Una vez seleccionado, nos aparecerá la siguiente ventana:</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/22.png" alt="22" /></p>
-
-<p>En la ventana de <code class="language-plaintext highlighter-rouge">Inicializar disco</code> donde aparecerán los dos discos que hemos configurado en el target. Seleccionaremos los dos y le daremos a <code class="language-plaintext highlighter-rouge">Aceptar</code>.</p>
-
-<p>Nos aparecen los discos sin formato, por lo que, en la barra superior de la ventana, seleccionamos <code class="language-plaintext highlighter-rouge">Acción</code> → <code class="language-plaintext highlighter-rouge">Añadir volumen simple</code>. Seleccionaremos el formato NTFS y le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code>.  En la siguiente ventana, le daremos a <code class="language-plaintext highlighter-rouge">Siguiente</code> y en la siguiente, a <code class="language-plaintext highlighter-rouge">Finalizar</code>.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/23.png" alt="23" /></p>
-
-<p>Tras finalizar, podemos ver que se han creado dos unidades de disco, una para cada LUN.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/24.png" alt="24" /></p>
-
-<p>Como podemos comprobar finalmente, ambos discos se han formateado correctamente y podemos acceder a ellos desde Windows.</p>
-
-<p><img src="/assets/images/almacenamiento/taller2/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción a iSCSI]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+    <p><img src="/assets/images/almacenamiento/taller1/9.png" alt="9" /></p>
+  </li>
+</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
 
@@ -2318,323 +2774,4 @@ ip route add default via 172.20.0.20
 
 <p>Una VPN site to site es una solución muy útil para conectar dos redes privadas de forma segura. En este caso, hemos utilizado OpenVPN, pero existen otras soluciones como IPsec, que también son muy interesantes.</p>
 
-<p>En este caso, hemos utilizado dos escenarios, pero también se podría utilizar un solo escenario, con dos clientes conectados a un servidor VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:]]></summary></entry><entry><title type="html">Servidor de correo en los servidores de clase</title><link href="/hlc+sri/2023/01/10/correo.html" rel="alternate" type="text/html" title="Servidor de correo en los servidores de clase" /><published>2023-01-10T11:59:07+01:00</published><updated>2023-01-10T11:59:07+01:00</updated><id>/hlc+sri/2023/01/10/correo</id><content type="html" xml:base="/hlc+sri/2023/01/10/correo.html"><![CDATA[<p>En este post, vamos a implementar en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> un servidor de correo.</p>
-
-<p><img src="/assets/images/escenario/escenario.png" alt="Escenario" /></p>
-
-<h1 id="ejercicio-1">Ejercicio 1</h1>
-
-<p>Instalaremos y configuraremos un servidor de correo en <code class="language-plaintext highlighter-rouge">delta</code>. El nombre del sistema de correo será nuestro nombre de dominio <code class="language-plaintext highlighter-rouge">maria.gonzalonazareno.org</code>.</p>
-
-<p>Utilizando la utilidad mail manda un correo desde un usuario del servidor a otro usuario del servidor. El usuario destinatario debe leer el correo con el mismo programa.</p>
-
-<h2 id="preparación-del-escenario">Preparación del escenario</h2>
-
-<ul>
-  <li>
-    <p>Instalamos el servidor de correo</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt <span class="nb">install </span>postfix bsd-mailx
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Realizamos una prueba de envío de correo</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/correo/1.png" alt="1" /></p>
-  </li>
-</ul>
-
-<h1 id="ejercicio-2">Ejercicio 2</h1>
-
-<p>Configura tu servidor de correo para que use como relay el servidor de correo de nuestra <code class="language-plaintext highlighter-rouge">red babuino-smtp.gonzalonazareno.org</code>. Con la utilidad <code class="language-plaintext highlighter-rouge">mail</code> envía un correo a tu cuenta personal de gmail, hotmail,…</p>
-
-<p>Muestra el log del sistema donde se comprueba que el correo se ha enviado con éxito.</p>
-
-<p>Comprueba las cabeceras del correo que has recibido e indica donde vemos los servidores por los que ha pasado el correo.</p>
-
-<ul>
-  <li>
-    <p>Nos disponemos a usar el servidor de correo de la red babuino</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/postfix/main.cf
-</code></pre></div>    </div>
-
-    <p>Y añadimos la siguiente línea</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  relayhost <span class="o">=</span> babuino-smtp.gonzalonazareno.org
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/correo/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Reiniciamos el servicio</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>systemctl restart postfix
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Enviamos un correo a nuestro correo personal</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span> <span class="nt">-r</span> <span class="s2">"mariajesus.alloza@outlook.es"</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/correo/3.jpg" alt="3" /></p>
-  </li>
-  <li>
-    <p>Comprobamos el log del sistema</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo tail</span> <span class="nt">-f</span> /var/log/mail.log
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/correo/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Comprobamos las cabeceras del correo que hemos recibido</p>
-
-    <p><img src="/assets/images/correo/5.png" alt="5" /></p>
-  </li>
-</ul>
-
-<h1 id="ejercicio-3">Ejercicio 3</h1>
-
-<p>En este ejercicio debemos responder desde nuestra cuenta de correo personal al correo que recibimos en el ejercicio anterior. Recuerda que para que todo funcione debemos indicarle al profesor el nombre de tu dominio para que configure de manera adecuada el parámetro <code class="language-plaintext highlighter-rouge">relay_domains</code> en <code class="language-plaintext highlighter-rouge">babuino-smtp</code>. Además debes configurar de manera adecuada el registro MX de tu servidor DNS.</p>
-
-<p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito.</p>
-
-<ul>
-  <li>
-    <p>Nos logueamos en <code class="language-plaintext highlighter-rouge">alfa</code> y configuramos la regla DNAT para que los emails que lleguen a <code class="language-plaintext highlighter-rouge">babuino-smtp</code> sean redirigidos a <code class="language-plaintext highlighter-rouge">delta</code></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  post-up iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 25 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 192.168.0.3
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>En el contenedor <code class="language-plaintext highlighter-rouge">charlie</code> configuramos el registro MX de nuestro dominio</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>nano <span class="nt">-cl</span> /var/cache/bind/db.externa.mariajesus.gonzalonazareno.org
- <span class="nt">---</span>
- @       IN      MX  10  alfa.mariajesus.gonzalonazareno.org.
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Vamos a probar si hemos recibido algún correo, ejecutaremos lo siguiente</p>
-
-    <p><img src="/assets/images/correo/6.png" alt="6" /></p>
-
-    <p><img src="/assets/images/correo/7.png" alt="7" /></p>
-
-    <p><img src="/assets/images/correo/8.png" alt="8" /></p>
-  </li>
-</ul>
-
-<h2 id="ejercicio-extra">Ejercicio Extra</h2>
-
-<p>Vamos a mandarle un correo electrónico al profesor, comprobando que el correo se ha recibido con éxito y puede ser respondido, por lo que la respuesta nos llegará a nuestra cuenta de correo personal.</p>
-
-<ul>
-  <li>
-    <p>Enviamos un correo al profesor</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola Jose Domingo. Le mando este correo como prueba de funcionamiento del servidor de correo en delta."</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span> <span class="nt">-r</span> <span class="s2">"josedomingo@
-</span></code></pre></div>    </div>
-  </li>
-</ul>
-
-<h2 id="comprobación">Comprobación</h2>
-
-<ol>
-  <li>
-    <p>Prueba de funcionamiento del ejercicio1. Se debe mostrar el log para asegurarse que se ha enviado el correo.</p>
-
-    <p><img src="/assets/images/correo/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Muestra las cabeceras del correo recibido en el ejercicio 2 mostrando las cabeceras donde vemos los servidores por los que ha pasado el correo.</p>
-
-    <p><img src="/assets/images/correo/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Muestra el log del sistema donde se comprueba que el correo se ha recibido con éxito en el ejercicio 3.</p>
-
-    <p><img src="/assets/images/correo/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p><strong>EXTRA: Ejercicio propuesto por el profesor</strong>:</p>
-
-    <p><img src="/assets/images/correo/9.png" alt="9" /></p>
-
-    <p><img src="/assets/images/correo/10.png" alt="10" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[En este post, vamos a implementar en nuestro escenario un servidor de correo.]]></summary></entry><entry><title type="html">Desarrollo y despliegue de una aplicación Java simple</title><link href="/iaw/2023/01/09/java-simple.html" rel="alternate" type="text/html" title="Desarrollo y despliegue de una aplicación Java simple" /><published>2023-01-09T12:47:17+01:00</published><updated>2023-01-09T12:47:17+01:00</updated><id>/iaw/2023/01/09/java-simple</id><content type="html" xml:base="/iaw/2023/01/09/java-simple.html"><![CDATA[<p>En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.</p>
-
-<p><strong>Tomcat</strong> es un servidor web que permite ejecutar aplicaciones Java. En este post vamos a ver como desplegar una aplicación Java en un servidor Tomcat.</p>
-
-<p>Mientras que <strong>Maven</strong> es una herramienta de construcción de software que nos permite gestionar el ciclo de vida de un proyecto Java. En este post vamos a ver como crear un proyecto Java con Maven.</p>
-
-<h2 id="escenario">Escenario</h2>
-<ol>
-  <li>
-    <p>Instala tomcat9 como hemos visto en la documentación.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>tomcat9 tomcat9-admin
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Configuramos el panel de administración Tomcat-Manager y configúralo para su acceso.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> nano /etc/tomcat9/tomcat-users.xml
-</code></pre></div>    </div>
-
-    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;tomcat-users&gt;</span>
-     <span class="nt">&lt;role</span> <span class="na">rolename=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
-     <span class="nt">&lt;user</span> <span class="na">username=</span><span class="s">"tomcat"</span> <span class="na">password=</span><span class="s">"s3cret"</span> <span class="na">roles=</span><span class="s">"manager-gui"</span><span class="nt">/&gt;</span>
- <span class="nt">&lt;/tomcat-users&gt;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instala la aplicación maven que nos va a ayudar a compilar aplicaciones java.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> apt <span class="nb">install </span>maven
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>A continuación vamos a generar un proyecto, que será el esqueleto de nuestra aplicación Java, para ello ejecutamos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mvn archetype:generate <span class="nt">-DgroupId</span><span class="o">=</span>com.app.example <span class="nt">-DartifactId</span><span class="o">=</span>java-app <span class="nt">-DarchetypeArtifactId</span><span class="o">=</span>maven-archetype-quickstart <span class="nt">-DinteractiveMode</span><span class="o">=</span><span class="nb">false</span>
-</code></pre></div>    </div>
-
-    <p>La estructura de nuestro directorio sería la siguiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> java-app/
- ├── pom.xml
- └── src
-     ├── main
-     │   ├── java
-     │   │   └── com
-     │   │       └── app
-     │   │           └── example
-     │   │               └── App.java
-     │   └── resources
-     └── <span class="nb">test</span>
-         └── java
-             └── com
-                 └── app
-                     └── example
-                         └── AppTest.java
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">java-app/pom.xml</code> para que tenga la siguiente estructura:</p>
-
-    <div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     <span class="cp">&lt;?xml version = "1.0" encoding = "UTF-8"?&gt;</span>
-     <span class="nt">&lt;project</span> <span class="na">xmlns =</span> <span class="s">"http://maven.apache.org/POM/4.0.0"</span> 
-        <span class="na">xmlns:xsi =</span> <span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
-
-     <span class="na">xsi:schemaLocation =</span> <span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
-     <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
-
-        <span class="nt">&lt;groupId&gt;</span>com.tutorialspoint<span class="nt">&lt;/groupId&gt;</span>
-        <span class="nt">&lt;artifactId&gt;</span>hello-world<span class="nt">&lt;/artifactId&gt;</span>
-        <span class="nt">&lt;version&gt;</span>1<span class="nt">&lt;/version&gt;</span>
-        <span class="nt">&lt;packaging&gt;</span>war<span class="nt">&lt;/packaging&gt;</span>
-
-        <span class="nt">&lt;parent&gt;</span>
-           <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-           <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-parent<span class="nt">&lt;/artifactId&gt;</span>
-           <span class="nt">&lt;version&gt;</span>2.3.0.RELEASE<span class="nt">&lt;/version&gt;</span>
-           <span class="nt">&lt;relativePath/&gt;</span> 
-        <span class="nt">&lt;/parent&gt;</span>
-
-        <span class="nt">&lt;properties&gt;</span>
-           <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>
-           <span class="nt">&lt;project.reporting.outputEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.reporting.outputEncoding&gt;</span>
-           <span class="nt">&lt;java.version&gt;</span>1.8<span class="nt">&lt;/java.version&gt;</span>
-           <span class="nt">&lt;tomcat.version&gt;</span>9.0.37<span class="nt">&lt;/tomcat.version&gt;</span>
-        <span class="nt">&lt;/properties&gt;</span>
-
-        <span class="nt">&lt;dependencies&gt;</span>
-           <span class="nt">&lt;dependency&gt;</span>
-              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-web<span class="nt">&lt;/artifactId&gt;</span>
-           <span class="nt">&lt;/dependency&gt;</span>
-           <span class="nt">&lt;dependency&gt;</span>  
-              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>  
-     	 <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-tomcat<span class="nt">&lt;/artifactId&gt;</span>  
-     	 <span class="nt">&lt;scope&gt;</span>provided<span class="nt">&lt;/scope&gt;</span>  
-           <span class="nt">&lt;/dependency&gt;</span>   
-           <span class="nt">&lt;dependency&gt;</span>
-              <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-              <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-test<span class="nt">&lt;/artifactId&gt;</span>
-              <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
-           <span class="nt">&lt;/dependency&gt;</span>
-        <span class="nt">&lt;/dependencies&gt;</span>
-
-        <span class="nt">&lt;build&gt;</span>
-           <span class="nt">&lt;plugins&gt;</span>
-              <span class="nt">&lt;plugin&gt;</span>
-                 <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
-                 <span class="nt">&lt;artifactId&gt;</span>spring-boot-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
-              <span class="nt">&lt;/plugin&gt;</span>
-           <span class="nt">&lt;/plugins&gt;</span>
-        <span class="nt">&lt;/build&gt;</span>
-
-     <span class="nt">&lt;/project&gt;</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Construimos la aplicación, y para ello modificamos el fichero <code class="language-plaintext highlighter-rouge">src/main/java/com/app/example/App.java</code> para que tenga la siguiente estructura:</p>
-
-    <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kn">package</span> <span class="nn">com.app.example</span><span class="o">;</span>
-
- <span class="kn">import</span> <span class="nn">org.springframework.boot.SpringApplication</span><span class="o">;</span>
- <span class="kn">import</span> <span class="nn">org.springframework.boot.autoconfigure.SpringBootApplication</span><span class="o">;</span>
- <span class="kn">import</span> <span class="nn">org.springframework.boot.builder.SpringApplicationBuilder</span><span class="o">;</span>
- <span class="kn">import</span> <span class="nn">org.springframework.boot.web.servlet.support.SpringBootServletInitializer</span><span class="o">;</span>
- <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMapping</span><span class="o">;</span>
- <span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
-
- <span class="nd">@SpringBootApplication</span>
- <span class="nd">@RestController</span>
- <span class="kd">public</span> <span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="nc">SpringBootServletInitializer</span> <span class="o">{</span>
-    <span class="nd">@Override</span>
-    <span class="kd">protected</span> <span class="nc">SpringApplicationBuilder</span> <span class="nf">configure</span><span class="o">(</span><span class="nc">SpringApplicationBuilder</span> <span class="n">application</span><span class="o">)</span> <span class="o">{</span>
-       <span class="k">return</span> <span class="n">application</span><span class="o">.</span><span class="na">sources</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-    <span class="o">}</span>
-    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-       <span class="nc">SpringApplication</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">App</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
-    <span class="o">}</span>
-
-    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">"/"</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="nc">String</span> <span class="nf">hello</span><span class="o">()</span> <span class="o">{</span>
-       <span class="k">return</span> <span class="s">"&lt;center&gt;Hola mundo!!!&lt;/center&gt;"</span><span class="o">;</span>
-    <span class="o">}</span>
- <span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Construimos la aplicación, y para ello ejecutamos:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mvn package
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Copiamos el fichero <code class="language-plaintext highlighter-rouge">java-app/target/hello-world-1.war</code> a la carpeta <code class="language-plaintext highlighter-rouge">/var/lib/tomcat9/webapps/</code> y reiniciamos el servicio de tomcat9.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> systemctl restart tomcat9
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/java-simple/1.png" alt="1" /></p>
-  </li>
-</ol>
-
-<h2 id="comprobación">Comprobación</h2>
-<p>Si accedemos a la ip de nuestro servidor, veremos el mensaje <code class="language-plaintext highlighter-rouge">Hola mundo!!!</code> en el navegador.</p>
-
-<p><img src="/assets/images/java-simple/2.png" alt="2" /></p>
-
-<p>Y si accedemos al Tomcat-Manager, veremos que la aplicación se ha desplegado correctamente.</p>
-
-<p><img src="/assets/images/java-simple/3.png" alt="3" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[En este post vamos a crear una aplicación Java simple y desplegarla en un servidor Tomcat con Maven.]]></summary></entry></feed>
+<p>En este caso, hemos utilizado dos escenarios, pero también se podría utilizar un solo escenario, con dos clientes conectados a un servidor VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:]]></summary></entry></feed>
