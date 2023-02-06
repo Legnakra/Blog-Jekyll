@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-05T03:25:22+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-06T23:36:06+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
 
@@ -1059,7 +1059,496 @@ o2cb cluster-status tclust
 
     <p><img src="/assets/images/docker/taller3/15.png" alt="15" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Configuración de un servidor de correo en un VPS</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo en un VPS" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Escenario - Configuración de LDAP en Alfa</title><link href="/aso/2023/01/22/ldap1.html" rel="alternate" type="text/html" title="Escenario - Configuración de LDAP en Alfa" /><published>2023-01-22T16:45:16+01:00</published><updated>2023-01-22T16:45:16+01:00</updated><id>/aso/2023/01/22/ldap1</id><content type="html" xml:base="/aso/2023/01/22/ldap1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
+
+<p>Para ello, crearemos un usuario denominado <code class="language-plaintext highlighter-rouge">prueba</code> y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario <code class="language-plaintext highlighter-rouge">prueba</code>.</p>
+
+<h2 id="instalación-de-openldap">Instalación de OpenLDAP</h2>
+
+<p>Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>. Para ello, ejecutaremos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">hostname</span> <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/1.png" alt="1" /></p>
+
+<p>Una vez que tenemos el FQDN, procederemos a instalar el paquete <code class="language-plaintext highlighter-rouge">slapd</code> y <code class="language-plaintext highlighter-rouge">ldap-utils</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>slapd ldap-utils
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/2.png" alt="2" /></p>
+
+<p>Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es <code class="language-plaintext highlighter-rouge">admin</code>.</p>
+
+<p>Tras la instalación, podemos comprobar que el servicio está activo y en ejecución:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl status slapd
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/3.png" alt="3" /></p>
+
+<p>Y comprobaremos también que el puerto 389/TCP está abierto:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>389
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/4.png" alt="4" /></p>
+
+<p>Como tenemos el paquete <code class="language-plaintext highlighter-rouge">ldap-utils</code> instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando <code class="language-plaintext highlighter-rouge">ldapsearch</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/5.png" alt="5" /></p>
+
+<p>Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado <code class="language-plaintext highlighter-rouge">ldapescenario.ldif</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi ldapescenario.ldif
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">ou</span><span class="o">=</span>Personas,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+objectClass: organizationalUnit
+ou: Personas
+changeType: add
+dn: <span class="nv">ou</span><span class="o">=</span>Grupos,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+objectClass: organizationalUnit
+ou: Grupos
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/6.png" alt="6" /></p>
+
+<p>Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-f</span> ldapescenario.ldif <span class="nt">-W</span> 
+</code></pre></div></div>
+
+<p>Si queremos borra el archivo, lo haremos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Personas</span>
+ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span> <span class="s2">"ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
+<span class="c">#Grupos</span>
+ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span> <span class="s2">"ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
+</code></pre></div></div>
+
+<p>Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando <code class="language-plaintext highlighter-rouge">ldapsearch</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/7.png" alt="7" /></p>
+
+<h3 id="creación-del-grupo-prueba">Creación del grupo <code class="language-plaintext highlighter-rouge">prueba</code></h3>
+
+<p>Para crear el grupo <code class="language-plaintext highlighter-rouge">prueba</code>, vamos a crear un archivo denominado <code class="language-plaintext highlighter-rouge">grupos.ldif</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi grupos.ldif
+<span class="nt">---</span>
+dn: <span class="nv">cn</span><span class="o">=</span>prueba,ou<span class="o">=</span>Grupos,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+objectClass: top
+objectClass: posixGroup
+gidNumber: 2001
+cn: prueba
+</code></pre></div></div>
+
+<p>Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nt">-f</span> grupos.ldif
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/8.png" alt="8" /></p>
+
+<p>Y comprobamos que se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/9.png" alt="9" /></p>
+
+<p>Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nv">cn</span><span class="o">=</span>prueba,ou<span class="o">=</span>Group,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+</code></pre></div></div>
+
+<h3 id="creación-de-una-contraseña-para-el-usuario-prueba">Creación de una contraseña para el usuario <code class="language-plaintext highlighter-rouge">prueba</code></h3>
+
+<p>En nuestro caso, vamos a crear una contraseña para el usuario <code class="language-plaintext highlighter-rouge">prueba</code>, pero será una contraseña cifrada, que lo haremos con el comando <code class="language-plaintext highlighter-rouge">slappasswd</code>. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato <code class="language-plaintext highlighter-rouge">{SSHA}</code>.</p>
+
+<p><img src="/assets/images/LDAP/ldap1/10.png" alt="10" /></p>
+
+<p>A continuación, creamos el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en un fichero denominado <code class="language-plaintext highlighter-rouge">prueba.ldif</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi usuarios.ldif
+<span class="nt">---</span>
+
+dn: <span class="nv">uid</span><span class="o">=</span>prueba,ou<span class="o">=</span>Personas,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+objectClass: top
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: person
+cn: prueba
+uid: prueba
+uidNumber: 2001
+gidNumber: 2001
+homeDirectory: /home/nfs/prueba
+loginShell: /bin/bash
+userPassword: <span class="o">{</span>SSHA<span class="o">}</span>wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4
+sn: prueba
+mail: mail@gmail.com
+givenName: prueba
+</code></pre></div></div>
+<p><img src="/assets/images/LDAP/ldap1/11.png" alt="11" /></p>
+
+<p>Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nt">-f</span> usuarios.ldif
+
+ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/12.png" alt="12" /></p>
+
+<p>En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo <code class="language-plaintext highlighter-rouge">prueba</code>.</p>
+
+<p>Para borrar el usuario, solo tendremos que ejecutar en nuestra consola <code class="language-plaintext highlighter-rouge">ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org</code>.</p>
+
+<h2 id="configuración-de-nfs-en-el-servidor">Configuración de NFS en el Servidor</h2>
+
+<p>Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en el servidor NFS.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="nv">$$</span> <span class="nb">mkdir</span> /home/nfs/prueba
+<span class="nb">chown </span>2001:2001 /home/nfs/prueba
+</code></pre></div></div>
+
+<p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>nfs-kernel-server
+</code></pre></div></div>
+
+<p>Tras esto, deberemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/exports</code> para que el usuario <code class="language-plaintext highlighter-rouge">prueba</code> pueda acceder a su directorio de inicio, y reiniciamos el servicio <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/exports
+<span class="nt">---</span>
+/home/nfs       <span class="k">*</span><span class="o">(</span>rw,fsid<span class="o">=</span>0, subtree_check,no_root_squash<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Las opciones que hemos añadido son:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">rw</code>: Permite que el usuario pueda leer y escribir en el directorio.</li>
+  <li><code class="language-plaintext highlighter-rouge">fsid=0</code>: Es el identificador del sistema de ficheros.</li>
+  <li><code class="language-plaintext highlighter-rouge">subtree_check</code>: Comprueba que el usuario tiene permisos para acceder a los subdirectorios.</li>
+  <li><code class="language-plaintext highlighter-rouge">no_root_squash</code>: No comprime el usuario root.</li>
+</ul>
+
+<p>Para que se apliquen los cambios, deberemos ejecutar <code class="language-plaintext highlighter-rouge">exportfs -a</code> y reiniciar el servicio <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nfs-kernel-server
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/13.png" alt="13" /></p>
+
+<h2 id="instalación-de-nss-pam-y-nscd-en-el-servidor">Instalación de NSS, PAM y NSCD en el Servidor</h2>
+
+<p>El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación:</p>
+
+<ul>
+  <li>
+    <p><strong>NSS</strong>: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema.</p>
+  </li>
+  <li>
+    <p><strong>PAM</strong>: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios.</p>
+  </li>
+  <li>
+    <p><strong>NSCD</strong>: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida.</p>
+  </li>
+</ul>
+
+<p>Para instalarlos, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>libnss-ldapd libpam-ldapd nscd
+</code></pre></div></div>
+
+<p>Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes.</p>
+
+<p><img src="/assets/images/LDAP/ldap1/14.png" alt="14" /></p>
+
+<p><img src="/assets/images/LDAP/ldap1/15.png" alt="15" /></p>
+
+<p>Para terminar, debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nsswitch.conf
+<span class="nt">---</span>
+passwd:         files ldap
+group:          files ldap
+shadow:         files ldap
+gshadow:        files ldap
+
+hosts:          files dns mymachines
+networks:       files
+
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+netgroup:       nis
+</code></pre></div></div>
+
+<p>Comprobamos la UUID del usuario <code class="language-plaintext highlighter-rouge">prueba</code> y nos conectamos con él:</p>
+
+<p><img src="/assets/images/LDAP/ldap1/16.png" alt="16" /></p>
+
+<p><img src="/assets/images/LDAP/ldap1/17.png" alt="17" /></p>
+
+<h2 id="configuración-del-cliente-ubuntu">Configuración del Cliente Ubuntu</h2>
+
+<p>Para este punto, vamos a usar la máquina <code class="language-plaintext highlighter-rouge">delta</code> del escenario. En ella, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">ldap-utils</code> para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>ldap-utils <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> con el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/ldap/ldap.conf
+<span class="nt">---</span>
+BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+URI ldap://alfa.mariajesus.gonzalonazareno.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/18.png" alt="18" /></p>
+
+<p>Y con la ejecución del comando <code class="language-plaintext highlighter-rouge">ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org</code> comprobamos que podemos conectarnos al servidor LDAP:</p>
+
+<p><img src="/assets/images/LDAP/ldap1/19.png" alt="19" /></p>
+
+<p>Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario <code class="language-plaintext highlighter-rouge">prueba</code>, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/20.png" alt="20" /></p>
+
+<p>Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>libnss-ldapd libpam-ldapd ldap-utils <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code> como servidor LDAP y como servidor de búsqueda introducimos <code class="language-plaintext highlighter-rouge">dc=mariajesus,dc=gonzalonazareno,dc=org</code>.</p>
+
+<p>Lo siguiente será modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/pam.d/common-session</code> y añadimos al final de este fichero la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session required        pam_mkhomedir.so <span class="nv">skel</span><span class="o">=</span>/etc/skel <span class="nb">umask</span><span class="o">=</span>077
+</code></pre></div></div>
+
+<p>Y reiniciamos el servicio <code class="language-plaintext highlighter-rouge">nscd</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nscd nslcd
+</code></pre></div></div>
+
+<p>El siguiente paso será modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> como hicimos en el servidor, pero introduciremos los datos del servidor LDAP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nsswitch.conf
+<span class="nt">---</span>
+passwd:         files systemd ldap
+group:          files systemd ldap
+shadow:         files ldap
+gshadow:        files ldap
+
+hosts:          files dns mymachines
+networks:       files
+
+protocols:      db files
+services:       db files
+ethers:         db files
+rpc:            db files
+netgroup:       nis
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/21.png" alt="21" /></p>
+
+<p>Reiniciamos el resvicio <code class="language-plaintext highlighter-rouge">nscd</code> e instalamos <code class="language-plaintext highlighter-rouge">nfs-common</code> para poder montar el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nscd
+apt-get <span class="nb">install </span>nfs-common
+</code></pre></div></div>
+
+<p>Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start nfs-client.target <span class="o">&amp;&amp;</span> systemctl <span class="nb">enable </span>nfs-client.target
+<span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
+<span class="nb">chown </span>2001:2001 /home/nfs/prueba
+</code></pre></div></div>
+
+<p>Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Cargar el módulo nfs al arrancar el sistema</span>
+<span class="nb">echo </span>NFS | <span class="nb">tee</span> <span class="nt">-a</span> /etc/modules
+<span class="c">#Montar el directorio de inicio del usuario prueba</span>
+vim /etc/systemd/system/home-nfs.mount
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span> Home de NFS
+<span class="nv">Requires</span><span class="o">=</span>network-online.target
+<span class="nv">After</span><span class="o">=</span>network-online.target
+<span class="o">[</span>Mount]
+<span class="nv">What</span><span class="o">=</span>192.168.0.1:/home/nfs
+<span class="nv">Where</span><span class="o">=</span>/home/nfs
+<span class="nv">Options</span><span class="o">=</span>_netdev,auto
+<span class="nv">Type</span><span class="o">=</span>nfs
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Reiniciamos los demonios</span>
+systemctl daemon-reload
+<span class="c">#Activamos el servicio</span>
+systemctl <span class="nb">enable </span>home-nfs.mount
+<span class="c">#Comenzamos el servicio</span>
+systemctl start home-nfs.mount
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/22.png" alt="22" /></p>
+
+<p>Para la prueba de fuego, vamos a conectarnos con el usuario prueba en <code class="language-plaintext highlighter-rouge">delta</code> y vamos a crear un fichero en el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
+
+<p><img src="/assets/images/LDAP/ldap1/23.png" alt="23" /></p>
+
+<p><img src="/assets/images/LDAP/ldap1/24.png" alt="24" /></p>
+
+<h2 id="configuración-del-cliente-rocky-linux">Configuración del Cliente Rocky Linux</h2>
+
+<p>Para este punto, vamos a usar la máquina <code class="language-plaintext highlighter-rouge">bravo</code> del escenario. En ella, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">openldap-clients</code> para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Editaremos el fichero de configración de <strong>PAM</strong> , que en ROcy linux se encuentra en <code class="language-plaintext highlighter-rouge">/etc/pam.d/system-auth</code> y añadiremos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/pam.d/system-auth
+<span class="nt">---</span>
+auth sufficient pam_ldap.so
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/25.png" alt="25" /></p>
+
+<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openldap/ldap.conf</code> con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/openldap/ldap.conf
+<span class="nt">---</span>
+BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+URI ldap://alfa.mariajesus.gonzalonazareno.org
+</code></pre></div></div>
+
+<p>Para que el usuario <code class="language-plaintext highlighter-rouge">prueba</code> pueda conectarse al servidor LDAP, tenemos que editar <code class="language-plaintext highlighter-rouge">/etc/pam.d/common-session</code> y añadir la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/pam.d/system-auth
+<span class="nt">---</span>
+session required pam_mkhomedir.so <span class="nv">skel</span><span class="o">=</span>/etc/skel <span class="nb">umask</span><span class="o">=</span>0022
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/26.png" alt="26" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/27.png" alt="27" /></p>
+
+<p>En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/28.png" alt="28" /></p>
+
+<p>Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux.</p>
+
+<p>Para realizar el login al servidor LDAP, instalamos <code class="language-plaintext highlighter-rouge">sssd</code> y <code class="language-plaintext highlighter-rouge">sssd-ldap</code> y añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">/etc/ssd/sssd.conf</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>sssd sssd-ldap
+vi /etc/sssd/sssd.conf
+<span class="nt">---</span>
+<span class="o">[</span>domain/default]
+id_provider <span class="o">=</span> ldap
+autofs_provider <span class="o">=</span> ldap
+auth_provider <span class="o">=</span> ldap
+chpass_provider <span class="o">=</span> ldap
+ldap_uri <span class="o">=</span> ldap://alfa.mariajesus.gonzalonazareno.org
+ldap_search_base <span class="o">=</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+ldap_id_use_start_tls <span class="o">=</span> True
+ldap_tls_cacertdir <span class="o">=</span> /etc/openldap/cacerts
+cache_credentials <span class="o">=</span> True
+ldap_tls_reqcert <span class="o">=</span> allow
+
+<span class="o">[</span>sssd]
+services <span class="o">=</span> nss, pam, autofs
+domains <span class="o">=</span> default
+
+<span class="o">[</span>nss]
+homedir_substring <span class="o">=</span> /home/nfs
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/29.png" alt="29" /></p>
+
+<p>Le cambiamos los permisos al fichero <code class="language-plaintext highlighter-rouge">/etc/sssd/sssd.conf</code>, habilitamos el servicio y lo reiniciamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>0600 /etc/sssd/sssd.conf
+systemctl restart sssd
+systemctl <span class="nb">enable </span>sssd
+</code></pre></div></div>
+
+<p>Creamos el directorio <code class="language-plaintext highlighter-rouge">/home/nfs</code> y lo hacemos propietario del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
+<span class="nb">chown </span>2001:2001 /home/nfs/prueba
+</code></pre></div></div>
+
+<p>Lo montamos con la ayuda de systemd:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/systemd/system/home-nfs.mount
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
+<span class="nv">Description</span><span class="o">=</span>script de montaje NFS
+<span class="nv">Requires</span><span class="o">=</span>NetworkManager.service
+<span class="nv">After</span><span class="o">=</span>NetworkManager.service
+<span class="o">[</span>Mount]
+<span class="nv">What</span><span class="o">=</span>172.16.0.1:/home/nfs
+<span class="nv">Where</span><span class="o">=</span>/home/nfs
+<span class="nv">Options</span><span class="o">=</span>_netdev,auto
+<span class="nv">Type</span><span class="o">=</span>nfs
+<span class="o">[</span>Install]
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/30.png" alt="30" /></p>
+
+<p>Reiniciamos los demonios y activamos el servicio:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl start home-nfs.mount
+systemctl <span class="nb">enable </span>home-nfs.mount
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap1/31.png" alt="31" /></p>
+
+<p><img src="/assets/images/LDAP/ldap1/32.png" alt="32" /></p>
+
+<p>Como podemos ver en las imágenes anteriores, el directorio <code class="language-plaintext highlighter-rouge">/home/nfs</code> se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en <code class="language-plaintext highlighter-rouge">alfa</code> y en <code class="language-plaintext highlighter-rouge">delta</code></p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP.</p>
+
+<p>La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla.</p>
+
+<h2 id="referencias">Referencias</h2>
+
+<p>[1] <a href="https://www.openldap.org/">https://www.openldap.org/</a></p>
+
+<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado prueba.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs $$ mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry><entry><title type="html">Configuración de un servidor de correo en un VPS</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo en un VPS" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será <code class="language-plaintext highlighter-rouge">mail.mariatec.es</code>, que será el nombre que aparecerá en el registro MX.</p>
 
@@ -2500,278 +2989,4 @@ http://localhost:8080
 
 <p><img src="/assets/images/docker/taller1/14.png" alt="14" /></p>
 
-<p><img src="/assets/images/docker/taller1/15.png" alt="15" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Almacenamiento]]></summary></entry><entry><title type="html">VPN site to site con OpenVPN y certificados x509</title><link href="/seguridad/2023/01/11/vpn-b.html" rel="alternate" type="text/html" title="VPN site to site con OpenVPN y certificados x509" /><published>2023-01-11T12:47:17+01:00</published><updated>2023-01-11T12:47:17+01:00</updated><id>/seguridad/2023/01/11/vpn-b</id><content type="html" xml:base="/seguridad/2023/01/11/vpn-b.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-<p>En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:</p>
-
-<ul>
-  <li>Cada equipo estará conectado a dos redes, una de ellas en común</li>
-  <li>Para la autenticación de los extremos se usarán obligatoriamente certificados digitales, que se generarán utilizando openssl y se almacenarán en el directorio /etc/openvpn, junto con con los parámetros Diffie-Helman y el certificado de la propia Autoridad de Certificación.</li>
-  <li>Se utilizarán direcciones de la red 10.99.99.0/24 para las direcciones virtuales de la VPN.</li>
-  <li>Tras el establecimiento de la VPN, una máquina de cada red detrás de cada servidor VPN debe ser capaz de acceder a una máquina del otro extremo.</li>
-</ul>
-
-<p><img src="/assets/images/vpn/B/VPN.png" alt="escenario" /></p>
-
-<h2 id="preparando-el-escenario">Preparando el escenario</h2>
-
-<p>Vamos a dividir el escenario en dos, por una parte, un escenario que actuará de servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-        libvirt.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.10"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
-      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente"</span>
-      nodo2.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.11"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
-  end
-</code></pre></div></div>
-
-<p>Y por otra parte, un escenario que actuará de cliente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-        libvirt.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor2"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.10"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
-      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente2"</span>
-      nodo2.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.11"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
-end
-</code></pre></div></div>
-
-<h2 id="configurando-el-servidor">Configurando el servidor</h2>
-
-<p>Lo primero que tendremos que hacer es instalar el servicio openvpn y crearemos el fichero <code class="language-plaintext highlighter-rouge">.vars</code> que contendrá las variables que usaremos en el resto de la configuración:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>openvpn
-
-<span class="nb">cp</span> /usr/share/easy-rsa/vars.example /etc/openvpn/easy-rsa/vars
-</code></pre></div></div>
-
-<p>Ahora, vamos a editar el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/easy-rsa/vars</code> y vamos a modificar las siguientes variables:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>set_var EASYRSA_REQ_COUNTRY     <span class="s2">"ES"</span>
-set_var EASYRSA_REQ_PROVINCE    <span class="s2">"Sevilla"</span>
-set_var EASYRSA_REQ_CITY        <span class="s2">"Dos Hermanas"</span>
-set_var EASYRSA_REQ_ORG         <span class="s2">"MJAR"</span>
-set_var EASYRSA_REQ_EMAIL       <span class="s2">"mariajesus.alloza@outlook.es"</span>
-set_var EASYRSA_REQ_OU          <span class="s2">"VPN site to site"</span>
-</code></pre></div></div>
-
-<p>Creamos eldirectorio donde almacenaremos la Autoridad Certificadore (CA) y generamos la clave Diffie-Helman:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /usr/share/easy-rsa
-./easyrsa init-pki
-<span class="nt">---</span>
-./easyrsa gen-dh
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/1.png" alt="1" /></p>
-
-<p><img src="/assets/images/vpn/B/2.png" alt="2" /></p>
-
-<p>Terminado esto, construimos la Autoridad certificadora:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa build-ca
-<span class="c">#Frase de paso: admin</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/3.png" alt="3" /></p>
-
-<p>El siguiente paso será que, ya teniendo nuestra Autoridad Certificadora, crearemos y firmaremos el certificado para <code class="language-plaintext highlighter-rouge">server</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-req server
-./easyrsa sign-req server server
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/4.png" alt="4" /></p>
-
-<p><img src="/assets/images/vpn/B/5.png" alt="5" /></p>
-
-<p>Ahora le toca el turno al segundo escenario, y comenzaremos firmando el certificado para <code class="language-plaintext highlighter-rouge">server2</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./easyrsa gen-req server2
-./easyrsa sign-req client server2
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/6.png" alt="6" /></p>
-
-<p><img src="/assets/images/vpn/B/7.png" alt="7" /></p>
-
-<p>Copiamos los certificados y claves generadas al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/server</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Copiamos los ficheros</span>
-<span class="nb">cp</span> <span class="nt">-rp</span> /etc/openvpn/easy-rsa/pki<span class="o">{</span>ca.crt,dh.pem,issued/server.crt,private/server.key<span class="o">}</span> /etc/openvpn/server
-
-<span class="c">#Enviamos por scp los ficheros</span>
-scp <span class="nt">-r</span> /etc/openvpn/server vagrant@192.168.121.21:
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/8.png" alt="8" /></p>
-
-<p><img src="/assets/images/vpn/B/9.png" alt="9" /></p>
-
-<p>Creamos el fichero de configuración del servidor VPN:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /usr/share/doc/openvpn/examples/sample-config-files/server.conf /etc/openvpn/server/server.conf
-</code></pre></div></div>
-
-<p>Y editamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/server/servidor.conf</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dev tun
-ifconfig 10.99.99.1 10.99.99.2
-route 172.20.0.0 255.255.255.0
-tls-server
-ca ca.crt
-cert server.crt
-key server.key
-dh dh.pem
-comp-lzo
-keepalive 10 120
-log /var/log/openvpn/server.log
-verb 3
-askpass contra.txt
-</code></pre></div></div>
-
-<p>Iniciamos el servicio y nos cercioramos de que está activo:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl <span class="nb">enable</span> <span class="nt">--now</span> openvpn-server@servidor
-systemctl start openvpn-server@servidor
-systemctl status openvpn-server@servidor
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/10.png" alt="10" /></p>
-
-<p>Configuramos el bit de forwarding en el servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Y configuramos el cliente del primer escenario cambiando la ruta por defecto:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
-ip route add default via 172.20.0.20
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/11.png" alt="11" /></p>
-
-<h2 id="configurando-el-cliente">Configurando el cliente</h2>
-
-<p>Ahora le toca el turno a <code class="language-plaintext highlighter-rouge">servidor2</code> y comenzaremos moviendo los ficheros de los certificados y claves generadas al directorio <code class="language-plaintext highlighter-rouge">/etc/openvpn/client</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Copiamos los ficheros</span>
-<span class="nb">mv </span>ca.crt /etc/openvpn/client
-<span class="nb">mv </span>server2.crt /etc/openvpn/client
-<span class="nb">mv </span>server2.key /etc/openvpn/client
-</code></pre></div></div>
-
-<p>Creamos el fichero de configuración tomando primero como referencia el fichero de configuración del servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /usr/share/doc/openvpn/examples/sample-config-files/client.conf /etc/openvpn/client/client.conf
-</code></pre></div></div>
-
-<p>Y editamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openvpn/client/cliente.conf</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dev tun
-
-remote 192.168.121.115
-ifconfig 10.99.99.2 10.99.99.1
-route 172.30.0.0 255.255.255.0
-tls-client
-ca ca.crt
-cert server.crt
-key server.key
-comp-lzo
-keepalive 10 120
-verb 3
-askpass contra2.txt
-</code></pre></div></div>
-
-<p>Iniciamos el servicio y nos cercioramos de que está activo:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start openvpn-client@cliente
-systemctl status openvpn-client@cliente
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/B/12.png" alt="12" /></p>
-
-<p>Configuramos el bit de forwarding en el servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Y configuramos el cliente del primer escenario cambiando la ruta por defecto:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip route del default
-ip route add default via 172.20.0.20
-</code></pre></div></div>
-
-<h2 id="comprobando-la-conexión">Comprobando la conexión</h2>
-
-<p>Comprobamos que el tunel se ha creado correctamente:</p>
-
-<ul>
-  <li>
-    <p>Rutas del escenario 1</p>
-
-    <p><img src="/assets/images/vpn/B/13.png" alt="13" /></p>
-  </li>
-  <li>
-    <p>Rutas del escenario 2</p>
-
-    <p><img src="/assets/images/vpn/B/14.png" alt="14" /></p>
-  </li>
-  <li>
-    <p>Conexión desde el cliente del escenario 1</p>
-
-    <p><img src="/assets/images/vpn/B/15.png" alt="15" /></p>
-  </li>
-  <li>
-    <p>Conexión desde el cliente del escenario 2</p>
-
-    <p><img src="/assets/images/vpn/B/16.png" alt="16" /></p>
-  </li>
-</ul>
-
-<h2 id="conclusiones">Conclusiones</h2>
-
-<p>Una VPN site to site es una solución muy útil para conectar dos redes privadas de forma segura. En este caso, hemos utilizado OpenVPN, pero existen otras soluciones como IPsec, que también son muy interesantes.</p>
-
-<p>En este caso, hemos utilizado dos escenarios, pero también se podría utilizar un solo escenario, con dos clientes conectados a un servidor VPN.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar una conexión VPN sitio a sitio entre dos equipos:]]></summary></entry></feed>
+<p><img src="/assets/images/docker/taller1/15.png" alt="15" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Almacenamiento]]></summary></entry></feed>
