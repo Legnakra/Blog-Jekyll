@@ -1,4 +1,613 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-06T23:36:06+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-11T17:57:17+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a>. Crearemos una imagen Docker para implementar dicha aplicación.</p>
+
+<h2 id="aspectos-a-tener-en-cuenta">Aspectos a tener en cuenta</h2>
+
+<ul>
+  <li>Contenedor mariadb
+    <ul>
+      <li>Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb.</li>
+      <li>El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script.</li>
+      <li>Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información.</li>
+      <li>El contenedor mariadb debe tener un volumen para guardar la base de datos.</li>
+    </ul>
+  </li>
+  <li>Contenedor bookmedik
+    <ul>
+      <li>Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP.</li>
+      <li>La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto.</li>
+      <li>Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas:
+        <ul>
+          <li>Que modifique el fichero <code class="language-plaintext highlighter-rouge">core\controller\Database.php</code> para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información.</li>
+          <li>Que se inicialice la base de datos con el fichero <code class="language-plaintext highlighter-rouge">schema.sql</code>.</li>
+          <li>Que ejecute el servidor web.</li>
+        </ul>
+      </li>
+      <li>El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web.</li>
+      <li>La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build.</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="preparamos-el-escenario">Preparamos el escenario</h2>
+
+<p>Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>En caso de no tenerlo, lo instalaremos con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>docker.io docker compose
+</code></pre></div></div>
+
+<p>Clonamos el repositorio de la aplicación web:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/evilnapsis/bookmedik.git
+</code></pre></div></div>
+
+<h2 id="tarea-1-creación-de-una-imagen-docker-con-una-aplicación-web-desde-una-imagen-base">Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base</h2>
+
+<p>Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">schema.sql</code> para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">bookmedik</span><span class="p">;</span>
+<span class="n">USE</span> <span class="n">bookmedik</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">core/controller/Database.php</code> para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas:</p>
+
+<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
+<span class="kd">class</span> <span class="nc">Database</span> <span class="p">{</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="nv">$db</span><span class="p">;</span>
+        <span class="k">public</span> <span class="k">static</span> <span class="nv">$con</span><span class="p">;</span>
+        <span class="k">function</span> <span class="n">Database</span><span class="p">(){</span>
+                <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">user</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'USUARIO_BOOKMEDIK'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">pass</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'CONTRA_BOOKMEDIK'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">host</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'DATABASE_HOST'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">ddbb</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'NOMBRE_DB'</span><span class="p">);</span>
+        <span class="p">}</span>
+
+        <span class="k">function</span> <span class="n">connect</span><span class="p">(){</span>
+                <span class="nv">$con</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">mysqli</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">user</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">pass</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">ddbb</span><span class="p">);</span>
+                <span class="nv">$con</span><span class="o">-&gt;</span><span class="nf">query</span><span class="p">(</span><span class="s2">"set sql_mode=''"</span><span class="p">);</span>
+                <span class="k">return</span> <span class="nv">$con</span><span class="p">;</span>
+        <span class="p">}</span>
+
+        <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="n">getCon</span><span class="p">(){</span>
+                <span class="k">if</span><span class="p">(</span><span class="k">self</span><span class="o">::</span><span class="nv">$con</span><span class="o">==</span><span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">self</span><span class="o">::</span><span class="nv">$db</span><span class="o">==</span><span class="kc">null</span><span class="p">){</span>
+                        <span class="k">self</span><span class="o">::</span><span class="nv">$db</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Database</span><span class="p">();</span>
+                        <span class="k">self</span><span class="o">::</span><span class="nv">$con</span> <span class="o">=</span> <span class="k">self</span><span class="o">::</span><span class="nv">$db</span><span class="o">-&gt;</span><span class="nf">connect</span><span class="p">();</span>
+                <span class="p">}</span>
+                <span class="k">return</span> <span class="k">self</span><span class="o">::</span><span class="nv">$con</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+<span class="cp">?&gt;</span>
+</code></pre></div></div>
+
+<p>Ya teniendo todo esto realizado, vamos a crear el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code> para crear la imagen docker. Para ello, debemos crear un fichero llamado <code class="language-plaintext highlighter-rouge">Dockerfile</code> en la raíz del proyecto y añadir el siguiente contenido:</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> debian:bullseye</span>
+<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>apache2 libapache2-mod-php php php-mysql mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+<span class="k">COPY</span><span class="s"> bookmedik /var/www/html/</span>
+<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
+<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh <span class="o">&amp;&amp;</span> <span class="nb">rm</span> /var/www/html/index.html
+<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
+</code></pre></div></div>
+
+<p>Y el fichero <code class="language-plaintext highlighter-rouge">script.sh</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+
+mysql <span class="nt">-u</span> <span class="nv">$USUARIO_BOOKMEDIK</span> <span class="nt">--password</span><span class="o">=</span><span class="nv">$CONTRA_BOOKMEDIK</span> <span class="nt">-h</span> <span class="nv">$DATABASE_HOST</span> <span class="nv">$NOMBRE_DB</span> &lt; /var/www/html/schema.sql
+
+/usr/sbin/apache2ctl <span class="nt">-D</span> FOREGROUND
+</code></pre></div></div>
+
+<p>El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v1 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>Si ejecutamos <code class="language-plaintext highlighter-rouge">docker images</code>, podremos ver que la imagen se ha creado correctamente:</p>
+
+<h2 id="tarea-2-despliegue-en-el-entorno-de-desarrollo">Tarea 2: Despliegue en el entorno de desarrollo</h2>
+
+<p>En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: <code class="language-plaintext highlighter-rouge">Usuario: admin // contraseña: admin.</code></p>
+
+<p>Por ello, creamos el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para levantar ambos contenedores:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">bookmedik</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v1</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8081:80</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>Levantamos el escenario con <code class="language-plaintext highlighter-rouge">docker compose up -d</code>y con <code class="language-plaintext highlighter-rouge">docker ps</code> podemos ver que los contenedores se han levantado correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/1.png" alt="1" /></p>
+
+<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/2.png" alt="2" /></p>
+
+<h2 id="tarea-3-creación-de-una-imagen-docker-con-una-aplicación-web-desde-una-imagen-php">Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP</h2>
+
+<p>Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado <code class="language-plaintext highlighter-rouge">Dockerfile</code> en la raíz del proyecto y añadiremos el siguiente contenido:</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> php:7.4-apache-bullseye</span>
+<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> docker-php-ext-install mysqli pdo pdo_mysql <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+<span class="k">ADD</span><span class="s"> bookmedik /var/www/html/</span>
+<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
+<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh
+<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
+</code></pre></div></div>
+
+<p>Y creamos una nueva imagen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v2 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>EL fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> quedaría de la siguiente forma:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">bookmedik</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v2</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8081:80</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:latest</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>Realizamos el despliegue con <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/3.png" alt="3" /></p>
+
+<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/4.png" alt="4" /></p>
+
+<p><img src="/assets/images/docker/p1/5.png" alt="5" /></p>
+
+<h2 id="tarea-4-ejecución-de-una-aplicación-php-en-docker-con-nginx">Tarea 4: Ejecución de una aplicación PHP en docker con nginx</h2>
+
+<p>En esta tarea, vamos a tener que crear dos imágenes:</p>
+<ul>
+  <li>Una que contrendrá la aplicación PHP y será nginx la encargada de servirla.</li>
+  <li>Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione.</li>
+</ul>
+
+<p>Creamos el <code class="language-plaintext highlighter-rouge">Dockerfile</code> con php-fpm y sus correspondientes modulos:</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> php:7.4-fpm</span>
+<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
+<span class="k">RUN </span>docker-php-ext-install mysqli
+</code></pre></div></div>
+
+<p>Creamos la imagen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/php-fpm-mysql:v1 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p1/6.png" alt="6" /></p>
+
+<p>Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido:</p>
+
+<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> nginx</span>
+<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+<span class="k">ADD</span><span class="s"> default.conf /etc/nginx/conf.d/</span>
+<span class="k">ADD</span><span class="s"> bookmedik /usr/share/nginx/html</span>
+<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
+<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh <span class="o">&amp;&amp;</span> <span class="nb">rm</span> /usr/share/nginx/html/index.html
+<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
+</code></pre></div></div>
+
+<p>En el docker file anterior, hemos establecido el fichero <code class="language-plaintext highlighter-rouge">default.conf</code> como el fichero de configuración de nginx. Este fichero contendrá la siguiente información:</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">nano</span> <span class="s">default.conf</span>
+
+<span class="s">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>       <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">listen</span>  <span class="s">[::]:80</span><span class="p">;</span>
+    <span class="kn">server_name</span>  <span class="s">localhost</span><span class="p">;</span>
+    <span class="kn">error_log</span>  <span class="n">/var/log/nginx/error.log</span><span class="p">;</span>
+    <span class="kn">access_log</span> <span class="n">/var/log/nginx/access.log</span><span class="p">;</span>
+    <span class="kn">root</span>   <span class="n">/usr/share/nginx/html</span><span class="p">;</span>
+    <span class="kn">index</span>  <span class="s">index.php</span> <span class="s">index.html</span><span class="p">;</span>
+
+    <span class="kn">location</span> <span class="p">~</span> <span class="sr">\.php$</span> <span class="p">{</span>
+        <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="p">=</span><span class="mi">404</span><span class="p">;</span>
+        <span class="kn">fastcgi_split_path_info</span> <span class="s">^(.+</span><span class="err">\</span><span class="s">.php)(/.+)</span>$<span class="p">;</span>
+        <span class="kn">fastcgi_pass</span> <span class="s">book_php:9000</span><span class="p">;</span>
+        <span class="kn">fastcgi_index</span> <span class="s">index.php</span><span class="p">;</span>
+        <span class="kn">include</span> <span class="s">fastcgi_params</span><span class="p">;</span>
+        <span class="kn">fastcgi_param</span> <span class="s">SCRIPT_FILENAME</span> <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+        <span class="kn">fastcgi_param</span> <span class="s">PATH_INFO</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Y también deberemos modificar <code class="language-plaintext highlighter-rouge">script.sh</code> para adaptarlo a nginx:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+
+<span class="nb">sleep </span>10
+
+mysql <span class="nt">-u</span> <span class="nv">$USUARIO_BOOKMEDIK</span> <span class="nt">--password</span><span class="o">=</span><span class="nv">$CONTRA_BOOKMEDIK</span> <span class="nt">-h</span> <span class="nv">$DATABASE_HOST</span> <span class="nv">$NOMBRE_DB</span> &lt; /usr/share/nginx/html/schema.sql
+
+nginx <span class="nt">-g</span> <span class="s2">"daemon off;"</span>
+</code></pre></div></div>
+
+<p>Creamos la imagen:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v3 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p1/7.png" alt="7" /></p>
+
+<p>Antes de modificar el <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> debemos tener en cuenta que:</p>
+<ul>
+  <li>Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta.</li>
+  <li>Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm.</li>
+</ul>
+
+<p>Por lo que el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> quedaría de la siguiente forma:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">bookmedik</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v3</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8082:80</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+      <span class="pi">-</span> <span class="s">php</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">phpdocs:/usr/share/nginx/html/</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
+  <span class="na">php</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">book_php</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/php-fpm-mysql:v1</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">phpdocs:/usr/share/nginx/html/</span> 
+
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data</span><span class="pi">:</span>
+    <span class="na">phpdocs</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p>Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente.</p>
+
+<p>Ahora, ejecutamos el <code class="language-plaintext highlighter-rouge">docker compose.yaml</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up <span class="nt">-d</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p1/8.png" alt="8" /></p>
+
+<p>Y comprobamos que todo funciona como esperábamos:</p>
+
+<p><img src="/assets/images/docker/p1/9.png" alt="9" /></p>
+
+<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/10.png" alt="10" /></p>
+
+<p><img src="/assets/images/docker/p1/11.png" alt="11" /></p>
+
+<h2 id="tarea-5-puesta-en-producción-de-nuestra-aplicación">Tarea 5: Puesta en producción de nuestra aplicación</h2>
+
+<p>Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS.</p>
+
+<p>⬜️ bookmedik.mariatec.es     CNAME       mariatec.es</p>
+
+<p>Y le generamos un certificado de <code class="language-plaintext highlighter-rouge">Let's Encrypt</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> bookmedik.mariatec.es
+</code></pre></div></div>
+
+<p>Instalamos docker y docker-compose en nuestro VPS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt <span class="nb">install </span>docker.io docker-compose-plugin <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull legnakra/bookmedik:v2
+</code></pre></div></div>
+
+<p>En mi caso he elegido la versión 2, ya que es la que tiene el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> adaptado para el VPS.</p>
+
+<p>Creamos el virtualhost en nginx para que actúe de proxy inverso:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/nginx/sites-available/bookmedik.mariatec.es
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
+        listen 80<span class="p">;</span>
+        listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+        server_name bookmedik.mariatec.es<span class="p">;</span>
+
+        <span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="o">}</span>
+
+server <span class="o">{</span>
+        listen 443 ssl http2<span class="p">;</span>
+        listen <span class="o">[</span>::]:443 ssl http2<span class="p">;</span>
+
+        ssl    on<span class="p">;</span>
+        ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem<span class="p">;</span>
+        ssl_certificate_key     /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem<span class="p">;</span>
+
+        index index.html index.php index.htm index.nginx-debian.html<span class="p">;</span>
+
+        server_name bookmedik.mariatec.es<span class="p">;</span>
+
+        location / <span class="o">{</span>
+                proxy_pass http://localhost:8083<span class="p">;</span>
+                include proxy_params<span class="p">;</span>
+        <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Creamos el enlace simbólico y reiniciamos nginx:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/
+systemctl restart nginx
+</code></pre></div></div>
+
+<p>En mi caso, he subido los ficheros a github, por lo que he clonado <a href="https://github.com/Legnakra/Docker-Bookmedik/tree/main/Tarea%204">el repositorio</a> y el repositorio de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a> en mi VPS, dejando la estructura de carpetas de la siguiente forma:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── Bookmedik
+│   ├── docker-compose.yaml
+│   ├── Dockerfile
+│   ├── scripts
+│   ├── bookmedik
+│   │   ├── PhpWord
+│   │   ├── core
+│   │   ├── assets
+│   │   ├── report
+│   │   ├── index.php
+│   │   ├── instalation.txt
+│   │   ├── schema.sql
+│   │   ├── logout.php
+│   │   ├── README.md
+</code></pre></div></div>
+
+<p>Realizamos la ejecución del comando <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y comprobamos que todo funciona correctamente:</p>
+
+<p><img src="/assets/images/docker/p1/12.png" alt="12" /></p>
+
+<p>Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente.</p>
+
+<p><img src="/assets/images/docker/p1/13.png" alt="13" /></p>
+
+<p><strong>NOTA</strong>: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS.</p>
+
+<p><img src="/assets/images/docker/p1/14.png" alt="14" /></p>
+
+<h2 id="tarea-6-modificación-de-la-aplicación">Tarea 6: Modificación de la aplicación</h2>
+
+<p>Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea <code class="language-plaintext highlighter-rouge">&lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;</code>.</p>
+
+<p>Para ello, vamos a utilizar la imagen de <code class="language-plaintext highlighter-rouge">legnakra/bookmedik:v1</code> que ya tiene el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para generar la nueva imagen.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano <span class="sb">`</span>core/app/view/login-view.php<span class="sb">`</span>
+<span class="nt">---</span>
+&lt;h4 <span class="nv">class</span><span class="o">=</span><span class="s2">"title"</span><span class="o">&gt;</span>María Jesús Alloza Rodríguez&lt;/h4&gt;
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p1/15.png" alt="15" /></p>
+
+<p>Creamos la nueva imagen</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v1_2 <span class="nb">.</span>
+</code></pre></div></div>
+<p><img src="/assets/images/docker/p1/16.png" alt="16" /></p>
+
+<p>La resubimos a DockerHub:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push legnakra/bookmedik:v1_2
+</code></pre></div></div>
+
+<p>Eliminamos los contenedores que están en ejecución, modificamos el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para que descargue la nueva imagen y ejecutamos el <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose down
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano docker-compose.yaml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">bookmedik</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v1_2</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8081:80</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data</span><span class="pi">:</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p1/17.png" alt="17" /></p>
+
+<p>Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker.</p>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas.</p>
+
+<h2 id="bibliografía">Bibliografía</h2>
+
+<p><a href="https://www.docker.com/">https://www.docker.com/</a></p>
+
+<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry><entry><title type="html">Escenario - Configuración de LDAP en Alfa</title><link href="/aso/2023/02/07/ldap2.html" rel="alternate" type="text/html" title="Escenario - Configuración de LDAP en Alfa" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/ldap2</id><content type="html" xml:base="/aso/2023/02/07/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
+
+<p>En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información:</p>
+
+<ul>
+  <li>Nombre del alumno</li>
+  <li>Apellidos del alumno</li>
+  <li>Dirección de correo electrónico</li>
+  <li>Nombre del equipo</li>
+  <li>Dirección IP del equipo</li>
+  <li>Clave pública SSH del equipo</li>
+</ul>
+
+<p>El mío quedaría así:</p>
+
+<pre><code class="language-csv">Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
+Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org
+Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie
+Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org
+</code></pre>
+
+<h3 id="esquema-openssh-lpk">Esquema openssh-lpk</h3>
+
+<p>Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/ldap/schema/openssh-lpk.ldif
+</code></pre></div></div>
+
+<p>Y añadimos el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">cn</span><span class="o">=</span>openssh-lpk,cn<span class="o">=</span>schema,cn<span class="o">=</span>config
+objectClass: olcSchemaConfig
+cn: openssh-lpk
+olcAttributeTypes: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.1.13 NAME <span class="s1">'sshPublicKey'</span>
+  DESC <span class="s1">'MANDATORY: OpenSSH Public key'</span>
+  EQUALITY octetStringMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 <span class="o">)</span>
+olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <span class="s1">'ldapPublicKey'</span> SUP top AUXILIARY
+  DESC <span class="s1">'MANDATORY: OpenSSH LPK objectclass'</span>
+  MAY <span class="o">(</span> sshPublicKey <span class="nv">$ </span>uid <span class="o">)</span>
+  <span class="o">)</span>
+</code></pre></div></div>
+
+<p>Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> /etc/ldap/schema/openssh-lpk.ldif
+</code></pre></div></div>
+
+<h3 id="script-en-python-">Script en Python 🐍</h3>
+
+<h2 id="referencias">Referencias</h2>
+
+<p>[1] <a href="https://www.openldap.org/">https://www.openldap.org/</a></p>
+
+<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>
+
+<ul>
+  <li>
+    <p>Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o    incluso una máquina virtual.</p>
+  </li>
+  <li>
+    <p>Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc.</p>
+  </li>
+  <li>
+    <p>Logical Files: Incluye la imagen de cualquier carpeta o archivo local.</p>
+  </li>
+  <li>
+    <p>Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo      Ingest.</p>
+  </li>
+  <li>
+    <p>Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas.</p>
+  </li>
+  <li>
+    <p>XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.</p>
+  </li>
+</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o incluso una máquina virtual. Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc. Logical Files: Incluye la imagen de cualquier carpeta o archivo local. Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo Ingest. Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas. XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
 
@@ -1178,7 +1787,7 @@ cn: prueba
 
 <p><img src="/assets/images/LDAP/ldap1/10.png" alt="10" /></p>
 
-<p>A continuación, creamos el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en un fichero denominado <code class="language-plaintext highlighter-rouge">prueba.ldif</code>:</p>
+<p>A continuación, creamos el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en un fichero denominado <code class="language-plaintext highlighter-rouge">usuarios.ldif</code>:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi usuarios.ldif
 <span class="nt">---</span>
@@ -1218,7 +1827,7 @@ ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv
 
 <p>Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en el servidor NFS.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="nv">$$</span> <span class="nb">mkdir</span> /home/nfs/prueba
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
 <span class="nb">chown </span>2001:2001 /home/nfs/prueba
 </code></pre></div></div>
 
@@ -1548,7 +2157,7 @@ systemctl <span class="nb">enable </span>home-nfs.mount
 
 <p>[1] <a href="https://www.openldap.org/">https://www.openldap.org/</a></p>
 
-<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado prueba.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs $$ mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry><entry><title type="html">Configuración de un servidor de correo en un VPS</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo en un VPS" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado usuarios.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry><entry><title type="html">Configuración de un servidor de correo en un VPS</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo en un VPS" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será <code class="language-plaintext highlighter-rouge">mail.mariatec.es</code>, que será el nombre que aparecerá en el registro MX.</p>
 
@@ -2451,542 +3060,4 @@ wg
 
 <p>Además de su seguridad, OpenVPN tiene una gran ventaja sobre Wireguard: es multiplataforma. Esto quiere decir que podemos utilizar OpenVPN en cualquier sistema operativo, mientras que Wireguard solo está disponible para Linux.</p>
 
-<p>En resumen, Wireguar es una muy buena alternativa frente a OpenVPN y se espera que en un futuro de bastante prontitud, Wireguard se convierta en la VPN por defecto de Linux. Es de facil configuración, y es mucho mas eficiente que OpenVPN en cuanto a rendimiento y consumo de recursos.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">VPN de acceso remoto con WireGuard (Windows, Linux, Android)</title><link href="/seguridad/2023/01/12/vpn-c.html" rel="alternate" type="text/html" title="VPN de acceso remoto con WireGuard (Windows, Linux, Android)" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/seguridad/2023/01/12/vpn-c</id><content type="html" xml:base="/seguridad/2023/01/12/vpn-c.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este post vamos a configurar un servidor VPN con WireGuard. WireGuard es un protocolo de túnel de código abierto que se ha convertido en una alternativa a OpenVPN. WireGuard es más rápido, más ligero y más fácil de configurar que OpenVPN.</p>
-
-<h2 id="preparando-el-escenario">Preparando el escenario</h2>
-
-<h3 id="máquina-interno">Máquina <strong>Interno</strong></h3>
-
-<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de cliente interno. Esta máquina tendrá una IP privada y no podrá acceder a internet.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-        libvirt.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Interno"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"Privada"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.20.10"</span>,
-        :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
-        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-end
-</code></pre></div></div>
-<p>Y le configuraremos la ruta por defecto para que vaya por la ip ‘192.168.20.1’ que es la ip del servidor VPN.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
-ip r add default via 192.168.20.1
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/1.png" alt="1" /></p>
-
-<h3 id="maquina-servidor">Maquina <strong>Servidor</strong></h3>
-
-<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de servidor VPN. Esta máquina tendrá una IP pública y podrá acceder a internet.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-
-    config.vm.provider :libvirt <span class="k">do</span> |v|
-      v.memory <span class="o">=</span> 1024
-      end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN3"</span>,
-      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.99.10"</span>,
-      :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
-      :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-      nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"Privada"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"192.168.20.1"</span>,
-        :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
-        :mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-end
-</code></pre></div></div>
-
-<p>En esta máquina vamos a instalar WireGuard.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
-</code></pre></div></div>
-
-<p>Activamos el bit de forwarding en el kernel.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Nos dirigimos al directorio de configuración de WireGuard, creamos las claves del servidor que nos servirán para configurar los clientes y el fichero de configuración del servidor.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivatekey | wg pubkey <span class="o">&gt;</span> serverpublickey
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/2.png" alt="2" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-<span class="c">#IP del servidor</span>
-Address <span class="o">=</span> 10.99.99.1
-<span class="c">#Clave privada del servidor</span>
-PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
-<span class="c">#Puerto de escucha</span>
-ListenPort <span class="o">=</span> 51820
-</code></pre></div></div>
-
-<p>Activamos la interfaz de WireGuard.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
-</code></pre></div></div>
-
-<p>Y comprobamos que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/3.png" alt="3" /></p>
-
-<p><img src="/assets/images/vpn/C/4.png" alt="4" /></p>
-
-<h3 id="cliente-linux">Cliente <strong>Linux</strong></h3>
-
-<p>Vamos a crear una máquina virtual con la ayuda de vagrant que servirá de cliente para la VPN.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-
-    config.vm.provider :libvirt <span class="k">do</span> |v|
-      v.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Linux"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-      :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"VPN3"</span>,
-      :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-      :ip <span class="o">=&gt;</span> <span class="s2">"192.168.99.11"</span>,
-      :libvirt__netmask <span class="o">=&gt;</span> <span class="s1">'255.255.255.0'</span>,
-      :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-end
-</code></pre></div></div>
-
-<p>Y le configuraremos la ruta por defecto para que vaya por la ip ‘192.168.20.1’ que es la ip del servidor VPN.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip r del default
-ip r add default via 192.168.99.10
-</code></pre></div></div>
-
-<p>En esta máquina realizaremos la configuración de wireguard como hemos realizado en la máquina anterior.</p>
-
-<ul>
-  <li>
-    <p>Instalamos wireguard</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>wireguard
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Nos dirigimosal directorio <code class="language-plaintext highlighter-rouge">/etc/wireguard/</code>y creamos el par de claves:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wg genkey | <span class="nb">tee </span>clientprivatekey | wg pubkey <span class="o">&gt;</span> clientpublickey
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/vpn/C/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Creamos el fichero de configuración del cliente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="o">[</span>Interface]
-  Address <span class="o">=</span> 10.99.99.2/24
-  <span class="c">#Clave privada del cliente</span>
-  PrivateKey <span class="o">=</span> 8J4d+gUAoZMNPZ1unrMtPJ4p7a2aXAB24MXnlmx+CEU<span class="o">=</span>
-  <span class="c">#Puerto de escucha del servidor</span>
-  ListenPort <span class="o">=</span> 51820
-
-  <span class="o">[</span>Peer]
-  <span class="c">#Clave pública del servidor</span>
-  PublicKey <span class="o">=</span> <span class="nv">KGD20wvABWB20aj02aCsUfKxphiubQUa0iGOMSVqNHc</span><span class="o">=</span>
-  AllowedIPs <span class="o">=</span> 0.0.0.0/0
-  <span class="c">#Punto de acceso del servidor</span>
-  Endpoint <span class="o">=</span> 192.168.99.10:51820
-  <span class="c">#Tiempo de espera de la conexión</span>
-  PersistentKeepalive <span class="o">=</span> 25
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Activamos la interfaz de WireGuard.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wg-quick up wg0
-</code></pre></div>    </div>
-    <p><img src="/assets/images/vpn/C/6.png" alt="6" /></p>
-
-    <p><img src="/assets/images/vpn/C/7.png" alt="7" /></p>
-  </li>
-</ul>
-
-<p>Configurado el cliente, deberemos configurar en el fichero <code class="language-plaintext highlighter-rouge">wg0.cong</code>de <code class="language-plaintext highlighter-rouge">servidor</code> donde incluiremos el cliente que recientemente hemos configurado y el fichero quedaría de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-Address <span class="o">=</span> 10.99.99.1
-<span class="c">#Clave privada del servidor</span>
-PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
-<span class="c">#Puerto de escucha</span>
-ListenPort <span class="o">=</span> 51820
-
-<span class="c">#Bit de forwarding</span>
-PreUp <span class="o">=</span> sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1
-
-<span class="c"># Cliente Debian 11</span>
-<span class="o">[</span>Peer]
-<span class="c">#Clave pública del cliente</span>
-Publickey <span class="o">=</span> pQLF6BndUY/V15vvCymgo+84qWp5YzLLjXpybSmMBDo<span class="o">=</span>
-<span class="c">#IP del cliente</span>
-AllowedIPs <span class="o">=</span> 10.99.99.2/32
-<span class="c">#Tiempo de espera de respuesta</span>
-PersistentKeepAlive <span class="o">=</span> 25
-</code></pre></div></div>
-
-<p>Reiniciaos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick down wg0
-wg
-</code></pre></div></div>
-<p><img src="/assets/images/vpn/C/8.png" alt="8" /></p>
-
-<p><img src="/assets/images/vpn/C/9.png" alt="9" /></p>
-
-<h3 id="comprobaciones-de-funcionamiento">Comprobaciones de funcionamiento</h3>
-
-<p>Desde el propio cliente podemos comprobar el funcionamiento de la VPN.</p>
-
-<p><img src="/assets/images/vpn/C/10.png" alt="10" /></p>
-
-<p>Desde el servidor podemos comprobar que el cliente Android se ha conectado correctamente.</p>
-
-<p><img src="/assets/images/vpn/C/11.png" alt="11" /></p>
-
-<h2 id="configuración-del-cliente-windows">Configuración del cliente windows</h2>
-
-<p>Lo primero que deberemos realizar es el cambio de ip de la interfaz de red de la máquina virtual para que no haya conflictos con la ip de la VPN. Para ello, ejecutamos el administrador de sistema en modo administrador y escribimos en la consola:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netsh
-interface ip <span class="nb">set </span>address <span class="nv">name</span><span class="o">=</span><span class="s2">"Ethernet"</span> static 192.168.99.12 255.255.255.0 192.168.99.10
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/C/12.png" alt="12" /></p>
-
-<p>Descargamos wildguard desde su <a href="https://www.wireguard.com/install/">página oficial</a>, y una vez instalado, abrimos el programa y en la parte inferior izquierda, tenemos un menú desplegable donde seleccionamos <code class="language-plaintext highlighter-rouge">Añadir tunel vacío</code>.</p>
-
-<p>En la subventana que se abre, ya nos aparecen creadas ambas claves, la pública y la privada del servidor, por lo que solo tendremos que añadir la clave pública del servidor y la IP.</p>
-
-<p><img src="/assets/images/vpn/C/13.png" alt="13" /></p>
-
-<p>Nos dirigimos al servidor, y añadimos la clave pública del cliente y la IP, quedando el fichero de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-Address <span class="o">=</span> 10.99.99.1
-PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
-ListenPort <span class="o">=</span> 51820
-
-PreUp <span class="o">=</span> sysctl <span class="nt">-w</span> net.ipv4.ip_forward<span class="o">=</span>1
-
-<span class="c"># Cliente Debian 11</span>
-<span class="o">[</span>Peer]
-Publickey <span class="o">=</span> pQLF6BndUY/V15vvCymgo+84qWp5YzLLjXpybSmMBDo<span class="o">=</span>
-AllowedIPs <span class="o">=</span> 10.99.99.2/32
-PersistentKeepAlive <span class="o">=</span> 25
-
-<span class="c"># Cliente Windows</span>
-
-<span class="o">[</span>Peer]
-Publickey <span class="o">=</span> <span class="nv">SqFFutq1xAbGzj3POiHSRbbPpQAH1clUkyWikKjhojg</span><span class="o">=</span>
-AllowedIPs <span class="o">=</span> 10.99.99.2/32
-PersistentKeepAlive <span class="o">=</span> 25
-</code></pre></div></div>
-
-<p>Reiniciamos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
-
-<p><img src="/assets/images/vpn/C/14.png" alt="14" /></p>
-
-<p><img src="/assets/images/vpn/C/15.png" alt="15" /></p>
-
-<h3 id="comprobaciones-de-funcionamiento-1">Comprobaciones de funcionamiento</h3>
-
-<p>En las siguientes imágenes, podemos ver que el cliente windows puede acceder a la red interna y también con el cliente linux.</p>
-
-<p><img src="/assets/images/vpn/C/16.png" alt="16" /></p>
-
-<p><img src="/assets/images/vpn/C/17.png" alt="17" /></p>
-
-<h2 id="configuración-del-cliente-android">Configuración del cliente Android</h2>
-
-<p>Para este punto del escenario, voy a usar mi máquina host como servidor VPN y mi móvil físico como cliente. Para ello, hemos instalado la aplicación WireGuard en el móvil y hemos configurado el servidor con la IP de mi móvil.</p>
-
-<p>Para hacerlo posible, vamos a realizar la configuración del cliente en la propia máquina servidor y luego pasaremos dicha configuración al móvil a través de un código QR que generaremos en nuestra consola.</p>
-
-<ul>
-  <li>
-    <p>Creamos las claves pública y privada del cliente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>androidprivate | wg pubkey <span class="o">&gt;</span> androidpublic
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el fichero de configuración del cliente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-Address <span class="o">=</span> 10.99.99.4
-PrivateKey <span class="o">=</span> wHf9pBV923/XKWPzFVPp39w3eUZ7wU7DsE6cvu36F2s<span class="o">=</span>
-ListenPort <span class="o">=</span> 51820
-  
-<span class="o">[</span>Peer]
-Publickey <span class="o">=</span><span class="nv">n9IjUHqVAQ9WEW80syWFYmgY5IG80kd5J9j2godvgm8</span><span class="o">=</span>
-AllowedIPs <span class="o">=</span> 0.0.0.0/0
-Endpoint <span class="o">=</span> 192.168.15.32:51820
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Ahora generaremos el código QR con el que pasaremos la configuración al móvil.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qrencode <span class="nt">-t</span> ansiutf8 &lt; android.conf
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/vpn/C/18.png" alt="18" /></p>
-  </li>
-  <li>
-    <p>Modificamos el fichero de configuración del servidor para añadir la clave pública del cliente y la IP.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-<span class="c">#IP del servidor</span>
-Address <span class="o">=</span> 10.99.99.1
-<span class="c">#Clave privada del servidor</span>
-PrivateKey <span class="o">=</span> <span class="nv">gFfh8vumUY89MkV269eYEiDdT9IWdfKDvV1T0DcSsEA</span><span class="o">=</span>
-<span class="c">#Puerto de escucha</span>
-ListenPort <span class="o">=</span> 51820
-
-<span class="o">[</span>Peer]
-Publickey <span class="o">=</span> Iq47qp/TP8bx6v4qDJwTiHwWYSO7/y23FvK1SpIdzi0<span class="o">=</span>
-AllowedIPs <span class="o">=</span> 10.99.99.4/32
-PersistentKeepAlive <span class="o">=</span> 25
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Tras ello, reiniciamos el servicio y comprobamos que el cliente se ha conectado correctamente.</p>
-
-    <p><img src="/assets/images/vpn/C/19.png" alt="19" /></p>
-
-    <p><img src="/assets/images/vpn/C/20.png" alt="20" /></p>
-  </li>
-</ul>
-
-<h3 id="comprobaciones-de-funcionamiento-2">Comprobaciones de funcionamiento</h3>
-
-<p>Para verificar que funciona correctamente, haremos ping desde el cliente interno al cliente android y desde el cliente android al servidor.</p>
-
-<p><img src="/assets/images/vpn/C/21.png" alt="21" /></p>
-
-<p><img src="/assets/images/vpn/C/22.png" alt="22" /></p>
-
-<p><img src="/assets/images/vpn/C/23.png" alt="23" /></p>
-
-<h2 id="conclusiones">Conclusiones</h2>
-
-<p>Comparando OpenVPN y WireGuard, podemos ver que WireGuard es mucho más sencillo de configurar y que tiene un rendimiento mucho mejor. Con Wireguard no es necesario que creamos un certificado para cada cliente, ya que solo necesitamos la clave pública del cliente y la clave privada del servidor.</p>
-
-<p>Otro de los puntos a favor de WireGuard es que no es necesario que el servidor tenga una IP pública, ya que podemos usar un servidor con una IP privada y usar un servicio de tunelado.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Docker - Almacenamiento y Redes</title><link href="/iaw/2023/01/12/docker-almacenamiento.html" rel="alternate" type="text/html" title="Taller Docker - Almacenamiento y Redes" /><published>2023-01-12T12:47:17+01:00</published><updated>2023-01-12T12:47:17+01:00</updated><id>/iaw/2023/01/12/docker-almacenamiento</id><content type="html" xml:base="/iaw/2023/01/12/docker-almacenamiento.html"><![CDATA[<h2 id="almacenamiento">Almacenamiento</h2>
-
-<h3 id="volúmenes-docker">Volúmenes docker</h3>
-
-<ol>
-  <li>
-    <p>Crearemos un volumen docker que se llame miweb.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume create miweb
-</code></pre></div>    </div>
-
-    <p>Y mostramos que el volumen se ha creado correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume <span class="nb">ls</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el volumen docker que has creado.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Utiliza el comando docker cp para copiar un fichero index.html (donde aparece tu nombre) en el directorio /var/www/html.</p>
-
-    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
- <span class="nt">&lt;html&gt;</span>
-     <span class="nt">&lt;body&gt;</span>
-         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
-         <span class="nt">&lt;h2&gt;</span>Prueba de docker<span class="nt">&lt;/h2&gt;</span>
-     <span class="nt">&lt;/body&gt;</span>
- <span class="nt">&lt;/html&gt;</span>
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">cp </span>index.html miweb:/var/www/html/index.html
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Borra el contenedor</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Crea un nuevo contenedor y monta el mismo volumen como en el ejercicio anterior.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> miweb:/var/www/html php:7.4-apache
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Seguía existiendo ese fichero?</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/6.png" alt="6" /></p>
-
-    <ul>
-      <li>El fichero sigue existiendo porque se ha creado un volumen docker que se ha montado en el contenedor.</li>
-    </ul>
-  </li>
-</ol>
-
-<h3 id="bind-mounts">Bind Mounts</h3>
-
-<ol>
-  <li>
-    <p>Crea un directorio en tu host y dentro crea un fichero index.html (donde aparece tu nombre).</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir</span> <span class="nt">-p</span> /home/maria/Documentos/2ASIR/IAW/Docker
- <span class="nb">cd</span> /home/maria/Documentos/2ASIR/IAW/Docker
- <span class="nb">touch </span>index.html
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Crea un contenedor desde la imagen php:7.4-apache donde montes en el directorio /var/www/html el directorio que has creado por medio de bind mount.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Modifica el contenido del fichero index.html en tu host y comprueba que al refrescar la página ofrecida por el contenedor, el contenido ha cambiado.</p>
-
-    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="cp">&lt;!DOCTYPE html&gt;</span>
- <span class="nt">&lt;html&gt;</span>
-     <span class="nt">&lt;body&gt;</span>
-         <span class="nt">&lt;h1&gt;</span>Nombre: Maria Jesus<span class="nt">&lt;/h1&gt;</span>
-         <span class="nt">&lt;h2&gt;</span>Prueba Bind Mounts<span class="nt">&lt;/h2&gt;</span>
-     <span class="nt">&lt;/body&gt;</span>
- <span class="nt">&lt;/html&gt;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Borra el contenedor</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">rm</span> <span class="nt">-f</span> miweb
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Crea un nuevo contenedor y monta el mismo directorio como en el ejercicio anterior.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">--name</span> miweb <span class="nt">-p</span> 80:80 <span class="nt">-v</span> /home/maria/Documentos/2ASIR/IAW/Docker/index.html:/var/www/html/index.html php:7.4-apache
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/9.png" alt="9" /></p>
-  </li>
-  <li>
-    <p>Accede al contenedor desde el navegador para ver la información ofrecida por el fichero index.html. ¿Se sigue viendo el mismo contenido?</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller1/10.png" alt="10" /></p>
-
-    <ul>
-      <li>El contenido sigue siendo el mismo porque se ha montado el directorio en el contenedor.</li>
-    </ul>
-  </li>
-</ol>
-
-<h2 id="redes">Redes</h2>
-
-<p>Despliegue de Nextcloud + mariadb/postgreSQL</p>
-
-<p>Vamos a desplegar la aplicación nextcloud con una base de datos. Para ello sigue los siguientes pasos:</p>
-
-<p>Crea una red de tipo bridge para que los contenedores se puedan comunicar entre ellos.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-docker network create nextcloud-net
-```
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/taller1/11.png" alt="11" /></p>
-
-<p>Crea el contenedor de la base de datos conectado a la red que has creado. La base de datos se debe configurar para crear una base de dato y un usuario. Además el contenedor debe utilizar almacenamiento para guardar la información.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-docker run -d --name nextcloud-db -e MYSQL_ROOT_PASSWORD=nextcloud -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -v nextcloud-db:/var/lib/mysql --network nextcloud-net mariadb
-```
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/taller1/12.png" alt="12" /></p>
-
-<p>A continuación, siguiendo la documentación de la imagen nextcloud, crea un contenedor conectado a la misma red, e indica las variables adecuadas para que se configure de forma adecuada y realice la conexión a la base de datos. El contenedor también debe ser persistente usando almacenamiento.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-docker run -d --name nextcloud -p 80:80 -e MYSQL_DATABASE=nextcloud -e MYSQL_USER=nextcloud -e MYSQL_PASSWORD=admin -e MYSQL_HOST=nextcloud-db -v nextcloud:/var/www/html --network nextcloud-net nextcloud
-```
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/taller1/13.png" alt="13" /></p>
-
-<p>Accede a la aplicación usando un navegador web.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-http://localhost:8080
-```
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/taller1/14.png" alt="14" /></p>
-
-<p><img src="/assets/images/docker/taller1/15.png" alt="15" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Almacenamiento]]></summary></entry></feed>
+<p>En resumen, Wireguar es una muy buena alternativa frente a OpenVPN y se espera que en un futuro de bastante prontitud, Wireguard se convierta en la VPN por defecto de Linux. Es de facil configuración, y es mucho mas eficiente que OpenVPN en cuanto a rendimiento y consumo de recursos.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
