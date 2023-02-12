@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Implantación de aplicaciones web Python en docker | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Implantación de aplicaciones web Python en docker">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get(&quot;BASE_DATOS&quot;), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get(&quot;CONTRA&quot;), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get(&quot;ALLOWED_HOSTS&quot;)] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS=* ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT [&quot;/usr/src/app/polls.sh&quot;] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: &quot;*&quot; HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.">
+<meta property="og:description" content="Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get(&quot;BASE_DATOS&quot;), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get(&quot;CONTRA&quot;), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get(&quot;ALLOWED_HOSTS&quot;)] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS=* ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT [&quot;/usr/src/app/polls.sh&quot;] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: &quot;*&quot; HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.">
+<link rel="canonical" href="/iaw/2023/02/11/docker-python.html">
+<meta property="og:url" content="/iaw/2023/02/11/docker-python.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-02-11T16:45:16+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Implantación de aplicaciones web Python en docker">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-11T16:45:16+01:00","datePublished":"2023-02-11T16:45:16+01:00","description":"Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { &#39;default&#39;: { &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;, &#39;NAME&#39;: os.environ.get(&quot;BASE_DATOS&quot;), &#39;USER&#39;: os.environ.get(&#39;USUARIO&#39;), &#39;PASSWORD&#39;: os.environ.get(&quot;CONTRA&quot;), &#39;HOST&#39;: os.environ.get(&#39;HOST&#39;), &#39;PORT&#39;: &#39;3306&#39;, } } ALLOWED_HOSTS = [os.environ.get(&quot;ALLOWED_HOSTS&quot;)] STATIC_ROOT = os.path.join(BASE_DIR, &#39;static&#39;) STATIC_URL = &#39;/static/&#39; CSRF_TRUSTED_ORIGINS = [&#39;http://*.mariatec.es&#39;,&#39;http://*.127.0.0.1&#39;,&#39;https://*.mariatec.es&#39;,&#39;https://*.127.0.0.1&#39;] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez &#39;mariajesus.allozarodriguez@gmail.com&#39; RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS=* ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT [&quot;/usr/src/app/polls.sh&quot;] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: &#39;3.7&#39; services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: &quot;*&quot; HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.","headline":"Implantación de aplicaciones web Python en docker","mainEntityOfPage":{"@type":"WebPage","@id":"/iaw/2023/02/11/docker-python.html"},"url":"/iaw/2023/02/11/docker-python.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/docker.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/docker.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Implantación de aplicaciones web Python en docker</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-02-11T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 11, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
+
+<h2 id="entorno-de-desarrollo">Entorno de desarrollo</h2>
+
+<p>Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción.</p>
+
+<p>También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción.</p>
+
+<h3 id="creación-de-la-red">Creación de la red</h3>
+
+<p>Para crear la red, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker network create net_django
+</code></pre></div></div>
+
+<h3 id="creación-del-contenedor-de-la-base-de-datos">Creación del contenedor de la base de datos</h3>
+
+<p>Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">--name</span> mariadb <span class="nt">-v</span> vol_polls:/var/lib/mysql <span class="nt">--network</span> net_django <span class="nt">-e</span> <span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span>admin <span class="nt">-e</span> <span class="nv">MARIADB_USER</span><span class="o">=</span>django <span class="nt">-e</span> <span class="nv">MARIADB_PASSWORD</span><span class="o">=</span>admin <span class="nt">-e</span> <span class="nv">MARIADB_DATABASE</span><span class="o">=</span>django mariadb
+</code></pre></div></div>
+
+<p>Tendremos que modificar el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la aplicación web para que sea capaz de leer las variables de entorno:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
+        <span class="s">'NAME'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"BASE_DATOS"</span><span class="p">),</span>
+        <span class="s">'USER'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'USUARIO'</span><span class="p">),</span>
+        <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"CONTRA"</span><span class="p">),</span>
+        <span class="s">'HOST'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'HOST'</span><span class="p">),</span>
+        <span class="s">'PORT'</span><span class="p">:</span> <span class="s">'3306'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ALLOWED_HOSTS"</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'static'</span><span class="p">)</span>
+<span class="n">STATIC_URL</span> <span class="o">=</span> <span class="s">'/static/'</span>
+<span class="n">CSRF_TRUSTED_ORIGINS</span> <span class="o">=</span> <span class="p">[</span><span class="s">'http://*.mariatec.es'</span><span class="p">,</span><span class="s">'http://*.127.0.0.1'</span><span class="p">,</span><span class="s">'https://*.mariatec.es'</span><span class="p">,</span><span class="s">'https://*.127.0.0.1'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>La estructura del directorio de la aplicación web es la siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── practica2
+│   ├── django_tutorial
+│   │   ├── manage.py
+│   │   ├── requirements.txt
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── polls.sh
+</code></pre></div></div>
+
+<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code> a partir de la imagen de Python:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">FROM python:3</span>
+<span class="s">WORKDIR /usr/src/app</span>
+<span class="s">MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com'</span>
+<span class="s">RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient</span>
+<span class="s">RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static</span>
+<span class="s">ADD ./polls.sh /usr/src/app/</span>
+<span class="s">RUN chmod +x /usr/src/app/polls.sh</span>
+<span class="s">ENV ALLOWED_HOSTS=*</span>
+<span class="s">ENV HOST=mariadb</span>
+<span class="s">ENV USUARIO=django</span>
+<span class="s">ENV CONTRA=django</span>
+<span class="s">ENV BASE_DATOS=django</span>
+<span class="s">ENV DJANGO_SUPERUSER_PASSWORD=admin</span>
+<span class="s">ENV DJANGO_SUPERUSER_USERNAME=admin</span>
+<span class="s">ENV DJANGO_SUPERUSER_EMAIL=admin@example.org</span>
+<span class="s">ENTRYPOINT ["/usr/src/app/polls.sh"]</span>
+</code></pre></div></div>
+
+<p>Una vez terminado de crear el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code>, creamos el fichero <code class="language-plaintext highlighter-rouge">django_polls.sh</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py createsuperuser <span class="nt">--noinput</span>
+python3 manage.py collectstatic <span class="nt">--noinput</span>
+python3 manage.py runserver 0.0.0.0:8006
+</code></pre></div></div>
+
+<p>Creamos la imagen de Docker:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/django:v1 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p2/1.png" alt="1"></p>
+
+<p>Ejecutando <code class="language-plaintext highlighter-rouge">docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1</code> podemos ver que la aplicación se ejecuta correctamente.</p>
+
+<p><img src="/assets/images/docker/p2/2.png" alt="2"></p>
+
+<p>Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi docker-compose.yml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.7'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">django-tutorial</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">django-tutorial</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/django:v1</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ALLOWED_HOSTS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">*"</span>
+      <span class="na">HOST</span><span class="pi">:</span> <span class="s">bd_mariadb_django</span>
+      <span class="na">USUARIO</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">CONTRA</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">BASE_DATOS</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">DJANGO_SUPERUSER_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DJANGO_SUPERUSER_USERNAME</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DJANGO_SUPERUSER_EMAIL</span><span class="pi">:</span> <span class="s">admin@admin.org</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8084:8006</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db_django</span>
+  <span class="na">db_django</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb_django</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:latest</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">django</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data_django:/var/lib/mysql</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">net-mariatec</span>
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data_django</span><span class="pi">:</span>
+<span class="na">netwoks</span><span class="pi">:</span>
+  <span class="na">net-mariatec</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">net-mariatec</span>
+    <span class="na">external</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+
+<p>Levantamos el escenario de nuestro entorno de desarrollo con <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y podemos comprobar que todo funciona correctamente.</p>
+
+<p><img src="/assets/images/docker/p2/3.png" alt="3"></p>
+
+<p><img src="/assets/images/docker/p2/4.png" alt="4"></p>
+
+<p>Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> y podemos ver que accedemos y podemos crear nuevas encuestas.</p>
+
+<p><img src="/assets/images/docker/p2/5.png" alt="5"></p>
+
+<h2 id="entorno-de-producción">Entorno de producción</h2>
+
+<p>Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación.</p>
+
+<p>Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior.</p>
+
+<p>⬜️ django.mariatec.es        CNAME    mariatec.es</p>
+
+<p>Generamos el certificado SSL para poder acceder a la aplicación desde el exterior.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> django.mariatec.com
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p2/6.png" alt="6"></p>
+
+<p>Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nginx/sites-available/django.mariatec.es
+</code></pre></div></div>
+
+<p>recuerda que debe ser escuchado por elpuerto 8084.</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+        <span class="kn">listen</span> <span class="s">[::]:80</span><span class="p">;</span>
+
+        <span class="kn">server_name</span> <span class="s">django.mariatec.es</span><span class="p">;</span>
+
+        <span class="kn">return</span> <span class="mi">301</span> <span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">443</span> <span class="s">ssl</span> <span class="s">http2</span><span class="p">;</span>
+        <span class="kn">listen</span> <span class="s">[::]:443</span> <span class="s">ssl</span> <span class="s">http2</span><span class="p">;</span>
+
+        <span class="kn">ssl</span>    <span class="no">on</span><span class="p">;</span>
+        <span class="kn">ssl_certificate</span> <span class="n">/etc/letsencrypt/live/django.mariatec.es/fullchain.pem</span><span class="p">;</span>
+        <span class="kn">ssl_certificate_key</span> <span class="n">/etc/letsencrypt/live/django.mariatec.es/privkey.pem</span><span class="p">;</span>
+
+        <span class="kn">index</span> <span class="s">index.html</span> <span class="s">index.php</span> <span class="s">index.htm</span> <span class="s">index.nginx-debian.html</span><span class="p">;</span>
+
+        <span class="kn">server_name</span> <span class="s">django.mariatec.es</span><span class="p">;</span>
+
+        <span class="kn">location</span> <span class="n">/</span> <span class="p">{</span>
+                <span class="kn">proxy_pass</span> <span class="s">http://localhost:8084</span><span class="p">;</span>
+                <span class="kn">include</span> <span class="s">proxy_params</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
+
+systemctl restart nginx
+</code></pre></div></div>
+
+<p>Si accedemos desde nuestro navegador a la dirección <code class="language-plaintext highlighter-rouge">https://django.mariatec.es</code> podemos ver que accedemos a la aplicación.</p>
+
+<p><img src="/assets/images/docker/p2/7.png" alt="7"></p>
+
+<p>Y que podemos acceder a la zona de administración.</p>
+
+<p><img src="/assets/images/docker/p2/8.png" alt="8"></p>
+
+<p><img src="/assets/images/docker/p2/9.png" alt="9"></p>
+
+<p><img src="/assets/images/docker/p2/10.png" alt="10"></p>
+
+<p><img src="/assets/images/docker/p2/11.png" alt="11"></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/iaw/2023/02/09/docker-bookmedik.html" title="Implantación de aplicaciones web PHP en docker">Implantación de aplicaciones web PHP en...</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/iaw/2023/01/12/docker-almacenamiento.html" title="">Taller Docker - Almacenamiento y Redes</a></li>
+<li><a class="post-link" href="/aso/2023/01/22/ldap1.html" title="">Escenario - Configuración de LDAP en Alfa</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="">Virtualización en Linux</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

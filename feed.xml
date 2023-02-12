@@ -1,4 +1,232 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-11T17:59:51+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-12T18:37:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
+
+<h2 id="entorno-de-desarrollo">Entorno de desarrollo</h2>
+
+<p>Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción.</p>
+
+<p>También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción.</p>
+
+<h3 id="creación-de-la-red">Creación de la red</h3>
+
+<p>Para crear la red, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker network create net_django
+</code></pre></div></div>
+
+<h3 id="creación-del-contenedor-de-la-base-de-datos">Creación del contenedor de la base de datos</h3>
+
+<p>Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-d</span> <span class="nt">--name</span> mariadb <span class="nt">-v</span> vol_polls:/var/lib/mysql <span class="nt">--network</span> net_django <span class="nt">-e</span> <span class="nv">MARIADB_ROOT_PASSWORD</span><span class="o">=</span>admin <span class="nt">-e</span> <span class="nv">MARIADB_USER</span><span class="o">=</span>django <span class="nt">-e</span> <span class="nv">MARIADB_PASSWORD</span><span class="o">=</span>admin <span class="nt">-e</span> <span class="nv">MARIADB_DATABASE</span><span class="o">=</span>django mariadb
+</code></pre></div></div>
+
+<p>Tendremos que modificar el fichero <code class="language-plaintext highlighter-rouge">settings.py</code> de la aplicación web para que sea capaz de leer las variables de entorno:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">BASE_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">'default'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'ENGINE'</span><span class="p">:</span> <span class="s">'django.db.backends.mysql'</span><span class="p">,</span>
+        <span class="s">'NAME'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"BASE_DATOS"</span><span class="p">),</span>
+        <span class="s">'USER'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'USUARIO'</span><span class="p">),</span>
+        <span class="s">'PASSWORD'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"CONTRA"</span><span class="p">),</span>
+        <span class="s">'HOST'</span><span class="p">:</span> <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'HOST'</span><span class="p">),</span>
+        <span class="s">'PORT'</span><span class="p">:</span> <span class="s">'3306'</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ALLOWED_HOSTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">"ALLOWED_HOSTS"</span><span class="p">)]</span>
+</code></pre></div></div>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">STATIC_ROOT</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="s">'static'</span><span class="p">)</span>
+<span class="n">STATIC_URL</span> <span class="o">=</span> <span class="s">'/static/'</span>
+<span class="n">CSRF_TRUSTED_ORIGINS</span> <span class="o">=</span> <span class="p">[</span><span class="s">'http://*.mariatec.es'</span><span class="p">,</span><span class="s">'http://*.127.0.0.1'</span><span class="p">,</span><span class="s">'https://*.mariatec.es'</span><span class="p">,</span><span class="s">'https://*.127.0.0.1'</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>La estructura del directorio de la aplicación web es la siguiente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── practica2
+│   ├── django_tutorial
+│   │   ├── manage.py
+│   │   ├── requirements.txt
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── polls.sh
+</code></pre></div></div>
+
+<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code> a partir de la imagen de Python:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">FROM python:3</span>
+<span class="s">WORKDIR /usr/src/app</span>
+<span class="s">MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com'</span>
+<span class="s">RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient</span>
+<span class="s">RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static</span>
+<span class="s">ADD ./polls.sh /usr/src/app/</span>
+<span class="s">RUN chmod +x /usr/src/app/polls.sh</span>
+<span class="s">ENV ALLOWED_HOSTS=*</span>
+<span class="s">ENV HOST=mariadb</span>
+<span class="s">ENV USUARIO=django</span>
+<span class="s">ENV CONTRA=django</span>
+<span class="s">ENV BASE_DATOS=django</span>
+<span class="s">ENV DJANGO_SUPERUSER_PASSWORD=admin</span>
+<span class="s">ENV DJANGO_SUPERUSER_USERNAME=admin</span>
+<span class="s">ENV DJANGO_SUPERUSER_EMAIL=admin@example.org</span>
+<span class="s">ENTRYPOINT ["/usr/src/app/polls.sh"]</span>
+</code></pre></div></div>
+
+<p>Una vez terminado de crear el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code>, creamos el fichero <code class="language-plaintext highlighter-rouge">django_polls.sh</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py createsuperuser <span class="nt">--noinput</span>
+python3 manage.py collectstatic <span class="nt">--noinput</span>
+python3 manage.py runserver 0.0.0.0:8006
+</code></pre></div></div>
+
+<p>Creamos la imagen de Docker:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/django:v1 <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p2/1.png" alt="1" /></p>
+
+<p>Ejecutando <code class="language-plaintext highlighter-rouge">docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1</code> podemos ver que la aplicación se ejecuta correctamente.</p>
+
+<p><img src="/assets/images/docker/p2/2.png" alt="2" /></p>
+
+<p>Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi docker-compose.yml
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.7'</span>
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">django-tutorial</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">django-tutorial</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/django:v1</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">ALLOWED_HOSTS</span><span class="pi">:</span> <span class="s2">"</span><span class="s">*"</span>
+      <span class="na">HOST</span><span class="pi">:</span> <span class="s">bd_mariadb_django</span>
+      <span class="na">USUARIO</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">CONTRA</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">BASE_DATOS</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">DJANGO_SUPERUSER_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DJANGO_SUPERUSER_USERNAME</span><span class="pi">:</span> <span class="s">admin</span>
+      <span class="na">DJANGO_SUPERUSER_EMAIL</span><span class="pi">:</span> <span class="s">admin@admin.org</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">8084:8006</span>
+    <span class="na">depends_on</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db_django</span>
+  <span class="na">db_django</span><span class="pi">:</span>
+    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb_django</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:latest</span>
+    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
+      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">django</span>
+      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">django</span>
+    <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">mariadb_data_django:/var/lib/mysql</span>
+    <span class="na">networks</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">net-mariatec</span>
+<span class="na">volumes</span><span class="pi">:</span>
+    <span class="na">mariadb_data_django</span><span class="pi">:</span>
+<span class="na">netwoks</span><span class="pi">:</span>
+  <span class="na">net-mariatec</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">net-mariatec</span>
+    <span class="na">external</span><span class="pi">:</span> <span class="no">true</span>
+</code></pre></div></div>
+
+<p>Levantamos el escenario de nuestro entorno de desarrollo con <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y podemos comprobar que todo funciona correctamente.</p>
+
+<p><img src="/assets/images/docker/p2/3.png" alt="3" /></p>
+
+<p><img src="/assets/images/docker/p2/4.png" alt="4" /></p>
+
+<p>Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yml</code> y podemos ver que accedemos y podemos crear nuevas encuestas.</p>
+
+<p><img src="/assets/images/docker/p2/5.png" alt="5" /></p>
+
+<h2 id="entorno-de-producción">Entorno de producción</h2>
+
+<p>Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación.</p>
+
+<p>Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior.</p>
+
+<p>⬜️ django.mariatec.es        CNAME    mariatec.es</p>
+
+<p>Generamos el certificado SSL para poder acceder a la aplicación desde el exterior.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> django.mariatec.com
+</code></pre></div></div>
+
+<p><img src="/assets/images/docker/p2/6.png" alt="6" /></p>
+
+<p>Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nginx/sites-available/django.mariatec.es
+</code></pre></div></div>
+
+<p>recuerda que debe ser escuchado por elpuerto 8084.</p>
+
+<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+        <span class="kn">listen</span> <span class="s">[::]:80</span><span class="p">;</span>
+
+        <span class="kn">server_name</span> <span class="s">django.mariatec.es</span><span class="p">;</span>
+
+        <span class="kn">return</span> <span class="mi">301</span> <span class="s">https://</span><span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">443</span> <span class="s">ssl</span> <span class="s">http2</span><span class="p">;</span>
+        <span class="kn">listen</span> <span class="s">[::]:443</span> <span class="s">ssl</span> <span class="s">http2</span><span class="p">;</span>
+
+        <span class="kn">ssl</span>    <span class="no">on</span><span class="p">;</span>
+        <span class="kn">ssl_certificate</span> <span class="n">/etc/letsencrypt/live/django.mariatec.es/fullchain.pem</span><span class="p">;</span>
+        <span class="kn">ssl_certificate_key</span> <span class="n">/etc/letsencrypt/live/django.mariatec.es/privkey.pem</span><span class="p">;</span>
+
+        <span class="kn">index</span> <span class="s">index.html</span> <span class="s">index.php</span> <span class="s">index.htm</span> <span class="s">index.nginx-debian.html</span><span class="p">;</span>
+
+        <span class="kn">server_name</span> <span class="s">django.mariatec.es</span><span class="p">;</span>
+
+        <span class="kn">location</span> <span class="n">/</span> <span class="p">{</span>
+                <span class="kn">proxy_pass</span> <span class="s">http://localhost:8084</span><span class="p">;</span>
+                <span class="kn">include</span> <span class="s">proxy_params</span><span class="p">;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django
+
+systemctl restart nginx
+</code></pre></div></div>
+
+<p>Si accedemos desde nuestro navegador a la dirección <code class="language-plaintext highlighter-rouge">https://django.mariatec.es</code> podemos ver que accedemos a la aplicación.</p>
+
+<p><img src="/assets/images/docker/p2/7.png" alt="7" /></p>
+
+<p>Y que podemos acceder a la zona de administración.</p>
+
+<p><img src="/assets/images/docker/p2/8.png" alt="8" /></p>
+
+<p><img src="/assets/images/docker/p2/9.png" alt="9" /></p>
+
+<p><img src="/assets/images/docker/p2/10.png" alt="10" /></p>
+
+<p><img src="/assets/images/docker/p2/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get("BASE_DATOS"), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get("CONTRA"), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS=* ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT ["/usr/src/app/polls.sh"] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: "*" HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a>. Crearemos una imagen Docker para implementar dicha aplicación.</p>
 
@@ -2875,189 +3103,4 @@ systemctl restart nginx
 
     <p><img src="/assets/images/almacenamiento/taller1/9.png" alt="9" /></p>
   </li>
-</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt]]></summary></entry><entry><title type="html">VPN sitio a sitio con WireGuard</title><link href="/seguridad/2023/01/13/vpn-d.html" rel="alternate" type="text/html" title="VPN sitio a sitio con WireGuard" /><published>2023-01-13T12:47:17+01:00</published><updated>2023-01-13T12:47:17+01:00</updated><id>/seguridad/2023/01/13/vpn-d</id><content type="html" xml:base="/seguridad/2023/01/13/vpn-d.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este post vamos a configurar una VPN site to site con wireguard. Para ello vamos a hacer uso de máquinas vagrant para montar el escenario.</p>
-
-<h2 id="escenario">Escenario</h2>
-
-<p>Vamos a dividir el escenario en dos, por una parte, un escenario que actuará de servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-        libvirt.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.10"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
-      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente"</span>
-      nodo2.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadavpn"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.30.0.11"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-end
-</code></pre></div></div>
-
-<p>Y por otra parte, un escenario que actuará de cliente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
-    config.vm.provider :libvirt <span class="k">do</span> |libvirt|
-        libvirt.memory <span class="o">=</span> 1024
-    end
-    config.vm.define :nodo1 <span class="k">do</span> |nodo1|
-      nodo1.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo1.vm.hostname <span class="o">=</span> <span class="s2">"Servidor2"</span>
-      nodo1.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo1.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.10"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-    end
-    config.vm.define :nodo2 <span class="k">do</span> |nodo2|
-      nodo2.vm.synced_folder <span class="s2">"."</span>, <span class="s2">"/vagrant"</span>, disabled: <span class="nb">true
-      </span>nodo2.vm.box <span class="o">=</span> <span class="s2">"debian/bullseye64"</span>
-      nodo2.vm.hostname <span class="o">=</span> <span class="s2">"Cliente2"</span>
-      nodo2.vm.network :private_network,
-        :libvirt__network_name <span class="o">=&gt;</span> <span class="s2">"privadvpn2"</span>,
-        :libvirt__dhcp_enabled <span class="o">=&gt;</span> <span class="nb">false</span>,
-        :ip <span class="o">=&gt;</span> <span class="s2">"172.20.0.11"</span>,
-        :netmask <span class="o">=&gt;</span> <span class="s2">"255.255.255.0"</span>,
-        :libvirt__forward_mode <span class="o">=&gt;</span> <span class="s2">"veryisolated"</span>
-     end
-end
-</code></pre></div></div>
-
-<p>Comenzaremos cambiando las rutas por defecto en las máquinas <code class="language-plaintext highlighter-rouge">cliente1</code> y <code class="language-plaintext highlighter-rouge">cliente2</code> para que se dirijan a la máquina <code class="language-plaintext highlighter-rouge">servidor1</code> y <code class="language-plaintext highlighter-rouge">servidor2</code> respectivamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#cliente1</span>
-ip r del default
-ip r add default via 172.30.0.10
-
-<span class="c">#cliente2</span>
-ip r del default
-ip r add default via 172.20.0.10
-</code></pre></div></div>
-
-<h2 id="configuración-del-servidor-1">Configuración del servidor 1</h2>
-
-<p>Instalaremos wireguard en el <code class="language-plaintext highlighter-rouge">servidor1</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
-</code></pre></div></div>
-
-<p>Y activamos el bit de forwarding en el kernel:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Tras ello, generaremos el par de claves pública y privada para el servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>serverprivate | wg pubkey <span class="o">&gt;</span> serverpublic
-</code></pre></div></div>
-
-<p>Ya obtenidas, crearemos el fichero de configuración del servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
-</code></pre></div></div>
-
-<p>Y añadiremos lo siguiente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-Address <span class="o">=</span> 10.99.99.1
-PrivateKey <span class="o">=</span> IHIpGRRZZ/GPIHCL8d9K+Ukd3hcav2Cki9MmOIf5Xns<span class="o">=</span>
-ListenPort <span class="o">=</span> 51820
-</code></pre></div></div>
-
-<p>Levantamos el servicio y comprobamos que está funcionando correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
-wg
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/D/1.png" alt="1" /></p>
-
-<h2 id="configuración-del-servidor-2">Configuración del servidor 2</h2>
-
-<p>Instalaremos wireguard en el <code class="language-plaintext highlighter-rouge">servidor2</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>wireguard
-</code></pre></div></div>
-
-<p>Y activamos el bit de forwarding en el kernel:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 <span class="o">&gt;</span> /proc/sys/net/ipv4/ip_forward
-</code></pre></div></div>
-
-<p>Tras ello, generaremos el par de claves pública y privada para el servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg genkey | <span class="nb">tee </span>clientprivate | wg pubkey <span class="o">&gt;</span> clientpublic
-</code></pre></div></div>
-
-<p>Ya obtenidas, crearemos el fichero de configuración del servidor:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano wg0.conf
-</code></pre></div></div>
-
-<p>Y añadiremos lo siguiente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Interface]
-Address <span class="o">=</span> 10.99.99.2 
-<span class="c"># Clave privada del servidor</span>
-PrivateKey <span class="o">=</span> yO6u4QrwRwHef6WfPkZlcE6k/FET8ZnhcH2JUpp4VGI<span class="o">=</span>
-ListenPort <span class="o">=</span> 51820
-
-<span class="o">[</span>Peer]
-<span class="c"># Clave pública del cliente</span>
-PublicKey <span class="o">=</span> <span class="nv">FzKmyNQaz9UdnkB4J0oH6WoPAp2XRP4ZerqfZM5k0h4</span><span class="o">=</span>
-AllowedIPs <span class="o">=</span> 0.0.0.0/0
-Endpoint <span class="o">=</span> 192.168.121.98:51820
-</code></pre></div></div>
-
-<p>Levantamos el servicio y comprobamos que está funcionando correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wg-quick up wg0
-wg
-</code></pre></div></div>
-
-<p><img src="/assets/images/vpn/D/2.png" alt="2" /></p>
-
-<h2 id="comprobación-de-la-conexión">Comprobación de la conexión</h2>
-
-<p>Para comprobar que la conexión funciona correctamente, ejecutaremos el comando <code class="language-plaintext highlighter-rouge">ping</code> desde el <code class="language-plaintext highlighter-rouge">cliente1</code> hacia el <code class="language-plaintext highlighter-rouge">cliente2</code>:</p>
-
-<p><img src="/assets/images/vpn/D/3.png" alt="3" /></p>
-
-<p><img src="/assets/images/vpn/D/4.png" alt="4" /></p>
-
-<h2 id="comparando-con-openvpn">Comparando con OpenVPN</h2>
-
-<p>Tras haber realizado el mismo escenario con OpenVPN, hemos obtenido los siguientes resultados:</p>
-<ul>
-  <li>El tiempo de conexión es mucho mayor en OpenVPN que en Wireguard.</li>
-  <li>El ancho de banda es mucho mayor en Wireguard que en OpenVPN.</li>
-  <li>El consumo de CPU es mucho menor en Wireguard que en OpenVPN.</li>
-</ul>
-
-<p>Todo esto podemos traducirlo en que Wireguard es mucho más rápido y eficiente que OpenVPN. Además, Wireguard es mucho más sencillo de configurar que OpenVPN.</p>
-
-<p>Es cierto que Wiereguard no es tan seguro como OpenVPN, pero para la mayoría de los usuarios, la seguridad no es un problema. Además, Wireguard está en constante desarrollo y se espera que en un futuro sea mucho más seguro que OpenVPN.</p>
-
-<p>Además de su seguridad, OpenVPN tiene una gran ventaja sobre Wireguard: es multiplataforma. Esto quiere decir que podemos utilizar OpenVPN en cualquier sistema operativo, mientras que Wireguard solo está disponible para Linux.</p>
-
-<p>En resumen, Wireguar es una muy buena alternativa frente a OpenVPN y se espera que en un futuro de bastante prontitud, Wireguard se convierta en la VPN por defecto de Linux. Es de facil configuración, y es mucho mas eficiente que OpenVPN en cuanto a rendimiento y consumo de recursos.</p>]]></content><author><name></name></author><category term="SEGURIDAD" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt]]></summary></entry></feed>
