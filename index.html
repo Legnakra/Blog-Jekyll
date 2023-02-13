@@ -966,6 +966,170 @@ En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vay
 
 
 <h2 class="post-title">
+        <a class="post-link" href="/sri/2023/02/02/kubernetes-pods.html">
+          Taller Kubernetes: Trabajando con Pods
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Feb 2, 2023</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <a class="post-excerpt" href="/sri/2023/02/02/kubernetes-pods.html">
+        <p>
+        Introducción
+
+Un Pod en kubernetes es un grupo de uno o más contenedores que comparten un espacio de red y espacio de almacenamiento. Los Pods son la unidad de despliegue en Kubernetes. Un Pod representa un proceso en ejecución en su clúster.
+
+En este post vamos a crear un Pod en Kubernetes y para ello, vamos a desplegar una imagen que nos ofrec... <span class="read_more">Leer más</span>
+        </p>
+      </a>
+      <div class="post-tags"></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html">
+          Kubernetes: Instalación y configuración de minikube y kubectl
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Feb 1, 2023</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+      </div>
+      <a class="post-excerpt" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html">
+        <p>
+        Introducción
+
+Como nos cuentan en su página oficial,Kubernetes es una plataforma de orquestación de contenedores de código abierto que automatiza la implementación, la gestión y el escalado de aplicaciones en contenedores. Dicho de otra manera, es un sistema de administración de clústeres que mantiene las cargas de trabajo en ejecución y es un g... <span class="read_more">Leer más</span>
+        </p>
+      </a>
+      <div class="post-tags"></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
         <a class="post-link" href="/hlc+sri/2023/01/29/DRBD+OCFS2.html">
           Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2
         </a>
@@ -1395,27 +1559,35 @@ Para ello, crearemos un usuario denominado prueba y configuraremos una máquina 
 
 
 <h2 class="post-title">
-        <a class="post-link" href="/hlc+sri/2023/01/22/servidor-correo.html">
-          Configuración de un servidor de correo en un VPS
+        <a class="post-link" href="/hlc+sri/2023/01/21/almacenamiento.html">
+          Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt
         </a>
       </h2>
       <div class="post-meta">
-        <span class="post-date"><i class="fa fa-calendar"></i> Jan 22, 2023</span>
-        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
+        <span class="post-date"><i class="fa fa-calendar"></i> Jan 21, 2023</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
       </div>
-      <a class="post-excerpt" href="/hlc+sri/2023/01/22/servidor-correo.html">
+      <a class="post-excerpt" href="/hlc+sri/2023/01/21/almacenamiento.html">
         <p>
-        Introducción
+        Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt
 
-En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será mail.mariatec.es, que será el nombre que aparecerá en el registro MX.
 
-Gestión de correos desde el servidor
+  Vamos a crear un pool de almacenamiento lógico. Para ello, lo más fácil, es tener un grupo de volúmenes con espacio libre.
 
-El envío y recepción se hará desde el servidor a trávés de la herramienta mail.
 
-Gestión de correos desde el servidor
 
-Tarea ... <span class="read_more">Leer más</span>
+  
+    Listamos los grupos de volúmenes.
+
+      vgs
+    
+
+    
+  
+  
+    Creamos un pool de almacenamiento lógico.
+
+      virsh -c qemu:///system pool-... <span class="read_more">Leer más</span>
         </p>
       </a>
       <div class="post-tags"></div>
@@ -1484,35 +1656,27 @@ Tarea ... <span class="read_more">Leer más</span>
 
 
 <h2 class="post-title">
-        <a class="post-link" href="/hlc+sri/2023/01/21/almacenamiento.html">
-          Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt
+        <a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html">
+          Configuración de un servidor de correo en un VPS
         </a>
       </h2>
       <div class="post-meta">
-        <span class="post-date"><i class="fa fa-calendar"></i> Jan 21, 2023</span>
-        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+        <span class="post-date"><i class="fa fa-calendar"></i> Jan 15, 2023</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
       </div>
-      <a class="post-excerpt" href="/hlc+sri/2023/01/21/almacenamiento.html">
+      <a class="post-excerpt" href="/hlc+sri/2023/01/15/servidor-correo.html">
         <p>
-        Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt
+        Introducción
 
+En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será mail.mariatec.es, que será el nombre que aparecerá en el registro MX.
 
-  Vamos a crear un pool de almacenamiento lógico. Para ello, lo más fácil, es tener un grupo de volúmenes con espacio libre.
+Gestión de correos desde el servidor
 
+El envío y recepción se hará desde el servidor a trávés de la herramienta mail.
 
+Gestión de correos desde el servidor
 
-  
-    Listamos los grupos de volúmenes.
-
-      vgs
-    
-
-    
-  
-  
-    Creamos un pool de almacenamiento lógico.
-
-      virsh -c qemu:///system pool-... <span class="read_more">Leer más</span>
+Tarea ... <span class="read_more">Leer más</span>
         </p>
       </a>
       <div class="post-tags"></div>
@@ -4584,7 +4748,7 @@ Diseño:
   <ul>
     <li>
       <a href="/index.html">
-        All<span>45</span>
+        All<span>47</span>
       </a>
     </li>
 
@@ -4603,7 +4767,7 @@ Diseño:
     
       <li>
         <a href="/categories.html#h-HLC+SRI">
-          HLC+SRI <span>14</span>
+          HLC+SRI <span>15</span>
         </a>
       </li>
     
@@ -4634,6 +4798,12 @@ Diseño:
       <li>
         <a href="/categories.html#h-SOBRE-MI">
           SOBRE-MI <span>1</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-SRI">
+          SRI <span>1</span>
         </a>
       </li>
     

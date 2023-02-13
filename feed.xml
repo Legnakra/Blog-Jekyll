@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-12T18:37:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-13T10:37:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -835,7 +835,229 @@ olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <s
   <li>
     <p>XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.</p>
   </li>
-</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o incluso una máquina virtual. Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc. Logical Files: Incluye la imagen de cualquier carpeta o archivo local. Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo Ingest. Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas. XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o incluso una máquina virtual. Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc. Logical Files: Incluye la imagen de cualquier carpeta o archivo local. Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo Ingest. Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas. XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Pods</title><link href="/sri/2023/02/02/kubernetes-pods.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Pods" /><published>2023-02-02T16:45:16+01:00</published><updated>2023-02-02T16:45:16+01:00</updated><id>/sri/2023/02/02/kubernetes-pods</id><content type="html" xml:base="/sri/2023/02/02/kubernetes-pods.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>Un Pod en kubernetes es un grupo de uno o más contenedores que comparten un espacio de red y espacio de almacenamiento. Los Pods son la unidad de despliegue en Kubernetes. Un Pod representa un proceso en ejecución en su clúster.</p>
+
+<p>En este post vamos a crear un Pod en Kubernetes y para ello, vamos a desplegar una imagen que nos ofrece un servidor web con una página estática.</p>
+
+<h2 id="preparamos-el-entorno">Preparamos el entorno</h2>
+
+<h3 id="instalando-kubernetes">Instalando kubernetes</h3>
+
+<p>Para poder trabajar con Kubernetes, vamos a instalarlo a de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubernetes
+</code></pre></div></div>
+
+<h3 id="instalando-kubectl">Instalando kubectl</h3>
+
+<p>Para poder trabajar con Kubernetes, vamos a utilizar la herramienta <code class="language-plaintext highlighter-rouge">kubectl</code>. Para instalarla, vamosa hacerlo a través de apt:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubectl
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/1.png" alt="1" /></p>
+
+<h3 id="creando-un-pod">Creando un Pod</h3>
+
+<p>Lo primero que vamos a hacer, es crear un fichero yaml con la descripción del recurso Pod, teniendo en cuenta lo siguiente:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Los pods deben tener distinto nombre que el del contenedor.
+- La imagen que vamos a desplegar es `iesgn/test_web:latest`.
+- Le asignaremos una etiqueta en la descripción del Pod.
+</code></pre></div></div>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">test-web</span>
+<span class="na">spec</span><span class="pi">:</span>
+    <span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
+        <span class="s">image</span><span class="err">:</span> <span class="s">iesgn/test_web:latest</span>
+        <span class="s">ports</span><span class="err">:</span>
+        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div></div>
+
+<p>Una vez creado el fichero, vamos a crear el Pod en nuestro clúster de Kubernetes.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl create <span class="nt">-f</span> test-web.yaml
+
+pod/test-web created
+</code></pre></div></div>
+
+<h3 id="comprobando-el-estado-del-pod">Comprobando el estado del Pod</h3>
+
+<p>Para comprobar el estado del Pod, podemos ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl get pods
+
+NAME       READY   STATUS    RESTARTS   AGE
+test-web   1/1     Running   0          2m
+</code></pre></div></div>
+
+<p>Como podemos ver, el Pod se ha creado correctamente y está en estado <code class="language-plaintext highlighter-rouge">Running</code>.</p>
+
+<h3 id="obteniendo-información-del-pod">Obteniendo información del Pod</h3>
+
+<p>Para obtener información del Pod, podemos ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl describe pod test-web
+</code></pre></div></div>
+
+<h3 id="accediendo-al-pod">Accediendo al Pod</h3>
+
+<p>En esta ocasión, vamos a acceder de forma interactiva y comprobaremos los ficheros que están en el <code class="language-plaintext highlighter-rouge">DocumentRoot</code> del servidor web.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl <span class="nb">exec</span> <span class="nt">-it</span> test-web <span class="nt">--</span> /bin/bash
+
+<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /usr/local/apache2/htdocs/
+</code></pre></div></div>
+
+<h3 id="creando-una-redirección">Creando una redirección</h3>
+
+<p>Vamos a crear una redirección con <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> para poder acceder al Pod desde el navegador. Utilizaremos el puerto 8888 del localhost y redirigiremos el puerto 80 del Pod.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl port-forward test-web 8888:80
+</code></pre></div></div>
+
+<p>Ahora, podemos acceder al Pod desde el navegador con la siguiente URL: <code class="language-plaintext highlighter-rouge">http://localhost:8888</code>.</p>
+
+<h3 id="mostrando-los-logs-del-pod">Mostrando los logs del Pod</h3>
+
+<p>Para mostrar los logs del Pod, podemos ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl logs test-web
+</code></pre></div></div>
+
+<p>De esta manera, podemos ver los logs del servidor web que hemos desplegado.</p>
+
+<h3 id="eliminando-el-pod">Eliminando el Pod</h3>
+
+<p>Para eliminar el Pod, podemos ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl delete pod test-web
+
+pod <span class="s2">"test-web"</span> deleted
+</code></pre></div></div>
+
+<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Instalación y configuración de minikube y kubectl</title><link href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" rel="alternate" type="text/html" title="Kubernetes: Instalación y configuración de minikube y kubectl" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-instalacion</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>Como nos cuentan en su <a href="https://kubernetes.io/es/">página oficial</a>,Kubernetes es una plataforma de orquestación de contenedores de código abierto que automatiza la implementación, la gestión y el escalado de aplicaciones en contenedores. Dicho de otra manera, es un sistema de administración de clústeres que mantiene las cargas de trabajo en ejecución y es un gran problema en DevOps.</p>
+
+<p>A medida que la adopción nativa de la nube sigue aumentando, Kubernetes se ha convertido en la plataforma de infraestructura de más rápido crecimiento. Un informe de Cloud Native Computing Foundation (CNCF) descubrió que para 2020, más del 90 % de las organizaciones encuestadas usaban Kubernetes.</p>
+
+<h2 id="instalación">Instalación</h2>
+
+<h3 id="instalando-minikube">Instalando minikube</h3>
+
+<p>Vamos a instalar minikube en nuestro sistema operativo. En mi caso, os voy a mostrar cómo hacerlo en Debian 11. Para ello, vamos a realizar los siguientes pasos:</p>
+
+<ol>
+  <li>
+    <p>Descargar el binario de minikube desde su <a href="https://minikube.sigs.k8s.io/docs/start/">página oficial</a>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> curl <span class="nt">-LO</span> https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Instalar el binario en el sistema.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo install </span>minikube-linux-amd64 /usr/local/bin/minikube
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobar que se ha instalado correctamente.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube version
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Iniciamos un clúster de Kubernetes con minikube.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube start <span class="nt">--driver</span><span class="o">=</span>kvm2
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Comprobamos su estado.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube status
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/3.png" alt="3" /></p>
+  </li>
+</ol>
+
+<h3 id="instalando-kubectl">Instalando kubectl</h3>
+
+<p>Para instalar kubectl, vamos a realizar los siguientes pasos:</p>
+
+<ol>
+  <li>
+    <p>Instalamos kubernetes-client en nuestro sistema.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>kubernetes-client
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que se ha instalado correctamente.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl version
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/4.png" alt="4" /></p>
+
+    <p>Si visualizamos el fichero que se nos ha creado en nuestro directorio <code class="language-plaintext highlighter-rouge">/home</code>, veremos que se ha creado un fichero de configuración en .kube.</p>
+
+    <p><img src="/assets/images/kubernetes/instalacion/5.png" alt="5" /></p>
+
+    <p>En este fichero se encuentra la configuración de nuestro clúster de Kubernetes.</p>
+  </li>
+</ol>
+
+<h3 id="comandos-básicos">Comandos básicos</h3>
+
+<ul>
+  <li>Muestra la IP del clúster.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes <span class="nt">-o</span> wide
+</code></pre></div></div>
+
+<ul>
+  <li>Muestra los pods que se están ejecutando en el clúster.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods
+</code></pre></div></div>
+
+<ul>
+  <li>Muestra los servicios que se están ejecutando en el clúster.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get services
+</code></pre></div></div>
+
+<ul>
+  <li>Muestra los deployments que se están ejecutando en el clúster.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get deployments
+</code></pre></div></div>
+
+<ul>
+  <li>Borra todos los deployments que se están ejecutando en el clúster.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete all <span class="nt">--all</span> <span class="nt">--all-namespaces</span>
+</code></pre></div></div>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
 
@@ -2385,722 +2607,4 @@ systemctl <span class="nb">enable </span>home-nfs.mount
 
 <p>[1] <a href="https://www.openldap.org/">https://www.openldap.org/</a></p>
 
-<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado usuarios.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry><entry><title type="html">Configuración de un servidor de correo en un VPS</title><link href="/hlc+sri/2023/01/22/servidor-correo.html" rel="alternate" type="text/html" title="Configuración de un servidor de correo en un VPS" /><published>2023-01-22T12:47:17+01:00</published><updated>2023-01-22T12:47:17+01:00</updated><id>/hlc+sri/2023/01/22/servidor-correo</id><content type="html" xml:base="/hlc+sri/2023/01/22/servidor-correo.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este post vamos a configurar un servidor de correos en nuestro VPS. El nombre del servidor será <code class="language-plaintext highlighter-rouge">mail.mariatec.es</code>, que será el nombre que aparecerá en el registro MX.</p>
-
-<h2 id="gestión-de-correos-desde-el-servidor">Gestión de correos desde el servidor</h2>
-
-<p>El envío y recepción se hará desde el servidor a trávés de la herramienta <code class="language-plaintext highlighter-rouge">mail</code>.</p>
-
-<h2 id="gestión-de-correos-desde-el-servidor-1">Gestión de correos desde el servidor</h2>
-
-<h3 id="tarea-1">Tarea 1</h3>
-
-<p>Lo primero que deberemos hacer es realizar un registro DNS en nuestro dominio y añadir un registro <code class="language-plaintext highlighter-rouge">A</code> con el nombre <code class="language-plaintext highlighter-rouge">mail</code> y la IP del servidor.</p>
-
-<p>🔲 mail.mariatec.es     A       82.223.1.72</p>
-
-<p>Y agregamos un registro SPF para evitar que nuestro servidor sea utilizado como servidor de spam.</p>
-
-<p>🔲 mariatec.es     SPF     “v=spf1 ip4:82.223.1.72 -all”</p>
-
-<p><img src="/assets/images/correo/correo/1.png" alt="1" /></p>
-
-<p>Abrimos el puerto 25 en el cortafuegos del servidor y configuramos el registro PTR con el fqdn de nuestro VPS.</p>
-
-<p><img src="/assets/images/correo/correo/2.png" alt="2" /></p>
-
-<p>Una vez terminado esto, nos conectamos a nuestro VPS y comentamos con la configuración:</p>
-
-<ul>
-  <li>
-    <p>Instalamos postfix y bsd-mailx</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>postfix bsd-mailx
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<p><strong>NOTA</strong>: Recuerda que al instalar postfix te pedirá que configures el servidor de correo. En nuestro caso, seleccionamos la opción <code class="language-plaintext highlighter-rouge">Internet Site</code> y el nombre del dominio será <code class="language-plaintext highlighter-rouge">mariatec.es</code>.</p>
-
-<ul>
-  <li>
-    <p>Enviaremos un correo a nuestro correo personal para comprobar que todo funciona correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"Hola, esto es una prueba"</span> | mail <span class="nt">-s</span> <span class="s2">"Prueba"</span>
-</code></pre></div>    </div>
-
-    <p>Como podemos ver en la siguiente imagen, en el log del correo aparece el correo que hemos enviado y que ha sido recibido correctamente.</p>
-
-    <p><img src="/assets/images/correo/correo/3.png" alt="3" /></p>
-
-    <p><img src="/assets/images/correo/correo/4.png" alt="4" /></p>
-  </li>
-</ul>
-
-<h3 id="tarea-2">Tarea 2</h3>
-
-<p>En esta tarea, deberemos cerciorarnos de que podemos recibir correos ennuestro servidor VPS y por ello, vamos a usar el servicio de correo de gmail. Para que esto sea posible, deberemos realizar un nuevo registro MX 10 en nuestro dominio.</p>
-
-<p>🔲 mariatec.es     MX 10    mail.mariatec.es</p>
-
-<p>Para comprobar qeu funciona, accedemos a nuestra cuenta personal de correo y enviamos un correo a nuestro servidor.</p>
-
-<p><img src="/assets/images/correo/correo/4.png" alt="4" /></p>
-
-<p>Y desde nuestra consola, nos enviaremos un correo y podemos ver que ha llegado correctamente:</p>
-
-<p><img src="/assets/images/correo/correo/5.png" alt="5" /></p>
-
-<p><img src="/assets/images/correo/correo/6.png" alt="6" /></p>
-
-<h2 id="uso-de-alias-y-redirecciones">Uso de alias y redirecciones</h2>
-
-<h3 id="tarea-3">Tarea 3</h3>
-
-<p>Para completar esta tarea, configuraremos, mediante <code class="language-plaintext highlighter-rouge">cron</code>, un script que nos permita enviar un correo cada minuto con la fecha y hora actual. Para ello, crearemos un script en <code class="language-plaintext highlighter-rouge">/usr/local/bin</code> que se llame <code class="language-plaintext highlighter-rouge">cronmail.sh</code> y que tenga el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
-<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
-<span class="nb">echo</span> <span class="s2">"Fecha y hora actual: </span><span class="si">$(</span><span class="nb">date</span><span class="si">)</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
-<span class="nb">echo</span> <span class="s2">"Uptime: </span><span class="si">$(</span><span class="nb">uptime</span><span class="si">)</span><span class="s2">"</span>
-<span class="nb">echo</span> <span class="s2">"=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_="</span>
-<span class="nb">echo</span> <span class="s2">"Estado de los procesos:"</span>
-ps
-</code></pre></div></div>
-
-<p>Le damos permisos de ejecución y comprobamos que funciona correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod</span> +x /root/cronmail.sh
-<span class="nt">---</span>
-bash /root/cronmail.sh
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/7.png" alt="7" /></p>
-
-<p>Ahora, crearemos un archivo en <code class="language-plaintext highlighter-rouge">/etc/cron.d</code> que se llame <code class="language-plaintext highlighter-rouge">cronmail</code> y que tenga el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">MAILTO</span><span class="o">=</span>root
-<span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> root /root/cronmail.sh
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/8.png" alt="8" /></p>
-
-<p>Esperamos un minuto y comprobamos que el correo ha llegado correctamente:</p>
-
-<p><img src="/assets/images/correo/correo/9.png" alt="9" /></p>
-
-<p>Lo que hemos hecho es crear un script que se ejecuta cada minuto y que envía un correo con la fecha y hora actual, el uptime del servidor y el estado de los procesos.</p>
-
-<p>El paso que viene ahora crear un alias para que los correos que se envíen a <code class="language-plaintext highlighter-rouge">root</code> se envíen a nuestro correo personal.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/aliases
-<span class="nt">---</span>
-root:   mariajesus
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/10.png" alt="10" /></p>
-
-<p>Ejecutamos <code class="language-plaintext highlighter-rouge">newaliases</code> para que se actualice el archivo de alias y comprobamos que funciona correctamente:</p>
-
-<p><img src="/assets/images/correo/correo/11.png" alt="11" /></p>
-
-<p><img src="/assets/images/correo/correo/12.png" alt="12" /></p>
-
-<p>Por último, creamos una redirección para que los correos que se envíen a <code class="language-plaintext highlighter-rouge">root</code> se envíen a nuestro correo personal.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /home/mariajesus/.forward
-<span class="nt">---</span>
-correo@gmail.com
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/13.png" alt="13" /></p>
-
-<h2 id="para-asegurar-el-envío">Para asegurar el envío</h2>
-
-<h3 id="tarea-4">Tarea 4</h3>
-
-<p>En esta tarea, deberemos configurar el DomainKeys Identified Mail (DKIM) para que los correos que envíe nuestro servidor sean firmados digitalmente. Para ello, instalaremos el paquete <code class="language-plaintext highlighter-rouge">opendkim</code> y <code class="language-plaintext highlighter-rouge">opendkim-tools</code> y crearemos un archivo de configuración en <code class="language-plaintext highlighter-rouge">/etc/opendkim.conf</code> que tenga el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>opendkim opendkim-tools <span class="nt">-y</span>
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Domain mariatec.es
-Selector dkim2023
-KeyFile /etc/dkimkeys/dkim2023.private
-<span class="c">#Socket local:/var/opendkim/opendkim.sock</span>
-Socket inet:8891@localhost
-PidFile /var/opendkim/opendkim.pid
-TrustAnchorFile /usr/share/dns/root.key
-</code></pre></div></div>
-
-<p>Tras esto, modificaremos el archivo <code class="language-plaintext highlighter-rouge">/etc/default/opendkim</code> para que se ejecute en el puerto 8891 y no en el socket local.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SOCKET</span><span class="o">=</span>inet:8891@localhost
-</code></pre></div></div>
-
-<p>Y modificamos el archivo <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para señalar el modo de firma de los correos y el puerto en el que se ejecuta el servicio de <code class="language-plaintext highlighter-rouge">opendkim</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>milter_default_action <span class="o">=</span> accept
-milter_protocol <span class="o">=</span> 2
-smtpd_milters <span class="o">=</span> inet:localhost:8891
-non_smtpd_milters <span class="o">=</span> <span class="nv">$smtpd_milters</span>
-</code></pre></div></div>
-
-<p>Cuando tengamos todo esto configurado, generamos la clave privada y pública para el selector <code class="language-plaintext highlighter-rouge">dkim2023</code>. También le cambiamos el propietario al usuario <code class="language-plaintext highlighter-rouge">opendkim</code> y reiniciamos los servicios.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /etc/dkimkeys
-opendkim-genkey <span class="nt">-s</span> dkim2023 <span class="nt">-d</span> mariatec.es <span class="nt">-b</span> 2048
-<span class="nb">chown </span>opendkim:opendkim dkim2023.private dkim2023.txt
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/14.png" alt="14" /></p>
-
-<p>Para que postfix pueda usar la clave, deberá tener la siguiente estructura:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dkim2023._domainkey     IN      TXT     <span class="o">(</span> <span class="s2">"v=DKIM1; h=sha256; k=rsa; "</span>
-          <span class="s2">"p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3gaVO68xhAlj7yNqNHEPh2zJDF+Mz5Zt9nsb54fElkvjUhAWUc+YiQ2yb+5tSo2EXjZV8LZCogkdKWkJniAmID/ZcyxZZB3XDa7nWpVJGF1JlOPXw+gJonq3Pdii945bIBR91ZcPR9KBL2TUZX0mHs1I1DlyXEALjajI5v2qbUFIVVCM6Kvv2qHB1FKhbkXozOW/ILoQr6unUp"</span>
-          <span class="s2">"Y4pFGzgZBkUUWQVTHCJ/J9d2VIjN1lp1Ro3sV788PoU8Mk9piRmyW3+p1hoh6qeTqFv9QekD4jsiWBHuWM7mo3vLBoO4lzMsvcyPuAgaqsy2oEuq3RvtO23mNoqwtA5QmNGrQsBwIDAQAB"</span> <span class="o">)</span>  <span class="p">;</span> <span class="nt">-----</span> DKIM key dkim2023 <span class="k">for </span>mariatec.es
-</code></pre></div></div>
-
-<p>Y en el registro TXT del DNS colocaremos la clave pública:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">v</span><span class="o">=</span>DKIM1<span class="p">;</span> <span class="nv">h</span><span class="o">=</span>sha256<span class="p">;</span> <span class="nv">k</span><span class="o">=</span>rsa<span class="p">;</span> <span class="nv">p</span><span class="o">=</span><span class="nv">p</span><span class="o">=</span>MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA3gaVO68xhAlj7yNqNHEPh2zJDF+Mz5Zt9nsb54fElkvjUhAWUc+YiQ2yb+5tSo2EXjZV8LZCogkdKWkJniAmID/ZcyxZZB3XDa7nWpVJGF1JlOPXw+gJonq3Pdii945bIBR91ZcPR9KBL2TUZX0mHs1I1DlyXEALjajI5v2qbUFIVVCM6Kvv2qHB1FKhbkXozOW/ILoQr6unUp
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/15.png" alt="15" /></p>
-
-<p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart opendkim postfix
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>8891
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/16.png" alt="16" /></p>
-
-<p>Como podemos ver en las siguientes capturas, en la cabecera del correo se añade la información de la firma.</p>
-
-<p><img src="/assets/images/correo/correo/17.png" alt="17" /></p>
-
-<p>Y en la web de <a href="https://dkimvalidator.com/">dkimvalidator</a> podemos comprobar que la firma es correcta.</p>
-
-<p><img src="/assets/images/correo/correo/18.png" alt="18" /></p>
-
-<h2 id="para-luchar-contra-el-spam">Para luchar contra el SPAM</h2>
-
-<h3 id="tarea-5">Tarea 5</h3>
-
-<p>Le ha llegado el turno a la tarea 5. En esta tarea vamos a configurar Postfix para que tenga en cuenta el registro SPF de los correos que recibe. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">postfix-policyd-spf-python</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>postfix-policyd-spf-python <span class="nt">-y</span>
-</code></pre></div></div>
-
-<p>Modificaremos el archivo <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para que se ejecute el servicio de <code class="language-plaintext highlighter-rouge">policyd-spf</code> y para que se ejecute el servicio de <code class="language-plaintext highlighter-rouge">opendkim</code>. Con la siguiente sentencia le estaremos indicando a postfix para comprobar el SPF de los correos que recibe.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>policy-spf  unix  -       n       n       -       0       spawn
-    <span class="nv">user</span><span class="o">=</span>policyd-spf <span class="nv">argv</span><span class="o">=</span>/usr/bin/policyd-spf
-</code></pre></div></div>
-
-<p>Reiniciamos el servicio de postfix y comprobamos que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix
-
-<span class="nb">tail</span> <span class="nt">-f</span> /var/log/mail.log
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/19.png" alt="19" /></p>
-
-<h3 id="tarea-6">Tarea 6</h3>
-
-<p>Le toca el turno a la protección contra el SPAM. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">spamassassin</code> y habilitaremos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>spamassassin spamc <span class="nt">-y</span>
-<span class="nb">sudo </span>systemctl <span class="nb">enable</span> <span class="nt">--now</span> spamassassin
-</code></pre></div></div>
-
-<p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/default/spamassassin</code> y agregaremos las líneas necesarias para que se actualice la base de datos de spamassassin.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">CRON</span><span class="o">=</span>1
-</code></pre></div></div>
-
-<p>Y en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/master.cf</code> agregaremos la siguiente línea para que el servicio de postfix ejecute el servicio de spamassassin.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smtp      inet  n       -       y       -       -       smtpd
-  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
-submission inet n       -       y       -       -       smtpd
-  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
-spamassassin unix -     n       n       -       -       pipe
-  <span class="nv">user</span><span class="o">=</span>debian-spamd <span class="nv">argv</span><span class="o">=</span>/usr/bin/spamc <span class="nt">-f</span> <span class="nt">-e</span> /usr/sbin/sendmail <span class="nt">-oi</span> <span class="nt">-f</span> <span class="k">${</span><span class="nv">sender</span><span class="k">}</span> <span class="k">${</span><span class="nv">recipient</span><span class="k">}</span>
-</code></pre></div></div>
-
-<p>Y para configurar que los emails que se detecten como SPAM, reciban una etiqueta en el asunto, modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/spamassassin/local.cf</code> y descomentamos la siguiente línea.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rewrite_header Subject <span class="k">*****</span>SPAM<span class="k">*****</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/20.png" alt="20" /></p>
-
-<p>Reiniciamos los servicios y comprobamos que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix spamassassin
-</code></pre></div></div>
-
-<p>Comprobaremos que funciona, enviando un correo a nuestro email en nuestro VPS y comprobando que se ha etiquetado como SPAM. Por ello, usaremos <a href="https://spamassassin.apache.org/gtube/">The GTUBE</a> para enviar un correo que se detecte como SPAM.</p>
-
-<p>Comprobando que el email se ha etiquetado como SPAM, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de spamassassin.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tail</span> <span class="nt">-f</span> /var/log/mail.log <span class="nt">-n</span> 26
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/21.png" alt="21" /></p>
-
-<h3 id="tarea-7">Tarea 7</h3>
-
-<p>Nuestro servidor de correo deberá tener antivirus que se encargue de detectar y eliminar los virus que se encuentren en los correos que recibe. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">clamav</code> y habilitaremos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>clamsmtp clamav-daemon arc arj bzip2 cabextract lzop nomarch p7zip pax tnef unrar-free unzip <span class="nt">-y</span>
-
-systemctl <span class="nb">enable</span> <span class="nt">--now</span> clamav-daemon
-</code></pre></div></div>
-
-<p>El siguiente paso el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/master.cf</code> y agregaremos la siguiente línea para que el servicio de postfix ejecute el servicio de clamav.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scan unix -       -       n       -       16       smtp
-  <span class="nt">-o</span> <span class="nv">smtp_data_done_timeout</span><span class="o">=</span>1200
-  <span class="nt">-o</span> <span class="nv">smtp_send_xforward_command</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nt">-o</span> <span class="nv">disable_dns_lookups</span><span class="o">=</span><span class="nb">yes
-</span>127.0.0.1:10025 inet n       -       n       -       16       smtpd
-  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">local_recipient_maps</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">relay_recipient_maps</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_restriction_classes</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>permit_mynetworks,reject
-  <span class="nt">-o</span> <span class="nv">mynetworks_style</span><span class="o">=</span>host
-  <span class="nt">-o</span> <span class="nv">smtpd_authorized_xforward_hosts</span><span class="o">=</span>127.0.0.0/8
-</code></pre></div></div>
-
-<p>Y en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> y le indicamos el socket que usará el servicio de clamav.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>content_filter <span class="o">=</span> scan:127.0.0.1:10026
-</code></pre></div></div>
-
-<p>Reconfiguramos <code class="language-plaintext highlighter-rouge">clamav-daemon</code> de forma que le indiquemos los hilos de procesador que usará y el resto de parámetros.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dpkg-reconfigure clamav-daemon
-</code></pre></div></div>
-
-<p>Y reiniciamos los servicios.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart postfix clamav-daemon
-</code></pre></div></div>
-
-<p><strong>NOTA</strong> : Será normal que <code class="language-plaintext highlighter-rouge">ClamAV</code> tarde un poco en arrancar, ya que tiene que actualizar la base de datos de virus.</p>
-
-<p>Para probarlo, enviaremos un correo con <code class="language-plaintext highlighter-rouge">X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*</code> para probar que se detecta como virus.</p>
-
-<p>Comprobando que el email se ha etiquetado como virus, miraremos también el log de mail para comprobar que se ha ejecutado el servicio de clamav.</p>
-
-<p><img src="/assets/images/correo/correo/22.png" alt="22" /></p>
-
-<h2 id="gestión-de-correos-desde-un-cliente">Gestión de correos desde un cliente</h2>
-
-<h3 id="tarea-8">Tarea 8</h3>
-
-<p>Aquí vamos a configurar el buzón de los usuarios para que puedan acceder a él desde un cliente de correo. Y para ello, el primer paso es modificar la configuración de <code class="language-plaintext highlighter-rouge">postfix</code>, en el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> para que use el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> añadiendo al final del fichero <code class="language-plaintext highlighter-rouge">home_mailbox = Maildir/</code>.</p>
-
-<p>Reiniciamos el servicio de postfix y tras esto, la función <code class="language-plaintext highlighter-rouge">mail</code> dejará de funcionar, ya que no encontrará el buzón <code class="language-plaintext highlighter-rouge">Maildir</code> en el directorio <code class="language-plaintext highlighter-rouge">/var/mail</code>. Para ello, instalaremos <code class="language-plaintext highlighter-rouge">mutt</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>mutt <span class="nt">-y</span>
-systemctl restart postfix
-</code></pre></div></div>
-
-<p>Y configuramos <code class="language-plaintext highlighter-rouge">mutt</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set </span><span class="nv">mbox_type</span><span class="o">=</span>Maildir
-<span class="nb">set </span><span class="nv">mbox</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
-<span class="nb">set </span><span class="nv">folder</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
-<span class="nb">set </span><span class="nv">spoolfile</span><span class="o">=</span><span class="s2">"~/Maildir"</span>
-<span class="nb">set </span><span class="nv">record</span><span class="o">=</span><span class="s2">"+.Sent"</span>
-<span class="nb">set </span><span class="nv">postponed</span><span class="o">=</span><span class="s2">"+.Drafts"</span>
-<span class="nb">set </span><span class="nv">mask</span><span class="o">=</span><span class="s2">"!^</span><span class="se">\\</span><span class="s2">.[^.]"</span>
-</code></pre></div></div>
-
-<p>Para probar que funciona, enviaremos un correo a nuestro buzón y comprobaremos que se ha recibido correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/23.png" alt="23" /></p>
-
-<p><img src="/assets/images/correo/correo/24.png" alt="24" /></p>
-
-<p>Realizado esto, podemos decir que tenemos un buzón de correo funcionando correctamente como <code class="language-plaintext highlighter-rouge">Maildir</code> en vez de <code class="language-plaintext highlighter-rouge">mbox</code>.</p>
-
-<h3 id="tarea-9">Tarea 9</h3>
-
-<p>Vamos a configurar el protocolo IMAP instalando el paquete <code class="language-plaintext highlighter-rouge">dovecot-imapd</code> y habilitaremos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>dovecot-imapd <span class="nt">-y</span>
-systemctl <span class="nb">enable</span> <span class="nt">--now</span> dovecot
-netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>dovecot
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/25.png" alt="25" /></p>
-
-<p>Paramos nginx para que no interfiera con el puerto 80.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl stop nginx
-</code></pre></div></div>
-
-<p>Y generamos un certificado SSL para el servidor de correo.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> mail.mariatec.es
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/26.png" alt="26" /></p>
-
-<p>Modificamos la configuración de <code class="language-plaintext highlighter-rouge">dovecot</code> en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/dovecot.conf</code> para que use el certificado SSL que hemos generado. Una vez configurado, reiniciamos el servicio y también el servicio de nginx.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssl_cert <span class="o">=</span> &lt;/etc/letsencrypt/live/mail.mariatec.es/fullchain.pem
-ssl_key <span class="o">=</span> &lt;/etc/letsencrypt/live/mail.mariatec.es/privkey.pem
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/27.png" alt="27" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart dovecot
-systemctl restart nginx
-</code></pre></div></div>
-
-<p><strong>INCISO</strong>: Vamos a realizar primero la configuración de postfix para que mande correos desde un cliente remoto, ya que si no, no podremos probar el servicio de IMAP. Después de esto, instalaremos un webmail.</p>
-
-<h3 id="tarea-11">Tarea 11</h3>
-
-<p>Los mismos certificados que hemos generado antes para cifrar los emails enviados y recibidos. Para ello, modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/postfix/main.cf</code> y añadimos las siguientes líneas:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>smtpd_tls_cert_file <span class="o">=</span> /etc/letsencrypt/live/mail.mariatec.es/fullchain.pem
-smtpd_tls_key_file <span class="o">=</span> /etc/letsencrypt/live/mail.mariatec.es/privkey.pem
-
-smtpd_sasl_auth_enable <span class="o">=</span> <span class="nb">yes
-</span>smtpd_sasl_type <span class="o">=</span> dovecot
-smtpd_sasl_path <span class="o">=</span> private/auth
-smtpd_sasl_authenticated_header <span class="o">=</span> <span class="nb">yes
-</span>broken_sasl_auth_clients <span class="o">=</span> <span class="nb">yes</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/28.png" alt="28" /></p>
-
-<p>Acto seguido, configuraremos el fichero <code class="language-plaintext highlighter-rouge">master.cf</code> y modificamos la directiva submission para que use el puerto 587 y el fichero <code class="language-plaintext highlighter-rouge">smtpd.conf</code> para que use el puerto 465.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-submission inet n       -       y       -       -       smtpd
-  <span class="nt">-o</span> <span class="nv">content_filter</span><span class="o">=</span>spamassassin
-  <span class="nt">-o</span> <span class="nv">syslog_name</span><span class="o">=</span>postfix/submission
-  <span class="nt">-o</span> <span class="nv">smtpd_tls_security_level</span><span class="o">=</span>encrypt
-  <span class="nt">-o</span> <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_tls_auth_only</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_reject_unlisted_recipient</span><span class="o">=</span>no
-  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span><span class="nv">$mua_client_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span><span class="nv">$mua_helo_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span><span class="nv">$mua_sender_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_relay_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
-  <span class="nt">-o</span> <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
-
-smtps     inet  n       -       y       -       -       smtpd
-  <span class="nt">-o</span> <span class="nv">syslog_name</span><span class="o">=</span>postfix/smtps
-  <span class="nt">-o</span> <span class="nv">smtpd_tls_wrappermode</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_reject_unlisted_recipient</span><span class="o">=</span>no
-  <span class="nt">-o</span> <span class="nv">smtpd_client_restrictions</span><span class="o">=</span><span class="nv">$mua_client_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_helo_restrictions</span><span class="o">=</span><span class="nv">$mua_helo_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_sender_restrictions</span><span class="o">=</span><span class="nv">$mua_sender_restrictions</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_recipient_restrictions</span><span class="o">=</span>
-  <span class="nt">-o</span> <span class="nv">smtpd_relay_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
-  <span class="nt">-o</span> <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/29.png" alt="29" /></p>
-
-<p>Ahora, a <code class="language-plaintext highlighter-rouge">dovecot</code>, le indicamos qué debe hacer para autenticarse. Lo haremos en el fichero <code class="language-plaintext highlighter-rouge">/etc/dovecot/conf.d/10-master.conf</code> y añadimos las siguientes líneas:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>service auth <span class="o">{</span>
-  ...
-  <span class="c"># Postfix smtp-auth</span>
-  unix_listener /var/spool/postfix/private/auth <span class="o">{</span>
-    mode <span class="o">=</span> 0666
-  <span class="o">}</span>
-  ...
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/30.png" alt="30" /></p>
-
-<p>Reiniciamos los servicios y comprobamos que todo funciona correctamente. Deberemos abrir los puertos 465 y 993 en el firewall de nuestro VPS.</p>
-
-<p>Para comprobar que funciona correctamente, he usado <code class="language-plaintext highlighter-rouge">Thunderbird</code>, configuramos el correo y comprobamos que funciona correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/31.png" alt="31" /></p>
-
-<p>Ya podemos decir que los correos están sincronizados correctamente entre el servidor y el cliente. También probaremos que, desde <code class="language-plaintext highlighter-rouge">Thunderbird</code>, podemos enviar un correo a mi cuenta de gmail y que llega correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/32.png" alt="32" /></p>
-
-<p>También vamos a probar que podemos responder al email y que se sincronizan correctamente los emails de mi servidor y los emailsdel cliente de correo.</p>
-
-<p><img src="/assets/images/correo/correo/33.png" alt="33" /></p>
-
-<h3 id="tarea-10">Tarea 10</h3>
-
-<p>Ha llegado la hora de instalar un webmail. Para ello, vamos a instalar <code class="language-plaintext highlighter-rouge">Roundcube</code>. Para ello, prepararemos el VPS para que pueda instalar <code class="language-plaintext highlighter-rouge">Roundcube</code> y sus dependencias.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>docker.io
-</code></pre></div></div>
-
-<p>Agregaremos un registro CNAME en nuestro DNS para que el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> apunte a la IP del servidor.</p>
-
-<p>🔲 webmail.mariatec.es     CNAME      mariatec.es</p>
-
-<p>Le toca el turno a roundcube y a su configuración, y para eso empezaremos por crear un directorio en el depositaremos los ficheros de configuración de <code class="language-plaintext highlighter-rouge">Roundcube</code> y lo estrenaremos creando el fichero <code class="language-plaintext highlighter-rouge">custom.inc.php</code> que contendrá la configuración de la base de datos.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /root/config-roundcube
-
-nano /root/configs-roundcube/custom.inc.php
-</code></pre></div></div>
-
-<p>Dentro del fichero, añadiremos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;?php
-<span class="nv">$config</span><span class="o">[</span><span class="s1">'mail_domain'</span><span class="o">]</span> <span class="o">=</span> array<span class="o">(</span>
-    <span class="s1">'mail.mariatec.es'</span> <span class="o">=&gt;</span> <span class="s1">'mariatec.es'</span>
-<span class="o">)</span><span class="p">;</span>
-?&gt;
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/34.png" alt="34" /></p>
-
-<p>Echamos a andar el contenedor de docker donde tenemos la aplicación de <code class="language-plaintext highlighter-rouge">Roundcube</code> y le pasamos los parámetros necesarios para que funcione correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-v</span> /root/config-roundcube/:/var/roundcube/config/ <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_HOST</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_SERVER</span><span class="o">=</span>ssl://mail.mariatec.es <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_SMTP_PORT</span><span class="o">=</span>465 <span class="nt">-e</span> <span class="nv">ROUNDCUBEMAIL_DEFAULT_PORT</span><span class="o">=</span>993 <span class="nt">-p</span> 8001:80 <span class="nt">-d</span> roundcube/roundcubemail
-</code></pre></div></div>
-
-<p>Y en la siguiente imagen podemos ver como el contenedor se ha levantado correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/35.png" alt="35" /></p>
-
-<p>Paramos de nuevo <code class="language-plaintext highlighter-rouge">Nginx</code> y creamos un certificado para el dominio <code class="language-plaintext highlighter-rouge">webmail.mariatec.es</code> y lo instalamos en el servidor.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop nginx
-
-certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> webmail.mariatec.es
-</code></pre></div></div>
-
-<p>Ya terminada toda la configuración anterior, tendremos que crear un VirtualHost para <code class="language-plaintext highlighter-rouge">Nginx</code> que redirija las peticiones a <code class="language-plaintext highlighter-rouge">Roundcube</code> y que esté protegido por <code class="language-plaintext highlighter-rouge">Let's Encrypt</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/nginx/sites-available/webmail.mariatec.es
-</code></pre></div></div>
-
-<p>Dentro del fichero, añadiremos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
-        listen 80<span class="p">;</span>
-        listen <span class="o">[</span>::]:80<span class="p">;</span>
-
-        server_name webmail.mariatec.es<span class="p">;</span>
-
-        <span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
-<span class="o">}</span>
-
-server <span class="o">{</span>
-        listen 443 ssl http2<span class="p">;</span>
-        listen <span class="o">[</span>::]:443 ssl http2<span class="p">;</span>
-
-        ssl    on<span class="p">;</span>
-        ssl_certificate /etc/letsencrypt/live/webmail.mariatec.es/fullchain.pem<span class="p">;</span>
-        ssl_certificate_key     /etc/letsencrypt/live/webmail.mariatec.es/privkey.pem<span class="p">;</span>
-
-        index index.html index.php index.htm index.nginx-debian.html<span class="p">;</span>
-
-        server_name webmail.mariatec.es<span class="p">;</span>
-
-        location / <span class="o">{</span>
-                proxy_pass http://localhost:8001<span class="p">;</span>
-                include proxy_params<span class="p">;</span>
-        <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>Para que esté habilitado el VirtualHost, tendremos que crear un enlace simbólico en <code class="language-plaintext highlighter-rouge">/etc/nginx/sites-enabled/</code> y reiniciar el servicio de <code class="language-plaintext highlighter-rouge">Nginx</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/webmail.mariatec.es /etc/nginx/sites-enabled/webmail.mariatec.es
-
-systemctl restart nginx
-</code></pre></div></div>
-
-<p><img src="/assets/images/correo/correo/36.png" alt="36" /></p>
-
-<p>Ahora, ya podemos acceder a <code class="language-plaintext highlighter-rouge">Roundcube</code> desde el navegador.</p>
-
-<p><img src="/assets/images/correo/correo/37.png" alt="37" /></p>
-
-<p><img src="/assets/images/correo/correo/38.png" alt="38" /></p>
-
-<p>Hacemos una prueba de envío de correo desde <code class="language-plaintext highlighter-rouge">Roundcube</code> y comprobamos que funciona correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/39.png" alt="39" /></p>
-
-<p>En gmail podemos verificar que el correo ha llegado correctamente.</p>
-
-<p><img src="/assets/images/correo/correo/40.png" alt="40" /></p>
-
-<h3 id="tarea-12">Tarea 12</h3>
-
-<p>En la tarea 10 ya hemos comprobado que ya hemos podido enviar y recibir correos desde el servidor de correo. Ahora, vamos a comprobar que el servidor de correo funciona correctamente y que podemos enviar y recibir correos desde el servidor.</p>
-
-<h2 id="comprobación-final">Comprobación final</h2>
-
-<h3 id="tarea-13">Tarea 13</h3>
-
-<p>Última tarea, comprobación final. Para ello, vamos a comprobar que el servidor de correo funciona correctamente y que podemos enviar y recibir correos desde el servidor. Comprobaremos con un correo generado por <a href="https://www.mail-tester.com/">mail-tester.com</a> y que, con la puntuación que nos da, podemos ver que el servidor de correo funciona correctamente.</p>
-
-<p>Para ello, modificaremos nuestro DNS y añadiremos un registro TXT con el valor que nos da <code class="language-plaintext highlighter-rouge">mail-tester.com</code> y que nos permitirá que el servidor de correo sea verificado por <code class="language-plaintext highlighter-rouge">mail-tester.com</code>.</p>
-
-<p>🔲 _dmarc.mariatec.es     TXT      v=DMARC1; p=none;</p>
-
-<p><img src="/assets/images/correo/correo/41.png" alt="41" /></p>
-
-<p><img src="/assets/images/correo/correo/42.png" alt="42" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt</title><link href="/hlc+sri/2023/01/21/almacenamiento.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt" /><published>2023-01-21T12:47:17+01:00</published><updated>2023-01-21T12:47:17+01:00</updated><id>/hlc+sri/2023/01/21/almacenamiento</id><content type="html" xml:base="/hlc+sri/2023/01/21/almacenamiento.html"><![CDATA[<h2 id="taller-1-gestión-de-pool-de-almacenamiento-lógico-en-kvmlibvirt">Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt</h2>
-
-<ol>
-  <li>Vamos a crear un pool de almacenamiento lógico. Para ello, lo más fácil, es tener un grupo de volúmenes con espacio libre.</li>
-</ol>
-
-<ul>
-  <li>
-    <p>Listamos los grupos de volúmenes.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  vgs
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Creamos un pool de almacenamiento lógico.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  virsh <span class="nt">-c</span> qemu:///system pool-define-as <span class="nt">--name</span> pool-t1 <span class="nt">--type</span> logical <span class="nt">--source-name</span> debian
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Activamos el pool.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  virsh <span class="nt">-c</span> qemu:///system pool-start pool-t1
-  virsh <span class="nt">-c</span> qemu:///system pool-autostart pool-t1
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/2.png" alt="2" /></p>
-  </li>
-</ul>
-
-<ol>
-  <li>
-    <p>Ahora vamos a crear un volumen dentro de ese pool.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system vol-create-as <span class="nt">--pool</span> pool-t1 <span class="nt">--name</span> vol1 <span class="nt">--capacity</span> 5G <span class="nt">--format</span> qcow2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Ahora, usaremos <code class="language-plaintext highlighter-rouge">virt-install</code>para crear ua máquina virtual cuyo disco corresponda al volumen que hemos creado anteriormente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virt-install <span class="nt">--connect</span> qemu:///system <span class="se">\</span>
- <span class="nt">--virt-type</span> kvm <span class="se">\</span>
- <span class="nt">--name</span> taller1 <span class="se">\</span>
- <span class="nt">--cdrom</span> ~/Documentos/ISO/debian-11.5.0-amd64-netinst.iso <span class="se">\</span>
- <span class="nt">--os-variant</span> debian10 <span class="se">\</span>
- <span class="nt">--disk</span><span class="o">=</span>/dev/mapper/debian-vol1 <span class="se">\</span>
- <span class="nt">--memory</span> 2048 <span class="se">\</span>
- <span class="nt">--network</span> <span class="nv">network</span><span class="o">=</span>default <span class="se">\</span>
- <span class="nt">--vcpus</span> 1
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Una vez que la máquina esté funcionando, creamos un nuevo volumen y lo añadimos a la máquina.</p>
-
-    <ul>
-      <li>Iniciamos la máquina.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system start taller1
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Creamos un nuevo volumen.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system vol-create-as <span class="nt">--pool</span> pool-t1 <span class="nt">--name</span> vol2 <span class="nt">--capacity</span> 5G <span class="nt">--format</span> qcow2
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Añadimos el nuevo volumen a la máquina.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system attach-disk taller1 /dev/mapper/debian-vol2 vdb <span class="nt">--targetbus</span> virtio <span class="nt">--persistent</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/5.png" alt="5" /></p>
-
-    <p><img src="/assets/images/almacenamiento/taller1/6.png" alt="6" /></p>
-  </li>
-  <li>
-    <p>Apagamos la máquina, montamos la partición del disco de la máquina en nuestro anfitrión para acceder al sistema de archivos.</p>
-
-    <ul>
-      <li>Apagamos la máquina.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> virsh <span class="nt">-c</span> qemu:///system shutdown taller1
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/7.png" alt="7" /></p>
-
-    <ul>
-      <li>Montamos la partición del disco de la máquina en nuestro anfitrión para acceder al sistema de archivos.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kpartx <span class="nt">-va</span> /dev/mapper/debian-vol1
-
- mount /dev/mapper/debian-vol1p1 /mnt/taller1
-
- <span class="nb">ls</span> <span class="nt">-Shail</span> /mnt/taller1
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/8.png" alt="8" /></p>
-  </li>
-</ol>
-
-<h2 id="extra">Extra</h2>
-
-<p>Vamos a desmontar la partición del disco de la máquina y a eliminar el volumen.</p>
-
-<ul>
-  <li>
-    <p>Desmontamos la partición del disco de la máquina.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  umount /mnt/taller1
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Borramos las particiones del volumen que hemos mapeado</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kpartx <span class="nt">-dv</span> /dev/mapper/debian-vol1
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/almacenamiento/taller1/9.png" alt="9" /></p>
-  </li>
-</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Taller 1: Gestión de pool de almacenamiento lógico en KVM/libvirt]]></summary></entry></feed>
+<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado usuarios.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry></feed>
