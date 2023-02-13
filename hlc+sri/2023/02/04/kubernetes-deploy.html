@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Taller Kubernetes: Trabajando con Deployments | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Taller Kubernetes: Trabajando con Deployments">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción">
+<meta property="og:description" content="Introducción">
+<link rel="canonical" href="/hlc+sri/2023/02/04/kubernetes-deploy.html">
+<meta property="og:url" content="/hlc+sri/2023/02/04/kubernetes-deploy.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-02-04T16:45:16+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Taller Kubernetes: Trabajando con Deployments">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-04T16:45:16+01:00","datePublished":"2023-02-04T16:45:16+01:00","description":"Introducción","headline":"Taller Kubernetes: Trabajando con Deployments","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/02/04/kubernetes-deploy.html"},"url":"/hlc+sri/2023/02/04/kubernetes-deploy.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/kubernetes.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/kubernetes.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Taller Kubernetes: Trabajando con Deployments</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-02-04T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 4, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 12 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este taller vamos a trabajar con Deployments, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un Deployment que va a controlar un conjunto de Pods.</p>
+
+<h3 id="ejercicio-1-trabajando-con-deployments">Ejercicio 1: Trabajando con Deployments</h3>
+
+<ol>
+  <li>
+    <p>Crearemos un fichero yaml con la descripción del recurso Deployment, teniendo en cuenta los siguientes aspectos:</p>
+
+    <ul>
+      <li>Indicaremos nombres distintos para el Deployment y para el contenedor de los Pods que va a controlar.</li>
+      <li>El Deployment va a crear 2 réplicas.</li>
+      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
+      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del Deployment.</li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
+   <span class="na">strategy</span><span class="pi">:</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
+         <span class="na">name</span><span class="pi">:</span> <span class="s">container-testweb</span>
+         <span class="na">ports</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+           <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/0.png" alt="0"></p>
+  </li>
+  <li>
+    <p>Creamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-deployment.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos los recursos que se han creado, en nuestro caso, Deployment, ReplicaSet y Pods.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl get all
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/1.png" alt="1"></p>
+  </li>
+  <li>
+    <p>Obtenemos la información detallada del Deployment:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl describe deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/2.png" alt="2"></p>
+  </li>
+  <li>
+    <p>Crearemos un una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accede a la aplicación con un navegador web.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl port-forward deployments.apps/test-web-deployment 8080:80
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/3.png" alt="3"></p>
+
+    <p><img src="/assets/images/kubernetes/t3/4.png" alt="4"></p>
+  </li>
+  <li>
+    <p>Accederemos a los logs del despliegue para comprobar el acceso que has hecho en el punto anterior.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl logs deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/5.png" alt="5"></p>
+  </li>
+  <li>
+    <p>Elimina el Deployment y comprueba que se han borrado todos los recursos creados.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl delete deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/6.png" alt="6"></p>
+  </li>
+</ol>
+
+<h3 id="ejercicio-2-actualización-y-desactualización-de-nuestra-aplicación">Ejercicio 2: Actualización y desactualización de nuestra aplicación.</h3>
+
+<h4 id="primera-verisón">Primera verisón</h4>
+<p>El equipo de desarrollo ha creado una primera versión preliminar de una aplicación web y ha creado una imagen de contenedor con el siguiente nombre: iesgn/test_web:version1.</p>
+
+<p>Vamos a desplegar esta primera versión de la aplicación. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version1</code>.</p>
+
+<ol>
+  <li>Creamos un fichero yaml para desplegar la imagen: iesgn/test_web:version1.</li>
+</ol>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
+    <span class="na">strategy</span><span class="pi">:</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version1</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-testweb</span>
+          <span class="na">ports</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+            <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="err">```</span>
+
+  <span class="kt">![7](/assets/images/kubernetes/t3/7.png)</span>
+
+<span class="na">2. Creamos el deployment</span><span class="pi">:</span>
+
+  <span class="err">```</span><span class="s">bash</span>
+  <span class="s">kubectl apply -f test-web-deployment2.yaml</span>
+</code></pre></div></div>
+
+<p><strong>NOTA</strong>: Anotaremos el despliegue para tener un registro de los cambios que se han ido realizando.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 1"</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/8.png" alt="8"></p>
+
+<ol>
+  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/9.png" alt="9"></p>
+
+<h4 id="segunda-versión">Segunda versión</h4>
+
+<p>Nuestro equipo de desarrollo ha seguido trabajando y ya tiene lista la versión 2 de nuestra aplicación, han creado una imagen que se llama: iesgn/test_web:version2. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version2</code>.Vamos a actualizar nuestro despliegue con la nueva versión, para ello:</p>
+
+<ol>
+  <li>Realiza la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version2</span>
+<span class="nn">...</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Anotamos la versión 2 de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 2"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Actualizamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/10.png" alt="10"></p>
+
+<ol>
+  <li>
+    <p>Visualizamos el historial de actualizaciones.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/11.png" alt="11"></p>
+  </li>
+  <li>
+    <p>Creamos   una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment2 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/12.png" alt="12"></p>
+
+<h4 id="tercera-versión">Tercera versión</h4>
+
+<p>Finalmente después de un trabajo muy duro, el equipo de desarrollo ha creado la imagen iesgn/test_web:version3. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version3</code> y la vamos a poner en producción, para ello:</p>
+
+<ol>
+  <li>Realizamos la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version3</span>
+<span class="nn">...</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Anotamos la versión 3 de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 3"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Actualizamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/13.png" alt="13"></p>
+
+<ol>
+  <li>
+    <p>Visualizamos el historial de actualizaciones.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment2
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/14.png" alt="14"></p>
+  </li>
+  <li>
+    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/15.png" alt="15"></p>
+
+<h4 id="rollback">Rollback</h4>
+
+<p>¡Vaya!, parece que esta versión tiene un fallo, y no se ve de forma adecuada la hoja de estilos, tenemos que volver a la versión anterior:</p>
+
+<ol>
+  <li>Realizamos el rollback a la versión anterior.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout undo deployment/test-web-deployment
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/16.png" alt="16"></p>
+
+<ol>
+  <li>Anotamos el rollback.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment rollback"</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/17.png" alt="17"></p>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/18.png" alt="18"></p>
+
+<ol>
+  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/19.png" alt="19"></p>
+
+<h3 id="ejercicio-3-despliegue-de-la-aplicación-guestbook">Ejercicio 3: Despliegue de la aplicación GuestBook</h3>
+
+<p>En esta tarea vamos a desplegar una aplicación web que requiere de dos servicios para su ejecución. La aplicación se llama GuestBook y necesita los siguientes servicios:</p>
+
+<ul>
+  <li>
+    <p>La aplicación Guestbook es una aplicación web desarrollada en python que es servida en el puerto 5000/tcp. Utilizaremos la imagen iesgn/guestbook.</p>
+  </li>
+  <li>
+    <p>Esta aplicación guarda la información en una base de datos no relacional redis, que utiliza el puerto 6379/tcp para recibir las conexiones. Usaremos la imagen redis.</p>
+  </li>
+</ul>
+
+<p>Por lo tanto si tenemos dos servicios distintos, tendremos dos ficheros yaml para crear dos recursos Deployment, uno para cada servicio. Con esta manera de trabajar podemos obtener las siguientes características:</p>
+
+<ul>
+  <li>
+    <p>Cada conjunto de Pods creado en cada despliegue ejecutarán un solo proceso para ofrecer el servicio.</p>
+  </li>
+  <li>
+    <p>Cada conjunto de Pods se puede escalar de manera independiente. Esto es importante, si identificamos que al acceder a alguno de los servicios se crea un cuello de botella, podemos escalarlo para tener más Pods ejecutando el servicio.</p>
+  </li>
+  <li>
+    <p>Las actualizaciones de los distintos servicios no interfieren en el resto.</p>
+  </li>
+  <li>
+    <p>Lo estudiaremos en un módulo posterior, pero podremos gestionar el almacenamiento de cada servicio de forma independiente.</p>
+  </li>
+</ul>
+
+<p>Por lo tanto para desplegar la aplicaciones tendremos dos ficheros.yaml:</p>
+
+<ul>
+  <li>
+    <p>guestbook-deployment.yaml</p>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-guestbook</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/guestbook</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>redis-deployment.yaml</p>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-redis</span>
+            <span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
+            <span class="na">ports</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">redis-server</span>
+                <span class="na">containerPort</span><span class="pi">:</span> <span class="m">6379</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Para realizar el despliegue realiza los siguientes pasos:</p>
+
+<ol>
+  <li>Usando los ficheros anteriores, creamos los dos Deployments.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> guestbook-deployment.yaml
+  kubectl apply <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div></div>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/20.png" alt="20"></p>
+
+<ol>
+  <li>Crea una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 5000, y accede a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/guestbook 8080:5000
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/21.png" alt="21"></p>
+
+<p><img src="/assets/images/kubernetes/t3/22.png" alt="22"></p>
+
+<p>Para eliminarlo ejecuta:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl delete <span class="nt">-f</span> guestbook-deployment.yaml
+  kubectl delete <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div></div>
+
+<p>¿Qué aparece en la página principal de la aplicación?. Aparece el siguiente mensaje: Waiting for database connection…. Por lo tanto podemos indicar varias conclusiones:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Hasta ahora no estamos accediendo de forma “normal” a las aplicaciones. El uso de la opción port-forward es un mecanismo que realmente nos posibilita acceder a la aplicación, pero utilizando un proxy. Deberíamos acceder a las aplicaciones usando una ip y un puerto determinado.
+
+2. Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" title="Taller Kubernetes: Trabajando con ReplicaSet ">Taller Kubernetes: Trabajando con ReplicaSet </a><a class="next" href="/aso/2023/02/07/ldap2.html" title="Escenario - Configuración de LDAP en Alfa">Escenario - Configuración de LDAP en...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Escenario - Configuración de LDAP en Alfa">Compilación de un kernel a medida</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Escenario - Configuración de LDAP en Alfa">Cifrado asimétrico con gpg y openssl </a></li>
+<li><a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html" title="Escenario - Configuración de LDAP en Alfa">Configuración de un servidor de correo en un VPS</a></li>
+<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Escenario - Configuración de LDAP en Alfa">Bienvenid@</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

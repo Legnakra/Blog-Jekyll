@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-13T10:37:18+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-13T20:18:24+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -835,69 +835,506 @@ olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <s
   <li>
     <p>XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.</p>
   </li>
-</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o incluso una máquina virtual. Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc. Logical Files: Incluye la imagen de cualquier carpeta o archivo local. Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo Ingest. Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas. XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Pods</title><link href="/sri/2023/02/02/kubernetes-pods.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Pods" /><published>2023-02-02T16:45:16+01:00</published><updated>2023-02-02T16:45:16+01:00</updated><id>/sri/2023/02/02/kubernetes-pods</id><content type="html" xml:base="/sri/2023/02/02/kubernetes-pods.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+</ul>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es Disk Image or VM file: Esto incluye el archivo de imagen que puede ser una copia exacta de un disco duro, una tarjeta multimedia o incluso una máquina virtual. Local Disk: Esta opción incluye dispositivos como discos duros, pen drives, tarjetas de memoria, etc. Logical Files: Incluye la imagen de cualquier carpeta o archivo local. Unallocated Space Image File: Incluyen archivos que no contienen ningún sistema de archivos y se ejecutan con la ayuda del módulo Ingest. Autopsy Logical Imager Results: Incluyen la fuente de datos de la ejecución del generador de imágenes lógicas. XRY Text Export: Incluyen la fuente de datos de la exportación de archivos de texto desde XRY.]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Deployments</title><link href="/hlc+sri/2023/02/04/kubernetes-deploy.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Deployments" /><published>2023-02-04T16:45:16+01:00</published><updated>2023-02-04T16:45:16+01:00</updated><id>/hlc+sri/2023/02/04/kubernetes-deploy</id><content type="html" xml:base="/hlc+sri/2023/02/04/kubernetes-deploy.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este taller vamos a trabajar con Deployments, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un Deployment que va a controlar un conjunto de Pods.</p>
+
+<h3 id="ejercicio-1-trabajando-con-deployments">Ejercicio 1: Trabajando con Deployments</h3>
+
+<ol>
+  <li>
+    <p>Crearemos un fichero yaml con la descripción del recurso Deployment, teniendo en cuenta los siguientes aspectos:</p>
+
+    <ul>
+      <li>Indicaremos nombres distintos para el Deployment y para el contenedor de los Pods que va a controlar.</li>
+      <li>El Deployment va a crear 2 réplicas.</li>
+      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
+      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del Deployment.</li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
+   <span class="na">strategy</span><span class="pi">:</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
+         <span class="na">name</span><span class="pi">:</span> <span class="s">container-testweb</span>
+         <span class="na">ports</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+           <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/0.png" alt="0" /></p>
+  </li>
+  <li>
+    <p>Creamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-deployment.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos los recursos que se han creado, en nuestro caso, Deployment, ReplicaSet y Pods.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Obtenemos la información detallada del Deployment:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Crearemos un una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accede a la aplicación con un navegador web.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl port-forward deployments.apps/test-web-deployment 8080:80
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/3.png" alt="3" /></p>
+
+    <p><img src="/assets/images/kubernetes/t3/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Accederemos a los logs del despliegue para comprobar el acceso que has hecho en el punto anterior.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl logs deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Elimina el Deployment y comprueba que se han borrado todos los recursos creados.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete deployments.apps/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/6.png" alt="6" /></p>
+  </li>
+</ol>
+
+<h3 id="ejercicio-2-actualización-y-desactualización-de-nuestra-aplicación">Ejercicio 2: Actualización y desactualización de nuestra aplicación.</h3>
+
+<h4 id="primera-verisón">Primera verisón</h4>
+<p>El equipo de desarrollo ha creado una primera versión preliminar de una aplicación web y ha creado una imagen de contenedor con el siguiente nombre: iesgn/test_web:version1.</p>
+
+<p>Vamos a desplegar esta primera versión de la aplicación. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version1</code>.</p>
+
+<ol>
+  <li>Creamos un fichero yaml para desplegar la imagen: iesgn/test_web:version1.</li>
+</ol>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
+    <span class="na">strategy</span><span class="pi">:</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version1</span>
+          <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-testweb</span>
+          <span class="na">ports</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+            <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="err">```</span>
+
+  <span class="kt">![7](/assets/images/kubernetes/t3/7.png)</span>
+
+<span class="na">2. Creamos el deployment</span><span class="pi">:</span>
+
+  <span class="err">```</span><span class="s">bash</span>
+  <span class="s">kubectl apply -f test-web-deployment2.yaml</span>
+</code></pre></div></div>
+
+<p><strong>NOTA</strong>: Anotaremos el despliegue para tener un registro de los cambios que se han ido realizando.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 1"</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/8.png" alt="8" /></p>
+
+<ol>
+  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/9.png" alt="9" /></p>
+
+<h4 id="segunda-versión">Segunda versión</h4>
+
+<p>Nuestro equipo de desarrollo ha seguido trabajando y ya tiene lista la versión 2 de nuestra aplicación, han creado una imagen que se llama: iesgn/test_web:version2. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version2</code>.Vamos a actualizar nuestro despliegue con la nueva versión, para ello:</p>
+
+<ol>
+  <li>Realiza la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version2</span>
+<span class="nn">...</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Anotamos la versión 2 de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 2"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Actualizamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/10.png" alt="10" /></p>
+
+<ol>
+  <li>
+    <p>Visualizamos el historial de actualizaciones.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/11.png" alt="11" /></p>
+  </li>
+  <li>
+    <p>Creamos   una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment2 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/12.png" alt="12" /></p>
+
+<h4 id="tercera-versión">Tercera versión</h4>
+
+<p>Finalmente después de un trabajo muy duro, el equipo de desarrollo ha creado la imagen iesgn/test_web:version3. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version3</code> y la vamos a poner en producción, para ello:</p>
+
+<ol>
+  <li>Realizamos la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
+<span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version3</span>
+<span class="nn">...</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Anotamos la versión 3 de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 3"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Actualizamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/13.png" alt="13" /></p>
+
+<ol>
+  <li>
+    <p>Visualizamos el historial de actualizaciones.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment2
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/14.png" alt="14" /></p>
+  </li>
+  <li>
+    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/15.png" alt="15" /></p>
+
+<h4 id="rollback">Rollback</h4>
+
+<p>¡Vaya!, parece que esta versión tiene un fallo, y no se ve de forma adecuada la hoja de estilos, tenemos que volver a la versión anterior:</p>
+
+<ol>
+  <li>Realizamos el rollback a la versión anterior.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout undo deployment/test-web-deployment
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/16.png" alt="16" /></p>
+
+<ol>
+  <li>Anotamos el rollback.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment rollback"</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/17.png" alt="17" /></p>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/18.png" alt="18" /></p>
+
+<ol>
+  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/19.png" alt="19" /></p>
+
+<h3 id="ejercicio-3-despliegue-de-la-aplicación-guestbook">Ejercicio 3: Despliegue de la aplicación GuestBook</h3>
+
+<p>En esta tarea vamos a desplegar una aplicación web que requiere de dos servicios para su ejecución. La aplicación se llama GuestBook y necesita los siguientes servicios:</p>
+
+<ul>
+  <li>
+    <p>La aplicación Guestbook es una aplicación web desarrollada en python que es servida en el puerto 5000/tcp. Utilizaremos la imagen iesgn/guestbook.</p>
+  </li>
+  <li>
+    <p>Esta aplicación guarda la información en una base de datos no relacional redis, que utiliza el puerto 6379/tcp para recibir las conexiones. Usaremos la imagen redis.</p>
+  </li>
+</ul>
+
+<p>Por lo tanto si tenemos dos servicios distintos, tendremos dos ficheros yaml para crear dos recursos Deployment, uno para cada servicio. Con esta manera de trabajar podemos obtener las siguientes características:</p>
+
+<ul>
+  <li>
+    <p>Cada conjunto de Pods creado en cada despliegue ejecutarán un solo proceso para ofrecer el servicio.</p>
+  </li>
+  <li>
+    <p>Cada conjunto de Pods se puede escalar de manera independiente. Esto es importante, si identificamos que al acceder a alguno de los servicios se crea un cuello de botella, podemos escalarlo para tener más Pods ejecutando el servicio.</p>
+  </li>
+  <li>
+    <p>Las actualizaciones de los distintos servicios no interfieren en el resto.</p>
+  </li>
+  <li>
+    <p>Lo estudiaremos en un módulo posterior, pero podremos gestionar el almacenamiento de cada servicio de forma independiente.</p>
+  </li>
+</ul>
+
+<p>Por lo tanto para desplegar la aplicaciones tendremos dos ficheros.yaml:</p>
+
+<ul>
+  <li>
+    <p>guestbook-deployment.yaml</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-guestbook</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/guestbook</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>redis-deployment.yaml</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-redis</span>
+            <span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
+            <span class="na">ports</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">redis-server</span>
+                <span class="na">containerPort</span><span class="pi">:</span> <span class="m">6379</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Para realizar el despliegue realiza los siguientes pasos:</p>
+
+<ol>
+  <li>Usando los ficheros anteriores, creamos los dos Deployments.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> guestbook-deployment.yaml
+  kubectl apply <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div></div>
+
+<ol>
+  <li>Comprobamos que se han creado los recursos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/20.png" alt="20" /></p>
+
+<ol>
+  <li>Crea una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 5000, y accede a la aplicación con un navegador web.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/guestbook 8080:5000
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t3/21.png" alt="21" /></p>
+
+<p><img src="/assets/images/kubernetes/t3/22.png" alt="22" /></p>
+
+<p>Para eliminarlo ejecuta:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl delete <span class="nt">-f</span> guestbook-deployment.yaml
+  kubectl delete <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div></div>
+
+<p>¿Qué aparece en la página principal de la aplicación?. Aparece el siguiente mensaje: Waiting for database connection…. Por lo tanto podemos indicar varias conclusiones:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Hasta ahora no estamos accediendo de forma “normal” a las aplicaciones. El uso de la opción port-forward es un mecanismo que realmente nos posibilita acceder a la aplicación, pero utilizando un proxy. Deberíamos acceder a las aplicaciones usando una ip y un puerto determinado.
+
+2. Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.
+</code></pre></div></div>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Pods</title><link href="/hlc+sri/2023/02/03/kubernetes-pods.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Pods" /><published>2023-02-03T16:45:16+01:00</published><updated>2023-02-03T16:45:16+01:00</updated><id>/hlc+sri/2023/02/03/kubernetes-pods</id><content type="html" xml:base="/hlc+sri/2023/02/03/kubernetes-pods.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>Un Pod en kubernetes es un grupo de uno o más contenedores que comparten un espacio de red y espacio de almacenamiento. Los Pods son la unidad de despliegue en Kubernetes. Un Pod representa un proceso en ejecución en su clúster.</p>
 
 <p>En este post vamos a crear un Pod en Kubernetes y para ello, vamos a desplegar una imagen que nos ofrece un servidor web con una página estática.</p>
 
-<h2 id="preparamos-el-entorno">Preparamos el entorno</h2>
-
-<h3 id="instalando-kubernetes">Instalando kubernetes</h3>
-
-<p>Para poder trabajar con Kubernetes, vamos a instalarlo a de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubernetes
-</code></pre></div></div>
-
-<h3 id="instalando-kubectl">Instalando kubectl</h3>
-
-<p>Para poder trabajar con Kubernetes, vamos a utilizar la herramienta <code class="language-plaintext highlighter-rouge">kubectl</code>. Para instalarla, vamosa hacerlo a través de apt:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubectl
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/1.png" alt="1" /></p>
+<h2 id="desplegando-un-pod">Desplegando un Pod</h2>
 
 <h3 id="creando-un-pod">Creando un Pod</h3>
 
 <p>Lo primero que vamos a hacer, es crear un fichero yaml con la descripción del recurso Pod, teniendo en cuenta lo siguiente:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Los pods deben tener distinto nombre que el del contenedor.
-- La imagen que vamos a desplegar es `iesgn/test_web:latest`.
-- Le asignaremos una etiqueta en la descripción del Pod.
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* Los pods deben tener distinto nombre que el del contenedor.
+* La imagen que vamos a desplegar es `iesgn/test_web:latest`.
+* Le asignaremos una etiqueta en la descripción del Pod.
 </code></pre></div></div>
+
+<p>Antes que nada nos vamos a descargar la imagen con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:latest</code>:</p>
+
+<p><img src="/assets/images/kubernetes/t1/1.png" alt="1" /></p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
 <span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
 <span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">test-web</span>
+ <span class="na">name</span><span class="pi">:</span> <span class="s">pod-test-web</span>
+ <span class="na">labels</span><span class="pi">:</span>
+   <span class="na">service</span><span class="pi">:</span> <span class="s">pod-taller1</span>
 <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
-        <span class="s">image</span><span class="err">:</span> <span class="s">iesgn/test_web:latest</span>
-        <span class="s">ports</span><span class="err">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+ <span class="na">containers</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
+     <span class="na">name</span><span class="pi">:</span> <span class="s">container-test-web</span>
 </code></pre></div></div>
 
 <p>Una vez creado el fichero, vamos a crear el Pod en nuestro clúster de Kubernetes.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl create <span class="nt">-f</span> test-web.yaml
-
-pod/test-web created
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create <span class="nt">-f</span> test_web.yaml
 </code></pre></div></div>
 
 <h3 id="comprobando-el-estado-del-pod">Comprobando el estado del Pod</h3>
 
 <p>Para comprobar el estado del Pod, podemos ejecutar el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl get pods
-
-NAME       READY   STATUS    RESTARTS   AGE
-test-web   1/1     Running   0          2m
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod pod-test-web <span class="nt">-o</span> wide
 </code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/2.png" alt="2" /></p>
 
 <p>Como podemos ver, el Pod se ha creado correctamente y está en estado <code class="language-plaintext highlighter-rouge">Running</code>.</p>
 
@@ -905,33 +1342,51 @@ test-web   1/1     Running   0          2m
 
 <p>Para obtener información del Pod, podemos ejecutar el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl describe pod test-web
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod pod-test-web <span class="nt">-o</span> wide
 </code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/3.png" alt="3" /></p>
+
+<p>O con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl describe pod pod-test-web
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/4.png" alt="4" /></p>
 
 <h3 id="accediendo-al-pod">Accediendo al Pod</h3>
 
 <p>En esta ocasión, vamos a acceder de forma interactiva y comprobaremos los ficheros que están en el <code class="language-plaintext highlighter-rouge">DocumentRoot</code> del servidor web.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl <span class="nb">exec</span> <span class="nt">-it</span> test-web <span class="nt">--</span> /bin/bash
-
-<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /usr/local/apache2/htdocs/
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec</span> <span class="nt">-it</span> pod-test-web <span class="nt">--</span> /bin/bash
 </code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-la</span> htdocs/
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/5.png" alt="5" /></p>
 
 <h3 id="creando-una-redirección">Creando una redirección</h3>
 
 <p>Vamos a crear una redirección con <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> para poder acceder al Pod desde el navegador. Utilizaremos el puerto 8888 del localhost y redirigiremos el puerto 80 del Pod.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl port-forward test-web 8888:80
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward test-web 8888:80
 </code></pre></div></div>
 
+<p><img src="/assets/images/kubernetes/t1/6.png" alt="6" /></p>
+
 <p>Ahora, podemos acceder al Pod desde el navegador con la siguiente URL: <code class="language-plaintext highlighter-rouge">http://localhost:8888</code>.</p>
+
+<p><img src="/assets/images/kubernetes/t1/7.png" alt="7" /></p>
 
 <h3 id="mostrando-los-logs-del-pod">Mostrando los logs del Pod</h3>
 
 <p>Para mostrar los logs del Pod, podemos ejecutar el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl logs test-web
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs test-web
 </code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t1/8.png" alt="8" /></p>
 
 <p>De esta manera, podemos ver los logs del servidor web que hemos desplegado.</p>
 
@@ -939,12 +1394,107 @@ test-web   1/1     Running   0          2m
 
 <p>Para eliminar el Pod, podemos ejecutar el siguiente comando:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl delete pod test-web
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete pod pod-test-web
 
-pod <span class="s2">"test-web"</span> deleted
+kubectl get pod
 </code></pre></div></div>
 
-<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Instalación y configuración de minikube y kubectl</title><link href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" rel="alternate" type="text/html" title="Kubernetes: Instalación y configuración de minikube y kubectl" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-instalacion</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/kubernetes/t1/9.png" alt="9" /></p>
+
+<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con ReplicaSet</title><link href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con ReplicaSet" /><published>2023-02-03T16:45:16+01:00</published><updated>2023-02-03T16:45:16+01:00</updated><id>/hlc+sri/2023/02/03/kubernetes-replicaset</id><content type="html" xml:base="/hlc+sri/2023/02/03/kubernetes-replicaset.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este taller vamos a trabajar con ReplicaSet, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un ReplicaSet que va a controlar un conjunto de Pods.</p>
+
+<h3 id="creando-un-replicaset">Creando un ReplicaSet</h3>
+
+<ol>
+  <li>
+    <p>Creamos un fichero yaml con la descripción del recurso ReplicaSet, teniendo en cuenta los siguientes aspectos:</p>
+
+    <ul>
+      <li>Indicaremos nombres distintos para el ReplicaSet y para el contenedor de los Pods que va a controlar.</li>
+      <li>El ReplicaSet va a crear 3 réplicas.</li>
+      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
+      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del ReplicaSet.</li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-replica</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
+           <span class="na">name</span><span class="pi">:</span> <span class="s">container-test-web</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el recurso:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-replica.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que se ha creado el ReplicaSet:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get rs,pods
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t2/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Obtenemos la información detallada del ReplicaSet:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe rs test-web-replica
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t2/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Vamos a probar la tolerancia a fallos: Elimina uno de los 3 Pods, y comprueba que inmediatamente se ha vuelto a crear un nuevo Pod</p>
+
+    <ul>
+      <li>Obtenemos el nombre del Pod que queremos eliminar:</li>
+    </ul>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get pods
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Eliminamos el Pod:
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete pod test-web-replica-96tvz
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><img src="/assets/images/kubernetes/t2/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Vamos a comprobar la escalabilidad: escala el ReplicaSet para tener 6 Pods de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl scale rs test-web-replica <span class="nt">--replicas</span><span class="o">=</span>6
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t2/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Elimina el ReplicaSet y comprueba que se han borrado todos los Pods.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete rs test-web-replica
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t2/5.png" alt="5" /></p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Instalación y configuración de minikube y kubectl</title><link href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" rel="alternate" type="text/html" title="Kubernetes: Instalación y configuración de minikube y kubectl" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-instalacion</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>Como nos cuentan en su <a href="https://kubernetes.io/es/">página oficial</a>,Kubernetes es una plataforma de orquestación de contenedores de código abierto que automatiza la implementación, la gestión y el escalado de aplicaciones en contenedores. Dicho de otra manera, es un sistema de administración de clústeres que mantiene las cargas de trabajo en ejecución y es un gran problema en DevOps.</p>
 
@@ -1057,7 +1607,88 @@ pod <span class="s2">"test-web"</span> deleted
 </ul>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete all <span class="nt">--all</span> <span class="nt">--all-namespaces</span>
-</code></pre></div></div>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+</code></pre></div></div>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Trabajando con un Pod multicontenedor</title><link href="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html" rel="alternate" type="text/html" title="Kubernetes: Trabajando con un Pod multicontenedor" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-multicontenedor</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>Vamos a profundizar en los Pods multicontenedor. Como indicamos en el contenido del módulo, un Pod puede estar formado por varios contenedores y por volúmenes (para permitir que los contenedores del Pod puedan compartir almacenamiento).</p>
+
+<p>La razón principal por la que los Pods pueden tener múltiples contenedores es para admitir aplicaciones auxiliares que ayudan a una aplicación primaria. Ejemplos típicos de estas aplicaciones pueden ser las que envían o recogen datos externos (por ejemplo de un repositorio) y los servidores proxy. El ayudante y las aplicaciones primarias a menudo necesitan comunicarse entre sí. Normalmente, esto se realiza a través de un sistema de archivos compartido o mediante la interfaz loopback (localhost).</p>
+
+<h2 id="creando-un-pod-multicontenedor">Creando un Pod multicontenedor</h2>
+
+<ol>
+  <li>
+    <p>Creamos un fichero yaml con la descripción del Pod multicontenedor. En este caso, vamos a crear un Pod con dos contenedores: uno con la imagen <code class="language-plaintext highlighter-rouge">nginx</code> y otro con la imagen <code class="language-plaintext highlighter-rouge">busybox</code>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> vi pod-multicontenedor.yaml
+</code></pre></div>    </div>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">pod-multicontenedor</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">volumes</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
+     <span class="na">emptyDir</span><span class="pi">:</span> <span class="pi">{}</span>
+   <span class="na">containers</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor1</span>
+     <span class="na">image</span><span class="pi">:</span> <span class="s">nginx</span>
+     <span class="na">volumeMounts</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
+       <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/usr/share/nginx/html</span>
+   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor2</span>
+     <span class="na">image</span><span class="pi">:</span> <span class="s">debian</span>
+     <span class="na">volumeMounts</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
+       <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/html</span>
+     <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">/bin/sh"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">-c"</span><span class="pi">]</span>
+     <span class="na">args</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="s">while </span><span class="no">true</span><span class="s">; do</span>
+           <span class="s">date &gt;&gt; /html/index.html;</span>
+           <span class="s">sleep 1;</span>
+         <span class="s">done</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Vamos a crear un pod.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> pod-multicontenedor.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>Mostramos la información del pod, y podemos ver que tiene dos contenedores.
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get pod pod-multicontenedor <span class="nt">-o</span> wide
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Mostramos el contenido de <code class="language-plaintext highlighter-rouge">index.html</code> del primer contenedor:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl <span class="nb">exec </span>pod-multicontenedor <span class="nt">-c</span> contenedor1 <span class="nt">--</span> /bin/cat /usr/share/nginx/html/index.html
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Mostramos el contenido de <code class="language-plaintext highlighter-rouge">index.html</code> del segundo contenedor:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl <span class="nb">exec </span>pod-multicontenedor <span class="nt">-c</span> contenedor2 <span class="nt">--</span> /bin/cat /html/index.html
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p>Ejecutamos un “port forward” para acceder al Pod en el puerto 8081 de localhost, sabiendo que el servicio usa el puerto 80.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl port-forward pod-multicontenedor 8081:80
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/instalacion/9.png" alt="9" /></p>
+  </li>
+  <li>
+    <p>Accede desde un navegador para ver el resultado. Refresca la página para observar cómo va cambiando el fichero index.html.</p>
+
+    <p><img src="/assets/images/kubernetes/instalacion/10.png" alt="10" /></p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</title><link href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" rel="alternate" type="text/html" title="Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2" /><published>2023-01-29T17:47:32+01:00</published><updated>2023-01-29T17:47:32+01:00</updated><id>/hlc+sri/2023/01/29/DRBD+OCFS2</id><content type="html" xml:base="/hlc+sri/2023/01/29/DRBD+OCFS2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a ver cómo crear un cluster DRBD + OCFS2 para almacenar datos en un entorno de alta disponibilidad. Para ello, vamos a utilizar dos maquinas virtuales, a las que les vamos a añadir dos discos adicionales de 2GB para que la sincronización de los datos sea más rápida.</p>
 
@@ -1633,978 +2264,4 @@ o2cb cluster-status tclust
 
 <p>Como podemos comprobar finalmente, ambos discos se han formateado correctamente y podemos acceder a ellos desde Windows.</p>
 
-<p><img src="/assets/images/almacenamiento/taller2/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción a iSCSI]]></summary></entry><entry><title type="html">Taller Docker - Escenarios multicontenedor en Docker</title><link href="/iaw/2023/01/27/docker-multicontenedor.html" rel="alternate" type="text/html" title="Taller Docker - Escenarios multicontenedor en Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-multicontenedor</id><content type="html" xml:base="/iaw/2023/01/27/docker-multicontenedor.html"><![CDATA[<h2 id="despliegue-de-nextcloud-en-docker">Despliegue de Nextcloud en Docker</h2>
-
-<p>Vamos a desplegar la aplicación nextcloud con una base de datos  utilizando la aplicación docker-compose. Puedes coger cómo modelo el fichero docker-compose.yml el que hemos estudiado para desplegar WordPress.</p>
-
-<ol>
-  <li>
-    <p>Instala docker-compose en tu ordenador.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>docker-compose
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Dentro de un directorio crea un fichero docker-compose.yml para realizar el despliegue de nextcloud con una base de datos. Recuerda las variables de entorno y la persistencia de información.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">mkdir </span>nextcloud
- <span class="nb">cd </span>nextcloud
- nano docker-compose.yml
-</code></pre></div>    </div>
-
-    <p>Dentro del fichero docker-compose.yml debes definir los siguientes servicios:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```yaml
- version: '3.7'
- services:
-   nextcloud:
-     image: nextcloud:latest
-     container_name: nextcloud
-     restart: always
-     ports:
-       - 8080:80
-     volumes:
-       - nextcloud:/var/www/html
-     environment:
-       - MYSQL_HOST=mariadb
-       - MYSQL_DATABASE=nextcloud
-       - MYSQL_USER=nextcloud
-       - MYSQL_PASSWORD=admin
-       - MYSQL_ROOT_PASSWORD=nextcloud
-   db:
-     image: mariadb:latest
-     container_name: nextcloud-db
-     restart: always
-     volumes:
-       - nextcloud-db:/var/lib/mysql
-     environment:
-       - MYSQL_DATABASE=nextcloud
-       - MYSQL_USER=nextcloud
-       - MYSQL_PASSWORD=admin
-       - MYSQL_ROOT_PASSWORD=nextcloud
- volumes:
-     nextcloud:
-     nextcloud-db:
-     ```
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Levanta el escenario con docker-compose.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose up <span class="nt">-d</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller2/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Muestra los contenedores con docker-compose.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose ps
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller2/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Accede a la aplicación y comprueba que funciona.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> http://localhost:8080
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller2/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Comprueba el almacenamiento que has definido y que se ha creado una nueva red de tipo bridge.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker volume <span class="nb">ls
- </span>docker network <span class="nb">ls</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller2/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Borra el escenario con docker-compose.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker-compose down
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller2/5.png" alt="5" /></p>
-
-    <p><img src="/assets/images/docker/taller2/6.png" alt="6" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Despliegue de Nextcloud en Docker]]></summary></entry><entry><title type="html">Taller Docker - Creación de imágenes Docker</title><link href="/iaw/2023/01/27/docker-imagen.html" rel="alternate" type="text/html" title="Taller Docker - Creación de imágenes Docker" /><published>2023-01-27T16:11:17+01:00</published><updated>2023-01-27T16:11:17+01:00</updated><id>/iaw/2023/01/27/docker-imagen</id><content type="html" xml:base="/iaw/2023/01/27/docker-imagen.html"><![CDATA[<h2 id="creación-de-una-imagen-a-partir-de-un-dockerfile">Creación de una imagen a partir de un Dockerfile</h2>
-
-<ol>
-  <li>
-    <p>Crea una página web estática index.html. En mi caso, incluiré el CSS y el JS en el mismo fichero HTML.</p>
-
-    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;html&gt;</span>
- <span class="nt">&lt;head&gt;</span>
-     <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">'utf-8'</span><span class="nt">&gt;</span>
-     <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">'viewport'</span> <span class="na">content=</span><span class="s">'width=device-width, initial-scale=1'</span><span class="nt">&gt;</span>
-     <span class="nt">&lt;title&gt;</span>Crear Imagen Docker<span class="nt">&lt;/title&gt;</span>
-        <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">"text/css"</span><span class="nt">&gt;</span>
-       <span class="o">/*&lt;![</span><span class="nt">CDATA</span><span class="o">[*/</span>
-
-             <span class="nt">html</span> <span class="p">{</span>
-              <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-              <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-            <span class="p">}</span>  
-              <span class="nt">body</span> <span class="p">{</span>
-        <span class="nl">background</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="m">72</span><span class="p">,</span><span class="m">50</span><span class="p">);</span>
-        <span class="nl">background</span><span class="p">:</span> <span class="n">-moz-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span>  <span class="p">;</span>
-        <span class="nl">background</span><span class="p">:</span> <span class="n">-webkit-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span> <span class="p">;</span>
-        <span class="nl">background</span><span class="p">:</span> <span class="n">linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">);</span>
-        <span class="nl">background-repeat</span><span class="p">:</span> <span class="nb">no-repeat</span><span class="p">;</span>
-        <span class="nl">background-attachment</span><span class="p">:</span> <span class="nb">fixed</span><span class="p">;</span>
-        <span class="nl">filter</span><span class="p">:</span> <span class="n">progid</span><span class="p">:</span><span class="n">DXImageTransform</span><span class="p">.</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">startColorstr</span><span class="err">=</span><span class="s1">"#3c6eb4"</span><span class="p">,</span><span class="n">endColorstr</span><span class="err">=</span><span class="s1">"#3c95b4"</span><span class="p">,</span><span class="n">GradientType</span><span class="err">=</span><span class="m">1</span><span class="p">);</span> 
-              <span class="nl">color</span><span class="p">:</span> <span class="no">white</span><span class="p">;</span>
-              <span class="nl">font-size</span><span class="p">:</span> <span class="m">0.9em</span><span class="p">;</span>
-              <span class="nl">font-weight</span><span class="p">:</span> <span class="m">400</span><span class="p">;</span>
-              <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-              <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-              <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">6em</span> <span class="m">10em</span> <span class="m">6em</span><span class="p">;</span>
-              <span class="nl">box-sizing</span><span class="p">:</span> <span class="n">border-box</span><span class="p">;</span>      
-            <span class="p">}</span>
-                    <span class="nt">h1</span> <span class="p">{</span>
-          <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-          <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">0.6em</span> <span class="m">2em</span> <span class="m">0.4em</span><span class="p">;</span>
-          <span class="nl">color</span><span class="p">:</span> <span class="m">#fff</span><span class="p">;</span>
-          <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
-          <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-          <span class="nl">font-size</span><span class="p">:</span> <span class="m">2em</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nt">h1</span> <span class="nt">strong</span> <span class="p">{</span>
-          <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bolder</span><span class="p">;</span>
-          <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nt">h2</span> <span class="p">{</span>
-          <span class="nl">font-size</span><span class="p">:</span> <span class="m">1.5em</span><span class="p">;</span>
-          <span class="nl">font-weight</span><span class="p">:</span><span class="nb">bold</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nc">.title</span> <span class="p">{</span>
-          <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="no">black</span><span class="p">;</span>
-          <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
-          <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
-          <span class="nl">float</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
-          <span class="nl">width</span><span class="p">:</span> <span class="m">150px</span><span class="p">;</span>
-          <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span><span class="p">;</span>
-          <span class="nl">margin-top</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nc">.description</span> <span class="p">{</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">45px</span> <span class="m">10px</span> <span class="m">5px</span> <span class="m">10px</span><span class="p">;</span>
-          <span class="nl">clear</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">15px</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nc">.section</span> <span class="p">{</span>
-          <span class="nl">padding-left</span><span class="p">:</span> <span class="m">3%</span><span class="p">;</span>
-         <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nt">img</span> <span class="p">{</span>
-                <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-          <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-        <span class="p">}</span>
-        <span class="nt">a</span><span class="nd">:hover</span> <span class="nt">img</span> <span class="p">{</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-          <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nd">:link</span> <span class="p">{</span>
-          <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">199</span><span class="p">,</span> <span class="m">252</span><span class="p">,</span> <span class="m">77</span><span class="p">);</span>
-          <span class="nl">text-shadow</span><span class="p">:</span>
-        <span class="p">}</span>
-        <span class="nd">:visited</span> <span class="p">{</span>
-          <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">122</span><span class="p">,</span> <span class="m">206</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nt">a</span><span class="nd">:hover</span> <span class="p">{</span>
-          <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">16</span><span class="p">,</span> <span class="m">44</span><span class="p">,</span> <span class="m">122</span><span class="p">);</span>
-        <span class="p">}</span>
-        <span class="nc">.row</span> <span class="p">{</span>
-          <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-          <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nt">footer</span> <span class="p">{</span>
-          <span class="nl">padding-top</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
-          <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
-          <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-          <span class="nl">font-size</span><span class="p">:</span> <span class="nb">xx-small</span><span class="p">;</span>
-          <span class="nl">overflow</span><span class="p">:</span><span class="nb">hidden</span><span class="p">;</span>
-          <span class="nl">clear</span><span class="p">:</span> <span class="nb">both</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nc">.summary</span> <span class="p">{</span>
-          <span class="nl">font-size</span><span class="p">:</span> <span class="m">140%</span><span class="p">;</span>
-          <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nf">#rocky-poweredby</span> <span class="nt">img</span> <span class="p">{</span>
-          <span class="nl">margin-left</span><span class="p">:</span> <span class="m">-10px</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="nf">#logos</span> <span class="nt">img</span> <span class="p">{</span>
-          <span class="nl">vertical-align</span><span class="p">:</span> <span class="nb">top</span><span class="p">;</span>
-        <span class="p">}</span>
-              <span class="c">/* Desktop  View Options */</span>
-              <span class="k">@media</span> <span class="p">(</span><span class="n">min-width</span><span class="p">:</span> <span class="m">768px</span><span class="p">)</span>  <span class="p">{</span>
-                <span class="nt">body</span> <span class="p">{</span>
-            <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">20%</span> <span class="cp">!important</span><span class="p">;</span>
-          <span class="p">}</span>
-                <span class="nc">.col-md-1</span><span class="o">,</span> <span class="nc">.col-md-2</span><span class="o">,</span> <span class="nc">.col-md-3</span><span class="o">,</span> <span class="nc">.col-md-4</span><span class="o">,</span> <span class="nc">.col-md-5</span><span class="o">,</span> <span class="nc">.col-md-6</span><span class="o">,</span>
-          <span class="nc">.col-md-7</span><span class="o">,</span> <span class="nc">.col-md-8</span><span class="o">,</span> <span class="nc">.col-md-9</span><span class="o">,</span> <span class="nc">.col-md-10</span><span class="o">,</span> <span class="nc">.col-md-11</span><span class="o">,</span> <span class="nc">.col-md-12</span> <span class="p">{</span>
-            <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
-          <span class="p">}</span>
-                <span class="nc">.col-md-1</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-2</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-3</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-4</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-5</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-6</span> <span class="p">{</span>
-            <span class="nl">border-left</span><span class="p">:</span><span class="m">3px</span> <span class="p">;</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
-                      <span class="p">}</span>
-          <span class="nc">.col-md-7</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-8</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-9</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-10</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-11</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-md-12</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-              <span class="c">/* Mobile View Options */</span>
-        <span class="k">@media</span> <span class="p">(</span><span class="n">max-width</span><span class="p">:</span> <span class="m">767px</span><span class="p">)</span> <span class="p">{</span>
-          <span class="nc">.col-sm-1</span><span class="o">,</span> <span class="nc">.col-sm-2</span><span class="o">,</span> <span class="nc">.col-sm-3</span><span class="o">,</span> <span class="nc">.col-sm-4</span><span class="o">,</span> <span class="nc">.col-sm-5</span><span class="o">,</span> <span class="nc">.col-sm-6</span><span class="o">,</span>
-          <span class="nc">.col-sm-7</span><span class="o">,</span> <span class="nc">.col-sm-8</span><span class="o">,</span> <span class="nc">.col-sm-9</span><span class="o">,</span> <span class="nc">.col-sm-10</span><span class="o">,</span> <span class="nc">.col-sm-11</span><span class="o">,</span> <span class="nc">.col-sm-12</span> <span class="p">{</span>
-            <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
-          <span class="p">}</span>
-                <span class="nc">.col-sm-1</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-2</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-3</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-4</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-5</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-6</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-7</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-8</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-9</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-10</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-11</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nc">.col-sm-12</span> <span class="p">{</span>
-            <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
-          <span class="p">}</span>
-          <span class="nt">h1</span> <span class="p">{</span>
-            <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="cp">!important</span><span class="p">;</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
-              <span class="nt">&lt;/style&gt;</span>
-        <span class="nt">&lt;/head&gt;</span>
-        <span class="nt">&lt;body&gt;</span>
-               <span class="nt">&lt;h1&gt;</span>¡Bienvenid@ Docker!<span class="nt">&lt;/h1&gt;</span>
-               <span class="nt">&lt;h2&gt;</span>Esta es una web desplegada desde un contenedor de Docker<span class="nt">&lt;/h2&gt;</span>
-               <span class="nt">&lt;p&gt;</span>Realizado por <span class="nt">&lt;strong&gt;</span>María Jesús Alloza<span class="nt">&lt;/strong&gt;&lt;/p&gt;</span>
-        <span class="nt">&lt;/body&gt;</span>
- <span class="nt">&lt;/html&gt;</span>
-  
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Crea un fichero Dockerfile que permita crear una imagen con un servidor web sirviendo la página. Puedes usar una imagen base debian o ubuntu, o una imagen que tenga ya un servicio web, como hemos visto en el apartado Ejemplo 1: Construcción de imágenes con una página estática.</p>
-
-    <ul>
-      <li>
-        <p>Primero, crea un directorio donde guardarás los ficheros de la web. En este directorio crea un fichero index.html con el contenido que quieras. En este caso, el fichero index.html es el que hemos creado en el apartado anterior.</p>
-
-        <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mkdir mi_servidor_web
-  cd servidor_web
-  touch index.html
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Luego, crearemos un fichero Dockerfile con el siguiente contenido:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  FROM debian
-  MAINTAINER María Jesús Alloza <span class="s2">"mariajesus.alloza@outlook.es"</span>
-  RUN apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> apache2
-  COPY index.html /var/www/html/index.html
-  CMD <span class="o">[</span><span class="s2">"/usr/sbin/apache2ctl"</span>, <span class="s2">"-D"</span>, <span class="s2">"FOREGROUND"</span><span class="o">]</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Ejecuta el comando docker que crea la nueva imagen. La imagen se debe llamar /mi_servidor_web:v1.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker build <span class="nt">-t</span> mi_servidor_web:v1 <span class="nb">.</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller3/1.png" alt="1" /></p>
-
-    <p><img src="/assets/images/docker/taller3/2.png" alt="2" /></p>
-
-    <p>Listamos las imágenes para comprobar que se ha creado correctamente:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- docker images
- ```
-</code></pre></div>    </div>
-
-    <p><strong>NOTA</strong>: El punto al final del comando es importante, ya que indica que el contexto de construcción es el directorio actual.</p>
-
-    <p><img src="/assets/images/docker/taller3/3.png" alt="3" /></p>
-
-    <ul>
-      <li>
-        <p>Creamos el contenedor para comprobar que funciona correctamente:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker run <span class="nt">-d</span> <span class="nt">-p</span> 80:80 <span class="nt">--name</span> mi_servidor_web mi_servidor_web:v1
-</code></pre></div>        </div>
-
-        <p><img src="/assets/images/docker/taller3/4.png" alt="4" /></p>
-      </li>
-      <li>
-        <p>Y accedemos a la página web desde el navegador:</p>
-
-        <p><img src="/assets/images/docker/taller3/5.png" alt="5" /></p>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Una vez comprobado, nos conectamos a Docker Hub y subimos la imagen que acabas de crear.</p>
-
-    <ul>
-      <li>
-        <p>Nos creamos una cuenta en Docker Hub en su <a href="https://hub.docker.com/">página web</a>.</p>
-      </li>
-      <li>
-        <p>Una vez creada la cuenta, nos logueamos en Docker Hub desde la terminal:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker login <span class="nt">-u</span> legnakra
-</code></pre></div>        </div>
-
-        <p><img src="/assets/images/docker/taller3/6.png" alt="6" /></p>
-      </li>
-      <li>
-        <p>Lo siguiente es preparar nuestra imagen para que sea aceptada en este registro público. Todos los registros siguen una nomenclatura a la hora de almacenar los repositorios. En el caso de Docker Hub necesitamos que nuestra imagen se llame <code class="language-plaintext highlighter-rouge">nombre_de_usuario/nombre_del_repositorio:etiqueta</code>. En nuestro caso, la imagen se llamará <code class="language-plaintext highlighter-rouge">legnakra/mi_servidor_web:v1</code>.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker tag mi_servidor_web:v1 legnakra/mi_servidor_web:latest
-</code></pre></div>        </div>
-
-        <p><strong>NOTA</strong>: La etiqueta latest es la que se utiliza por defecto cuando no se especifica ninguna etiqueta. Por eso, cuando nos descarguemos la imagen, no tendremos que especificar la etiqueta. Sin embargo, si queremos descargar una imagen con una etiqueta concreta, tendremos que especificarla.</p>
-      </li>
-      <li>
-        <p>Por último, subimos la imagen a Docker Hub:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker push legnakra/mi_servidor_web:v1
-  <span class="c"># O también se puede hacer:</span>
-  docker push legnakra/mi_servidor_web
-</code></pre></div>        </div>
-
-        <p><img src="/assets/images/docker/taller3/7.png" alt="7" /></p>
-      </li>
-    </ul>
-
-    <p>Como podemos ver <a href="https://hub.docker.com/r/legnakra/mi_servidor_web/">aquí</a>, la imagen se ha subido correctamente.</p>
-  </li>
-  <li>
-    <p>Descargamos la imagen en otro ordenador donde tengamos docker instalado, y creamos un contenedor a partir de ella.</p>
-
-    <p><img src="/assets/images/docker/taller3/8.png" alt="8" /></p>
-
-    <p><img src="/assets/images/docker/taller3/9.png" alt="9" /></p>
-
-    <p><img src="/assets/images/docker/taller3/10.png" alt="10" /></p>
-  </li>
-  <li>
-    <p>Realizamos una modificación de la página web. Modificaremos el fichero index.html y añadiremos:</p>
-
-    <div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nt">&lt;p&gt;</span>Administración de Sistemas Informáticos en Red<span class="nt">&lt;/p&gt;</span>
- # Añadimos una imagen al 50% de su tamaño
- <span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">"https://png2.cleanpng.com/sh/da64d3e952f3349e22eb3ec8c65d8ada/L0KzQYm3VMA5N5dqfZH0aYP2gLBuTfRwa5xqip95eYTrf7A0kB9nfKhmitc2ZHXzfLFCjfVvfF59fdRyYXzkcsS0gB9vfJJuhtd7LUXkc7K5V8Nna2ZqTtcBLkS0R4e5UcA4OWY3S6MEN0e4SYm4UMYveJ9s/kisspng-docker-python-software-deployment-xebialabs-container-5aca273fc5e6e6.4176210715231977598106.png"</span> <span class="na">alt=</span><span class="s">"docker"</span> <span class="na">width=</span><span class="s">"50%"</span><span class="nt">&gt;</span> 
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Vuelve a crear una nueva imagen, en esta caso pon la eiqueta v2. Súbela a Docker Hub.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker build <span class="nt">-t</span> mi_servidor_web:v2 <span class="nb">.</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller3/11.png" alt="11" /></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker tag mi_servidor_web:v2 legnakra/mi_servidor_web:latest
- docker push legnakra/mi_servidor_web:v2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller3/12.png" alt="12" /></p>
-
-    <ul>
-      <li>
-        <p>Creamos el contenedor para comprobar que funciona correctamente:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker run <span class="nt">-d</span> <span class="nt">-p</span> 80:80 <span class="nt">--name</span> mi_servidor_web mi_servidor_web:v2
-</code></pre></div>        </div>
-
-        <p><img src="/assets/images/docker/taller3/13.png" alt="13" /></p>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Por último, baja la nueva imagen en el ordenador donde está corriendo el contenedor. Para hacer la implantación de la nueva versión debes borrar el contenedor y crear uno nuevo desde la nueva versión de la imagen.</p>
-
-    <ul>
-      <li>
-        <p>Primero eliminamos el contenedor que teníamos creado:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  docker <span class="nb">rm</span> <span class="nt">-f</span> mi_servidor_web
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Y ahora descargamos la nueva imagen:</p>
-      </li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker pull legnakra/mi_servidor_web
- <span class="c"># O también se puede hacer:</span>
- docker pull legnakra/mi_servidor_web:v2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/docker/taller3/14.png" alt="14" /></p>
-
-    <ul>
-      <li>Y creamos el contenedor:</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">-p</span> 80:80 <span class="nt">--name</span> mi_servidor_web mi_servidor_web:v2
-</code></pre></div>    </div>
-
-    <p>Y como podemos ver, se han aplicado los cambios correctamente:</p>
-
-    <p><img src="/assets/images/docker/taller3/15.png" alt="15" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Creación de una imagen a partir de un Dockerfile]]></summary></entry><entry><title type="html">Escenario - Configuración de LDAP en Alfa</title><link href="/aso/2023/01/22/ldap1.html" rel="alternate" type="text/html" title="Escenario - Configuración de LDAP en Alfa" /><published>2023-01-22T16:45:16+01:00</published><updated>2023-01-22T16:45:16+01:00</updated><id>/aso/2023/01/22/ldap1</id><content type="html" xml:base="/aso/2023/01/22/ldap1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
-
-<p>Para ello, crearemos un usuario denominado <code class="language-plaintext highlighter-rouge">prueba</code> y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario <code class="language-plaintext highlighter-rouge">prueba</code>.</p>
-
-<h2 id="instalación-de-openldap">Instalación de OpenLDAP</h2>
-
-<p>Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>. Para ello, ejecutaremos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">hostname</span> <span class="nt">-f</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/1.png" alt="1" /></p>
-
-<p>Una vez que tenemos el FQDN, procederemos a instalar el paquete <code class="language-plaintext highlighter-rouge">slapd</code> y <code class="language-plaintext highlighter-rouge">ldap-utils</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>slapd ldap-utils
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/2.png" alt="2" /></p>
-
-<p>Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es <code class="language-plaintext highlighter-rouge">admin</code>.</p>
-
-<p>Tras la instalación, podemos comprobar que el servicio está activo y en ejecución:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl status slapd
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/3.png" alt="3" /></p>
-
-<p>Y comprobaremos también que el puerto 389/TCP está abierto:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>389
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/4.png" alt="4" /></p>
-
-<p>Como tenemos el paquete <code class="language-plaintext highlighter-rouge">ldap-utils</code> instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando <code class="language-plaintext highlighter-rouge">ldapsearch</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/5.png" alt="5" /></p>
-
-<p>Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado <code class="language-plaintext highlighter-rouge">ldapescenario.ldif</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi ldapescenario.ldif
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">ou</span><span class="o">=</span>Personas,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-objectClass: organizationalUnit
-ou: Personas
-changeType: add
-dn: <span class="nv">ou</span><span class="o">=</span>Grupos,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-objectClass: organizationalUnit
-ou: Grupos
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/6.png" alt="6" /></p>
-
-<p>Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-f</span> ldapescenario.ldif <span class="nt">-W</span> 
-</code></pre></div></div>
-
-<p>Si queremos borra el archivo, lo haremos con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Personas</span>
-ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span> <span class="s2">"ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
-<span class="c">#Grupos</span>
-ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span> <span class="s2">"ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
-</code></pre></div></div>
-
-<p>Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando <code class="language-plaintext highlighter-rouge">ldapsearch</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/7.png" alt="7" /></p>
-
-<h3 id="creación-del-grupo-prueba">Creación del grupo <code class="language-plaintext highlighter-rouge">prueba</code></h3>
-
-<p>Para crear el grupo <code class="language-plaintext highlighter-rouge">prueba</code>, vamos a crear un archivo denominado <code class="language-plaintext highlighter-rouge">grupos.ldif</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi grupos.ldif
-<span class="nt">---</span>
-dn: <span class="nv">cn</span><span class="o">=</span>prueba,ou<span class="o">=</span>Grupos,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-objectClass: top
-objectClass: posixGroup
-gidNumber: 2001
-cn: prueba
-</code></pre></div></div>
-
-<p>Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nt">-f</span> grupos.ldif
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/8.png" alt="8" /></p>
-
-<p>Y comprobamos que se ha creado correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/9.png" alt="9" /></p>
-
-<p>Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapdelete <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nv">cn</span><span class="o">=</span>prueba,ou<span class="o">=</span>Group,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-</code></pre></div></div>
-
-<h3 id="creación-de-una-contraseña-para-el-usuario-prueba">Creación de una contraseña para el usuario <code class="language-plaintext highlighter-rouge">prueba</code></h3>
-
-<p>En nuestro caso, vamos a crear una contraseña para el usuario <code class="language-plaintext highlighter-rouge">prueba</code>, pero será una contraseña cifrada, que lo haremos con el comando <code class="language-plaintext highlighter-rouge">slappasswd</code>. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato <code class="language-plaintext highlighter-rouge">{SSHA}</code>.</p>
-
-<p><img src="/assets/images/LDAP/ldap1/10.png" alt="10" /></p>
-
-<p>A continuación, creamos el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en un fichero denominado <code class="language-plaintext highlighter-rouge">usuarios.ldif</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi usuarios.ldif
-<span class="nt">---</span>
-
-dn: <span class="nv">uid</span><span class="o">=</span>prueba,ou<span class="o">=</span>Personas,dc<span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-objectClass: top
-objectClass: posixAccount
-objectClass: inetOrgPerson
-objectClass: person
-cn: prueba
-uid: prueba
-uidNumber: 2001
-gidNumber: 2001
-homeDirectory: /home/nfs/prueba
-loginShell: /bin/bash
-userPassword: <span class="o">{</span>SSHA<span class="o">}</span>wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4
-sn: prueba
-mail: mail@gmail.com
-givenName: prueba
-</code></pre></div></div>
-<p><img src="/assets/images/LDAP/ldap1/11.png" alt="11" /></p>
-
-<p>Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span> <span class="nt">-f</span> usuarios.ldif
-
-ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/12.png" alt="12" /></p>
-
-<p>En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo <code class="language-plaintext highlighter-rouge">prueba</code>.</p>
-
-<p>Para borrar el usuario, solo tendremos que ejecutar en nuestra consola <code class="language-plaintext highlighter-rouge">ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org</code>.</p>
-
-<h2 id="configuración-de-nfs-en-el-servidor">Configuración de NFS en el Servidor</h2>
-
-<p>Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario <code class="language-plaintext highlighter-rouge">prueba</code> en el servidor NFS.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
-<span class="nb">chown </span>2001:2001 /home/nfs/prueba
-</code></pre></div></div>
-
-<p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>nfs-kernel-server
-</code></pre></div></div>
-
-<p>Tras esto, deberemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/exports</code> para que el usuario <code class="language-plaintext highlighter-rouge">prueba</code> pueda acceder a su directorio de inicio, y reiniciamos el servicio <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/exports
-<span class="nt">---</span>
-/home/nfs       <span class="k">*</span><span class="o">(</span>rw,fsid<span class="o">=</span>0, subtree_check,no_root_squash<span class="o">)</span>
-</code></pre></div></div>
-
-<p>Las opciones que hemos añadido son:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">rw</code>: Permite que el usuario pueda leer y escribir en el directorio.</li>
-  <li><code class="language-plaintext highlighter-rouge">fsid=0</code>: Es el identificador del sistema de ficheros.</li>
-  <li><code class="language-plaintext highlighter-rouge">subtree_check</code>: Comprueba que el usuario tiene permisos para acceder a los subdirectorios.</li>
-  <li><code class="language-plaintext highlighter-rouge">no_root_squash</code>: No comprime el usuario root.</li>
-</ul>
-
-<p>Para que se apliquen los cambios, deberemos ejecutar <code class="language-plaintext highlighter-rouge">exportfs -a</code> y reiniciar el servicio <code class="language-plaintext highlighter-rouge">nfs-kernel-server</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nfs-kernel-server
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/13.png" alt="13" /></p>
-
-<h2 id="instalación-de-nss-pam-y-nscd-en-el-servidor">Instalación de NSS, PAM y NSCD en el Servidor</h2>
-
-<p>El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación:</p>
-
-<ul>
-  <li>
-    <p><strong>NSS</strong>: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema.</p>
-  </li>
-  <li>
-    <p><strong>PAM</strong>: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios.</p>
-  </li>
-  <li>
-    <p><strong>NSCD</strong>: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida.</p>
-  </li>
-</ul>
-
-<p>Para instalarlos, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>libnss-ldapd libpam-ldapd nscd
-</code></pre></div></div>
-
-<p>Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes.</p>
-
-<p><img src="/assets/images/LDAP/ldap1/14.png" alt="14" /></p>
-
-<p><img src="/assets/images/LDAP/ldap1/15.png" alt="15" /></p>
-
-<p>Para terminar, debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nsswitch.conf
-<span class="nt">---</span>
-passwd:         files ldap
-group:          files ldap
-shadow:         files ldap
-gshadow:        files ldap
-
-hosts:          files dns mymachines
-networks:       files
-
-protocols:      db files
-services:       db files
-ethers:         db files
-rpc:            db files
-netgroup:       nis
-</code></pre></div></div>
-
-<p>Comprobamos la UUID del usuario <code class="language-plaintext highlighter-rouge">prueba</code> y nos conectamos con él:</p>
-
-<p><img src="/assets/images/LDAP/ldap1/16.png" alt="16" /></p>
-
-<p><img src="/assets/images/LDAP/ldap1/17.png" alt="17" /></p>
-
-<h2 id="configuración-del-cliente-ubuntu">Configuración del Cliente Ubuntu</h2>
-
-<p>Para este punto, vamos a usar la máquina <code class="language-plaintext highlighter-rouge">delta</code> del escenario. En ella, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">ldap-utils</code> para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>ldap-utils <span class="nt">-y</span>
-</code></pre></div></div>
-
-<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> con el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/ldap/ldap.conf
-<span class="nt">---</span>
-BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-URI ldap://alfa.mariajesus.gonzalonazareno.org
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/18.png" alt="18" /></p>
-
-<p>Y con la ejecución del comando <code class="language-plaintext highlighter-rouge">ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org</code> comprobamos que podemos conectarnos al servidor LDAP:</p>
-
-<p><img src="/assets/images/LDAP/ldap1/19.png" alt="19" /></p>
-
-<p>Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario <code class="language-plaintext highlighter-rouge">prueba</code>, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/20.png" alt="20" /></p>
-
-<p>Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>libnss-ldapd libpam-ldapd ldap-utils <span class="nt">-y</span>
-</code></pre></div></div>
-
-<p>Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code> como servidor LDAP y como servidor de búsqueda introducimos <code class="language-plaintext highlighter-rouge">dc=mariajesus,dc=gonzalonazareno,dc=org</code>.</p>
-
-<p>Lo siguiente será modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/pam.d/common-session</code> y añadimos al final de este fichero la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session required        pam_mkhomedir.so <span class="nv">skel</span><span class="o">=</span>/etc/skel <span class="nb">umask</span><span class="o">=</span>077
-</code></pre></div></div>
-
-<p>Y reiniciamos el servicio <code class="language-plaintext highlighter-rouge">nscd</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nscd nslcd
-</code></pre></div></div>
-
-<p>El siguiente paso será modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> como hicimos en el servidor, pero introduciremos los datos del servidor LDAP:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/nsswitch.conf
-<span class="nt">---</span>
-passwd:         files systemd ldap
-group:          files systemd ldap
-shadow:         files ldap
-gshadow:        files ldap
-
-hosts:          files dns mymachines
-networks:       files
-
-protocols:      db files
-services:       db files
-ethers:         db files
-rpc:            db files
-netgroup:       nis
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/21.png" alt="21" /></p>
-
-<p>Reiniciamos el resvicio <code class="language-plaintext highlighter-rouge">nscd</code> e instalamos <code class="language-plaintext highlighter-rouge">nfs-common</code> para poder montar el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart nscd
-apt-get <span class="nb">install </span>nfs-common
-</code></pre></div></div>
-
-<p>Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start nfs-client.target <span class="o">&amp;&amp;</span> systemctl <span class="nb">enable </span>nfs-client.target
-<span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
-<span class="nb">chown </span>2001:2001 /home/nfs/prueba
-</code></pre></div></div>
-
-<p>Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Cargar el módulo nfs al arrancar el sistema</span>
-<span class="nb">echo </span>NFS | <span class="nb">tee</span> <span class="nt">-a</span> /etc/modules
-<span class="c">#Montar el directorio de inicio del usuario prueba</span>
-vim /etc/systemd/system/home-nfs.mount
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span> Home de NFS
-<span class="nv">Requires</span><span class="o">=</span>network-online.target
-<span class="nv">After</span><span class="o">=</span>network-online.target
-<span class="o">[</span>Mount]
-<span class="nv">What</span><span class="o">=</span>192.168.0.1:/home/nfs
-<span class="nv">Where</span><span class="o">=</span>/home/nfs
-<span class="nv">Options</span><span class="o">=</span>_netdev,auto
-<span class="nv">Type</span><span class="o">=</span>nfs
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Reiniciamos los demonios</span>
-systemctl daemon-reload
-<span class="c">#Activamos el servicio</span>
-systemctl <span class="nb">enable </span>home-nfs.mount
-<span class="c">#Comenzamos el servicio</span>
-systemctl start home-nfs.mount
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/22.png" alt="22" /></p>
-
-<p>Para la prueba de fuego, vamos a conectarnos con el usuario prueba en <code class="language-plaintext highlighter-rouge">delta</code> y vamos a crear un fichero en el directorio de inicio del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
-
-<p><img src="/assets/images/LDAP/ldap1/23.png" alt="23" /></p>
-
-<p><img src="/assets/images/LDAP/ldap1/24.png" alt="24" /></p>
-
-<h2 id="configuración-del-cliente-rocky-linux">Configuración del Cliente Rocky Linux</h2>
-
-<p>Para este punto, vamos a usar la máquina <code class="language-plaintext highlighter-rouge">bravo</code> del escenario. En ella, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">openldap-clients</code> para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools <span class="nt">-y</span>
-</code></pre></div></div>
-
-<p>Editaremos el fichero de configración de <strong>PAM</strong> , que en ROcy linux se encuentra en <code class="language-plaintext highlighter-rouge">/etc/pam.d/system-auth</code> y añadiremos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/pam.d/system-auth
-<span class="nt">---</span>
-auth sufficient pam_ldap.so
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/25.png" alt="25" /></p>
-
-<p>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/openldap/ldap.conf</code> con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/openldap/ldap.conf
-<span class="nt">---</span>
-BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-URI ldap://alfa.mariajesus.gonzalonazareno.org
-</code></pre></div></div>
-
-<p>Para que el usuario <code class="language-plaintext highlighter-rouge">prueba</code> pueda conectarse al servidor LDAP, tenemos que editar <code class="language-plaintext highlighter-rouge">/etc/pam.d/common-session</code> y añadir la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/pam.d/system-auth
-<span class="nt">---</span>
-session required pam_mkhomedir.so <span class="nv">skel</span><span class="o">=</span>/etc/skel <span class="nb">umask</span><span class="o">=</span>0022
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/26.png" alt="26" /></p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/27.png" alt="27" /></p>
-
-<p>En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-x</span> <span class="nt">-D</span> <span class="s1">'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org'</span> <span class="nt">-W</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/28.png" alt="28" /></p>
-
-<p>Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux.</p>
-
-<p>Para realizar el login al servidor LDAP, instalamos <code class="language-plaintext highlighter-rouge">sssd</code> y <code class="language-plaintext highlighter-rouge">sssd-ldap</code> y añadimos la siguiente línea al fichero <code class="language-plaintext highlighter-rouge">/etc/ssd/sssd.conf</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>sssd sssd-ldap
-vi /etc/sssd/sssd.conf
-<span class="nt">---</span>
-<span class="o">[</span>domain/default]
-id_provider <span class="o">=</span> ldap
-autofs_provider <span class="o">=</span> ldap
-auth_provider <span class="o">=</span> ldap
-chpass_provider <span class="o">=</span> ldap
-ldap_uri <span class="o">=</span> ldap://alfa.mariajesus.gonzalonazareno.org
-ldap_search_base <span class="o">=</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-ldap_id_use_start_tls <span class="o">=</span> True
-ldap_tls_cacertdir <span class="o">=</span> /etc/openldap/cacerts
-cache_credentials <span class="o">=</span> True
-ldap_tls_reqcert <span class="o">=</span> allow
-
-<span class="o">[</span>sssd]
-services <span class="o">=</span> nss, pam, autofs
-domains <span class="o">=</span> default
-
-<span class="o">[</span>nss]
-homedir_substring <span class="o">=</span> /home/nfs
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/29.png" alt="29" /></p>
-
-<p>Le cambiamos los permisos al fichero <code class="language-plaintext highlighter-rouge">/etc/sssd/sssd.conf</code>, habilitamos el servicio y lo reiniciamos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>0600 /etc/sssd/sssd.conf
-systemctl restart sssd
-systemctl <span class="nb">enable </span>sssd
-</code></pre></div></div>
-
-<p>Creamos el directorio <code class="language-plaintext highlighter-rouge">/home/nfs</code> y lo hacemos propietario del usuario <code class="language-plaintext highlighter-rouge">prueba</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /home/nfs <span class="o">&amp;&amp;</span> <span class="nb">mkdir</span> /home/nfs/prueba
-<span class="nb">chown </span>2001:2001 /home/nfs/prueba
-</code></pre></div></div>
-
-<p>Lo montamos con la ayuda de systemd:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/systemd/system/home-nfs.mount
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span>script de montaje NFS
-<span class="nv">Requires</span><span class="o">=</span>NetworkManager.service
-<span class="nv">After</span><span class="o">=</span>NetworkManager.service
-<span class="o">[</span>Mount]
-<span class="nv">What</span><span class="o">=</span>172.16.0.1:/home/nfs
-<span class="nv">Where</span><span class="o">=</span>/home/nfs
-<span class="nv">Options</span><span class="o">=</span>_netdev,auto
-<span class="nv">Type</span><span class="o">=</span>nfs
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/30.png" alt="30" /></p>
-
-<p>Reiniciamos los demonios y activamos el servicio:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl start home-nfs.mount
-systemctl <span class="nb">enable </span>home-nfs.mount
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap1/31.png" alt="31" /></p>
-
-<p><img src="/assets/images/LDAP/ldap1/32.png" alt="32" /></p>
-
-<p>Como podemos ver en las imágenes anteriores, el directorio <code class="language-plaintext highlighter-rouge">/home/nfs</code> se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en <code class="language-plaintext highlighter-rouge">alfa</code> y en <code class="language-plaintext highlighter-rouge">delta</code></p>
-
-<h2 id="conclusiones">Conclusiones</h2>
-
-<p>Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP.</p>
-
-<p>La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla.</p>
-
-<h2 id="referencias">Referencias</h2>
-
-<p>[1] <a href="https://www.openldap.org/">https://www.openldap.org/</a></p>
-
-<p>[2] <a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es</a></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. Para ello, crearemos un usuario denominado prueba y configuraremos una máquina cliente Debian y otra Rocky, para que pueda validarse el servicio LDAP con el usuario prueba. Instalación de OpenLDAP Para realizar la instalación de OpenLDAP, primero deberemos tener en cuenta el FQDN de nuestra máquina, que en nuestro caso es alfa.mariajesus.gonzalonazareno.org. Para ello, ejecutaremos el siguiente comando: hostname -f Una vez que tenemos el FQDN, procederemos a instalar el paquete slapd y ldap-utils: apt install slapd ldap-utils Durante la instalación del paquete, este nos poedirá la contraseña que el usuario administrador usará para acceder al servicio LDAP. En nuestro caso, la contraseña que he predefinido es admin. Tras la instalación, podemos comprobar que el servicio está activo y en ejecución: systemctl status slapd Y comprobaremos también que el puerto 389/TCP está abierto: netstat -tulpn | grep 389 Como tenemos el paquete ldap-utils instalado, vamos a buscar el contenido que tiene nuestro directorio con la ayuda del comando ldapsearch: ldapsearch -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -b "dc=mariajesus,dc=gonzalonazareno,dc=org" -W Hasta aquí estaría todo correcto e instalado, pero ¿y si queremos tener nuestros objetos organizados de una forma más clara? Para ello, vamos a crear un archivo de configuración denominado ldapescenario.ldif: vi ldapescenario.ldif dn: ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Personas changeType: add dn: ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: organizationalUnit ou: Grupos Listo el fichero, lo incluiremos en nuestro directorio con el siguiente comando: ldapadd -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -f ldapescenario.ldif -W Si queremos borra el archivo, lo haremos con el siguiente comando: #Personas ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org" #Grupos ldapdelete -x -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W "ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org" Si queremos comprobar que los cambios se han producido de forma correcta, podemos hacerlo con el comando ldapsearch: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Creación del grupo prueba Para crear el grupo prueba, vamos a crear un archivo denominado grupos.ldif con el siguiente contenido: vi grupos.ldif --- dn: cn=prueba,ou=Grupos,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixGroup gidNumber: 2001 cn: prueba Ya creado el fichero, podemos añadirlo al directorio con el siguiente comando: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f grupos.ldif Y comprobamos que se ha creado correctamente: ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org Si deseamos borrarlo, solo tendremos que ejecutar el siguiente comando: ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W cn=prueba,ou=Group,dc=mariajesus,dc=gonzalonazareno,dc=org Creación de una contraseña para el usuario prueba En nuestro caso, vamos a crear una contraseña para el usuario prueba, pero será una contraseña cifrada, que lo haremos con el comando slappasswd. Nos pedirá que ingresemos la contraseña, y nos la devolverá cifrada en la consola en formato {SSHA}. A continuación, creamos el usuario prueba en un fichero denominado usuarios.ldif: vi usuarios.ldif --- dn: uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org objectClass: top objectClass: posixAccount objectClass: inetOrgPerson objectClass: person cn: prueba uid: prueba uidNumber: 2001 gidNumber: 2001 homeDirectory: /home/nfs/prueba loginShell: /bin/bash userPassword: {SSHA}wQ5TgnH1OMpeAuuQyXX38Ye9Y8SVW3s4 sn: prueba mail: mail@gmail.com givenName: prueba Ya con nuestro fichero creado, lo añadimos a nuestro directorio como lo hemos hecho anteriormente: ldapadd -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W -f usuarios.ldif ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En la imagen anterior, podemos ver que el usuario prueba se ha creado correctamente y se ha añadido al grupo prueba. Para borrar el usuario, solo tendremos que ejecutar en nuestra consola ldapdelete -x -D 'cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org' -W uid=prueba,ou=People,dc=mariajesus,dc=gonzalonazareno,dc=org. Configuración de NFS en el Servidor Debemos recordar que el usuario no tiene directorio de inicio, razón por la que no podrá acceder a su escritorio. Para ello, vamos a crear un directorio de inicio para el usuario prueba en el servidor NFS. mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Instalamos el paquete nfs-kernel-server: apt install nfs-kernel-server Tras esto, deberemos modificar el fichero /etc/exports para que el usuario prueba pueda acceder a su directorio de inicio, y reiniciamos el servicio nfs-kernel-server: vi /etc/exports --- /home/nfs *(rw,fsid=0, subtree_check,no_root_squash) Las opciones que hemos añadido son: rw: Permite que el usuario pueda leer y escribir en el directorio. fsid=0: Es el identificador del sistema de ficheros. subtree_check: Comprueba que el usuario tiene permisos para acceder a los subdirectorios. no_root_squash: No comprime el usuario root. Para que se apliquen los cambios, deberemos ejecutar exportfs -a y reiniciar el servicio nfs-kernel-server: systemctl restart nfs-kernel-server Instalación de NSS, PAM y NSCD en el Servidor El título de este epígrafe tiene muchas siglas, pero no os preocupéis, que las explicaremos a continuación: NSS: Name Service Switch. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema. PAM: Pluggable Authentication Modules. Es un servicio que permite a los programas autenticar a los usuarios. NSCD: Name Service Caching Daemon. Es un servicio que permite a los programas acceder a información de los usuarios y grupos de un sistema de forma más rápida. Para instalarlos, ejecutamos el siguiente comando: apt-get install libnss-ldapd libpam-ldapd nscd Durante la instalación, nos pedirá que introduzcamos la dirección IP del servidor LDAP, el puerto, el DN del administrador y la contraseña. Una vez introducidos, se instalarán los paquetes. Para terminar, debemos modificar el fichero /etc/nsswitch.conf para que el sistema utilice el servicio LDAP para obtener información de los usuarios y grupos: vi /etc/nsswitch.conf --- passwd: files ldap group: files ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Comprobamos la UUID del usuario prueba y nos conectamos con él: Configuración del Cliente Ubuntu Para este punto, vamos a usar la máquina delta del escenario. En ella, vamos a instalar el paquete ldap-utils para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. apt-get install ldap-utils -y Creamos el fichero /etc/ldap/ldap.conf con el siguiente contenido: vi /etc/ldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Y con la ejecución del comando ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org comprobamos que podemos conectarnos al servidor LDAP: Como nos muestra la imagen anterior, podemos ver que funciona correctamente y podemos conectarnos al servidor LDAP desde el cliente Ubuntu. Para conectarnos con el usuario prueba, ejecutamos el siguiente comando: ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Instalaremos los paquetes necesarios para que el cliente pueda autenticarse con el servidor LDAP: apt-get install libnss-ldapd libpam-ldapd ldap-utils -y Se nos abrirá un asistente para configurar el cliente LDAP. En el primer paso, introducimos alfa.mariajesus.gonzalonazareno.org como servidor LDAP y como servidor de búsqueda introducimos dc=mariajesus,dc=gonzalonazareno,dc=org. Lo siguiente será modificar el fichero /etc/pam.d/common-session y añadimos al final de este fichero la siguiente línea: session required pam_mkhomedir.so skel=/etc/skel umask=077 Y reiniciamos el servicio nscd: systemctl restart nscd nslcd El siguiente paso será modificar el fichero /etc/nsswitch.conf como hicimos en el servidor, pero introduciremos los datos del servidor LDAP: vi /etc/nsswitch.conf --- passwd: files systemd ldap group: files systemd ldap shadow: files ldap gshadow: files ldap hosts: files dns mymachines networks: files protocols: db files services: db files ethers: db files rpc: db files netgroup: nis Reiniciamos el resvicio nscd e instalamos nfs-common para poder montar el directorio de inicio del usuario prueba: systemctl restart nscd apt-get install nfs-common Activamos el servicio y creamos el directorio donde vamos a montar el directorio de inicio del usuario prueba: systemctl start nfs-client.target &amp;&amp; systemctl enable nfs-client.target mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Llegados a este punto, podremos acceder al directorio sin problemas, pero todos los cambios que realicemos en el cliente ubuntu no se verán reflejados en el servidor LDAP. #Cargar el módulo nfs al arrancar el sistema echo NFS | tee -a /etc/modules #Montar el directorio de inicio del usuario prueba vim /etc/systemd/system/home-nfs.mount [Unit] Description= Home de NFS Requires=network-online.target After=network-online.target [Mount] What=192.168.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target #Reiniciamos los demonios systemctl daemon-reload #Activamos el servicio systemctl enable home-nfs.mount #Comenzamos el servicio systemctl start home-nfs.mount Para la prueba de fuego, vamos a conectarnos con el usuario prueba en delta y vamos a crear un fichero en el directorio de inicio del usuario prueba: Configuración del Cliente Rocky Linux Para este punto, vamos a usar la máquina bravo del escenario. En ella, vamos a instalar el paquete openldap-clients para poder conectarnos al servidor LDAP y comprobar que todo funciona correctamente. dnf install openldap-clients sssd sssd-ldap oddjob-mkhomedir sssd-tools -y Editaremos el fichero de configración de PAM , que en ROcy linux se encuentra en /etc/pam.d/system-auth y añadiremos la siguiente línea: vi /etc/pam.d/system-auth --- auth sufficient pam_ldap.so Creamos el fichero /etc/openldap/ldap.conf con el siguiente contenido para que el cliente pueda conectarse al servidor LDAP: vi /etc/openldap/ldap.conf --- BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org Para que el usuario prueba pueda conectarse al servidor LDAP, tenemos que editar /etc/pam.d/common-session y añadir la siguiente línea: vi /etc/pam.d/system-auth --- session required pam_mkhomedir.so skel=/etc/skel umask=0022 ldapsearch -x -b dc=mariajesus,dc=gonzalonazareno,dc=org En esta imagen podemos ver que el cliente Rocky Linux se ha conectado correctamente al servidor LDAP y podemos ver los usuarios que hay en el directorio. ldapwhoami -x -D 'uid=prueba,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org' -W Aquí podemos comprobar que funciona plenamente desde el cliente Rocky Linux. Para realizar el login al servidor LDAP, instalamos sssd y sssd-ldap y añadimos la siguiente línea al fichero /etc/ssd/sssd.conf: dnf install sssd sssd-ldap vi /etc/sssd/sssd.conf --- [domain/default] id_provider = ldap autofs_provider = ldap auth_provider = ldap chpass_provider = ldap ldap_uri = ldap://alfa.mariajesus.gonzalonazareno.org ldap_search_base = dc=mariajesus,dc=gonzalonazareno,dc=org ldap_id_use_start_tls = True ldap_tls_cacertdir = /etc/openldap/cacerts cache_credentials = True ldap_tls_reqcert = allow [sssd] services = nss, pam, autofs domains = default [nss] homedir_substring = /home/nfs Le cambiamos los permisos al fichero /etc/sssd/sssd.conf, habilitamos el servicio y lo reiniciamos: chmod 0600 /etc/sssd/sssd.conf systemctl restart sssd systemctl enable sssd Creamos el directorio /home/nfs y lo hacemos propietario del usuario prueba: mkdir /home/nfs &amp;&amp; mkdir /home/nfs/prueba chown 2001:2001 /home/nfs/prueba Lo montamos con la ayuda de systemd: vi /etc/systemd/system/home-nfs.mount [Unit] Description=script de montaje NFS Requires=NetworkManager.service After=NetworkManager.service [Mount] What=172.16.0.1:/home/nfs Where=/home/nfs Options=_netdev,auto Type=nfs [Install] WantedBy=multi-user.target Reiniciamos los demonios y activamos el servicio: systemctl daemon-reload systemctl start home-nfs.mount systemctl enable home-nfs.mount Como podemos ver en las imágenes anteriores, el directorio /home/nfs se ha montado correctamente en el cliente Rocky Linux y podemos realizar modificaciones desde bravo que veremos en alfa y en delta Conclusiones Tras configurar LDAP en Ubuntu y Rocky Linux hemos podido comprobar que funciona correctamente y que podemos conectarnos desde el cliente a nuestro servidor LDAP. La utilidad de esta herramiente es que podemos tener un único punto de acceso para todos los usuarios de nuestra red, y que todos ellos puedan acceder a los recursos de la misma manera. Además, podemos tener un único punto de control para los usuarios, y podemos gestionarlos de una manera más sencilla. Referencias [1] https://www.openldap.org/ [2] https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-openldap-and-phpldapadmin-on-ubuntu-18-04-es]]></summary></entry></feed>
+<p><img src="/assets/images/almacenamiento/taller2/25.png" alt="25" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción a iSCSI]]></summary></entry></feed>

@@ -7,21 +7,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
 <!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>Taller Kubernetes: Trabajando con Pods | sysmaria</title>
+<title>Taller Kubernetes: Trabajando con ReplicaSet | sysmaria</title>
 <meta name="generator" content="Jekyll v4.2.2">
-<meta property="og:title" content="Taller Kubernetes: Trabajando con Pods">
+<meta property="og:title" content="Taller Kubernetes: Trabajando con ReplicaSet">
 <meta property="og:locale" content="en_US">
 <meta name="description" content="Introducción">
 <meta property="og:description" content="Introducción">
-<link rel="canonical" href="/sri/2023/02/02/kubernetes-pods.html">
-<meta property="og:url" content="/sri/2023/02/02/kubernetes-pods.html">
+<link rel="canonical" href="/hlc+sri/2023/02/03/kubernetes-replicaset.html">
+<meta property="og:url" content="/hlc+sri/2023/02/03/kubernetes-replicaset.html">
 <meta property="og:site_name" content="sysmaria">
 <meta property="og:type" content="article">
-<meta property="article:published_time" content="2023-02-02T16:45:16+01:00">
+<meta property="article:published_time" content="2023-02-03T16:45:16+01:00">
 <meta name="twitter:card" content="summary">
-<meta property="twitter:title" content="Taller Kubernetes: Trabajando con Pods">
+<meta property="twitter:title" content="Taller Kubernetes: Trabajando con ReplicaSet">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-02T16:45:16+01:00","datePublished":"2023-02-02T16:45:16+01:00","description":"Introducción","headline":"Taller Kubernetes: Trabajando con Pods","mainEntityOfPage":{"@type":"WebPage","@id":"/sri/2023/02/02/kubernetes-pods.html"},"url":"/sri/2023/02/02/kubernetes-pods.html"}</script>
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-03T16:45:16+01:00","datePublished":"2023-02-03T16:45:16+01:00","description":"Introducción","headline":"Taller Kubernetes: Trabajando con ReplicaSet","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/02/03/kubernetes-replicaset.html"},"url":"/hlc+sri/2023/02/03/kubernetes-replicaset.html"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="icon" href="">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -455,11 +455,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <div class="wrapper">
       <div class="page-banner-inner">
 <header class="post-header">
-  <h1 class="post-title p-name" itemprop="name headline">Taller Kubernetes: Trabajando con Pods</h1>
+  <h1 class="post-title p-name" itemprop="name headline">Taller Kubernetes: Trabajando con ReplicaSet </h1>
   <h2 class="post-subtitle"></h2>
 
   <p class="post-meta">
-    <time class="dt-published" datetime="2023-02-02T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 2, 2023
+    <time class="dt-published" datetime="2023-02-03T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 3, 2023
     </time>
 
     
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
   </p></header>
 </div>
     </div>
@@ -691,129 +691,121 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
       <h2 id="introducción">Introducción</h2>
 
-<p>Un Pod en kubernetes es un grupo de uno o más contenedores que comparten un espacio de red y espacio de almacenamiento. Los Pods son la unidad de despliegue en Kubernetes. Un Pod representa un proceso en ejecución en su clúster.</p>
+<p>En este taller vamos a trabajar con ReplicaSet, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un ReplicaSet que va a controlar un conjunto de Pods.</p>
 
-<p>En este post vamos a crear un Pod en Kubernetes y para ello, vamos a desplegar una imagen que nos ofrece un servidor web con una página estática.</p>
+<h3 id="creando-un-replicaset">Creando un ReplicaSet</h3>
 
-<h2 id="preparamos-el-entorno">Preparamos el entorno</h2>
+<ol>
+  <li>
+    <p>Creamos un fichero yaml con la descripción del recurso ReplicaSet, teniendo en cuenta los siguientes aspectos:</p>
 
-<h3 id="instalando-kubernetes">Instalando kubernetes</h3>
+    <ul>
+      <li>Indicaremos nombres distintos para el ReplicaSet y para el contenedor de los Pods que va a controlar.</li>
+      <li>El ReplicaSet va a crear 3 réplicas.</li>
+      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
+      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del ReplicaSet.</li>
+    </ul>
 
-<p>Para poder trabajar con Kubernetes, vamos a instalarlo a de la siguiente manera:</p>
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-replica</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
+           <span class="na">name</span><span class="pi">:</span> <span class="s">container-test-web</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el recurso:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubernetes
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-replica.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que se ha creado el ReplicaSet:</p>
 
-<h3 id="instalando-kubectl">Instalando kubectl</h3>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl get rs,pods
+</code></pre></div>    </div>
 
-<p>Para poder trabajar con Kubernetes, vamos a utilizar la herramienta <code class="language-plaintext highlighter-rouge">kubectl</code>. Para instalarla, vamosa hacerlo a través de apt:</p>
+    <p><img src="/assets/images/kubernetes/t2/1.png" alt="1"></p>
+  </li>
+  <li>
+    <p>Obtenemos la información detallada del ReplicaSet:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>kubectl
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl describe rs test-web-replica
+</code></pre></div>    </div>
 
-<p><img src="/assets/images/kubernetes/t1/1.png" alt="1"></p>
+    <p><img src="/assets/images/kubernetes/t2/2.png" alt="2"></p>
+  </li>
+  <li>
+    <p>Vamos a probar la tolerancia a fallos: Elimina uno de los 3 Pods, y comprueba que inmediatamente se ha vuelto a crear un nuevo Pod</p>
 
-<h3 id="creando-un-pod">Creando un Pod</h3>
+    <ul>
+      <li>Obtenemos el nombre del Pod que queremos eliminar:</li>
+    </ul>
 
-<p>Lo primero que vamos a hacer, es crear un fichero yaml con la descripción del recurso Pod, teniendo en cuenta lo siguiente:</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl get pods
+</code></pre></div>    </div>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Los pods deben tener distinto nombre que el del contenedor.
-- La imagen que vamos a desplegar es `iesgn/test_web:latest`.
-- Le asignaremos una etiqueta en la descripción del Pod.
-</code></pre></div></div>
+    <ul>
+      <li>Eliminamos el Pod:
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl delete pod test-web-replica-96tvz
+</code></pre></div>        </div>
+      </li>
+    </ul>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">test-web</span>
-<span class="na">spec</span><span class="pi">:</span>
-    <span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">test-web</span>
-        <span class="s">image</span><span class="err">:</span> <span class="s">iesgn/test_web:latest</span>
-        <span class="s">ports</span><span class="err">:</span>
-        <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
-</code></pre></div></div>
+    <p><img src="/assets/images/kubernetes/t2/3.png" alt="3"></p>
+  </li>
+  <li>
+    <p>Vamos a comprobar la escalabilidad: escala el ReplicaSet para tener 6 Pods de la aplicación.</p>
 
-<p>Una vez creado el fichero, vamos a crear el Pod en nuestro clúster de Kubernetes.</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl scale rs test-web-replica <span class="nt">--replicas</span><span class="o">=</span>6
+</code></pre></div>    </div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl create <span class="nt">-f</span> test-web.yaml
+    <p><img src="/assets/images/kubernetes/t2/4.png" alt="4"></p>
+  </li>
+  <li>
+    <p>Elimina el ReplicaSet y comprueba que se han borrado todos los Pods.</p>
 
-pod/test-web created
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl delete rs test-web-replica
+</code></pre></div>    </div>
 
-<h3 id="comprobando-el-estado-del-pod">Comprobando el estado del Pod</h3>
-
-<p>Para comprobar el estado del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl get pods
-
-NAME       READY   STATUS    RESTARTS   AGE
-test-web   1/1     Running   0          2m
-</code></pre></div></div>
-
-<p>Como podemos ver, el Pod se ha creado correctamente y está en estado <code class="language-plaintext highlighter-rouge">Running</code>.</p>
-
-<h3 id="obteniendo-información-del-pod">Obteniendo información del Pod</h3>
-
-<p>Para obtener información del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl describe pod test-web
-</code></pre></div></div>
-
-<h3 id="accediendo-al-pod">Accediendo al Pod</h3>
-
-<p>En esta ocasión, vamos a acceder de forma interactiva y comprobaremos los ficheros que están en el <code class="language-plaintext highlighter-rouge">DocumentRoot</code> del servidor web.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl <span class="nb">exec</span> <span class="nt">-it</span> test-web <span class="nt">--</span> /bin/bash
-
-<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-la</span> /usr/local/apache2/htdocs/
-</code></pre></div></div>
-
-<h3 id="creando-una-redirección">Creando una redirección</h3>
-
-<p>Vamos a crear una redirección con <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> para poder acceder al Pod desde el navegador. Utilizaremos el puerto 8888 del localhost y redirigiremos el puerto 80 del Pod.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl port-forward test-web 8888:80
-</code></pre></div></div>
-
-<p>Ahora, podemos acceder al Pod desde el navegador con la siguiente URL: <code class="language-plaintext highlighter-rouge">http://localhost:8888</code>.</p>
-
-<h3 id="mostrando-los-logs-del-pod">Mostrando los logs del Pod</h3>
-
-<p>Para mostrar los logs del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl logs test-web
-</code></pre></div></div>
-
-<p>De esta manera, podemos ver los logs del servidor web que hemos desplegado.</p>
-
-<h3 id="eliminando-el-pod">Eliminando el Pod</h3>
-
-<p>Para eliminar el Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>kubectl delete pod test-web
-
-pod <span class="s2">"test-web"</span> deleted
-</code></pre></div></div>
-
-<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>
+    <p><img src="/assets/images/kubernetes/t2/5.png" alt="5"></p>
+  </li>
+</ol>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" title="Kubernetes: Instalación y configuración de minikube y kubectl">Kubernetes: Instalación y configuración de minikube...</a><a class="next" href="/aso/2023/02/07/ldap2.html" title="Escenario - Configuración de LDAP en Alfa">Escenario - Configuración de LDAP en...</a>
+<a class="previous" href="/hlc+sri/2023/02/03/kubernetes-pods.html" title="Taller Kubernetes: Trabajando con Pods">Taller Kubernetes: Trabajando con Pods</a><a class="next" href="/hlc+sri/2023/02/04/kubernetes-deploy.html" title="Taller Kubernetes: Trabajando con Deployments">Taller Kubernetes: Trabajando con Deployments</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="Escenario - Configuración de LDAP en Alfa">Despliegue de aplicaciones Java</a></li>
-<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Escenario - Configuración de LDAP en Alfa">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Escenario - Configuración de LDAP en Alfa">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/08/proxy.html" title="Escenario - Configuración de LDAP en Alfa">Apache como proxy inverso</a></li>
+        <li><a class="post-link" href="/hlc+sri/2023/01/28/iscsi.html" title="Taller Kubernetes: Trabajando con Deployments">Taller de Almacenamiento - Introducción a iSCSI </a></li>
+<li><a class="post-link" href="/iaw/2022/12/19/despliegue-python.html" title="Taller Kubernetes: Trabajando con Deployments">Despliegue de una aplicación Python</a></li>
+<li><a class="post-link" href="/aso/2022/10/12/compilacion-paquete-makefile.html" title="Taller Kubernetes: Trabajando con Deployments">Compilar dos2unix partiendo del código fuente</a></li>
+<li><a class="post-link" href="/aso/2023/01/22/ldap1.html" title="Taller Kubernetes: Trabajando con Deployments">Escenario - Configuración de LDAP en Alfa</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
