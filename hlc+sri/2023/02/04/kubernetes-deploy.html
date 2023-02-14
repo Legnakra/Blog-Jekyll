@@ -800,59 +800,64 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <p>Vamos a desplegar esta primera versión de la aplicación. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version1</code>.</p>
 
 <ol>
-  <li>Creamos un fichero yaml para desplegar la imagen: iesgn/test_web:version1.</li>
+  <li>
+    <p>Creamos un fichero yaml para desplegar la imagen: iesgn/test_web:version1.</p>
+
+    <div class="language-yaml highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
+   <span class="na">strategy</span><span class="pi">:</span>
+     <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version1</span>
+         <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-testweb</span>
+         <span class="na">ports</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
+           <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/7.png" alt="7"></p>
+  </li>
+  <li>
+    <p>Creamos el deployment:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>    </div>
+
+    <p><strong>NOTA</strong>: Anotaremos el despliegue para tener un registro de los cambios que se han ido realizando.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 1"</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/8.png" alt="8"></p>
+  </li>
+  <li>
+    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/9.png" alt="9"></p>
+  </li>
 </ol>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
-    <span class="na">strategy</span><span class="pi">:</span>
-      <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
-    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">matchLabels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-    <span class="na">template</span><span class="pi">:</span>
-      <span class="na">metadata</span><span class="pi">:</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-      <span class="na">spec</span><span class="pi">:</span>
-        <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version1</span>
-          <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-testweb</span>
-          <span class="na">ports</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-            <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
-    <span class="err">```</span>
-
-  <span class="kt">![7](/assets/images/kubernetes/t3/7.png)</span>
-
-<span class="na">2. Creamos el deployment</span><span class="pi">:</span>
-
-  <span class="err">```</span><span class="s">bash</span>
-  <span class="s">kubectl apply -f test-web-deployment2.yaml</span>
-</code></pre></div></div>
-
-<p><strong>NOTA</strong>: Anotaremos el despliegue para tener un registro de los cambios que se han ido realizando.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 1"</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/8.png" alt="8"></p>
-
-<ol>
-  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/9.png" alt="9"></p>
 
 <h4 id="segunda-versión">Segunda versión</h4>
 
@@ -922,105 +927,108 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Finalmente después de un trabajo muy duro, el equipo de desarrollo ha creado la imagen iesgn/test_web:version3. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version3</code> y la vamos a poner en producción, para ello:</p>
 
-<ol>
-  <li>Realizamos la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
-</ol>
-
 <ul>
   <li>
-    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+    <p>Realizamos la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</p>
 
-    <div class="language-yaml highlighter-rouge">
+    <ul>
+      <li>
+        <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
+
+        <div class="language-yaml highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
 <span class="na">containers</span><span class="pi">:</span>
     <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version3</span>
 <span class="nn">...</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Anotamos la versión 3 de la aplicación.</p>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Anotamos la versión 3 de la aplicación.</p>
 
-    <div class="language-bash highlighter-rouge">
+        <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 3"</span>
-</code></pre></div>    </div>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Actualizamos el deployment:</p>
+
+        <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+</code></pre></div>        </div>
+      </li>
+    </ul>
   </li>
   <li>
-    <p>Actualizamos el deployment:</p>
+    <p>Comprobamos que se han creado los recursos.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
+<div class="highlight"><pre class="highlight"><code>  kubectl get all
 </code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/13.png" alt="13"></p>
   </li>
-</ul>
-
-<ol>
-  <li>Comprobamos que se han creado los recursos.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/13.png" alt="13"></p>
-
-<ol>
   <li>
     <p>Visualizamos el historial de actualizaciones.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment2
+<div class="highlight"><pre class="highlight"><code>  kubectl rollout <span class="nb">history </span>deployment/test-web-deployment2
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/kubernetes/t3/14.png" alt="14"></p>
   </li>
   <li>
     <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t3/15.png" alt="15"></p>
   </li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/15.png" alt="15"></p>
+</ul>
 
 <h4 id="rollback">Rollback</h4>
 
 <p>¡Vaya!, parece que esta versión tiene un fallo, y no se ve de forma adecuada la hoja de estilos, tenemos que volver a la versión anterior:</p>
 
-<ol>
-  <li>Realizamos el rollback a la versión anterior.</li>
-</ol>
+<ul>
+  <li>
+    <p>Realizamos el rollback a la versión anterior.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout undo deployment/test-web-deployment
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl rollout undo deployment/test-web-deployment
+</code></pre></div>    </div>
 
-<p><img src="/assets/images/kubernetes/t3/16.png" alt="16"></p>
+    <p><img src="/assets/images/kubernetes/t3/16.png" alt="16"></p>
+  </li>
+  <li>
+    <p>Anotamos el rollback.</p>
 
-<ol>
-  <li>Anotamos el rollback.</li>
-</ol>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment rollback"</span>
+</code></pre></div>    </div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment rollback"</span>
-</code></pre></div></div>
+    <p><img src="/assets/images/kubernetes/t3/17.png" alt="17"></p>
+  </li>
+  <li>
+    <p>Comprobamos que se han creado los recursos.</p>
 
-<p><img src="/assets/images/kubernetes/t3/17.png" alt="17"></p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
+</code></pre></div>    </div>
 
-<ol>
-  <li>Comprobamos que se han creado los recursos.</li>
-</ol>
+    <p><img src="/assets/images/kubernetes/t3/18.png" alt="18"></p>
+  </li>
+  <li>
+    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/test-web-deployment 8080:80
+</code></pre></div>    </div>
 
-<p><img src="/assets/images/kubernetes/t3/18.png" alt="18"></p>
-
-<ol>
-  <li>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/19.png" alt="19"></p>
+    <p><img src="/assets/images/kubernetes/t3/19.png" alt="19"></p>
+  </li>
+</ul>
 
 <h3 id="ejercicio-3-despliegue-de-la-aplicación-guestbook">Ejercicio 3: Despliegue de la aplicación GuestBook</h3>
 
@@ -1121,61 +1129,69 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Para realizar el despliegue realiza los siguientes pasos:</p>
 
-<ol>
-  <li>Usando los ficheros anteriores, creamos los dos Deployments.</li>
-</ol>
+<ul>
+  <li>
+    <p>Usando los ficheros anteriores, creamos los dos Deployments.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> guestbook-deployment.yaml
-  kubectl apply <span class="nt">-f</span> redis-deployment.yaml
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> guestbook-deployment.yaml
+kubectl apply <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Comprobamos que se han creado los recursos.</p>
 
-<ol>
-  <li>Comprobamos que se han creado los recursos.</li>
-</ol>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl get all
+</code></pre></div>    </div>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
-</code></pre></div></div>
+    <p><img src="/assets/images/kubernetes/t3/20.png" alt="20"></p>
+  </li>
+  <li>
+    <p>Crea una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 5000, y accede a la aplicación con un navegador web.</p>
 
-<p><img src="/assets/images/kubernetes/t3/20.png" alt="20"></p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/guestbook 8080:5000
+</code></pre></div>    </div>
 
-<ol>
-  <li>Crea una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 5000, y accede a la aplicación con un navegador web.</li>
-</ol>
+    <p><img src="/assets/images/kubernetes/t3/21.png" alt="21"></p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/guestbook 8080:5000
-</code></pre></div></div>
+    <p><img src="/assets/images/kubernetes/t3/22.png" alt="22"></p>
 
-<p><img src="/assets/images/kubernetes/t3/21.png" alt="21"></p>
+    <p>Para eliminarlo ejecuta:</p>
 
-<p><img src="/assets/images/kubernetes/t3/22.png" alt="22"></p>
-
-<p>Para eliminarlo ejecuta:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl delete <span class="nt">-f</span> guestbook-deployment.yaml
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  kubectl delete <span class="nt">-f</span> guestbook-deployment.yaml
   kubectl delete <span class="nt">-f</span> redis-deployment.yaml
-</code></pre></div></div>
+</code></pre></div>    </div>
 
-<p>¿Qué aparece en la página principal de la aplicación?. Aparece el siguiente mensaje: Waiting for database connection…. Por lo tanto podemos indicar varias conclusiones:</p>
+    <p>¿Qué aparece en la página principal de la aplicación?. Aparece el siguiente mensaje: Waiting for database connection…. Por lo tanto podemos indicar varias conclusiones:</p>
+  </li>
+</ul>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1. Hasta ahora no estamos accediendo de forma “normal” a las aplicaciones. El uso de la opción port-forward es un mecanismo que realmente nos posibilita acceder a la aplicación, pero utilizando un proxy. Deberíamos acceder a las aplicaciones usando una ip y un puerto determinado.
-
-2. Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.
-</code></pre></div></div>
+<ol>
+  <li>
+    <p>Hasta ahora no estamos accediendo de forma “normal” a las aplicaciones. El uso de la opción port-forward es un mecanismo que realmente nos posibilita acceder a la aplicación, pero utilizando un proxy. Deberíamos acceder a las aplicaciones usando una ip y un puerto determinado.</p>
+  </li>
+  <li>
+    <p>Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.</p>
+  </li>
+</ol>
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" title="Taller Kubernetes: Trabajando con ReplicaSet ">Taller Kubernetes: Trabajando con ReplicaSet </a><a class="next" href="/aso/2023/02/07/ldap2.html" title="Escenario - Configuración de LDAP en Alfa">Escenario - Configuración de LDAP en...</a>
+<a class="previous" href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" title="Taller Kubernetes: Trabajando con ReplicaSet ">Taller Kubernetes: Trabajando con ReplicaSet </a><a class="next" href="/hlc+sri/2023/02/05/kubernetes-ingress.html" title="Kubernetes: Trabajando con Services">Kubernetes: Trabajando con Services</a>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Escenario - Configuración de LDAP en Alfa">Compilación de un kernel a medida</a></li>
-<li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Escenario - Configuración de LDAP en Alfa">Cifrado asimétrico con gpg y openssl </a></li>
-<li><a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html" title="Escenario - Configuración de LDAP en Alfa">Configuración de un servidor de correo en un VPS</a></li>
-<li><a class="post-link" href="/sobre-mi/2022/09/29/welcome-to-jekyll.html" title="Escenario - Configuración de LDAP en Alfa">Bienvenid@</a></li>
+        <li><a class="post-link" href="/aso/2022/11/16/centOS.html" title="Kubernetes: Trabajando con Services">Migración CentOS</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="Kubernetes: Trabajando con Services">Infraestructura como código</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" title="Kubernetes: Trabajando con Services">Kubernetes: Instalación y configuración de minikube y kubectl</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/01/29/DRBD+OCFS2.html" title="Kubernetes: Trabajando con Services">Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
