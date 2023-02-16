@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Cortafuegos I: De nodo con iptables | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Cortafuegos I: De nodo con iptables">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción">
+<meta property="og:description" content="Introducción">
+<link rel="canonical" href="/seguridad/2023/02/01/cortafuegos-1.html">
+<meta property="og:url" content="/seguridad/2023/02/01/cortafuegos-1.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-02-01T16:45:16+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Cortafuegos I: De nodo con iptables">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-01T16:45:16+01:00","datePublished":"2023-02-01T16:45:16+01:00","description":"Introducción","headline":"Cortafuegos I: De nodo con iptables","mainEntityOfPage":{"@type":"WebPage","@id":"/seguridad/2023/02/01/cortafuegos-1.html"},"url":"/seguridad/2023/02/01/cortafuegos-1.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/iptables.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/iptables.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Cortafuegos I: De nodo con iptables</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-02-01T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 1, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>Vamos a realizar los primeros pasos para implementar un cortafuegos en un nodo de una red, aquel que se ejecuta en el propio equipo que trata de proteger, lo que a veces se denomina un cortafuegos personal.</p>
+
+<h2 id="preparando-el-entorno">Preparando el entorno</h2>
+
+<p>Vamos a utilizar una máquina en openstack, que vamos a crear con la siguiente <a href="https://fp.josedomingo.org/seguridadgs/u03/escenario1.yaml">receta</a>. La receta heat ha deshabilitado el cortafuego que nos ofrece openstack (todos los puertos de todos los protocolos están abiertos). La máquina creada tendrá un servidor web instalado. Vamos a trabajar con la red de las ips flotantes: 172.22.0.0/16.</p>
+
+<p><img src="/assets/images/iptables/ej1/1.png" alt="1"></p>
+
+<p>Y nos logueamos en la máquina:</p>
+
+<p><img src="/assets/images/iptables/ej1/2.png" alt="2"></p>
+
+<h2 id="limpiamos-el-entorno">Limpiamos el entorno</h2>
+
+<p>Para asegurarnos de que nuestro escenario está limpio, vamos a eliminar todas las reglas que haya en la tabla de filtrado de iptables:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-F</span>
+iptables <span class="nt">-t</span> nat <span class="nt">-F</span>
+iptables <span class="nt">-Z</span>
+iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/3.png" alt="3"></p>
+
+<h2 id="vamos-a-permitir-ssh">Vamos a permitir ssh</h2>
+
+<p>Cómo estamos conectado a la máquina por ssh, vamos a permitir la conexión ssh desde la red 172.22.0.0/16, antes de cambiar las políticas por defecto a DROP, para no perder la conexión:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<span class="c">#Añado estas reglas para no perder la conexión, dado que es la VPN del instituto</span>
+iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.29.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.29.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/4.png" alt="4"></p>
+
+<h2 id="política-por-defecto">Política por defecto</h2>
+
+<p>En este punto, vamos a cambiar la política por defecto de la tabla de filtrado de iptables a DROP, para que no se permita nada que no hayamos especificado explícitamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-P</span> INPUT DROP
+iptables <span class="nt">-P</span> OUTPUT DROP
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/5.png" alt="5"></p>
+
+<p>Y comprobamos que no podemos hacer ping ni a la máquina ni a internet:</p>
+
+<p><img src="/assets/images/iptables/ej1/6.png" alt="6"></p>
+
+<h2 id="permitimos-tráfico-para-la-interfaz-de-loopback">Permitimos tráfico para la interfaz de loopback</h2>
+
+<p>Para poder hacer ping, vamos a permitirlo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> lo <span class="nt">-p</span> icmp <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> lo <span class="nt">-p</span> icmp <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 3 127.0.0.1
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/7.png" alt="7"></p>
+
+<h2 id="peticiones-y-respuestas-protocolo-icmp">Peticiones y respuestas protocolo ICMP</h2>
+
+<p>Vamos a añadir las reglas necesarias para permitir las peticiones y respuestas del protocolo ICMP, pero primero, comprobemos que no tenemos conexión a internet:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping <span class="nt">-c</span> 3 8.8.8.8
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/8.png" alt="8"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/9.png" alt="9"></p>
+
+<p>Y comprobamos que podemos realizar la ejecución de <code class="language-plaintext highlighter-rouge">ping -c 5 1.1.1.1</code>:</p>
+
+<p><img src="/assets/images/iptables/ej1/10.png" alt="10"></p>
+
+<h2 id="consultas-y-respuestas-dns">Consultas y respuestas DNS</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> udp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> udp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/11.png" alt="11"></p>
+
+<p>Y comprobamos que funciona haciendo una consulta dns a <code class="language-plaintext highlighter-rouge">www.josedomingo.org</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dig 1.1.1.1 www.josedomingo.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/12.png" alt="12"></p>
+
+<p>Aprovechando que tengo una aplicación web en mi VPS, vamos a comprobar que podemos hacer una petición http:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dig 1.1.1.1 bookmedik.mariatec.es
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/13.png" alt="13"></p>
+
+<h2 id="tráfico-http">Tráfico HTTP</h2>
+
+<p>Podemos hacer un par de reglas que permitan el tráfico http/https (los dos puntos anteriores) usando la extensión <code class="language-plaintext highlighter-rouge">multiport</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Con estas reglas, podremos permitir las peticiones http. Para comprobarlo, vamos a realizarlo con la ejecución del comando curl:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl portquiz.net:80
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/14.png" alt="14"></p>
+
+<h2 id="tráfico-https">Tráfico HTTPS</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Una vez aplicadas estas reglas, vamos a comprobar que podemos hacer una petición https:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl portquiz.net:443
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/15.png" alt="15"></p>
+
+<h2 id="tráfico-httphttps">Tráfico HTTP/HTTPS</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/16.png" alt="16"></p>
+
+<p>Y comprobamos que podemos hacer una petición http y https:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl portquiz.net:80
+curl portquiz.net:443
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/17.png" alt="17"></p>
+
+<h2 id="permitimos-el-acceso-de-nuestro-servidor-web">Permitimos el acceso de nuestro servidor web</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/18.png" alt="18"></p>
+
+<p>Y comprobamos que podemos acceder a nuestro servidor web:</p>
+
+<p><img src="/assets/images/iptables/ej1/19.png" alt="19"></p>
+
+<h2 id="configuración-en-un-solo-paso">Configuración en un solo paso</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">### Limpiamos las tablas</span>
+
+iptables <span class="nt">-F</span>
+iptables <span class="nt">-t</span> nat <span class="nt">-F</span>
+iptables <span class="nt">-Z</span>
+iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
+
+<span class="c">### Establecemos la política</span>
+
+iptables <span class="nt">-P</span> INPUT DROP
+iptables <span class="nt">-P</span> OUTPUT DROP
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> lo <span class="nt">-p</span> icmp <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> lo <span class="nt">-p</span> icmp <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> udp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> udp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+</code></pre></div></div>
+
+<p>Para guardarlas, podemos usar el comando <code class="language-plaintext highlighter-rouge">iptables-save</code> o podemos guardarlas con el comando <code class="language-plaintext highlighter-rouge">iptables-save</code>.</p>
+
+<h2 id="ejercicios-tras-la-configuración">Ejercicios tras la configuración</h2>
+
+<h3 id="ejercicio-1-permite-poder-hacer-conexiones-ssh-al-exterior">Ejercicio 1: Permite poder hacer conexiones ssh al exterior.</h3>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Tras implementar estas reglas, podemos comprobar que podemos hacer una conexión ssh al exterior:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh maria@172.22.xxx.xxx
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/20.png" alt="20"></p>
+
+<h3 id="ejercicio-2-deniega-el-acceso-a-tu-servidor-web-desde-una-ip-concreta">Ejercicio 2: Deniega el acceso a tu servidor web desde una ip concreta.</h3>
+
+<p>Para realizar este ejercicio, lo primero que vamos a comprobar las reglas que tenemos creadas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-L</span> <span class="nt">-n</span> <span class="nt">-v</span> <span class="nt">--line-numbers</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/21.png" alt="21"></p>
+
+<p>Una vez sabido esto, añadimos la regla que nos permite denegar el acceso a una ip concreta, en mi caso, la ip de mi máquina <code class="language-plaintext highlighter-rouge">alfa</code> de mi <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-I</span> INPUT 7 <span class="nt">-s</span> 172.22.201.46 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> DROP
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/22.png" alt="22"></p>
+
+<p>Ya incluida la regla, comprobamos que no podemos acceder a nuestro servidor web desde la ip</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl 172.22.200.153
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/23.png" alt="23"></p>
+
+<p>Para cerciorarnos de la regla, podemos comprobar que si accedemos desde otra ip, si podemos acceder:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl 172.22.200.153
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/24.png" alt="24"></p>
+
+<h3 id="ejercicio-3-permite-hacer-consultas-dns-sólo-al-servidor-1921682022-comprueba-que-no-puedes-hacer-un-dig-1111">Ejercicio 3: Permite hacer consultas DNS sólo al servidor 192.168.202.2. Comprueba que no puedes hacer un dig @1.1.1.1.</h3>
+
+<p>Lo primero será borrar las antiguas reglas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-D</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> udp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-D</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> udp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/25.png" alt="25"></p>
+
+<p>Añadimos las reglas nuevas, que nos permitirán hacer consultas DNS sólo al servidor</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 192.168.202.2 <span class="nt">-p</span> udp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 192.168.202.2 <span class="nt">-p</span> udp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/26.png" alt="26"></p>
+
+<p>Una vez incluidas, comprobamos que no podemos hacer una consulta DNS. La primera consulta la haremos al dns <code class="language-plaintext highlighter-rouge">1.1.1.1</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dig @1.1.1.1 bookmedik.mariatec.es
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/27.png" alt="27"></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dig @192.168.202.2 bookmedik.mariatec.es
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/28.png" alt="28"></p>
+
+<h3 id="ejercicio-4-no-permitir-el-acceso-al-servidor-web-de-wwwjosedomingoorg-tienes-que-utilizar-la-ip-puedes-acceder-a-fpjosedomingoorg">Ejercicio 4: No permitir el acceso al servidor web de www.josedomingo.org (Tienes que utilizar la ip). ¿Puedes acceder a fp.josedomingo.org?</h3>
+
+<p>Para realizar este ejercicio, lo primero que vamos a comprobar es la IP de <code class="language-plaintext highlighter-rouge">www.josedomingo.org</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dig www.josedomingo.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/29.png" alt="29"></p>
+
+<p>Vamos a mirar la posición en la que se encuentra la regla que nos permite el acceso tanto al protocolo http como al protocolo https:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-L</span> <span class="nt">-n</span> <span class="nt">-v</span> <span class="nt">--line-numbers</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/30.png" alt="30"></p>
+
+<p>Y añadimos la regla que se encuentra por encima de la regla que nos permite el acceso a nuestro servidor web:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-I</span> OUTPUT 5 <span class="nt">-d</span> 37.187.119.60 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> DROP
+</code></pre></div></div>
+
+<p>Si intentamos acceder a <code class="language-plaintext highlighter-rouge">www.josedomingo.org</code>, no podremos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl www.josedomingo.org
+dig www.josedomingo.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/31.png" alt="31"></p>
+
+<h3 id="ejercio-5-permite-mandar-un-correo-usando-nuestro-servidor-de-correo-babuino-smtp-para-probarlo-ejecuta-un-telnet-babuino-smtpgonzalonazarenoorg-25">Ejercio 5: Permite mandar un correo usando nuestro servidor de correo: babuino-smtp. Para probarlo ejecuta un telnet babuino-smtp.gonzalonazareno.org 25.</h3>
+
+<p>Creamos lasreglas que nos permitirán mandar un correo usando nuestro servidor de correo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 192.168.203.3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 25 <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 192.168.203.3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 25 <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Y comprobamos que funciona:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>telnet babuino-smtp.gonzalonazareno.org 25
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/32.png" alt="32"></p>
+
+<h3 id="ejercicio-6-instala-un-servidor-mariadb-y-permite-los-accesos-desde-la-ip-de-tu-cliente-comprueba-que-desde-otro-cliente-no-se-puede-acceder">Ejercicio 6: Instala un servidor mariadb, y permite los accesos desde la ip de tu cliente. Comprueba que desde otro cliente no se puede acceder.</h3>
+
+<p>Instalamos mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>mariadb-server
+</code></pre></div></div>
+
+<p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code> y configuramos el parámetro <code class="language-plaintext highlighter-rouge">bind-address</code> a <code class="language-plaintext highlighter-rouge">0.0.0.0</code> para que escuche en todas las interfaces:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bind-address <span class="o">=</span> 0.0.0.0
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart mariadb
+</code></pre></div></div>
+
+<p>Configuramos las reglas para permitir el tráfico entrante desde mi máquina:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.4.176 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 3306 <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.4.176 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 3306 <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Comprobamos que funciona:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nc <span class="nt">-zvw10</span> 172.22.4.176 3306
+</code></pre></div></div>
+
+<p><img src="/assets/images/iptables/ej1/33.png" alt="33"></p>
+
+<p><img src="/assets/images/iptables/ej1/34.png" alt="34"></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html" title="Kubernetes: Trabajando con un Pod multicontenedor">Kubernetes: Trabajando con un Pod multicontenedor...</a><a class="next" href="/hlc+sri/2023/02/03/kubernetes-pods.html" title="Taller Kubernetes: Trabajando con Pods">Taller Kubernetes: Trabajando con Pods</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/iaw/2023/02/09/docker-bookmedik.html" title="Taller Kubernetes: Trabajando con Pods">Implantación de aplicaciones web PHP en docker</a></li>
+<li><a class="post-link" href="/iaw/2023/02/11/docker-python.html" title="Taller Kubernetes: Trabajando con Pods">Implantación de aplicaciones web Python en docker</a></li>
+<li><a class="post-link" href="/iaw/2023/01/12/docker-almacenamiento.html" title="Taller Kubernetes: Trabajando con Pods">Taller Docker - Almacenamiento y Redes</a></li>
+<li><a class="post-link" href="/iaw/2023/01/27/docker-imagen.html" title="Taller Kubernetes: Trabajando con Pods">Taller Docker - Creación de imágenes Docker</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
