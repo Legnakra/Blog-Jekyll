@@ -901,7 +901,7 @@ iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span c
 
 <p>Tras implementar estas reglas, podemos comprobar que podemos hacer una conexión ssh al exterior:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh maria@172.22.xxx.xxx
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh maria@172.22.6.19
 </code></pre></div></div>
 
 <p><img src="/assets/images/iptables/ej1/20.png" alt="20"></p>
@@ -1029,16 +1029,16 @@ iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 192.168.203
 
 <p>Configuramos las reglas para permitir el tráfico entrante desde mi máquina:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.4.176 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 3306 <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.4.176 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 3306 <span class="nt">-j</span> ACCEPT
-</code></pre></div></div>
-
-<p>Comprobamos que funciona:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nc <span class="nt">-zvw10</span> 172.22.4.176 3306
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.6.19 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 3306 <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.6.19 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 3306 <span class="nt">-j</span> ACCEPT
 </code></pre></div></div>
 
 <p><img src="/assets/images/iptables/ej1/33.png" alt="33"></p>
+
+<p>Comprobamos que funciona:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nc <span class="nt">-zvw10</span> 172.22.200.153 3306
+</code></pre></div></div>
 
 <p><img src="/assets/images/iptables/ej1/34.png" alt="34"></p>
 
@@ -1052,10 +1052,10 @@ iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.4.1
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/12/19/despliegue-python.html" title="Taller Kubernetes: Trabajando con Pods">Despliegue de una aplicación Python</a></li>
-<li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Taller Kubernetes: Trabajando con Pods">Compilación de un kernel a medida</a></li>
-<li><a class="post-link" href="/seguridad/2023/01/13/vpn-d.html" title="Taller Kubernetes: Trabajando con Pods">VPN sitio a sitio con WireGuard</a></li>
+        <li><a class="post-link" href="/hlc+sri/2023/01/21/almacenamiento.html" title="Taller Kubernetes: Trabajando con Pods">Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt...</a></li>
+<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Taller Kubernetes: Trabajando con Pods">Configuración de HTTPS en nuestro VPS</a></li>
 <li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller Kubernetes: Trabajando con Pods">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/aso/2023/01/04/journald.html" title="Taller Kubernetes: Trabajando con Pods">Recolección centralizada de logs de sistema, mediante journald</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
