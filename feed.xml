@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-17T08:38:35+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-20T17:07:33+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -69,7 +69,7 @@
 <span class="s">RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static</span>
 <span class="s">ADD ./polls.sh /usr/src/app/</span>
 <span class="s">RUN chmod +x /usr/src/app/polls.sh</span>
-<span class="s">ENV ALLOWED_HOSTS=*</span>
+<span class="s">ENV ALLOWED_HOSTS='*'</span>
 <span class="s">ENV HOST=mariadb</span>
 <span class="s">ENV USUARIO=django</span>
 <span class="s">ENV CONTRA=django</span>
@@ -226,7 +226,7 @@ systemctl restart nginx
 
 <p><img src="/assets/images/docker/p2/10.png" alt="10" /></p>
 
-<p><img src="/assets/images/docker/p2/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get("BASE_DATOS"), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get("CONTRA"), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS=* ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT ["/usr/src/app/polls.sh"] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: "*" HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/docker/p2/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get("BASE_DATOS"), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get("CONTRA"), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS='*' ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT ["/usr/src/app/polls.sh"] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: "*" HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a>. Crearemos una imagen Docker para implementar dicha aplicación.</p>
 
@@ -758,7 +758,448 @@ systemctl restart nginx
 
 <p><a href="https://www.docker.com/">https://www.docker.com/</a></p>
 
-<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/07/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/ldap2</id><content type="html" xml:base="/aso/2023/02/07/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry><entry><title type="html">Taller Kubernetes: Despliegues parametrizados</title><link href="/hlc+sri/2023/02/08/kubernetes-parametrizados.html" rel="alternate" type="text/html" title="Taller Kubernetes: Despliegues parametrizados" /><published>2023-02-08T16:45:16+01:00</published><updated>2023-02-08T16:45:16+01:00</updated><id>/hlc+sri/2023/02/08/kubernetes-parametrizados</id><content type="html" xml:base="/hlc+sri/2023/02/08/kubernetes-parametrizados.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este taller vamos a ver cómo podemos desplegar aplicaciones parametrizadas en Kubernetes. Para ello, vamos a utilizar un ejemplo muy sencillo: una aplicación web que gestione las temperaturas de una localidad y el despliegue y acceso a Nextcloud.</p>
+
+<h2 id="ejercicio-1-configurando-nuestra-aplicación-temperaturas">Ejercicio 1: Configurando nuestra aplicación Temperaturas</h2>
+
+<p>Recordamos que el componente frontend hace peticiones al componente backend utilizando el nombre temperaturas-backend, que es el nombre que asignamos al Service ClusterIP para el acceso al backend.</p>
+
+<p>Vamos a cambiar la configuración de la aplicación para indicar otro nombre.</p>
+
+<p>Podemos configurar el nombre del servidor backend al que vamos acceder desde el frontend modificando la variable de entorno TEMP_SERVER a la hora de crear el despliegue del frontend.</p>
+
+<p>Por defecto el valor de esa variable es:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">TEMP_SERVER temperaturas-backend:5000</span>
+</code></pre></div></div>
+
+<p>Vamos a modificar esta variable en el despliegue del frontend y cambiaremos el nombre del Service del backend para que coincidan, para ello realiza los siguientes pasos:</p>
+
+<ol>
+  <li>
+    <p>Vamos a crear el recurso con los siguientes valores:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create cm temperaturas <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">SERVIDOR_TEMPERATURAS</span><span class="o">=</span>servidor-temperaturas:5000
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>para eliminarlo:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+kubectl delete cm temperaturas
+```
+
+
+Y verificamos que se ha creado correctamente:
+
+```bash
+kubectl get cm
+```
+
+```bash
+kubectl describe cm temperaturas
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/1.png" alt="1" /></p>
+
+<ol>
+  <li>
+    <p>Creamos los ficheros necesarios para el despliegue de la aplicación:</p>
+
+    <ul>
+      <li>
+        <p>frontend-deployment.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-frontend</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-temperaturas</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/temperaturas_frontend</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3000</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">TEMP_SERVER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">SERVIDOR_TEMPERATURAS</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>frontend-service.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-frontend</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>backend-deployment.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-backend</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+      <span class="na">spec</span><span class="pi">:</span>
+        <span class="na">containers</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-servidor-temperaturas</span>
+            <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/temperaturas_backend</span>
+            <span class="na">ports</span><span class="pi">:</span>
+              <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">api-server</span>
+                <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>backend-service.yaml</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">servidor-temperaturas</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+    <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">5000</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">api-server</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Y realizamos el despliegue de la aplicación:</p>
+  </li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+  kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/2.png" alt="2" /></p>
+
+<p><img src="/assets/images/kubernetes/t5/3.png" alt="3" /></p>
+
+<ol>
+  <li>Accedemos a la aplicación y verificamos que funciona correctamente:</li>
+</ol>
+
+<p><img src="/assets/images/kubernetes/t5/4.png" alt="4" /></p>
+
+<p><img src="/assets/images/kubernetes/t5/5.png" alt="5" /></p>
+
+<h2 id="ejercicio-2-desplegando-nextcloud">Ejercicio 2: Desplegando Nextcloud</h2>
+
+<p>Vamos a realizar el despliegue de la aplicación NextCloud + MariaDB. Para ello ten en cuenta lo siguiente:</p>
+
+<ul>
+  <li>
+    <p>El despliegue de la base de datos se realizará con una imagen de MariaDB:10.5.</p>
+  </li>
+  <li>
+    <p>Las variables de entorno que se deben configurar son:</p>
+
+    <ul>
+      <li>MYSQL_HOST: nombre del servicio que se creará para la base de datos.</li>
+      <li>MYSQL_DATABASE: nombre de la base de datos que se creará.</li>
+      <li>MYSQL_USER: nombre del usuario que se creará.</li>
+      <li>MYSQL_PASSWORD: contraseña del usuario que se creará.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Deberemos usar un recurso Secret para los datos sensibles y un COnfigMAp para el resto de variables de entorno.</p>
+  </li>
+</ul>
+
+<h3 id="paso-1-crear-el-recurso-secret">Paso 1: Crear el recurso Secret</h3>
+
+<p>Para crear el recurso Secret, ejecuta el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create cm bd-datos <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_user</span><span class="o">=</span>nextcloud <span class="se">\</span>
+<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_dbname</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_datos_configmap.yaml
+
+kubectl create secret generic bd-passwords <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_password</span><span class="o">=</span>nextcloud <span class="se">\</span>
+<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_rootpassword</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_passwords_secret.yaml
+</code></pre></div></div>
+
+<p>Y los desplegamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> bd_datos_configmap.yaml
+kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/6.png" alt="6" /></p>
+
+<h3 id="paso-2-creamos-er-fichero-de-despliegue-de-la-base-de-datos">Paso 2: Creamos er fichero de despliegue de la base de datos</h3>
+
+<p>Creamos el fichero de despliegue de la base de datos:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-deployment</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-mariadb</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:10.5</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3306</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">db-port</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_ROOT_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_root_password</span>
+</code></pre></div></div>
+
+<h3 id="paso-3-creamos-el-servicio-de-la-base-de-datos">Paso 3: Creamos el servicio de la base de datos</h3>
+
+<p>Creamos el servicio de la base de datos:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-service</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3306</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">db-port</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+</code></pre></div></div>
+
+<h3 id="paso-4-creamos-el-despliegue-de-nextcloud">Paso 4: Creamos el despliegue de Nextcloud</h3>
+
+<p>Creamos el despliegue de Nextcloud:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-deployment</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-nextcloud</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">nextcloud:latest</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">http-port</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">443</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">https-port</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_HOST</span>
+              <span class="na">value</span><span class="pi">:</span> <span class="s">mariadb-service</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
+</code></pre></div></div>
+
+<h3 id="paso-6-creamos-el-servicio-de-nextcloud">Paso 6: Creamos el servicio de Nextcloud</h3>
+
+<p>Creamos el servicio de Nextcloud:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-sv-port</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-port</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">https-sv-port</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="m">443</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">https-port</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+</code></pre></div></div>
+
+<h3 id="paso-7-creamos-el-fichero-ingress">Paso 7: Creamos el fichero ingress</h3>
+
+<p>Creamos el fichero ingress:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-ingress</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-nextcloud.org</span>
+    <span class="na">http</span><span class="pi">:</span>
+      <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+        <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+        <span class="na">backend</span><span class="pi">:</span>
+          <span class="na">service</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
+              <span class="s">port</span><span class="err">:</span>
+                <span class="na">number</span><span class="pi">:</span> <span class="s">http-sv-port</span>
+</code></pre></div></div>
+
+<h3 id="paso-8-desplegamos-la-aplicación">Paso 8: Desplegamos la aplicación</h3>
+
+<p>Desplegamos la aplicación:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/7.png" alt="7" /></p>
+
+<p>Y comprobamos que están desplegados los servicios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get all
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/8.png" alt="8" /></p>
+
+<h3 id="paso-9-modificamos-el-fichero-etchosts">Paso 9: Modificamos el fichero /etc/hosts</h3>
+
+<p>Modificamos el fichero /etc/hosts:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/hosts
+</code></pre></div></div>
+
+<p>Y añadimos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.100.185 www.maria-nextcloud.org
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t5/9.png" alt="9" /></p>
+
+<h3 id="paso-10-accedemos-a-la-aplicación">Paso 10: Accedemos a la aplicación</h3>
+
+<p>Accedemos a la aplicación:</p>
+
+<p><img src="/assets/images/kubernetes/t5/10.png" alt="10" /></p>
+
+<p>Introducimos las credenciales:</p>
+
+<ul>
+  <li>Usuario: nextcloud</li>
+  <li>Contraseña: bmV4dGNsb3Vk</li>
+</ul>
+
+<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/07/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/ldap2</id><content type="html" xml:base="/aso/2023/02/07/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
 
@@ -775,10 +1216,9 @@ systemctl restart nginx
 
 <p>El mío quedaría así:</p>
 
-<pre><code class="language-csv">Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
+<pre><code class="language-csv">Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org
+Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
 Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org
-Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie
-Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org
 </code></pre>
 
 <h3 id="esquema-openssh-lpk">Esquema openssh-lpk</h3>
@@ -808,6 +1248,8 @@ olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <s
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> /etc/ldap/schema/openssh-lpk.ldif
 </code></pre></div></div>
 
+<p><img src="/assets/images/LDAP/ldap2/1.png" alt="1" /></p>
+
 <h3 id="script-en-python-">Script en Python 🐍</h3>
 
 <p>Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando:</p>
@@ -818,7 +1260,8 @@ olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <s
 <p>El fin del entorno virtual es instalar el módulo <code class="language-plaintext highlighter-rouge">python-ldap</code> que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source </span>ldap/bin/activate
-pip <span class="nb">install </span>python-ldap<span class="o">==</span>2.6
+pip <span class="nb">install </span>python3-ldap
+pip <span class="nb">install </span><span class="nv">ldap3</span><span class="o">==</span>2.6
 </code></pre></div></div>
 
 <p>Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado <code class="language-plaintext highlighter-rouge">ldap.py</code>:</p>
@@ -922,21 +1365,19 @@ pip <span class="nb">install </span>python-ldap<span class="o">==</span>2.6
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 ldap.py
 </code></pre></div></div>
 
-<p>IMAGEN</p>
-
 <p>Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-LLL</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>ivan,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-LLL</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
 </code></pre></div></div>
 
-<p>IMAGEN</p>
+<p><img src="/assets/images/LDAP/ldap2/2.png" alt="2" /></p>
 
 <h3 id="configuramos-el-sistema-para-que-los-usuarios-sean-autenticados-por-ldap">Configuramos el sistema para que los usuarios sean autenticados por LDAP</h3>
 
 <p>Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> y añadir las siguientes líneas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-URI ldap://127.0.0.1
+URI ldap://alfa.mariajesus.gonzalonazareno.org
 </code></pre></div></div>
 
 <p>También deberemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> y añadir la siguiente línea:</p>
@@ -987,13 +1428,12 @@ ldapsearch <span class="nt">-x</span> <span class="nt">-u</span> <span class="nt
 
 <p>Para hacer una prueba, ejecutamos el script:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/opt/search.sh ivan
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> /opt/search.sh maria
 </code></pre></div></div>
 
-<p>IMAGEN</p>
+<p><img src="/assets/images/LDAP/ldap2/3.png" alt="3" /></p>
 
-<p>Tras esta comprobación, nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> y añadimos las siguientes líneas:</p>
-
+<h2 id="tras-esta-comprobación-nos-dirigimos-al-fichero-etcsshsshd_config-y-añadimos-las-siguientes-líneas">Tras esta comprobación, nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> y añadimos las siguientes líneas:</h2>
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AuthorizedKeysCommand /opt/search.sh
 AuthorizedKeysCommandUser nobody
 </code></pre></div></div>
@@ -1008,7 +1448,7 @@ AuthorizedKeysCommandUser nobody
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh mariajesus@alfa
 </code></pre></div></div>
 
-<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Angel,Suarez Perez,angelsuarezperez@gmail.com,angel,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDFEJGJIWb1KviE3kwQRoUV2C4E0d9L0mq9XjSt1kmznXSXMODJBdHwa7GOb9iwmW3OKkTa6RGokB2nKvs+2IBm9HcPYM0WM78wxEazuUvwpHR4mV58gzif/ETM48/ceQcf1fqADW1456Mfk7zFHwgf8vjyNfFCtR6NGve7wb7ojm79a9CJpqZEJ9X+EVxjbKysdvhS3BsNo5L3aJwPsAHE29+lFhDmOOzuEXWTjvFRkC1aFN1iVyxdolNJuh3onWXZDzPI55Q/DHtkpjKZ4cYqBsmwZFjWlum5aWRltgYMZtvoGOBglIxBQWjY4sl7WCiW89b+6zIcG4vWq48qhoO76ROYEPJL4pdkxxUZbjk4xApHLoO56+fXCtoo+fO/zQiHyTElzXBg/v2MmqxUrFQmQCzhbAuKK88rycZVFdIknuc+Raoi3faiX2x5N9AL4PMpEVJaTi7b/n7NMZVTkuVT9U/X9pwABSi1yngxlr2BpTg2FJD5iId15v51nx1ynXE= angelsuarez@charlie Maria Jesus,Alloza Rodriguez, mariajesus.allozarodriguez@gmail.com, ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDd4xzwnydw85ipOR35RhK/S4750Z+PDsr8JILUh3abXczA25pR/CoXmMdSqTOTG8QqA2eKyJtATbz7W7nbaniIO8vWlyYYBYiiq3gXIW8u5hZl791Odgl5V1INEuQFgdwyABk60m2kPzc8pzvBJc65TGq3C8YrpOY/k3DoXd0dBEmZe5bCUqCcSF9j1J+4FQj0NxF1sXrnP0ZNL0y70CPROzwZw0ECz1eB/WhfH4niQhF3jHSw9WEYy548JIy4xAbeexnenwVua5W0Wyu7Rfk2NIGuMnq0Ese06wSu1x7sX8rBOljs+E3+eAsPmBDGXzNlpi8x8k9ZAdSjLCY5mpPeXauOR7LKfVpqjXNDzBBoodQrDQOA8QbbUxOtYz2srno3KF0RmAzhk/puEn19rkhWulOBMr322Kom+br7Rzc/WiML7YHEYhAY1GE8eyCSzH3Mkv7dqLAfP3WZ6pgbVXe/OdHkpuXBw+RS/GqvlVTbl//gHsMbEMav3CZBZttiIpU= maria@delta.mariajesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python-ldap==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py IMAGEN Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=ivan,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W IMAGEN Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://127.0.0.1 También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org IMAGEN Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: /opt/search.sh ivan IMAGEN Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa IMAGEN]]></summary></entry><entry><title type="html">Escenario - LDAPs</title><link href="/aso/2023/02/07/LDAPs.html" rel="alternate" type="text/html" title="Escenario - LDAPs" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/LDAPs</id><content type="html" xml:base="/aso/2023/02/07/LDAPs.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/LDAP/ldap2/4.png" alt="4" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python3-ldap pip install ldap3==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=mariajesus,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org IMAGEN Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: source /opt/search.sh maria Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa]]></summary></entry><entry><title type="html">Escenario - LDAPs</title><link href="/aso/2023/02/07/LDAPs.html" rel="alternate" type="text/html" title="Escenario - LDAPs" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/LDAPs</id><content type="html" xml:base="/aso/2023/02/07/LDAPs.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este escenario vamos a ver como configurar un servidor LDAP en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> para que utilice el protocolo ldaps:// a la vez que el ldap:// utilizando el certificado x509 de la práctica de https o solicitando el correspondiente a través de gestiona. Realiza las modificaciones adecuadas en los clientes ldap de alfa para que todas las consultas se realicen por defecto utilizando ldaps://.</p>
 
@@ -1293,7 +1733,666 @@ systemctl start mnt-nfs.mount
   <li>Comprobamos desde <code class="language-plaintext highlighter-rouge">alfa</code> que se ha creado el directorio <code class="language-plaintext highlighter-rouge">/home/nfs/coffee</code>:</li>
 </ul>
 
-<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Trabajando con Services</title><link href="/hlc+sri/2023/02/05/kubernetes-ingress.html" rel="alternate" type="text/html" title="Kubernetes: Trabajando con Services" /><published>2023-02-05T16:45:16+01:00</published><updated>2023-02-05T16:45:16+01:00</updated><id>/hlc+sri/2023/02/05/kubernetes-ingress</id><content type="html" xml:base="/hlc+sri/2023/02/05/kubernetes-ingress.html"><![CDATA[<h2 id="ejercicio-1-despliegue-y-acceso-de-la-aplicación-guestbook">Ejercicio 1: Despliegue y acceso de la aplicación GuestBook</h2>
+<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Auditoría en bases de datos</title><link href="/asgdb/2023/02/07/auditoria.html" rel="alternate" type="text/html" title="Auditoría en bases de datos" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/asgdb/2023/02/07/auditoria</id><content type="html" xml:base="/asgdb/2023/02/07/auditoria.html"><![CDATA[<h2 id="qué-es-una-auditoría-en-bases-de-datos">¿Qué es una auditoría en bases de datos?</h2>
+
+<p>Una auditoría en bases de datos es un proceso que permite verificar el correcto funcionamiento de una base de datos, así como el cumplimiento de las políticas de seguridad y de las normas de calidad de los datos.  Dicho de otra forma, es un proceso que permite medir, demostrar, monitorear y registrar los accesos a la información que se haya almacenada en en una base de datos.</p>
+
+<p>Un administrador puede realizar auditorías con acciones individuales, como el tipo de declaración de lenguaje de consulta estructurado (SQL) ejecutada, o en combinaciones de datos que pueden incluir el nombre del usuario, la aplicación o la marca de tiempo, por ejemplo. Los auditores deben auditar las actividades exitosas y fallidas, e incluir o excluir usuarios específicos de la auditoría.</p>
+
+<h2 id="ejercicios-prácticos">Ejercicios prácticos</h2>
+
+<p><img src="/assets/images/interconexion/oracle.png" alt="oracle" /></p>
+
+<h3 id="ejercicio-1">Ejercicio 1</h3>
+
+<p><strong>Activa desde SQL*Plus la auditoría de los intentos de acceso exitosos al sistema. Comprueba su funcionamiento.</strong></p>
+
+<p>Lo primero que debemos hacer es activar la auditoría, que en ORACLE depende de un parámetro de sistema, <code class="language-plaintext highlighter-rouge">AUDIT_TRAIL</code>. Este parámetro puede tener los siguientes valores:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">NONE</code>: No se realiza ninguna auditoría.</li>
+  <li><code class="language-plaintext highlighter-rouge">DB</code>: Se realiza una auditoría en la base de datos.</li>
+  <li><code class="language-plaintext highlighter-rouge">OS</code>: Se realiza una auditoría en el sistema operativo.</li>
+</ul>
+
+<p>Antes de nada, vamos a comprobar el valor actual del parámetro:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">parameter</span> <span class="n">audit</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/1.png" alt="1" /></p>
+
+<p>Como podemos ver, enmi caso, el valor actual es <code class="language-plaintext highlighter-rouge">BD</code>. Si por elcontrario, el valor actual hubiese sido <code class="language-plaintext highlighter-rouge">NONE</code>, por lo que no se podría realizar ninguna auditoría. Para activar la auditoría, debemos ejecutar el siguiente comando:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">alter</span> <span class="k">system</span> <span class="k">set</span> <span class="n">audit_trail</span><span class="o">=</span><span class="n">db</span> <span class="k">scope</span><span class="o">=</span><span class="n">spfile</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Para que la modificación sea efectiva, debemos reiniciar la base de datos:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">shutdown</span> <span class="k">immediate</span>
+<span class="k">SQL</span><span class="o">&gt;</span> <span class="n">startup</span>
+</code></pre></div></div>
+
+<p>Si comprobamos de nuevo el valor del parámetro, veremos que ahora es <code class="language-plaintext highlighter-rouge">DB</code>:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">parameter</span> <span class="n">audit_trail</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/2.png" alt="2" /></p>
+
+<p>Por lo que, podemos confirmar que los cambios se han realizado correctamente. Pero,ahora deberemos activar la auditoría de intentos fallidos al sistema.</p>
+
+<p>Por ejemplo, imaginemos que nos han contratado para realizar la  FCT en una empresa y que, por error, no somos capaces de acceder a la base de datos. Para ver nuestros intentos fallidos, deberá tener habilitada la auditoría de inicio de sesión, pero concretamente, la auditoría de intentos fallidos al sistema. Para ello, debemos ejecutar el siguiente comando:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">audit</span> <span class="k">session</span> <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="n">ever</span> <span class="k">not</span> <span class="n">successful</span><span class="p">;</span>
+<span class="k">SQL</span><span class="o">&gt;</span> <span class="n">audit</span> <span class="k">session</span> <span class="k">by</span> <span class="n">maria</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/3.png" alt="3" /></p>
+
+<p>Vamos a entrar en la base de datos pero, vaya… ¡nos hemos equivocado de contraseña! Pero a la tercera va la vencida y, ¡por fin! ¡Hemos accedido!</p>
+
+<p>Si ahora comprobamos el contenido de la tabla <code class="language-plaintext highlighter-rouge">dba_audit_session</code>, veremos que se ha registrado el intento fallido:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">OS_USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="n">RETURNCODE</span>
+<span class="k">FROM</span> <span class="n">dba_audit_session</span>
+<span class="k">WHERE</span> <span class="n">username</span> <span class="o">=</span> <span class="s1">'MARIA'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/4.png" alt="4" /></p>
+
+<p>En la imagen anterior podemos ver cuando nos hemos conectado a la base de datos y cuando hemos intentado acceder con una contraseña incorrecta. Cuando sucede esto, el valor de <code class="language-plaintext highlighter-rouge">returncode</code> es <code class="language-plaintext highlighter-rouge">ORA-01017</code>. El código <code class="language-plaintext highlighter-rouge">ORA-01017</code> significa que el usuario no existe o la contraseña es incorrecta. Si el valor de <code class="language-plaintext highlighter-rouge">returncode</code> es <code class="language-plaintext highlighter-rouge">0</code>, significa que el intento ha sido exitoso.</p>
+
+<p>Existen otros códigos de error que nos pueden ser de utilidad a la hora de realizar auditorías. Estos códigos de error son:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ORA-00911</code>: Caracteres no válidos.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-01004</code>: Acceso denegado.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-01017</code>: Usuario o contraseña incorrectos.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-01045</code>: Sin permiso CREATE SESSION.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-28000</code>: Cuenta bloqueada.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-28001</code>: Contraseña expirada.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-28002</code>: Contraseña en periodo de caducidad.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-28003</code>: Contraseña vulnerable.</li>
+  <li><code class="language-plaintext highlighter-rouge">ORA-28011</code>: Contraseña en periodo de caducidad.</li>
+  <li>…etc.</li>
+</ul>
+
+<p>Pero en elsiguiente ejercicio, veremos como podemos traducir estos códigos de error a mensajes de texto comprensibles.</p>
+
+<p>En caso de que queramos desactivar la auditoría, debemos ejecutar el siguiente comando:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">NOAUDIT</span> <span class="k">CREATE</span> <span class="k">SESSION</span> <span class="k">WHENEVER</span> <span class="k">NOT</span> <span class="n">SUCCESSFUL</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="ejercicio-2">Ejercicio 2</h3>
+
+<p><strong>Realiza un procedimiento en PL/SQL que te muestre los accesos fallidos junto con el motivo de los mismos, transformando el código de error almacenado en un mensaje de texto comprensible. Contempla todos los motivos posibles para que un acceso sea fallido.</strong></p>
+
+<p>Para realizar este ejercicio, vamos a crear un procedimiento en PL/SQL que nos muestre los accesos fallidos por credenciales incorrectas.</p>
+
+<ul>
+  <li>
+    <p>Creamos el procedimiento que nos mostrará los mensajes de error.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">MensajesTraducidos</span> <span class="p">(</span><span class="n">p_codigo</span> <span class="n">VARCHAR2</span><span class="p">)</span>
+  <span class="k">RETURN</span> <span class="n">VARCHAR2</span>
+  <span class="k">IS</span>
+      <span class="n">mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+      <span class="k">BEGIN</span>
+          <span class="n">IF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="s1">'911'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Caracteres no validos'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="s1">'1004'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Acceso denegado'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'1017'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario o contrasena incorrectos'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'1045'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Sin permiso CREATE SESSION'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28000'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28001'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña expirada'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28002'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28003'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña vulnerable'</span><span class="p">;</span>
+          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28011'</span> <span class="k">THEN</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
+          <span class="k">ELSE</span>
+              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Error desconocido. Por favor, contacte con el administrador.'</span><span class="p">;</span>
+          <span class="k">END</span> <span class="n">IF</span><span class="p">;</span>
+      <span class="k">RETURN</span> <span class="n">mensaje</span><span class="p">;</span>
+  <span class="k">END</span><span class="p">;</span>
+  <span class="o">/</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos la cabecera del procedimiento que nos mostrará los accesos fallidos.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">CabeceraErroresLogin</span>
+  <span class="k">IS</span>
+  <span class="k">BEGIN</span>
+      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'-------------------------------'</span><span class="p">);</span>
+      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Accesos fallidos de conexion'</span><span class="p">);</span>
+      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'-------------------------------'</span><span class="p">);</span>
+  <span class="k">END</span><span class="p">;</span>
+  <span class="o">/</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el procedimiento que nos mostrará los accesos fallidos.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">AccesosFallidos</span>
+  <span class="k">IS</span>
+      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+      <span class="k">CURSOR</span> <span class="n">c_fallo</span> <span class="k">IS</span>
+          <span class="k">SELECT</span> <span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
+          <span class="k">FROM</span> <span class="n">DBA_AUDIT_SESSION</span>
+          <span class="k">WHERE</span> <span class="n">ACTION_NAME</span> <span class="o">=</span> <span class="s1">'LOGON'</span><span class="p">;</span>
+  <span class="k">BEGIN</span>
+      <span class="n">CabeceraErroresLogin</span><span class="p">;</span>
+      <span class="k">FOR</span> <span class="n">fallo</span> <span class="k">IN</span> <span class="n">c_fallo</span> <span class="n">LOOP</span>
+          <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="n">MensajesTraducidos</span><span class="p">(</span><span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Usuario: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">USERNAME</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Fecha: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="nb">TIMESTAMP</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Codigo de error: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Mensaje: '</span> <span class="o">||</span> <span class="n">v_mensaje</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'- - - - -'</span><span class="p">);</span>
+      <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
+  <span class="k">END</span><span class="p">;</span>
+  <span class="o">/</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Ejecutamos el procedimiento.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SQL</span><span class="o">&gt;</span> <span class="k">EXEC</span> <span class="n">AccesosFallidos</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/5.png" alt="5" /></p>
+  </li>
+</ul>
+
+<h3 id="ejercicio-3">Ejercicio 3</h3>
+
+<p><strong>Activa la auditoría de las operaciones DML realizadas por SCOTT. Comprueba su funcionamiento.</strong></p>
+
+<p>En DML (Data Manipulation Language) se incluyen las sentencias que permiten modificar los datos de una base de datos. Estas sentencias son:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">INSERT</code>: Inserta un nuevo registro en una tabla.</li>
+  <li><code class="language-plaintext highlighter-rouge">UPDATE</code>: Modifica los datos de un registro.</li>
+  <li><code class="language-plaintext highlighter-rouge">DELETE</code>: Elimina un registro de una tabla.</li>
+</ul>
+
+<p>Estas sentencias se pueden ejecutar de forma directa o mediante un procedimiento almacenado. En este ejercicio, vamos a realizar una auditoría de las operaciones DML realizadas por el usuario <code class="language-plaintext highlighter-rouge">SCOTT</code>. Para ello, debemos ejecutar el siguiente comando:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">AUDIT</span> <span class="k">INSERT</span> <span class="k">TABLE</span><span class="p">,</span> <span class="k">UPDATE</span> <span class="k">TABLE</span><span class="p">,</span> <span class="k">DELETE</span> <span class="k">TABLE</span> <span class="k">BY</span> <span class="n">SCOTT</span> <span class="k">BY</span> <span class="k">ACCESS</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Para comprobar que la auditoría se ha realizado correctamente, vamos a insertar un nuevo registro en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
+<span class="c1">---</span>
+<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7876</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7902</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7934</span><span class="p">;</span>
+<span class="c1">---</span>
+<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">1000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7788</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">2000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7839</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">3000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7844</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/6.png" alt="6" /></p>
+
+<p>Si conectándonos con el usuario administrador, o ‘SYSDBA’, ejecutamos la siguiente sentencia:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">OBJ_NAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
+<span class="k">FROM</span> <span class="n">DBA_AUDIT_TRAIL</span>
+<span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/7.png" alt="7" /></p>
+
+<h3 id="ejercicio-4">Ejercicio 4</h3>
+
+<p><strong>Realiza una auditoría de grano fino para almacenar información sobre la inserción de empleados con sueldo superior a 2000 en la tabla emp de scott.</strong></p>
+
+<p>¿Auditoría de grano fino?</p>
+
+<p>¡Pues claro que sí!</p>
+
+<p>De hecho, es la auditoría que vamos a realizar en este ejercicio.</p>
+
+<p>La auditoría de grano fino o FGA (Fine-Grained Auditing) es una característica de Oracle Database que permite registrar los cambios que se producen en los datos de una base de datos. Registrando los cambios que se producen en los datos, podemos realizar este tipo de auditoría que nos permiten conocer qué cambios se han producido en los datos, y por qué usuario se han producido.</p>
+
+<p>Permite que las políticas de auditoría se asocien con columnas en las tablas de la aplicación junto con las condiciones necesarias para que se genere un registro de auditoría. Las políticas de FGA se asignan a las tablas de aplicaciones mediante la API de FGA. Las políticas de auditoría detalladas se pueden usar para crear registros de auditoría cuando se accede a una tabla durante períodos específicos o se accede a columnas específicas. FGA complementa la nueva auditoría unificada de Oracle Database 12c al permitir que las condiciones de auditoría se asocien con columnas específicas.</p>
+
+<p>Los registros de seguimiento de auditoría creados por Fine Grained Auditing se pueden capturar y analizar en Oracle Audit Vault y Database Firewall, alertando automáticamente al equipo de seguridad sobre posibles actividades maliciosas.</p>
+
+<p>El único inconveniente de esta auditoría es que requiere de una licencia adicional de Oracle Database Enterprise Edition y que para el rendimiento de la base de datos, es recomendable que se use únicamente en casos puntuales, ya que lo disminuye.</p>
+
+<p>Pero, dejémonos de cháchara y vamos a realizar la auditoría de grano fino que nos pide el ejercicio.</p>
+
+<p>Debemos tener en cuenta que, deberemos hacerlo en cualquier versión de Oracle, siempre y cuando esta sea superior a la 11g, ya que es a partir de esta versión donde se implementó la auditoría de grano fino.</p>
+
+<p>Lo primero que vamos a hacer es crear un procedimiento para que, un objeto en concreto de una tabla, se audite cuando se realice una inserción en dicha tabla.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">BEGIN</span>
+    <span class="n">DBMS_FGA</span><span class="p">.</span><span class="n">ADD_POLICY</span> <span class="p">(</span>
+        <span class="n">object_schema</span> <span class="o">=&gt;</span> <span class="s1">'SCOTT'</span><span class="p">,</span>
+        <span class="n">object_name</span> <span class="o">=&gt;</span> <span class="s1">'EMP'</span><span class="p">,</span>
+        <span class="n">policy_name</span> <span class="o">=&gt;</span> <span class="s1">'AUDITAR_EMPLEADOS'</span><span class="p">,</span>
+        <span class="n">audit_condition</span> <span class="o">=&gt;</span> <span class="s1">'SAL &gt; 2000'</span><span class="p">,</span>
+        <span class="n">statement_types</span> <span class="o">=&gt;</span> <span class="s1">'INSERT'</span><span class="p">);</span>
+<span class="k">END</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/8.png" alt="8" /></p>
+
+<p>Para la comprobación, vamos a insertar varios empleados, 1 con un salario inferior a 2000 y otro con un salario superior a 2000.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7934</span><span class="p">,</span> <span class="s1">'FRANK'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7782</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">2100</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7935</span><span class="p">,</span> <span class="s1">'JUAN'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7782</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">1300</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/9.png" alt="9" /></p>
+
+<p>Ahora, vamos a comprobar que se ha realizado la auditoría de grano fino correctamente. Para ello, vamos a ejecutar la siguiente sentencia:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">DB_USER</span><span class="p">,</span> <span class="n">OBJECT_NAME</span><span class="p">,</span> <span class="n">SQL_TEXT</span><span class="p">,</span> <span class="k">CURRENT_USER</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
+<span class="k">FROM</span> <span class="n">DBA_FGA_AUDIT_TRAIL</span>
+<span class="k">WHERE</span> <span class="n">POLICY_NAME</span> <span class="o">=</span> <span class="s1">'AUDITAR_EMPLEADOS'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/10.png" alt="10" /></p>
+
+<p>Como podemos observar, se muestra la información de la inserción de los empleados, pero solo se muestra la información del empleado que tiene un salario superior a 2000, que era el que se tenía que auditar.</p>
+
+<h3 id="ejercicio-5">Ejercicio 5</h3>
+
+<p><strong>Explica la diferencia entre auditar una operación by access o by session ilustrándolo con ejemplos.</strong></p>
+
+<p>Vamos a diferenciar entre estas dos opciones de auditoría:</p>
+
+<ul>
+  <li>
+    <p><strong>Auditoría by access</strong>: Cuando se realiza una auditoría by access, se registra la información de la operación que se ha realizado, pero no se registra la información del usuario que ha realizado la operación. 
+Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta una sentencia, la auditoría by access, registrará la información de la sentencia que se ha ejecutado, pero no registrará la información del usuario que ha ejecutado la sentencia.</p>
+  </li>
+  <li>
+    <p><strong>Auditoría by session</strong>: Cuando se realiza una auditoría by session, se registra la información de la operación que se ha realizado, y se registra la información del usuario que ha realizado la operación.
+Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta una sentencia, la auditoría by session, registrará la información de la sentencia que se ha ejecutado, y registrará la información del usuario que ha ejecutado la sentencia.</p>
+  </li>
+</ul>
+
+<p>Pero para probar verdaderamente su funcionamiento, vamos a insertar nuevos registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code> de la base de datos <code class="language-plaintext highlighter-rouge">SCOTT</code> y vamos a comprobar que se ha realizado la auditoría correctamente.</p>
+
+<h4 id="auditoría-by-session">Auditoría by session</h4>
+
+<ol>
+  <li>
+    <p>Activamosla auditoría en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">AUDIT</span> <span class="k">INSERT</span><span class="p">,</span><span class="k">UPDATE</span><span class="p">,</span><span class="k">DELETE</span> <span class="k">ON</span> <span class="n">DEPT</span> <span class="k">BY</span> <span class="k">SESSION</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/11.png" alt="11" /></p>
+  </li>
+  <li>
+    <p>Realizamos la inserción de los registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+ <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/12.png" alt="12" /></p>
+  </li>
+  <li>
+    <p>Realizamos la consulta para comprobar que se ha realizado la auditoría correctamente;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">OBJ_NAME</span>
+ <span class="k">FROM</span> <span class="n">DBA_AUDIT_TRAIL</span>
+ <span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span>
+ <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/13.png" alt="13" /></p>
+  </li>
+</ol>
+
+<h4 id="auditoría-by-access">Auditoría by access</h4>
+
+<ol>
+  <li>
+    <p>Activamos la auditoría en la tabla <code class="language-plaintext highlighter-rouge">EMP</code>;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">AUDIT</span> <span class="k">INSERT</span><span class="p">,</span><span class="k">UPDATE</span><span class="p">,</span><span class="k">DELETE</span> <span class="k">ON</span> <span class="n">DEPT</span> <span class="k">BY</span> <span class="k">ACCESS</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/14.png" alt="14" /></p>
+  </li>
+  <li>
+    <p>Realizamos la inserción de los registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7799</span><span class="p">,</span> <span class="s1">'CHARLES'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7799</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">2100</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+ <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'CHRIS'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7987</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">1300</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/15.png" alt="15" /></p>
+  </li>
+  <li>
+    <p>Realizamos la consulta para comprobar que se ha realizado la auditoría correctamente;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">OBJ_NAME</span>
+ <span class="k">FROM</span> <span class="n">DBA_AUDIT_OBJECT</span>
+ <span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span>
+ <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/16.png" alt="16" /></p>
+  </li>
+</ol>
+
+<p>Para resumir es que la diferencia entre <code class="language-plaintext highlighter-rouge">BY ACCESS</code> y <code class="language-plaintext highlighter-rouge">BY SESSION</code> radica en cómo la vista del diccionario de datos DBA_AUDIT_TRAIL registra las acciones que capturan:</p>
+
+<p>POR ACCESO: Inserta un registro en la pista de auditoría para cada declaración auditada.</p>
+
+<p>POR SESIÓN: inserta solo un registro de auditoría en la pista de auditoría, para cada usuario y objeto de esquema, durante una sesión que incluye una acción auditada.</p>
+
+<h3 id="ejercicio-6">Ejercicio 6</h3>
+
+<p><strong>Documenta las diferencias entre los valores db y db_extended del parámetro audit_trail de ORACLE. Demuéstralas poniendo un ejemplo de la información sobre una operación concreta recopilada con cada uno de ellos.</strong></p>
+
+<p>El parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> de Oracle, nos permite controlar el tipo de auditoría que se va a realizar en la base de datos. Este parámetro puede tener varios valores, pero vamos a centrarnos en los siguientes:</p>
+
+<ul>
+  <li>
+    <p><strong>db</strong>: Dirige los registros de auditoría a la pista de auditoría de la base de datos (la tabla SYS.AUD$), excepto los registros que siempre se escriben en la pista de auditoría del sistema operativo. Utilice esta configuración para una base de datos general para facilitar la gestión.</p>
+
+    <p>Si la base de datos se inició en modo de solo lectura con AUDIT_TRAIL establecido en db, Oracle Database establece internamente AUDIT_TRAIL en os. Consulte el registro de alertas para obtener más información.</p>
+  </li>
+  <li>
+    <p><strong>db_extended</strong>: Realiza todas las acciones de AUDIT_TRAIL=db y también completa las columnas de tipo CLOB de enlace SQL y texto SQL de la tabla SYS.AUD$, cuando están disponibles. Estas dos columnas se rellenan solo cuando se especifica este parámetro. Cuando se usa la auditoría estándar con DB, EXTENDIDA, los predicados de la base de datos privada virtual (VPD) y los nombres de las políticas también se completan en la tabla SYS.AUD$.</p>
+
+    <p>Si la base de datos se inició en modo de solo lectura con AUDIT_TRAIL establecido en db, extendido, Oracle Database establece internamente AUDIT_TRAIL en os. Consulte el registro de alertas para obtener más información.</p>
+  </li>
+</ul>
+
+<p>Hasta ahora, hemos estado realizando auditoría con el parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> en el valor <code class="language-plaintext highlighter-rouge">db</code>, pero vamos a cambiarlo a <code class="language-plaintext highlighter-rouge">db_extended</code> y vamos a activarla.</p>
+
+<ol>
+  <li>
+    <p>Cambiamos el valor del parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> a <code class="language-plaintext highlighter-rouge">db_extended</code>, pero primero vamos a comprbar el valor actual del parámetro;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SHOW</span> <span class="k">PARAMETER</span> <span class="n">audit_trail</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/17.png" alt="17" /></p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">ALTER</span> <span class="k">SYSTEM</span> <span class="k">SET</span> <span class="n">audit_trail</span> <span class="o">=</span> <span class="n">db</span><span class="p">,</span><span class="n">extended</span> <span class="k">SCOPE</span><span class="o">=</span><span class="n">SPFILE</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/18.png" alt="18" /></p>
+  </li>
+  <li>
+    <p>Reiniciamos la base de datos;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">SHUTDOWN</span> <span class="k">IMMEDIATE</span><span class="p">;</span>
+ <span class="n">STARTUP</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/19.png" alt="19" /></p>
+  </li>
+  <li>
+    <p>Comprobamos que el valor del parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> es <code class="language-plaintext highlighter-rouge">db_extended</code>;</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SHOW</span> <span class="k">PARAMETER</span> <span class="n">audit_trail</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/20.png" alt="20" /></p>
+  </li>
+</ol>
+
+<p><img src="/assets/images/interconexion/postgresql.png" alt="postgres" /></p>
+
+<h3 id="ejercicio-7">Ejercicio 7</h3>
+
+<p><strong>Averigua si en Postgres se pueden realizar los cuatro primeros apartados. Si es así, documenta el proceso adecuadamente.</strong></p>
+
+<p>En PostgreSQL, la auditoría se realiza a travésde extensiones, como <code class="language-plaintext highlighter-rouge">pgAudit</code> o <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. En este caso, vamos a utilizar la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>.</p>
+
+<p>En mi caso, he decidido instalar la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code> en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code>, pero también se puede instalar en cualquier otra base de datos.</p>
+
+<p>Su proceso de instalación es muy sencillo. Lo primero que haremos será descargarnos la extensión desde el siguiente enlace:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://raw.githubusercontent.com/2ndQuadrant/audit-trigger/master/audit.sql
+</code></pre></div></div>
+
+<p>Cuando tengamos la extensión descargada, ingresamos en el servidor de PostgreSQL y ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> <span class="nt">-u</span> postgres psql
+<span class="se">\i</span> audit.sql
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/21.png" alt="21" /></p>
+
+<ol>
+  <li>EJERCICIO 1: Auditoría de accesos exitosos.</li>
+</ol>
+
+<p>Para mostrar los usuarios activos en la base de datos, vamos a hacer uso de la vista <code class="language-plaintext highlighter-rouge">pg_stat_activity</code>, y lo haremos realizando la siguiente consulta:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">distinct</span> <span class="n">usename</span>
+<span class="k">FROM</span> <span class="n">pg_stat_activity</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/22.png" alt="22" /></p>
+
+<ol>
+  <li>EJERCICIO 2: Auditoría de accesos fallidos.</li>
+</ol>
+
+<p>Para realizar la auditoría de accesos fallidos, vamos a hacer uso del log de acceso de PostgreSQL. Para ello, vamos a activar el log de acceso en el fichero de configuración de PostgreSQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/postgresql/9.5/main/postgresql.conf</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+sudo nano /etc/postgresql/9.5/main/postgresql.conf
+```
+</code></pre></div></div>
+
+<p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+#log_line_prefix = ''            # special values: '%m' for timestamp, '%u' for user,
+```
+</code></pre></div></div>
+
+<p>Y la vamos a modificar de la siguiente manera:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+log_line_prefix = '%m %u %d %r %p %h %a %q '
+```
+</code></pre></div></div>
+
+<p>Y tambien vamos a modificar la siguiente linea:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+log_statement = ‘all’
+```
+</code></pre></div></div>
+
+<p>Para que se nos muestre el query que se esta ejecutando.</p>
+
+<p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de PostgreSQL.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+sudo service postgresql restart
+```
+</code></pre></div></div>
+
+<p>Y comprobamos que se ha realizado la auditoría correctamente.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+tail -f /var/log/postgresql/postgresql-13-main.log
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/23.png" alt="23" /></p>
+
+<ol>
+  <li>EJERCICIO 3: Auditoría de DML.</li>
+</ol>
+
+<p>Para realizar la auditoría de DML, vamos a hacer uso de la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. Para ello, vamos a crear una tabla en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code> y vamos a insertar, actualizar y borrar datos de la base de datos SCOTT.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">---INSERTAR DATOS</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
+<span class="c1">---BORRAR DATOS</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+<span class="c1">---ACTUALIZAR DATOS</span>
+<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/24.png" alt="24" /></p>
+
+<p>Una vez realizadas estas operaciones, vamos a comprobar Audit Trigger para ver si se ha realizado la auditoría correctamente.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="n">audit</span><span class="p">.</span><span class="n">audit_table</span><span class="p">(</span><span class="s1">'DEPT'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/25.png" alt="25" /></p>
+
+<p>Para visualizar los datos de la auditoría, nos loguearemos con el usuario <code class="language-plaintext highlighter-rouge">postgres</code> y, concretamente, desde la base de datos que estamos auditando, en este caso, la base de datos <code class="language-plaintext highlighter-rouge">scott</code>, ejecutamos la siguiente consulta:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="n">session_user_name</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">action_tstamp_clk</span><span class="p">,</span> <span class="n">client_query</span> 
+<span class="k">from</span> <span class="n">audit</span><span class="p">.</span><span class="n">logged_actions</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/26.png" alt="26" /></p>
+
+<p>Como podemos observar en la imagen, podemos ver el usuario, la acción que ha realizado (<strong>I</strong>nsert, <strong>U</strong>pdate, <strong>D</strong>elete), la tabla en la que ha realizado la acción, la fecha y hora en la que ha realizado la acción y el query que ha ejecutado.</p>
+
+<p><img src="/assets/images/banners/mysql.png" alt="mysql" /></p>
+
+<h3 id="ejercicio-8">Ejercicio 8</h3>
+
+<p><strong>Averigua si en MySQL se pueden realizar los apartados 1, 3 y 4. Si es así, documenta el proceso adecuadamente.</strong></p>
+
+<p>Para auditar en MySQL, vamos a necesitar dos bases de datos. Para hacer la aditoría vamos a recurrir de un plugin <code class="language-plaintext highlighter-rouge">server_audit</code> que nos permite auditar las acciones que se realizan en el servidor de MySQL.</p>
+
+<p>Para instalar el plugin, deberemos ejecutar <code class="language-plaintext highlighter-rouge">INSTALL SONAME 'server_audit';</code> conectados en la base de datos.</p>
+
+<p><img src="/assets/images/asgdb/auditoria/27.png" alt="27" /></p>
+
+<ul>
+  <li>Ejercicio 1: Auditoría de accesos exitosos. (<strong>EXTRA</strong> Auditoría de accesos fallidos.)</li>
+</ul>
+
+<p>Tras la instalación del plugin, vamos a necesitar modificar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Descomentamos las siguientes lineas</span>
+general_log_file       <span class="o">=</span> /var/log/mysql/mysql.log
+general_log            <span class="o">=</span> 1
+<span class="c">#Y añadimos la siguiente linea</span>
+log_error              <span class="o">=</span> /var/log/mysql/error.log
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/28.png" alt="28" /></p>
+
+<p>Antes de reiniciar el servicio, vamos a cambiar el propietario del fichero de log de MySQL, para que el usuario <code class="language-plaintext highlighter-rouge">mysql</code> pueda escribir en el fichero.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo chown </span>mysql: /var/log/mysql/
+systemctl restart mysql
+systemctl restart mariadb
+</code></pre></div></div>
+
+<p>Una vez reiniciado el servicio, vamos a comprobar que se ha realizado la auditoría correctamente. Para ello, intentaremos hacer accesos fallidos y accesos exitosos, para controlar que funciona correctamente.</p>
+
+<p><img src="/assets/images/asgdb/auditoria/29.png" alt="29" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/30.png" alt="30" /></p>
+
+<ul>
+  <li>Ejercicio 3: Auditoría de DML.</li>
+</ul>
+
+<p>El siguiente paso es editar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre></div></div>
+
+<p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">server_audit_events</span><span class="o">=</span>CONNECT,QUERY,TABLE
+<span class="nv">server_audit_logging</span><span class="o">=</span>ON
+<span class="nv">server_audit_incl_users</span><span class="o">=</span>scott
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/31.png" alt="31" /></p>
+
+<p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de MySQL.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service mysql restart
+</code></pre></div></div>
+
+<p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/32.png" alt="32" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/33.png" alt="33" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/34.png" alt="34" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/35.png" alt="35" /></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+<span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/36.png" alt="36" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/37.png" alt="37" /></p>
+
+<ul>
+  <li>Ejercicio 4: Sueldo superior a 2000.</li>
+</ul>
+
+<p>Ahora vamos a auditar la tabla <code class="language-plaintext highlighter-rouge">emp</code> para que se nos muestre cuando se realice una inserción o actualización del sueldo de un empleado cuando este sea superior a 2000.</p>
+
+<p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="s1">'JOSH'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'MERY'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/38.png" alt="38" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/39.png" alt="39" /></p>
+
+<h3 id="ejercicio-9">Ejercicio 9</h3>
+
+<p><strong>Averigua las posibilidades que ofrece MongoDB para auditar los cambios que va sufriendo un documento. Demuestra su funcionamiento.</strong></p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Services</title><link href="/hlc+sri/2023/02/05/kubernetes-ingress.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Services" /><published>2023-02-05T16:45:16+01:00</published><updated>2023-02-05T16:45:16+01:00</updated><id>/hlc+sri/2023/02/05/kubernetes-ingress</id><content type="html" xml:base="/hlc+sri/2023/02/05/kubernetes-ingress.html"><![CDATA[<h2 id="ejercicio-1-despliegue-y-acceso-de-la-aplicación-guestbook">Ejercicio 1: Despliegue y acceso de la aplicación GuestBook</h2>
 
 <p>Una vez que tenemos creado el despliegue de la aplicación GuestBook, que realizamos en el anterior taller, vamos a crear los Services correspondientes para acceder a ella:</p>
 
@@ -2324,199 +3423,5 @@ kubectl get pod
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/kubernetes/t2/5.png" alt="5" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Instalación y configuración de minikube y kubectl</title><link href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" rel="alternate" type="text/html" title="Kubernetes: Instalación y configuración de minikube y kubectl" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-instalacion</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>Como nos cuentan en su <a href="https://kubernetes.io/es/">página oficial</a>,Kubernetes es una plataforma de orquestación de contenedores de código abierto que automatiza la implementación, la gestión y el escalado de aplicaciones en contenedores. Dicho de otra manera, es un sistema de administración de clústeres que mantiene las cargas de trabajo en ejecución y es un gran problema en DevOps.</p>
-
-<p>A medida que la adopción nativa de la nube sigue aumentando, Kubernetes se ha convertido en la plataforma de infraestructura de más rápido crecimiento. Un informe de Cloud Native Computing Foundation (CNCF) descubrió que para 2020, más del 90 % de las organizaciones encuestadas usaban Kubernetes.</p>
-
-<h2 id="instalación">Instalación</h2>
-
-<h3 id="instalando-minikube">Instalando minikube</h3>
-
-<p>Vamos a instalar minikube en nuestro sistema operativo. En mi caso, os voy a mostrar cómo hacerlo en Debian 11. Para ello, vamos a realizar los siguientes pasos:</p>
-
-<ol>
-  <li>
-    <p>Descargar el binario de minikube desde su <a href="https://minikube.sigs.k8s.io/docs/start/">página oficial</a>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> curl <span class="nt">-LO</span> https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Instalar el binario en el sistema.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo install </span>minikube-linux-amd64 /usr/local/bin/minikube
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobar que se ha instalado correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube version
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Iniciamos un clúster de Kubernetes con minikube.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube start <span class="nt">--driver</span><span class="o">=</span>kvm2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Comprobamos su estado.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube status
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/3.png" alt="3" /></p>
-  </li>
-</ol>
-
-<h3 id="instalando-kubectl">Instalando kubectl</h3>
-
-<p>Para instalar kubectl, vamos a realizar los siguientes pasos:</p>
-
-<ol>
-  <li>
-    <p>Instalamos kubernetes-client en nuestro sistema.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>apt <span class="nb">install </span>kubernetes-client
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que se ha instalado correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl version
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/4.png" alt="4" /></p>
-
-    <p>Si visualizamos el fichero que se nos ha creado en nuestro directorio <code class="language-plaintext highlighter-rouge">/home</code>, veremos que se ha creado un fichero de configuración en .kube.</p>
-
-    <p><img src="/assets/images/kubernetes/instalacion/5.png" alt="5" /></p>
-
-    <p>En este fichero se encuentra la configuración de nuestro clúster de Kubernetes.</p>
-  </li>
-</ol>
-
-<h3 id="comandos-básicos">Comandos básicos</h3>
-
-<ul>
-  <li>Muestra la IP del clúster.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes <span class="nt">-o</span> wide
-</code></pre></div></div>
-
-<ul>
-  <li>Muestra los pods que se están ejecutando en el clúster.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pods
-</code></pre></div></div>
-
-<ul>
-  <li>Muestra los servicios que se están ejecutando en el clúster.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get services
-</code></pre></div></div>
-
-<ul>
-  <li>Muestra los deployments que se están ejecutando en el clúster.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get deployments
-</code></pre></div></div>
-
-<ul>
-  <li>Borra todos los deployments que se están ejecutando en el clúster.</li>
-</ul>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete all <span class="nt">--all</span> <span class="nt">--all-namespaces</span>
-</code></pre></div></div>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Kubernetes: Trabajando con un Pod multicontenedor</title><link href="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html" rel="alternate" type="text/html" title="Kubernetes: Trabajando con un Pod multicontenedor" /><published>2023-02-01T16:45:16+01:00</published><updated>2023-02-01T16:45:16+01:00</updated><id>/hlc+sri/2023/02/01/kubernetes-multicontenedor</id><content type="html" xml:base="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>Vamos a profundizar en los Pods multicontenedor. Como indicamos en el contenido del módulo, un Pod puede estar formado por varios contenedores y por volúmenes (para permitir que los contenedores del Pod puedan compartir almacenamiento).</p>
-
-<p>La razón principal por la que los Pods pueden tener múltiples contenedores es para admitir aplicaciones auxiliares que ayudan a una aplicación primaria. Ejemplos típicos de estas aplicaciones pueden ser las que envían o recogen datos externos (por ejemplo de un repositorio) y los servidores proxy. El ayudante y las aplicaciones primarias a menudo necesitan comunicarse entre sí. Normalmente, esto se realiza a través de un sistema de archivos compartido o mediante la interfaz loopback (localhost).</p>
-
-<h2 id="creando-un-pod-multicontenedor">Creando un Pod multicontenedor</h2>
-
-<ol>
-  <li>
-    <p>Creamos un fichero yaml con la descripción del Pod multicontenedor. En este caso, vamos a crear un Pod con dos contenedores: uno con la imagen <code class="language-plaintext highlighter-rouge">nginx</code> y otro con la imagen <code class="language-plaintext highlighter-rouge">busybox</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> vi pod-multicontenedor.yaml
-</code></pre></div>    </div>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">pod-multicontenedor</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">volumes</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
-     <span class="na">emptyDir</span><span class="pi">:</span> <span class="pi">{}</span>
-   <span class="na">containers</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor1</span>
-     <span class="na">image</span><span class="pi">:</span> <span class="s">nginx</span>
-     <span class="na">volumeMounts</span><span class="pi">:</span>
-     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
-       <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/usr/share/nginx/html</span>
-   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor2</span>
-     <span class="na">image</span><span class="pi">:</span> <span class="s">debian</span>
-     <span class="na">volumeMounts</span><span class="pi">:</span>
-     <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">html</span>
-       <span class="na">mountPath</span><span class="pi">:</span> <span class="s">/html</span>
-     <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">/bin/sh"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">-c"</span><span class="pi">]</span>
-     <span class="na">args</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="s">while </span><span class="no">true</span><span class="s">; do</span>
-           <span class="s">date &gt;&gt; /html/index.html;</span>
-           <span class="s">sleep 1;</span>
-         <span class="s">done</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Vamos a crear un pod.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> pod-multicontenedor.yaml
-</code></pre></div>    </div>
-  </li>
-  <li>Mostramos la información del pod, y podemos ver que tiene dos contenedores.
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get pod pod-multicontenedor <span class="nt">-o</span> wide
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/6.png" alt="6" /></p>
-  </li>
-  <li>
-    <p>Mostramos el contenido de <code class="language-plaintext highlighter-rouge">index.html</code> del primer contenedor:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl <span class="nb">exec </span>pod-multicontenedor <span class="nt">-c</span> contenedor1 <span class="nt">--</span> /bin/cat /usr/share/nginx/html/index.html
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Mostramos el contenido de <code class="language-plaintext highlighter-rouge">index.html</code> del segundo contenedor:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl <span class="nb">exec </span>pod-multicontenedor <span class="nt">-c</span> contenedor2 <span class="nt">--</span> /bin/cat /html/index.html
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Ejecutamos un “port forward” para acceder al Pod en el puerto 8081 de localhost, sabiendo que el servicio usa el puerto 80.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl port-forward pod-multicontenedor 8081:80
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/instalacion/9.png" alt="9" /></p>
-  </li>
-  <li>
-    <p>Accede desde un navegador para ver el resultado. Refresca la página para observar cómo va cambiando el fichero index.html.</p>
-
-    <p><img src="/assets/images/kubernetes/instalacion/10.png" alt="10" /></p>
   </li>
 </ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
