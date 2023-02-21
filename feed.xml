@@ -1,4 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-21T08:02:43+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-21T10:05:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este taller vamos a instalar un CMS (Content Management System) en un cluster de Kubernetes. Para ello, vamos a instalar la última versión de Helm y añadiremos el repositorio de bitnami, porque instalaremos un wordpress.</p>
+
+<h2 id="instalamos-la-última-versión-de-helm">Instalamos la última versión de Helm</h2>
+
+<ol>
+  <li>
+    <p>Instalamos la última versión de Helm. Como nos indican en su <a href="https://helm.sh/docs/intro/install/">web oficial</a>, vamos a descargarnos el binario de la última versión de Helm y lo vamos a instalar en nuestro sistema.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>curl <span class="nt">-fsSL</span> <span class="nt">-o</span> get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+ <span class="nv">$ </span><span class="nb">chmod </span>700 get_helm.sh
+ <span class="nv">$ </span>./get_helm.sh
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t7/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Añadimos el repositorio de bitnami.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>helm repo add bitnami https://charts.bitnami.com/bitnami
+</code></pre></div>    </div>
+
+    <p>Y comprobamos que se ha añadido correctamente.</p>
+
+    <p><img src="/assets/images/kubernetes/t7/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Acualizamos los repositorios.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>helm repo update
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t7/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Buscamos el chart de bitnami para wordpress y lo instalamos.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nv">$ </span>helm search repo wordpress
+ <span class="nv">$ </span>helm <span class="nb">install </span>server bitnami/wordpress <span class="nt">--set</span> service.type<span class="o">=</span>NodePort <span class="nt">--set</span> <span class="nv">wordpressBlogName</span><span class="o">=</span><span class="s2">"mariatec"</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t7/4.png" alt="4" /></p>
+
+    <p>Y realizamos los pasos que nos indica el comando para acceder a la aplicación.</p>
+
+    <p><img src="/assets/images/kubernetes/t7/5.png" alt="5" /></p>
+  </li>
+</ol>
+
+<p>Como podemos ver, hemos instalado un CMS en nuestro cluster de Kubernetes.</p>
+
+<p><img src="/assets/images/kubernetes/t7/6.png" alt="6" /></p>
+
+<p>Entramos en la url que nos ha dado el comando y vemos que tenemos un wordpress instalado.</p>
+
+<p><img src="/assets/images/kubernetes/t7/7.png" alt="7" /></p>
+
+<p>Y si entramos con las credenciales que nos ha dado el comando, podemos ver acceder a la zona de administración.</p>
+
+<p><img src="/assets/images/kubernetes/t7/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -3799,116 +3859,4 @@ kubectl apply <span class="nt">-f</span> redis-deployment.yaml
   <li>
     <p>Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.</p>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Pods</title><link href="/hlc+sri/2023/02/03/kubernetes-pods.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Pods" /><published>2023-02-03T16:45:16+01:00</published><updated>2023-02-03T16:45:16+01:00</updated><id>/hlc+sri/2023/02/03/kubernetes-pods</id><content type="html" xml:base="/hlc+sri/2023/02/03/kubernetes-pods.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>Un Pod en kubernetes es un grupo de uno o más contenedores que comparten un espacio de red y espacio de almacenamiento. Los Pods son la unidad de despliegue en Kubernetes. Un Pod representa un proceso en ejecución en su clúster.</p>
-
-<p>En este post vamos a crear un Pod en Kubernetes y para ello, vamos a desplegar una imagen que nos ofrece un servidor web con una página estática.</p>
-
-<h2 id="desplegando-un-pod">Desplegando un Pod</h2>
-
-<h3 id="creando-un-pod">Creando un Pod</h3>
-
-<p>Lo primero que vamos a hacer, es crear un fichero yaml con la descripción del recurso Pod, teniendo en cuenta lo siguiente:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>* Los pods deben tener distinto nombre que el del contenedor.
-* La imagen que vamos a desplegar es `iesgn/test_web:latest`.
-* Le asignaremos una etiqueta en la descripción del Pod.
-</code></pre></div></div>
-
-<p>Antes que nada nos vamos a descargar la imagen con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:latest</code>:</p>
-
-<p><img src="/assets/images/kubernetes/t1/1.png" alt="1" /></p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Pod</span>
-<span class="na">metadata</span><span class="pi">:</span>
- <span class="na">name</span><span class="pi">:</span> <span class="s">pod-test-web</span>
- <span class="na">labels</span><span class="pi">:</span>
-   <span class="na">service</span><span class="pi">:</span> <span class="s">pod-taller1</span>
-<span class="na">spec</span><span class="pi">:</span>
- <span class="na">containers</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
-     <span class="na">name</span><span class="pi">:</span> <span class="s">container-test-web</span>
-</code></pre></div></div>
-
-<p>Una vez creado el fichero, vamos a crear el Pod en nuestro clúster de Kubernetes.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create <span class="nt">-f</span> test_web.yaml
-</code></pre></div></div>
-
-<h3 id="comprobando-el-estado-del-pod">Comprobando el estado del Pod</h3>
-
-<p>Para comprobar el estado del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod pod-test-web <span class="nt">-o</span> wide
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/2.png" alt="2" /></p>
-
-<p>Como podemos ver, el Pod se ha creado correctamente y está en estado <code class="language-plaintext highlighter-rouge">Running</code>.</p>
-
-<h3 id="obteniendo-información-del-pod">Obteniendo información del Pod</h3>
-
-<p>Para obtener información del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get pod pod-test-web <span class="nt">-o</span> wide
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/3.png" alt="3" /></p>
-
-<p>O con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl describe pod pod-test-web
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/4.png" alt="4" /></p>
-
-<h3 id="accediendo-al-pod">Accediendo al Pod</h3>
-
-<p>En esta ocasión, vamos a acceder de forma interactiva y comprobaremos los ficheros que están en el <code class="language-plaintext highlighter-rouge">DocumentRoot</code> del servidor web.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl <span class="nb">exec</span> <span class="nt">-it</span> pod-test-web <span class="nt">--</span> /bin/bash
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ls</span> <span class="nt">-la</span> htdocs/
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/5.png" alt="5" /></p>
-
-<h3 id="creando-una-redirección">Creando una redirección</h3>
-
-<p>Vamos a crear una redirección con <code class="language-plaintext highlighter-rouge">kubectl port-forward</code> para poder acceder al Pod desde el navegador. Utilizaremos el puerto 8888 del localhost y redirigiremos el puerto 80 del Pod.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward test-web 8888:80
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/6.png" alt="6" /></p>
-
-<p>Ahora, podemos acceder al Pod desde el navegador con la siguiente URL: <code class="language-plaintext highlighter-rouge">http://localhost:8888</code>.</p>
-
-<p><img src="/assets/images/kubernetes/t1/7.png" alt="7" /></p>
-
-<h3 id="mostrando-los-logs-del-pod">Mostrando los logs del Pod</h3>
-
-<p>Para mostrar los logs del Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl logs test-web
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/8.png" alt="8" /></p>
-
-<p>De esta manera, podemos ver los logs del servidor web que hemos desplegado.</p>
-
-<h3 id="eliminando-el-pod">Eliminando el Pod</h3>
-
-<p>Para eliminar el Pod, podemos ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete pod pod-test-web
-
-kubectl get pod
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t1/9.png" alt="9" /></p>
-
-<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
