@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-20T17:07:33+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-21T08:02:43+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -226,7 +226,597 @@ systemctl restart nginx
 
 <p><img src="/assets/images/docker/p2/10.png" alt="10" /></p>
 
-<p><img src="/assets/images/docker/p2/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get("BASE_DATOS"), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get("CONTRA"), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS='*' ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT ["/usr/src/app/polls.sh"] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: "*" HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/docker/p2/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de GitHub. Entorno de desarrollo Vamos a crear un entorno de desarrollo en el que realizaremos las pruebas necesarias para la puesta a punto antes de lanzar nuestra aplicación en producción. También vamos a crear dos contenedores que estarán conectados a la misma red. Una vez comprobado que la aplicación funciona, pasaremos a crear el docker-compose para pasarlo a producción. Creación de la red Para crear la red, ejecutamos el siguiente comando: docker network create net_django Creación del contenedor de la base de datos Ya creada la red en la que van a ir conectados los contenedores, nos ponemos manos a la obra y creamos el contenedor de la base de datos. Para ello, ejecutamos el siguiente comando: docker run -d --name mariadb -v vol_polls:/var/lib/mysql --network net_django -e MARIADB_ROOT_PASSWORD=admin -e MARIADB_USER=django -e MARIADB_PASSWORD=admin -e MARIADB_DATABASE=django mariadb Tendremos que modificar el fichero settings.py de la aplicación web para que sea capaz de leer las variables de entorno: import os BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) DATABASES = { 'default': { 'ENGINE': 'django.db.backends.mysql', 'NAME': os.environ.get("BASE_DATOS"), 'USER': os.environ.get('USUARIO'), 'PASSWORD': os.environ.get("CONTRA"), 'HOST': os.environ.get('HOST'), 'PORT': '3306', } } ALLOWED_HOSTS = [os.environ.get("ALLOWED_HOSTS")] STATIC_ROOT = os.path.join(BASE_DIR, 'static') STATIC_URL = '/static/' CSRF_TRUSTED_ORIGINS = ['http://*.mariatec.es','http://*.127.0.0.1','https://*.mariatec.es','https://*.127.0.0.1'] La estructura del directorio de la aplicación web es la siguiente: ├── practica2 │   ├── django_tutorial │   │   ├── manage.py │   │   ├── requirements.txt │   ├── docker-compose.yml │   ├── Dockerfile │   ├── polls.sh Creamos el fichero Dockerfile a partir de la imagen de Python: FROM python:3 WORKDIR /usr/src/app MAINTAINER Maria Jesús Alloza Rodríguez 'mariajesus.allozarodriguez@gmail.com' RUN apt-get install git &amp;&amp; pip install --root-user-action=ignore --upgrade pip &amp;&amp; pip install --root-user-action=ignore django mysqlclient RUN git clone https://github.com/Legnakra/django_tutorial.git /usr/src/app &amp;&amp; mkdir static ADD ./polls.sh /usr/src/app/ RUN chmod +x /usr/src/app/polls.sh ENV ALLOWED_HOSTS='*' ENV HOST=mariadb ENV USUARIO=django ENV CONTRA=django ENV BASE_DATOS=django ENV DJANGO_SUPERUSER_PASSWORD=admin ENV DJANGO_SUPERUSER_USERNAME=admin ENV DJANGO_SUPERUSER_EMAIL=admin@example.org ENTRYPOINT ["/usr/src/app/polls.sh"] Una vez terminado de crear el fichero Dockerfile, creamos el fichero django_polls.sh: #! /bin/sh python3 manage.py makemigrations python3 manage.py migrate python3 manage.py createsuperuser --noinput python3 manage.py collectstatic --noinput python3 manage.py runserver 0.0.0.0:8006 Creamos la imagen de Docker: docker build -t legnakra/django:v1 . Ejecutando docker run -d --name polls --network django-net -p 8080:8006 legnakra/django:v1 podemos ver que la aplicación se ejecuta correctamente. Tras ver como en la imagen anterior, todo funciona correctamente, nos disponemos a crear el docker-compose que levantará los dos contenedores que hemos creado. vi docker-compose.yml version: '3.7' services: django-tutorial: container_name: django-tutorial image: legnakra/django:v1 restart: always environment: ALLOWED_HOSTS: "*" HOST: bd_mariadb_django USUARIO: django CONTRA: django BASE_DATOS: django DJANGO_SUPERUSER_PASSWORD: admin DJANGO_SUPERUSER_USERNAME: admin DJANGO_SUPERUSER_EMAIL: admin@admin.org ports: - 8084:8006 depends_on: - db_django db_django: container_name: bd_mariadb_django image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: django MARIADB_USER: django MARIADB_PASSWORD: django volumes: - mariadb_data_django:/var/lib/mysql networks: - net-mariatec volumes: mariadb_data_django: netwoks: net-mariatec: name: net-mariatec external: true Levantamos el escenario de nuestro entorno de desarrollo con docker-compose up -d y podemos comprobar que todo funciona correctamente. Nos dirigimos a la zona de administración con las credenciales que hemos configurado en el fichero docker-compose.yml y podemos ver que accedemos y podemos crear nuevas encuestas. Entorno de producción Ya tenemos la aplicación funcionando en nuestro entorno de desarrollo, por lo que ahora solo queda que nos vayamos al entorno de producción y despleguemos la aplicación. Para ello, nos vamos a crear un registro en nuestro servidor DNS para que podamos acceder a la aplicación desde el exterior. ⬜️ django.mariatec.es CNAME mariatec.es Generamos el certificado SSL para poder acceder a la aplicación desde el exterior. certbot certonly --standalone -d django.mariatec.com Tras generarlos, creamos el proxy de nginx para poder acceder a la aplicación desde el exterior. vi /etc/nginx/sites-available/django.mariatec.es recuerda que debe ser escuchado por elpuerto 8084. server { listen 80; listen [::]:80; server_name django.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/django.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/django.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name django.mariatec.es; location / { proxy_pass http://localhost:8084; include proxy_params; } } Creamos el enlace simbólico para que nginx pueda cargar la configuración y reniciamos el servicio de nginx. ln -s /etc/nginx/sites-available/django /etc/nginx/sites-enabled/django systemctl restart nginx Si accedemos desde nuestro navegador a la dirección https://django.mariatec.es podemos ver que accedemos a la aplicación. Y que podemos acceder a la zona de administración.]]></summary></entry><entry><title type="html">Taller Kubernetes: Almacenamiento en Kubernetes</title><link href="/hlc+sri/2023/02/10/kubernetes-almacenamiento.html" rel="alternate" type="text/html" title="Taller Kubernetes: Almacenamiento en Kubernetes" /><published>2023-02-10T16:45:16+01:00</published><updated>2023-02-10T16:45:16+01:00</updated><id>/hlc+sri/2023/02/10/kubernetes-almacenamiento</id><content type="html" xml:base="/hlc+sri/2023/02/10/kubernetes-almacenamiento.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este taller, vamos a ver cómo Kubernetes gestiona el almacenamiento de los contenedores. Para ello, vamos a trabajar con recursos de almacenamiento que se pueden crear en Kubernetes. Estos recursos son PersistentVolume y PersistentVolumeClaim.</p>
+
+<h2 id="ejercicio-1-desplegando-un-servidor-web-persistente">Ejercicio 1: Desplegando un servidor web persistente</h2>
+
+<p>En este ejercicio, vamos a desplegar un servidor web que guarde los datos en un volumen persistente. Para ello, vamos a crear un PersistentVolume y un PersistentVolumeClaim. El PersistentVolumeClaim se va a asociar al PersistentVolume para que el servidor web pueda acceder a él.</p>
+
+<ol>
+  <li>
+    <p>Creamos el fichero que va a definir el PersistentVolume. El fichero es el siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolume</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">pvc-serverweb</span>
+ <span class="na">spec</span><span class="pi">:</span>
+     <span class="na">accessModes</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+     <span class="na">resources</span><span class="pi">:</span>
+       <span class="na">requests</span><span class="pi">:</span>
+         <span class="na">storage</span><span class="pi">:</span> <span class="s">2Gi</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el PersistentVolume con el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> pvc-serverweb.yaml
+</code></pre></div>    </div>
+
+    <p>Y comprobamos que se ha creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get pc, pvc
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de despliegue del servidor web. El fichero es el siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">web-php</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">apache</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">apache</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">apache</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">volumes</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-web-php</span>
+           <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+             <span class="na">claimName</span><span class="pi">:</span> <span class="s">pvc-webserver</span>
+       <span class="na">containers</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-apache-php</span>
+           <span class="na">image</span><span class="pi">:</span> <span class="s">php:7.4-apache</span>
+           <span class="na">ports</span><span class="pi">:</span>
+             <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+               <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+           <span class="na">volumeMounts</span><span class="pi">:</span>
+             <span class="pi">-</span> <span class="na">mountPath</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/var/www/html"</span>
+               <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-web-php</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el despliegue con el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> web-php.yaml
+</code></pre></div>    </div>
+
+    <p>Y comprobamos que se ha creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de servicio del servidor web. El fichero es el siguiente:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">servicio-web-php</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+   <span class="na">ports</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">service-http</span>
+     <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">apache</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el servicio con el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> servicio-web-php.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero <code class="language-plaintext highlighter-rouge">info.php</code> que vamos a guardar en el volumen persistente. Para ello, primero deberemos averiguar la ID del pod:</p>
+
+    <p>En la imagen del punto anterior, podemos ver que el pod se llama <code class="language-plaintext highlighter-rouge">pod/servidorweb-778bc767f5-dvf7x</code></p>
+
+    <p>Sabido esto, crearemos el fichero <code class="language-plaintext highlighter-rouge">info.php</code> con el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl <span class="nb">exec </span>pod/servidorweb-778bc767f5-dvf7x <span class="nt">--</span> bash <span class="nt">-c</span> <span class="s2">"echo '&lt;?php phpinfo(); ?&gt;' &gt; /var/www/html/info.php"</span>
+</code></pre></div>    </div>
+
+    <p>Para comprobar que se ha creado correctamente, abriremos el fichero php en el navegador:</p>
+
+    <p><img src="/assets/images/kubernetes/t6/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Como último paso, vamos a comprobar la persistencia, y por ello, vamos a eliminar el despliegue y lo volvemos a crear:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete deployment.apps/servidorweb
+ kubectl apply <span class="nt">-f</span> web-php.yaml
+</code></pre></div>    </div>
+
+    <p>Y comprobamos que se ha creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/5.png" alt="5" /></p>
+
+    <p>Y comprobamos que el fichero <code class="language-plaintext highlighter-rouge">info.php</code> sigue estando:</p>
+
+    <p><img src="/assets/images/kubernetes/t6/6.png" alt="6" /></p>
+  </li>
+</ol>
+
+<h2 id="ejercicio-2-haciendo-persistente-la-aplicación-guestbook">Ejercicio 2: Haciendo persistente la aplicación GuestBook</h2>
+
+<p>En este ejercicio vamos a desplegar nuestra aplicació Guestbook y vamos a hacer persistente la base de datos.</p>
+
+<ol>
+  <li>
+    <p>Creamos el fichero con el que vamos a definir el volumen <code class="language-plaintext highlighter-rouge">PersistentVolumenClaim</code>:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolumeClaim</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+     <span class="na">name</span><span class="pi">:</span> <span class="s">pvc-redis</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">accessModes</span><span class="pi">:</span>
+     <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+   <span class="na">resources</span><span class="pi">:</span>
+     <span class="na">requests</span><span class="pi">:</span>
+       <span class="na">storage</span><span class="pi">:</span> <span class="s">3Gi</span>
+</code></pre></div>    </div>
+
+    <p>Lo aplicamos y comprobamos que se ha creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> pvc-redis.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de despliegue de la base de datos:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+       <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+         <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">volumes</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-redis</span>
+           <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+             <span class="na">claimName</span><span class="pi">:</span> <span class="s">pvc-redis</span>
+       <span class="na">containers</span><span class="pi">:</span>
+         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-redis</span>
+           <span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
+           <span class="na">command</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">redis-server"</span><span class="pi">]</span>
+           <span class="na">args</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">--appendonly"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">yes"</span><span class="pi">]</span>
+           <span class="na">ports</span><span class="pi">:</span>
+             <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">redis-server</span>
+               <span class="na">containerPort</span><span class="pi">:</span> <span class="m">6379</span>
+           <span class="na">volumeMounts</span><span class="pi">:</span>
+             <span class="pi">-</span> <span class="na">mountPath</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/data"</span>
+               <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-redis</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el despliegue de guestbook:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">matchLabels</span><span class="pi">:</span>
+       <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+       <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+   <span class="na">template</span><span class="pi">:</span>
+     <span class="na">metadata</span><span class="pi">:</span>
+       <span class="na">labels</span><span class="pi">:</span>
+         <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+         <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+     <span class="na">spec</span><span class="pi">:</span>
+       <span class="na">containers</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-guestbook</span>
+         <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/guestbook</span>
+         <span class="na">ports</span><span class="pi">:</span>
+           <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+             <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el servicio de guestbook:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+   <span class="na">ports</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el servicio de redis:</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
+   <span class="na">labels</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+   <span class="na">ports</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span>
+     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">redis-server</span>
+   <span class="na">selector</span><span class="pi">:</span>
+     <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
+     <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Realizamos el despliegue de los servicios y comprobamos que se han creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/8.png" alt="8" /></p>
+  </li>
+  <li>
+    <p>Comprobamos que la aplicación funciona correctamente:</p>
+
+    <p><img src="/assets/images/kubernetes/t6/9.png" alt="9" /></p>
+  </li>
+  <li>
+    <p>Eliminamos el despliegue de guestbook y lo volvemos a crear:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete <span class="nt">-f</span> redis-deployment.yaml
+ kubectl apply <span class="nt">-f</span> redis-deployment.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/10.png" alt="10" /></p>
+  </li>
+  <li>
+    <p>Accedemos a la aplicación y comprobamos que los datos siguen estando:</p>
+
+    <p><img src="/assets/images/kubernetes/t6/11.png" alt="11" /></p>
+  </li>
+</ol>
+
+<h2 id="ejercicio-3-haciendo-persistente-la-aplicación-nextcloud">Ejercicio 3: Haciendo persistente la aplicación Nextcloud</h2>
+
+<p>En este ejercicio vamos a desplegar nuestra aplicación Nextcloud y vamos a hacer persistente tanto la aplicación como la base de datos.</p>
+
+<ul>
+  <li>
+    <p>Creamos los volúmenes: 1 para la base de datos y otro para la aplicación, ambos de 4GB.</p>
+
+    <ul>
+      <li>
+        <p>Volumen para la base de datos:</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolumeClaim</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">pvc-mariadb</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">accessModes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+    <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">requests</span><span class="pi">:</span>
+        <span class="na">storage</span><span class="pi">:</span> <span class="s">4Gi</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Volumen para la aplicación:</p>
+
+        <p><code class="language-plaintext highlighter-rouge">yaml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: pvc-nextcloud
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 4Gi
+     </code></p>
+      </li>
+    </ul>
+
+    <p>Y los aplicamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/12.png" alt="12" /></p>
+  </li>
+  <li>
+    <p>Creamos el recurso Secret, ejecuta el siguiente comando:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl create cm bd-datos <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_user</span><span class="o">=</span>nextcloud <span class="se">\</span>
+  <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_dbname</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_datos_configmap.yaml
+
+  kubectl create secret generic bd-passwords <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_password</span><span class="o">=</span>nextcloud <span class="se">\</span>
+  <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_rootpassword</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_passwords_secret.yaml
+</code></pre></div>    </div>
+
+    <p>Y los desplegamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> bd_datos_configmap.yaml
+  kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/t6/13.png" alt="13" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero de despliegue de la base de datos.</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-deployment</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-mariadb</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:10.5</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3306</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">db-port</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_ROOT_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_root_password</span>
+      <span class="na">volumes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-mariadb</span>
+        <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+          <span class="na">claimName</span><span class="pi">:</span> <span class="s">pvc-mariadb</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Creamos el servicio de la base de datos:</p>
+  </li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-service</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3306</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">db-port</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Creamos el despliegue de Nextcloud:</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-deployment</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+      <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-nextcloud</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">nextcloud:latest</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">http-port</span>
+            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">443</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">https-port</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_HOST</span>
+              <span class="na">value</span><span class="pi">:</span> <span class="s">mariadb-service</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
+        <span class="na">volumes</span><span class="pi">:</span>
+          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-nextcloud</span>
+          <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+            <span class="na">claimName</span><span class="pi">:</span> <span class="s">pvc-nextcloud</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Creamos el servicio de Nextcloud:</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">ports</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-sv-port</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-port</span>
+  <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">https-sv-port</span>
+    <span class="na">port</span><span class="pi">:</span> <span class="m">443</span>
+    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">https-port</span>
+  <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Creamos el fichero Ingress para Nextcloud:</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-ingress</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">rules</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-nextcloud.org</span>
+    <span class="na">http</span><span class="pi">:</span>
+      <span class="na">paths</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+        <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+        <span class="na">backend</span><span class="pi">:</span>
+          <span class="na">service</span><span class="pi">:</span>
+            <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
+              <span class="s">port</span><span class="err">:</span>
+                <span class="na">number</span><span class="pi">:</span> <span class="s">http-sv-port</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Desplegamos los recursos:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t6/14.png" alt="14" /></p>
+
+<ul>
+  <li>Cambiamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para que apunte a nuestro cluster:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/hosts
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/t6/15.png" alt="15" /></p>
+
+<ul>
+  <li>Accedemos a Nextcloud:</li>
+</ul>
+
+<p>Entramos en el navegador y accedemos a la dirección <code class="language-plaintext highlighter-rouge">www.maria-nextcloud.org</code>:</p>
+
+<p><img src="/assets/images/kubernetes/t6/16.png" alt="16" /></p>
+
+<p>Y nos logueamos con las siguientes credenciales:</p>
+
+<ul>
+  <li>Usuario: <code class="language-plaintext highlighter-rouge">nextcloud</code></li>
+  <li>Contraseña: <code class="language-plaintext highlighter-rouge">bmV4dGNsb3Vk</code></li>
+</ul>
+
+<p><img src="/assets/images/kubernetes/t6/17.png" alt="17" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a>. Crearemos una imagen Docker para implementar dicha aplicación.</p>
 
@@ -783,26 +1373,16 @@ systemctl restart nginx
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create cm temperaturas <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">SERVIDOR_TEMPERATURAS</span><span class="o">=</span>servidor-temperaturas:5000
 </code></pre></div>    </div>
+
+    <p>Y verificamos que se ha creado correctamente:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get cm
+</code></pre></div>    </div>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe cm temperaturas
+</code></pre></div>    </div>
   </li>
 </ol>
-
-<p>para eliminarlo:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-kubectl delete cm temperaturas
-```
-
-
-Y verificamos que se ha creado correctamente:
-
-```bash
-kubectl get cm
-```
-
-```bash
-kubectl describe cm temperaturas
-```
-</code></pre></div></div>
 
 <p><img src="/assets/images/kubernetes/t5/1.png" alt="1" /></p>
 
@@ -982,7 +1562,7 @@ kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
 
 <p><img src="/assets/images/kubernetes/t5/6.png" alt="6" /></p>
 
-<h3 id="paso-2-creamos-er-fichero-de-despliegue-de-la-base-de-datos">Paso 2: Creamos er fichero de despliegue de la base de datos</h3>
+<h3 id="paso-2-creamos-el-fichero-de-despliegue-de-la-base-de-datos">Paso 2: Creamos el fichero de despliegue de la base de datos</h3>
 
 <p>Creamos el fichero de despliegue de la base de datos:</p>
 
@@ -3331,97 +3911,4 @@ kubectl get pod
 
 <p><img src="/assets/images/kubernetes/t1/9.png" alt="9" /></p>
 
-<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con ReplicaSet</title><link href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con ReplicaSet" /><published>2023-02-03T16:45:16+01:00</published><updated>2023-02-03T16:45:16+01:00</updated><id>/hlc+sri/2023/02/03/kubernetes-replicaset</id><content type="html" xml:base="/hlc+sri/2023/02/03/kubernetes-replicaset.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este taller vamos a trabajar con ReplicaSet, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un ReplicaSet que va a controlar un conjunto de Pods.</p>
-
-<h3 id="creando-un-replicaset">Creando un ReplicaSet</h3>
-
-<ol>
-  <li>
-    <p>Creamos un fichero yaml con la descripción del recurso ReplicaSet, teniendo en cuenta los siguientes aspectos:</p>
-
-    <ul>
-      <li>Indicaremos nombres distintos para el ReplicaSet y para el contenedor de los Pods que va a controlar.</li>
-      <li>El ReplicaSet va a crear 3 réplicas.</li>
-      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
-      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del ReplicaSet.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">ReplicaSet</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-replica</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">matchLabels</span><span class="pi">:</span>
-       <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
-   <span class="na">template</span><span class="pi">:</span>
-     <span class="na">metadata</span><span class="pi">:</span>
-       <span class="na">labels</span><span class="pi">:</span>
-         <span class="na">app</span><span class="pi">:</span> <span class="s">web-test</span>
-     <span class="na">spec</span><span class="pi">:</span>
-       <span class="na">containers</span><span class="pi">:</span>
-         <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
-           <span class="na">name</span><span class="pi">:</span> <span class="s">container-test-web</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el recurso:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-replica.yaml
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que se ha creado el ReplicaSet:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get rs,pods
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t2/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Obtenemos la información detallada del ReplicaSet:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe rs test-web-replica
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t2/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Vamos a probar la tolerancia a fallos: Elimina uno de los 3 Pods, y comprueba que inmediatamente se ha vuelto a crear un nuevo Pod</p>
-
-    <ul>
-      <li>Obtenemos el nombre del Pod que queremos eliminar:</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get pods
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Eliminamos el Pod:
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete pod test-web-replica-96tvz
-</code></pre></div>        </div>
-      </li>
-    </ul>
-
-    <p><img src="/assets/images/kubernetes/t2/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Vamos a comprobar la escalabilidad: escala el ReplicaSet para tener 6 Pods de la aplicación.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl scale rs test-web-replica <span class="nt">--replicas</span><span class="o">=</span>6
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t2/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Elimina el ReplicaSet y comprueba que se han borrado todos los Pods.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete rs test-web-replica
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t2/5.png" alt="5" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+<p>Como podemos ver en la imagen anterior, el pod se ha eliminado correctamente.</p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
