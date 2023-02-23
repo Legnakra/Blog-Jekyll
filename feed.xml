@@ -1,4 +1,260 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-23T14:41:05+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-24T00:51:55+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/12/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/aso/2023/02/12/ldap2</id><content type="html" xml:base="/aso/2023/02/12/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
+
+<p>En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información:</p>
+
+<ul>
+  <li>Nombre del alumno</li>
+  <li>Apellidos del alumno</li>
+  <li>Dirección de correo electrónico</li>
+  <li>Nombre del equipo</li>
+  <li>Dirección IP del equipo</li>
+  <li>Clave pública SSH del equipo</li>
+</ul>
+
+<p>El mío quedaría así:</p>
+
+<pre><code class="language-csv">Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org
+Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
+Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org
+</code></pre>
+
+<h3 id="esquema-openssh-lpk">Esquema openssh-lpk</h3>
+
+<p>Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/ldap/schema/openssh-lpk.ldif
+</code></pre></div></div>
+
+<p>Y añadimos el siguiente contenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">cn</span><span class="o">=</span>openssh-lpk,cn<span class="o">=</span>schema,cn<span class="o">=</span>config
+objectClass: olcSchemaConfig
+cn: openssh-lpk
+olcAttributeTypes: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.1.13 NAME <span class="s1">'sshPublicKey'</span>
+  DESC <span class="s1">'MANDATORY: OpenSSH Public key'</span>
+  EQUALITY octetStringMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 <span class="o">)</span>
+olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <span class="s1">'ldapPublicKey'</span> SUP top AUXILIARY
+  DESC <span class="s1">'MANDATORY: OpenSSH LPK objectclass'</span>
+  MAY <span class="o">(</span> sshPublicKey <span class="nv">$ </span>uid <span class="o">)</span>
+  <span class="o">)</span>
+</code></pre></div></div>
+
+<p>Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> /etc/ldap/schema/openssh-lpk.ldif
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap2/1.png" alt="1" /></p>
+
+<h3 id="script-en-python-">Script en Python 🐍</h3>
+
+<p>Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> venv ldap
+</code></pre></div></div>
+
+<p>El fin del entorno virtual es instalar el módulo <code class="language-plaintext highlighter-rouge">python-ldap</code> que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source </span>ldap/bin/activate
+pip <span class="nb">install </span>python3-ldap
+pip <span class="nb">install </span><span class="nv">ldap3</span><span class="o">==</span>2.6
+</code></pre></div></div>
+
+<p>Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado <code class="language-plaintext highlighter-rouge">ldap.py</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi ldap.py
+</code></pre></div></div>
+
+<p>Y añadimos el siguiente contenido:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python
+</span>
+<span class="kn">import</span> <span class="nn">ldap3</span>
+<span class="kn">from</span> <span class="nn">ldap3</span> <span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ALL</span>
+<span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="nb">exit</span>
+
+<span class="c1">### VARIABLES
+</span>
+<span class="c1"># Shell que se le asigna a los usuarios
+</span><span class="n">shell</span> <span class="o">=</span> <span class="s">'/bin/bash'</span>
+
+<span class="c1"># Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/"
+</span><span class="n">home_dir</span> <span class="o">=</span> <span class="s">'/home/'</span>
+
+<span class="c1"># El valor inicial para los UID que se asignan al insertar usuarios. 
+</span><span class="n">uid_number</span> <span class="o">=</span> <span class="mi">5000</span>
+
+<span class="c1"># El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error.
+</span><span class="n">gid</span> <span class="o">=</span> <span class="mi">5000</span>
+
+<span class="c1">### VARIABLES
+</span>
+<span class="c1"># Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista.
+</span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'usuarios.csv'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">usuarios</span><span class="p">:</span>
+  <span class="n">usuarios</span> <span class="o">=</span> <span class="n">usuarios</span><span class="p">.</span><span class="n">readlines</span><span class="p">()</span>
+
+
+<span class="c1">### Parametros para la conexion
+</span><span class="n">ldap_ip</span> <span class="o">=</span> <span class="s">'ldaps://alfa.mariajesus.gonzalonazareno.org:636'</span>
+<span class="n">dominio_base</span> <span class="o">=</span> <span class="s">'dc=mariajesus,dc=gonzalonazareno,dc=org'</span>
+<span class="n">user_admin</span> <span class="o">=</span> <span class="s">'admin'</span> 
+<span class="n">contrasena</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="s">'Contrasena: '</span><span class="p">)</span>
+
+<span class="c1"># Intenta realizar la conexion.
+</span><span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ldap_ip</span><span class="p">,</span> <span class="s">'cn={},{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">user_admin</span><span class="p">,</span> <span class="n">dominio_base</span><span class="p">),</span><span class="n">contrasena</span><span class="p">)</span>
+
+<span class="c1"># conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario.
+</span>
+<span class="c1"># Si no se establece la conexion imprime por pantalla un error de conexion.
+</span><span class="k">if</span> <span class="ow">not</span> <span class="n">conn</span><span class="p">.</span><span class="n">bind</span><span class="p">():</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">'No se ha podido conectar con ldap'</span><span class="p">)</span> 
+  <span class="k">if</span> <span class="n">conn</span><span class="p">.</span><span class="n">result</span><span class="p">[</span><span class="s">'description'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'invalidCredentials'</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'Credenciales no validas.'</span><span class="p">)</span>
+  <span class="c1"># Termina el script.
+</span>  <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Recorre la lista de usuarios
+</span><span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">usuarios</span><span class="p">:</span>
+  <span class="c1"># Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente.
+</span>  <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">)</span>
+  <span class="n">cn</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">sn</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="n">mail</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">uid</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+  <span class="n">ssh</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+  <span class="c1">#Anade el usuario.
+</span>  <span class="n">conn</span><span class="p">.</span><span class="n">add</span><span class="p">(</span>
+    <span class="s">'uid={},ou=Personas,{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">dominio_base</span><span class="p">),</span>
+    <span class="n">object_class</span> <span class="o">=</span> 
+      <span class="p">[</span>
+      <span class="s">'inetOrgPerson'</span><span class="p">,</span>
+      <span class="s">'posixAccount'</span><span class="p">,</span> 
+      <span class="s">'ldapPublicKey'</span>
+      <span class="p">],</span>
+    <span class="n">attributes</span> <span class="o">=</span>
+      <span class="p">{</span>
+      <span class="s">'cn'</span><span class="p">:</span> <span class="n">cn</span><span class="p">,</span>
+      <span class="s">'sn'</span><span class="p">:</span> <span class="n">sn</span><span class="p">,</span>
+      <span class="s">'mail'</span><span class="p">:</span> <span class="n">mail</span><span class="p">,</span>
+      <span class="s">'uid'</span><span class="p">:</span> <span class="n">uid</span><span class="p">,</span>
+      <span class="s">'uidNumber'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uid_number</span><span class="p">),</span>
+      <span class="s">'gidNumber'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gid</span><span class="p">),</span>
+      <span class="s">'homeDirectory'</span><span class="p">:</span> <span class="s">'{}{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">home_dir</span><span class="p">,</span><span class="n">uid</span><span class="p">),</span>
+      <span class="s">'loginShell'</span><span class="p">:</span> <span class="n">shell</span><span class="p">,</span>
+      <span class="s">'sshPublicKey'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span>
+      <span class="p">})</span>
+
+  <span class="k">if</span> <span class="n">conn</span><span class="p">.</span><span class="n">result</span><span class="p">[</span><span class="s">'description'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'entryAlreadyExists'</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">'El usuario {} ya existe.'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">uid</span><span class="p">))</span>
+
+  <span class="c1"># Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos)
+</span>  <span class="n">uid_number</span> <span class="o">+=</span> <span class="mi">1</span>
+
+<span class="c1">#Cierra la conexion.
+</span><span class="n">conn</span><span class="p">.</span><span class="n">unbind</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 ldap.py
+</code></pre></div></div>
+
+<p>Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-LLL</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap2/2.png" alt="2" /></p>
+
+<h3 id="configuramos-el-sistema-para-que-los-usuarios-sean-autenticados-por-ldap">Configuramos el sistema para que los usuarios sean autenticados por LDAP</h3>
+
+<p>Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> y añadir las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+URI ldap://alfa.mariajesus.gonzalonazareno.org
+</code></pre></div></div>
+
+<p>También deberemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> y añadir la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>passwd:         files systemd ldap
+group:          files systemd ldap
+shadow:         files ldap
+</code></pre></div></div>
+
+<p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">libpam-ldap</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>libpam-ldap
+</code></pre></div></div>
+
+<p>Y lo configuramos:</p>
+
+<ul>
+  <li>LDAP server URI: `ldap://127.0.0.1</li>
+  <li>Distinguished name of search base: <code class="language-plaintext highlighter-rouge">dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
+  <li>LDAP version: <code class="language-plaintext highlighter-rouge">3</code></li>
+  <li>LDAP acount for root DN: <code class="language-plaintext highlighter-rouge">cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
+</ul>
+
+<p>IMAGEN</p>
+
+<h3 id="configuramos-el-sistema-para-que-los-usuarios-puedan-acceder-por-ssh">Configuramos el sistema para que los usuarios puedan acceder por SSH</h3>
+
+<p>Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia <code class="language-plaintext highlighter-rouge">/home</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"session   requiered    pam_mkhomedir.so"</span> <span class="o">&gt;&gt;</span> /etc/pam.d/common-session
+</code></pre></div></div>
+
+<p>Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio <code class="language-plaintext highlighter-rouge">/opt</code> para que tenga los permisos necesarios, estando en un dorectorio perteneciente a <code class="language-plaintext highlighter-rouge">root</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /opt/search.sh
+
+<span class="c">#!/bin/bash</span>
+
+<span class="c"># Busca la clave publica del usuario en el directorio LDAP.</span>
+
+ldapsearch <span class="nt">-x</span> <span class="nt">-u</span> <span class="nt">-LLL</span> <span class="nt">-o</span> ldif-wrap<span class="o">=</span>no <span class="s1">'(&amp;(objectClass=posixAccount)(uid='</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="s1">'))'</span> <span class="s1">'sshPublicKey'</span> | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</span> | <span class="nb">base64</span> <span class="nt">-d</span>
+</code></pre></div></div>
+
+<p>Una vez creado, le damos permisos de ejecución:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>755 /opt/search.sh
+</code></pre></div></div>
+
+<p>Para hacer una prueba, ejecutamos el script:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> /opt/search.sh maria
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap2/3.png" alt="3" /></p>
+
+<p>Tras esta comprobación, nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> y añadimos las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AuthorizedKeysCommand /opt/search.sh
+AuthorizedKeysCommandUser nobody
+</code></pre></div></div>
+
+<p>Reiniciamos el servicio SSH:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart sshd
+</code></pre></div></div>
+
+<p>Y comprabamos que funciona correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh mariajesus@alfa
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap2/4.png" alt="4" /></p>
+
+<p>Como tengo la clave de mi compañero Juan Jesús, comprueba que se puede conectar y que puede crear un fichero que yo podré leer:</p>
+
+<p><img src="/assets/images/LDAP/ldap2/5.png" alt="5" /></p>
+
+<p><img src="/assets/images/LDAP/ldap2/6.png" alt="6" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python3-ldap pip install ldap3==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=mariajesus,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org IMAGEN Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: source /opt/search.sh maria Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa Como tengo la clave de mi compañero Juan Jesús, comprueba que se puede conectar y que puede crear un fichero que yo podré leer:]]></summary></entry><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este taller vamos a instalar un CMS (Content Management System) en un cluster de Kubernetes. Para ello, vamos a instalar la última versión de Helm y añadiremos el repositorio de bitnami, porque instalaremos un wordpress.</p>
 
@@ -2122,256 +2378,7 @@ kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
   <li>Contraseña: bmV4dGNsb3Vk</li>
 </ul>
 
-<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/07/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/ldap2</id><content type="html" xml:base="/aso/2023/02/07/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
-
-<p>En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información:</p>
-
-<ul>
-  <li>Nombre del alumno</li>
-  <li>Apellidos del alumno</li>
-  <li>Dirección de correo electrónico</li>
-  <li>Nombre del equipo</li>
-  <li>Dirección IP del equipo</li>
-  <li>Clave pública SSH del equipo</li>
-</ul>
-
-<p>El mío quedaría así:</p>
-
-<pre><code class="language-csv">Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org
-Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
-Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org
-</code></pre>
-
-<h3 id="esquema-openssh-lpk">Esquema openssh-lpk</h3>
-
-<p>Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/ldap/schema/openssh-lpk.ldif
-</code></pre></div></div>
-
-<p>Y añadimos el siguiente contenido:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">cn</span><span class="o">=</span>openssh-lpk,cn<span class="o">=</span>schema,cn<span class="o">=</span>config
-objectClass: olcSchemaConfig
-cn: openssh-lpk
-olcAttributeTypes: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.1.13 NAME <span class="s1">'sshPublicKey'</span>
-  DESC <span class="s1">'MANDATORY: OpenSSH Public key'</span>
-  EQUALITY octetStringMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 <span class="o">)</span>
-olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <span class="s1">'ldapPublicKey'</span> SUP top AUXILIARY
-  DESC <span class="s1">'MANDATORY: OpenSSH LPK objectclass'</span>
-  MAY <span class="o">(</span> sshPublicKey <span class="nv">$ </span>uid <span class="o">)</span>
-  <span class="o">)</span>
-</code></pre></div></div>
-
-<p>Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapadd <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> /etc/ldap/schema/openssh-lpk.ldif
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap2/1.png" alt="1" /></p>
-
-<h3 id="script-en-python-">Script en Python 🐍</h3>
-
-<p>Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 <span class="nt">-m</span> venv ldap
-</code></pre></div></div>
-
-<p>El fin del entorno virtual es instalar el módulo <code class="language-plaintext highlighter-rouge">python-ldap</code> que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source </span>ldap/bin/activate
-pip <span class="nb">install </span>python3-ldap
-pip <span class="nb">install </span><span class="nv">ldap3</span><span class="o">==</span>2.6
-</code></pre></div></div>
-
-<p>Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado <code class="language-plaintext highlighter-rouge">ldap.py</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi ldap.py
-</code></pre></div></div>
-
-<p>Y añadimos el siguiente contenido:</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#!/usr/bin/env python
-</span>
-<span class="kn">import</span> <span class="nn">ldap3</span>
-<span class="kn">from</span> <span class="nn">ldap3</span> <span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">ALL</span>
-<span class="kn">from</span> <span class="nn">getpass</span> <span class="kn">import</span> <span class="n">getpass</span>
-<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="nb">exit</span>
-
-<span class="c1">### VARIABLES
-</span>
-<span class="c1"># Shell que se le asigna a los usuarios
-</span><span class="n">shell</span> <span class="o">=</span> <span class="s">'/bin/bash'</span>
-
-<span class="c1"># Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/"
-</span><span class="n">home_dir</span> <span class="o">=</span> <span class="s">'/home/'</span>
-
-<span class="c1"># El valor inicial para los UID que se asignan al insertar usuarios. 
-</span><span class="n">uid_number</span> <span class="o">=</span> <span class="mi">5000</span>
-
-<span class="c1"># El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error.
-</span><span class="n">gid</span> <span class="o">=</span> <span class="mi">5000</span>
-
-<span class="c1">### VARIABLES
-</span>
-<span class="c1"># Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista.
-</span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">'usuarios.csv'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">)</span> <span class="k">as</span> <span class="n">usuarios</span><span class="p">:</span>
-  <span class="n">usuarios</span> <span class="o">=</span> <span class="n">usuarios</span><span class="p">.</span><span class="n">readlines</span><span class="p">()</span>
-
-
-<span class="c1">### Parametros para la conexion
-</span><span class="n">ldap_ip</span> <span class="o">=</span> <span class="s">'ldaps://alfa.mariajesus.gonzalonazareno.org:636'</span>
-<span class="n">dominio_base</span> <span class="o">=</span> <span class="s">'dc=mariajesus,dc=gonzalonazareno,dc=org'</span>
-<span class="n">user_admin</span> <span class="o">=</span> <span class="s">'admin'</span> 
-<span class="n">contrasena</span> <span class="o">=</span> <span class="n">getpass</span><span class="p">(</span><span class="s">'Contrasena: '</span><span class="p">)</span>
-
-<span class="c1"># Intenta realizar la conexion.
-</span><span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ldap_ip</span><span class="p">,</span> <span class="s">'cn={},{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">user_admin</span><span class="p">,</span> <span class="n">dominio_base</span><span class="p">),</span><span class="n">contrasena</span><span class="p">)</span>
-
-<span class="c1"># conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario.
-</span>
-<span class="c1"># Si no se establece la conexion imprime por pantalla un error de conexion.
-</span><span class="k">if</span> <span class="ow">not</span> <span class="n">conn</span><span class="p">.</span><span class="n">bind</span><span class="p">():</span>
-  <span class="k">print</span><span class="p">(</span><span class="s">'No se ha podido conectar con ldap'</span><span class="p">)</span> 
-  <span class="k">if</span> <span class="n">conn</span><span class="p">.</span><span class="n">result</span><span class="p">[</span><span class="s">'description'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'invalidCredentials'</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'Credenciales no validas.'</span><span class="p">)</span>
-  <span class="c1"># Termina el script.
-</span>  <span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># Recorre la lista de usuarios
-</span><span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">usuarios</span><span class="p">:</span>
-  <span class="c1"># Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente.
-</span>  <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">)</span>
-  <span class="n">cn</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-  <span class="n">sn</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-  <span class="n">mail</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-  <span class="n">uid</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-  <span class="n">ssh</span> <span class="o">=</span> <span class="n">user</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
-
-  <span class="c1">#Anade el usuario.
-</span>  <span class="n">conn</span><span class="p">.</span><span class="n">add</span><span class="p">(</span>
-    <span class="s">'uid={},ou=Personas,{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">uid</span><span class="p">,</span> <span class="n">dominio_base</span><span class="p">),</span>
-    <span class="n">object_class</span> <span class="o">=</span> 
-      <span class="p">[</span>
-      <span class="s">'inetOrgPerson'</span><span class="p">,</span>
-      <span class="s">'posixAccount'</span><span class="p">,</span> 
-      <span class="s">'ldapPublicKey'</span>
-      <span class="p">],</span>
-    <span class="n">attributes</span> <span class="o">=</span>
-      <span class="p">{</span>
-      <span class="s">'cn'</span><span class="p">:</span> <span class="n">cn</span><span class="p">,</span>
-      <span class="s">'sn'</span><span class="p">:</span> <span class="n">sn</span><span class="p">,</span>
-      <span class="s">'mail'</span><span class="p">:</span> <span class="n">mail</span><span class="p">,</span>
-      <span class="s">'uid'</span><span class="p">:</span> <span class="n">uid</span><span class="p">,</span>
-      <span class="s">'uidNumber'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">uid_number</span><span class="p">),</span>
-      <span class="s">'gidNumber'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">gid</span><span class="p">),</span>
-      <span class="s">'homeDirectory'</span><span class="p">:</span> <span class="s">'{}{}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">home_dir</span><span class="p">,</span><span class="n">uid</span><span class="p">),</span>
-      <span class="s">'loginShell'</span><span class="p">:</span> <span class="n">shell</span><span class="p">,</span>
-      <span class="s">'sshPublicKey'</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">ssh</span><span class="p">)</span>
-      <span class="p">})</span>
-
-  <span class="k">if</span> <span class="n">conn</span><span class="p">.</span><span class="n">result</span><span class="p">[</span><span class="s">'description'</span><span class="p">]</span> <span class="o">==</span> <span class="s">'entryAlreadyExists'</span><span class="p">:</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">'El usuario {} ya existe.'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">uid</span><span class="p">))</span>
-
-  <span class="c1"># Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos)
-</span>  <span class="n">uid_number</span> <span class="o">+=</span> <span class="mi">1</span>
-
-<span class="c1">#Cierra la conexion.
-</span><span class="n">conn</span><span class="p">.</span><span class="n">unbind</span><span class="p">()</span>
-</code></pre></div></div>
-
-<p>Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 ldap.py
-</code></pre></div></div>
-
-<p>Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-LLL</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap2/2.png" alt="2" /></p>
-
-<h3 id="configuramos-el-sistema-para-que-los-usuarios-sean-autenticados-por-ldap">Configuramos el sistema para que los usuarios sean autenticados por LDAP</h3>
-
-<p>Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> y añadir las siguientes líneas:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-URI ldap://alfa.mariajesus.gonzalonazareno.org
-</code></pre></div></div>
-
-<p>También deberemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> y añadir la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>passwd:         files systemd ldap
-group:          files systemd ldap
-shadow:         files ldap
-</code></pre></div></div>
-
-<p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">libpam-ldap</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>libpam-ldap
-</code></pre></div></div>
-
-<p>Y lo configuramos:</p>
-
-<ul>
-  <li>LDAP server URI: `ldap://127.0.0.1</li>
-  <li>Distinguished name of search base: <code class="language-plaintext highlighter-rouge">dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
-  <li>LDAP version: <code class="language-plaintext highlighter-rouge">3</code></li>
-  <li>LDAP acount for root DN: <code class="language-plaintext highlighter-rouge">cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
-</ul>
-
-<p>IMAGEN</p>
-
-<h3 id="configuramos-el-sistema-para-que-los-usuarios-puedan-acceder-por-ssh">Configuramos el sistema para que los usuarios puedan acceder por SSH</h3>
-
-<p>Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia <code class="language-plaintext highlighter-rouge">/home</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"session   requiered    pam_mkhomedir.so"</span> <span class="o">&gt;&gt;</span> /etc/pam.d/common-session
-</code></pre></div></div>
-
-<p>Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio <code class="language-plaintext highlighter-rouge">/opt</code> para que tenga los permisos necesarios, estando en un dorectorio perteneciente a <code class="language-plaintext highlighter-rouge">root</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /opt/search.sh
-
-<span class="c">#!/bin/bash</span>
-
-<span class="c"># Busca la clave publica del usuario en el directorio LDAP.</span>
-
-ldapsearch <span class="nt">-x</span> <span class="nt">-u</span> <span class="nt">-LLL</span> <span class="nt">-o</span> ldif-wrap<span class="o">=</span>no <span class="s1">'(&amp;(objectClass=posixAccount)(uid='</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="s1">'))'</span> <span class="s1">'sshPublicKey'</span> | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</span> | <span class="nb">base64</span> <span class="nt">-d</span>
-</code></pre></div></div>
-
-<p>Una vez creado, le damos permisos de ejecución:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>755 /opt/search.sh
-</code></pre></div></div>
-
-<p>Para hacer una prueba, ejecutamos el script:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> /opt/search.sh maria
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap2/3.png" alt="3" /></p>
-
-<h2 id="tras-esta-comprobación-nos-dirigimos-al-fichero-etcsshsshd_config-y-añadimos-las-siguientes-líneas">Tras esta comprobación, nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> y añadimos las siguientes líneas:</h2>
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>AuthorizedKeysCommand /opt/search.sh
-AuthorizedKeysCommandUser nobody
-</code></pre></div></div>
-
-<p>Reiniciamos el servicio SSH:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart sshd
-</code></pre></div></div>
-
-<p>Y comprabamos que funciona correctamente:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh mariajesus@alfa
-</code></pre></div></div>
-
-<p><img src="/assets/images/LDAP/ldap2/4.png" alt="4" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python3-ldap pip install ldap3==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=mariajesus,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org IMAGEN Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: source /opt/search.sh maria Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa]]></summary></entry><entry><title type="html">Escenario - LDAPs</title><link href="/aso/2023/02/07/LDAPs.html" rel="alternate" type="text/html" title="Escenario - LDAPs" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/LDAPs</id><content type="html" xml:base="/aso/2023/02/07/LDAPs.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - LDAPs</title><link href="/aso/2023/02/07/LDAPs.html" rel="alternate" type="text/html" title="Escenario - LDAPs" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/LDAPs</id><content type="html" xml:base="/aso/2023/02/07/LDAPs.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este escenario vamos a ver como configurar un servidor LDAP en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> para que utilice el protocolo ldaps:// a la vez que el ldap:// utilizando el certificado x509 de la práctica de https o solicitando el correspondiente a través de gestiona. Realiza las modificaciones adecuadas en los clientes ldap de alfa para que todas las consultas se realicen por defecto utilizando ldaps://.</p>
 
@@ -3735,375 +3742,4 @@ db.Segundo.insertMany<span class="o">([{</span>nombre: <span class="s2">"Implant
 
 <p><img src="/assets/images/asgdb/auditoria/62.png" alt="62" /></p>
 
-<p>…podemos ver que se ha registrado el acceso correcto y el incorrecto.</p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Services</title><link href="/hlc+sri/2023/02/05/kubernetes-ingress.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Services" /><published>2023-02-05T16:45:16+01:00</published><updated>2023-02-05T16:45:16+01:00</updated><id>/hlc+sri/2023/02/05/kubernetes-ingress</id><content type="html" xml:base="/hlc+sri/2023/02/05/kubernetes-ingress.html"><![CDATA[<h2 id="ejercicio-1-despliegue-y-acceso-de-la-aplicación-guestbook">Ejercicio 1: Despliegue y acceso de la aplicación GuestBook</h2>
-
-<p>Una vez que tenemos creado el despliegue de la aplicación GuestBook, que realizamos en el anterior taller, vamos a crear los Services correspondientes para acceder a ella:</p>
-
-<h3 id="service-para-acceder-a-la-aplicación">Service para acceder a la aplicación:</h3>
-
-<p>Vamos a crear un Service que nos va a permitir acceder a la aplicación GuestBook desde el exterior, para ello crea un fichero yaml con la definición del Service a partir de la siguiente plantilla:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
-    <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-<span class="na">spec</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span>
-    <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span>
-      <span class="na">targetPort</span><span class="pi">:</span>
-    <span class="na">selector</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-</code></pre></div></div>
-
-<ul>
-  <li>Lanzamos el servicio con el comando <code class="language-plaintext highlighter-rouge">kubectl create -f guestbook-service.yaml</code> y comprobamos que se ha creado correctamente con el comando <code class="language-plaintext highlighter-rouge">kubectl get all</code>.</li>
-</ul>
-
-<p><img src="/assets/images/kubernetes/t4/1.png" alt="1" /></p>
-
-<ul>
-  <li>Accedemos a la ip del nodo master y al puerto asignado desde un navegador web para ver la aplicación.</li>
-</ul>
-
-<p><img src="/assets/images/kubernetes/t4/2.png" alt="2" /></p>
-
-<p>Pero claro, no funciona, ¿por qué? Porque la aplicación guestbook necesita conectarse a la base de datos redis, y no la encuentra. Para ello vamos a crear el Service para acceder a la base de datos. De esta forma, conectaremos el frontend con el backend, donde este último será de tipo ClusterIP.</p>
-
-<h3 id="service-para-acceder-a-la-base-de-datos">Service para acceder a la base de datos:</h3>
-
-<p>A continuación vamos a crear el Service para acceder a la base de datos. Vamos a crear el fichero yaml. Tenemos que poner el tipo del Service, el puerto del servicio será el 6379 y el nombre del puerto de la base de datos que hemos asignado en el Deployment es redis-server. Nota: No cambies el nombre del Service, ya que la aplicación guestbook va a acceder por defecto a la base de datos usando el nombre redis.</p>
-
-<p>Para ello, realizaremos lo siguientes pasos:</p>
-
-<ol>
-  <li>
-    <p>Elaboramos el fichero yaml con la definición del Service, y lo creamos.</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
-   <span class="na">labels</span><span class="pi">:</span>
-     <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
-     <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
-   <span class="na">ports</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">6379</span>
-     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">redis-server</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
-     <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-</code></pre></div>    </div>
-
-    <p>Y lo creamos.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> redis-service.yaml
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Listamos los servicios para comprobar que se ha creado correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/3.png" alt="3" /></p>
-  </li>
-  <li>
-    <p>Accederemos a la ip del nodo master y al puerto asignado desde un navegador web para ver la aplicación.</p>
-
-    <p><img src="/assets/images/kubernetes/t4/4.png" alt="4" /></p>
-  </li>
-</ol>
-
-<p>¡EY! ¡Ya funciona! Pero claro, no es muy cómodo acceder a la aplicación usando la ip del nodo master y el puerto asignado. Para ello vamos a crear un Ingress que nos permita acceder a la aplicación usando un nombre del tipo www.mariajesus.org.</p>
-
-<h3 id="acceso-a-la-aplicación-usando-ingress">Acceso a la aplicación usando Ingress</h3>
-
-<p>Vamos a crear el fichero yaml de definición del recurso Ingress para acceder a la aplicación. Indicaremos un host del tipo www.mariajesus.org, también el nombre del Service que creamos para acceder a la aplicación guestbook y tendremos que tener en cuenta que el puerto de dicho servicio era el 80. Para ello realizaremos los siguientes pasos:</p>
-
-<ol>
-  <li>
-    <p>Activamos el addon ingress en minikube para instalar el Ingress Controller y creamos el recurso Ingress.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> minikube addons <span class="nb">enable </span>ingress
-</code></pre></div>    </div>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">rules</span><span class="pi">:</span>
-   <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.mariajesus.org</span>
-     <span class="na">http</span><span class="pi">:</span>
-       <span class="na">paths</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
-         <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
-         <span class="na">backend</span><span class="pi">:</span>
-           <span class="na">service</span><span class="pi">:</span>
-             <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
-             <span class="na">port</span><span class="pi">:</span>
-               <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos la definición del recurso Ingress con los datos sugeridos, y creamos el recurso Ingress.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> guestbook-ingress.yaml
-</code></pre></div>    </div>
-
-    <p>Y comprobamos que se ha creado correctamente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Modificaremos el fichero /etc/hosts de nuestro ordenador para configurar la resolución estática.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>nano /etc/hosts
-</code></pre></div>    </div>
-
-    <p>Añadimos la siguiente línea al fichero:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 192.168.15.42 www.mariajesus.org
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/6.png" alt="6" /></p>
-  </li>
-  <li>
-    <p>Accederemos a la aplicación usando el nombre que has asignado.</p>
-
-    <p><img src="/assets/images/kubernetes/t4/7.png" alt="7" /></p>
-  </li>
-</ol>
-
-<p>Para eliminarlo todo, ejecutamos el siguiente comando:</p>
-
-<h2 id="ejercicio-2-despliegue-y-acceso-de-la-aplicación-lets-chat">Ejercicio 2: Despliegue y acceso de la Aplicación Lets-Chat</h2>
-
-<p>¿Qué es Lets-Chat?</p>
-
-<p>Lets-Chat es una aplicación de mensajería instantánea basada en Node.js y MongoDB. Es una aplicación de código abierto que se puede desplegar en cualquier entorno de forma sencilla. En este ejercicio vamos a desplegar Lets-Chat en Kubernetes.</p>
-
-<p>Para realizar el despliegue y el acceso de la aplicación, deberemos tener en cuenta los siguientes aspectos:</p>
-
-<ul>
-  <li>
-    <p>La imagen docker que vamos a usar para el despliegue de Let’s Chat es sdelements/lets-chat y para desplegar mongoDB utilizaremos la imagen mongo. Nota: utiliza imagen mongo:4, Let’s Chat es una aplicación antigua y no funciona con las últimas versiones de mongo.</p>
-  </li>
-  <li>
-    <p>Al crear el despliegue de Let’s Chat podemos poner varias replicas, pero el despliegue de la base de datos, sólo creará una replica.</p>
-  </li>
-  <li>
-    <p>El puerto en el que responde la aplicación es el 8080. La base de datos utiliza el puerto 27017.</p>
-  </li>
-  <li>
-    <p>Vamos acceder desde el exterior a la aplicación. Sin embargo, no es necesario acceder desde el exterior a la base de datos.</p>
-  </li>
-  <li>
-    <p>El nombre del Service para acceder a la base de datos debe ser mongo ya que por defecto la aplicación va a conectar a la base de datos usando ese nombre.</p>
-  </li>
-  <li>
-    <p>Queremos acceder a la aplicación usando un nombre del tipo www.chat-mariajesus.org.</p>
-  </li>
-</ul>
-
-<p>Tras tener todo esto en cuenta, vamos a utilizar como modelos los ficheros yaml de la actividad anterior, crea los ficheros necesarios para crear los recursos en tu cluster de Kubernetes para desplegar esta aplicación.</p>
-
-<ol>
-  <li>
-    <p>Creamos los ficheros encargados del despliegue de la aplicación Lets-Chat y de la base de datos.</p>
-
-    <ul>
-      <li>Fichero del despliegue de la aplicación Lets-Chat.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-   <span class="na">labels</span><span class="pi">:</span>
-     <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">matchLabels</span><span class="pi">:</span>
-       <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-   <span class="na">template</span><span class="pi">:</span>
-     <span class="na">metadata</span><span class="pi">:</span>
-       <span class="na">labels</span><span class="pi">:</span>
-         <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-     <span class="na">spec</span><span class="pi">:</span>
-       <span class="na">containers</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-         <span class="na">image</span><span class="pi">:</span> <span class="s">sdelements/lets-chat</span>
-         <span class="na">ports</span><span class="pi">:</span>
-           <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
-             <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Fichero del despliegue de la base de datos.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-   <span class="na">labels</span><span class="pi">:</span>
-     <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">matchLabels</span><span class="pi">:</span>
-       <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-   <span class="na">template</span><span class="pi">:</span>
-     <span class="na">metadata</span><span class="pi">:</span>
-       <span class="na">labels</span><span class="pi">:</span>
-         <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-     <span class="na">spec</span><span class="pi">:</span>
-       <span class="na">containers</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-         <span class="na">image</span><span class="pi">:</span> <span class="s">sdelements/lets-chat</span>
-         <span class="na">ports</span><span class="pi">:</span>
-           <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
-             <span class="na">containerPort</span><span class="pi">:</span> <span class="m">8080</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Levantamos los despliegues.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> letschat-deployment.yaml
- kubectl create <span class="nt">-f</span> mongo-deployment.yaml
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Comprobamos que se han creado correctamente.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Creamos los ficheros de servicios de Let’s Chat y de la base de datos.</p>
-
-    <ul>
-      <li>Fichero del servicio de la base de datos.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
- <span class="na">metadata</span><span class="pi">:</span>
- <span class="na">name</span><span class="pi">:</span> <span class="s">mongo</span>
- <span class="na">spec</span><span class="pi">:</span>
- <span class="na">ports</span><span class="pi">:</span>
- <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">mongo</span>
-     <span class="s">port</span><span class="err">:</span> <span class="m">27017</span>
-     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">mongo</span>
- <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">name</span><span class="pi">:</span> <span class="s">mongo</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Fichero del servicio de LetsChat.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
- <span class="na">metadata</span><span class="pi">:</span>
- <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
- <span class="na">spec</span><span class="pi">:</span>
- <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
- <span class="na">ports</span><span class="pi">:</span>
- <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-     <span class="s">port</span><span class="err">:</span> <span class="m">8080</span>
-     <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
- <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Levantamos los servicios.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> mongo-service.yaml
- kubectl create <span class="nt">-f</span> letschat-service.yaml
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Comprobamos que se han creado correctamente.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/9.png" alt="9" /></p>
-
-    <p>Nuestra aplicación LetsChat está desplegada en el cluster de Kubernetes, pero no podemos acceder a ella desde el exterior.</p>
-
-    <p><img src="/assets/images/kubernetes/t4/10.png" alt="10" /></p>
-
-    <p>Para poder acceder a ella desde el exterior, vamos a crear un Ingress.</p>
-  </li>
-  <li>
-    <p>Creamos el fichero de Ingress para LetsChat.</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
- <span class="na">metadata</span><span class="pi">:</span>
- <span class="na">name</span><span class="pi">:</span> <span class="s">ingress-letschat</span>
- <span class="na">spec</span><span class="pi">:</span>
- <span class="na">rules</span><span class="pi">:</span>
- <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.chat-mariajesus.org</span>
-     <span class="s">http</span><span class="err">:</span>
-     <span class="na">paths</span><span class="pi">:</span>
-     <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
-         <span class="s">pathType</span><span class="err">:</span> <span class="s">Prefix</span>
-         <span class="s">backend</span><span class="err">:</span>
-         <span class="na">service</span><span class="pi">:</span>
-             <span class="na">name</span><span class="pi">:</span> <span class="s">letschat</span>
-             <span class="na">port</span><span class="pi">:</span>
-             <span class="na">number</span><span class="pi">:</span> <span class="m">8080</span>
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Levantamos el Ingress.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create <span class="nt">-f</span> letschat-ingress.yaml
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Comprobamos que se ha creado correctamente.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <ul>
-      <li>Agregamos la siguiente línea al fichero /etc/hosts.</li>
-    </ul>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 192.168.100.185 www.chat-mariajesus.org
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t4/11.png" alt="11" /></p>
-
-    <ul>
-      <li>Comprobamos que podemos acceder a la aplicación LetsChat desde el exterior.</li>
-    </ul>
-
-    <p><img src="/assets/images/kubernetes/t4/12.png" alt="12" /></p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Ejercicio 1: Despliegue y acceso de la aplicación GuestBook]]></summary></entry></feed>
+<p>…podemos ver que se ha registrado el acceso correcto y el incorrecto.</p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Movimiento de Datos</title><link href="/asgdb/2023/02/07/movimientos.html" rel="alternate" type="text/html" title="Movimiento de Datos" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/asgdb/2023/02/07/movimientos</id><content type="html" xml:base="/asgdb/2023/02/07/movimientos.html"><![CDATA[]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[]]></summary></entry></feed>
