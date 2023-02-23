@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-21T10:05:44+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-23T14:11:47+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este taller vamos a instalar un CMS (Content Management System) en un cluster de Kubernetes. Para ello, vamos a instalar la última versión de Helm y añadiremos el repositorio de bitnami, porque instalaremos un wordpress.</p>
 
@@ -58,7 +58,290 @@
 
 <p>Y si entramos con las credenciales que nos ha dado el comando, podemos ver acceder a la zona de administración.</p>
 
-<p><img src="/assets/images/kubernetes/t7/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/kubernetes/t7/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Despliegue de una aplicación en Kubernetes</title><link href="/hlc+sri/2023/02/12/kubernetes-p1.html" rel="alternate" type="text/html" title="Despliegue de una aplicación en Kubernetes" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-p1</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-p1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En <a href="https://sysmaria.netlify.app/iaw/2023/02/09/docker-bookmedik.html">este post</a> realizamos la implantación de una aplicación en Docker. En este post vamos a realizar el despliegue de la misma aplicación en Kubernetes.</p>
+
+<p>En mi casi caso, voy a elegir bookmedik como aplicación a desplegar. Para ello, voy a utilizar el siguiente <a href="">repositorio</a> que contiene el código de la aplicación.</p>
+
+<h2 id="despliegue-de-la-aplicación">Despliegue de la aplicación</h2>
+
+<ol>
+  <li>
+    <p>Creamos los ficheros yaml para crear un <code class="language-plaintext highlighter-rouge">ConfigMap</code> y un <code class="language-plaintext highlighter-rouge">Secret</code> donde guardaremos las variables de entorno.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="se">\</span>
+ <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik <span class="se">\</span>
+ <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_datos_configmap.yaml
+
+ kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="se">\</span>
+ <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root <span class="se">\</span>
+ <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_passwords_secret.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Creamos el volumen y el fichero de despliegue para <code class="language-plaintext highlighter-rouge">mariadb</code></p>
+
+    <ul>
+      <li>
+        <p>Volumen para mariadb</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">PersistentVolumeClaim</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-pvc</span>
+  <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">accessModes</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">ReadWriteOnce</span>
+      <span class="na">resources</span><span class="pi">:</span>
+      <span class="na">requests</span><span class="pi">:</span>
+          <span class="na">storage</span><span class="pi">:</span> <span class="s">3Gi</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Despliegue de mariadb</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb</span>
+  <span class="na">labels</span><span class="pi">:</span>
+    <span class="na">app</span><span class="pi">:</span> <span class="s">mariadb</span>
+    <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">matchLabels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">mariadb</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">template</span><span class="pi">:</span>
+    <span class="na">metadata</span><span class="pi">:</span>
+      <span class="na">labels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">mariadb</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+    <span class="na">spec</span><span class="pi">:</span>
+      <span class="na">volumes</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-mariadb</span>
+          <span class="na">persistentVolumeClaim</span><span class="pi">:</span>
+            <span class="na">claimName</span><span class="pi">:</span> <span class="s">mariadb-pvc</span>
+      <span class="na">containers</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-mariadb</span>
+          <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:10.5</span>
+          <span class="na">env</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MARIADB_ROOT_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">secret-mariadb</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">rootpass</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MARIADB_DATABASE</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">cm-mariadb</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">basededatos</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MARIADB_USER</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">configMapKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">cm-mariadb</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">mysql_usuario</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MARIADB_PASSWORD</span>
+              <span class="na">valueFrom</span><span class="pi">:</span>
+                <span class="na">secretKeyRef</span><span class="pi">:</span>
+                  <span class="na">name</span><span class="pi">:</span> <span class="s">secret-mariadb</span>
+                  <span class="na">key</span><span class="pi">:</span> <span class="s">password</span>
+          <span class="na">ports</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-server</span>
+              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3306</span>
+          <span class="na">volumeMounts</span><span class="pi">:</span>
+            <span class="pi">-</span> <span class="na">mountPath</span><span class="pi">:</span> <span class="s2">"</span><span class="s">/var/lib/mysql"</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">volumen-mariadb</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Servicio de mariadb</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">mariadb</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3306</span>
+        <span class="na">targetPort</span><span class="pi">:</span> <span class="s">mariadb-server</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">mariadb</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Creamos los ficheros de despliegue y servicios para bookmedik.</p>
+
+    <ul>
+      <li>
+        <p>Despliegue de bookmedik</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">matchLabels</span><span class="pi">:</span>
+        <span class="na">app</span><span class="pi">:</span> <span class="s">bookmedik</span>
+        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+    <span class="na">template</span><span class="pi">:</span>
+      <span class="na">metadata</span><span class="pi">:</span>
+        <span class="na">labels</span><span class="pi">:</span>
+          <span class="na">app</span><span class="pi">:</span> <span class="s">bookmedik</span>
+          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">containers</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-bookmedik</span>
+      <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:latest</span>
+      <span class="na">env</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">USUARIO_BOOKMEDIK</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">configMapKeyRef</span><span class="pi">:</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">cm-mariadb</span>
+              <span class="na">key</span><span class="pi">:</span> <span class="s">mysql_user</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">PASS_BOOKMEDIK</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">secretKeyRef</span><span class="pi">:</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">secret-mariadb</span>
+              <span class="na">key</span><span class="pi">:</span> <span class="s">mysql_password</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">BASE_DATOS_BOOKMEDIK</span>
+          <span class="na">valueFrom</span><span class="pi">:</span>
+            <span class="na">configMapKeyRef</span><span class="pi">:</span>
+              <span class="na">name</span><span class="pi">:</span> <span class="s">cm-mariadb</span>
+              <span class="na">key</span><span class="pi">:</span> <span class="s">mysql_database</span>
+      <span class="na">ports</span><span class="pi">:</span>
+        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
+          <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Servicio de bookmedik</p>
+
+        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+  <span class="na">metadata</span><span class="pi">:</span>
+    <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik</span>
+    <span class="na">labels</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+  <span class="na">spec</span><span class="pi">:</span>
+    <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
+        <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
+    <span class="na">selector</span><span class="pi">:</span>
+      <span class="na">app</span><span class="pi">:</span> <span class="s">bookmedik</span>
+      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Creamos todo y anotamos la primera versión de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
+</code></pre></div>    </div>
+
+    <p>Comprobamos que los recursos se han creado correctamente.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/2.png" alt="2" /></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl annotate deployment.apps/bookmedik kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Versión 1"</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Accedemos a la aplicación y comprobamos que funciona correctamente.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/4.png" alt="4" /></p>
+
+    <p>Y comprobamos que podemos acceder:</p>
+
+    <p><img src="/assets/images/kubernetes/p1/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Creamos el fichero Ingress para acceder a la aplicación desde el exterior.</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
+ <span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
+ <span class="na">metadata</span><span class="pi">:</span>
+   <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik-ingress</span>
+   <span class="na">annotations</span><span class="pi">:</span>
+     <span class="na">nginx.ingress.kubernetes.io/rewrite-target</span><span class="pi">:</span> <span class="s">/</span>
+ <span class="na">spec</span><span class="pi">:</span>
+   <span class="na">rules</span><span class="pi">:</span>
+   <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-bookmedik.org</span>
+     <span class="na">http</span><span class="pi">:</span>
+       <span class="na">paths</span><span class="pi">:</span>
+       <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
+         <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
+         <span class="na">backend</span><span class="pi">:</span>
+           <span class="na">service</span><span class="pi">:</span>
+             <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik</span>
+             <span class="na">port</span><span class="pi">:</span>
+               <span class="na">number</span><span class="pi">:</span> <span class="m">80</span>
+</code></pre></div>    </div>
+
+    <p>Y lo creamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> bookmedik-ingress.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para que apunte a la IP del nodo maestro.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/7.png" alt="7" /></p>
+  </li>
+  <li>
+    <p>Accedemos a la aplicación desde el navegador.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/8.png" alt="8" /></p>
+
+    <p>Y accedemos a la zona de administración:</p>
+
+    <p><img src="/assets/images/kubernetes/p1/9.png" alt="9" /></p>
+  </li>
+  <li>
+    <p>Creamos información para probar la persistencia de la base de datos cuando borremos la base de datos de mariadb.</p>
+  </li>
+</ol>
+
+<p><img src="/assets/images/kubernetes/p1/10.png" alt="10" /></p>
+
+<ul>
+  <li>
+    <p>Eliminamos el despliegue de mariadb.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl delete deployment.apps/mariadb
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/11.png" alt="11" /></p>
+  </li>
+  <li>
+    <p>Comprobamos que la base de datos no funciona.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/12.png" alt="12" /></p>
+  </li>
+</ul>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Implantación de aplicaciones web Python en docker</title><link href="/iaw/2023/02/11/docker-python.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web Python en docker" /><published>2023-02-11T16:45:16+01:00</published><updated>2023-02-11T16:45:16+01:00</updated><id>/iaw/2023/02/11/docker-python</id><content type="html" xml:base="/iaw/2023/02/11/docker-python.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este post vamos a configurar contenedores de Docker para ejecutar aplicaciones web Python. Para ello, vamos a utilizar una aplicación web Python sencilla que se encuentra en el repositorio de <a href="https://github.com/josedom24/django_tutorial">GitHub</a>.</p>
 
@@ -2478,30 +2761,23 @@ systemctl start mnt-nfs.mount
     <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">MensajesTraducidos</span> <span class="p">(</span><span class="n">p_codigo</span> <span class="n">VARCHAR2</span><span class="p">)</span>
   <span class="k">RETURN</span> <span class="n">VARCHAR2</span>
   <span class="k">IS</span>
-      <span class="n">mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
-      <span class="k">BEGIN</span>
-          <span class="n">IF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="s1">'911'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Caracteres no validos'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="s1">'1004'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Acceso denegado'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'1017'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario o contrasena incorrectos'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'1045'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Sin permiso CREATE SESSION'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28000'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28001'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña expirada'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28002'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28003'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña vulnerable'</span><span class="p">;</span>
-          <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span>  <span class="s1">'28011'</span> <span class="k">THEN</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
-          <span class="k">ELSE</span>
-              <span class="n">mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Error desconocido. Por favor, contacte con el administrador.'</span><span class="p">;</span>
-          <span class="k">END</span> <span class="n">IF</span><span class="p">;</span>
-      <span class="k">RETURN</span> <span class="n">mensaje</span><span class="p">;</span>
+      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+  <span class="k">BEGIN</span>
+      <span class="k">CASE</span> <span class="n">p_codigo</span>
+          <span class="k">WHEN</span> <span class="mi">911</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Caracteres no validos'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">1004</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Acceso denegado'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">1017</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario o contrasena incorrectos'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">1033</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario inexistente'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">1045</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Sin permiso CREATE SESSION'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28000</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28001</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña expirada'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28002</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28003</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña vulnerable'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28011</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
+          <span class="k">WHEN</span> <span class="mi">28512</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
+          <span class="k">ELSE</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Error desconocido. Por favor, contacte con el administrador.'</span><span class="p">;</span>
+      <span class="k">END</span> <span class="k">CASE</span><span class="p">;</span>
+  <span class="k">RETURN</span> <span class="n">v_mensaje</span><span class="p">;</span>
   <span class="k">END</span><span class="p">;</span>
   <span class="o">/</span>
 </code></pre></div>    </div>
@@ -2524,17 +2800,20 @@ systemctl start mnt-nfs.mount
 
     <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">AccesosFallidos</span>
   <span class="k">IS</span>
-      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
       <span class="k">CURSOR</span> <span class="n">c_fallo</span> <span class="k">IS</span>
-          <span class="k">SELECT</span> <span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
+          <span class="k">SELECT</span> <span class="n">OS_USERNAME</span><span class="p">,</span><span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span>
           <span class="k">FROM</span> <span class="n">DBA_AUDIT_SESSION</span>
           <span class="k">WHERE</span> <span class="n">ACTION_NAME</span> <span class="o">=</span> <span class="s1">'LOGON'</span><span class="p">;</span>
+          <span class="k">AND</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span>
+          <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
+      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
   <span class="k">BEGIN</span>
       <span class="n">CabeceraErroresLogin</span><span class="p">;</span>
       <span class="k">FOR</span> <span class="n">fallo</span> <span class="k">IN</span> <span class="n">c_fallo</span> <span class="n">LOOP</span>
           <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="n">MensajesTraducidos</span><span class="p">(</span><span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Usuario del sistema: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">OS_USERNAME</span><span class="p">);</span>
           <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Usuario: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">USERNAME</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Fecha: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="nb">TIMESTAMP</span><span class="p">);</span>
+          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Fecha: '</span> <span class="o">||</span> <span class="n">TO_CHAR</span><span class="p">(</span><span class="n">fallo</span><span class="p">.</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="s1">'DD/MM/YYYY HH24:MI:SS'</span><span class="p">));</span>
           <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Codigo de error: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
           <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Mensaje: '</span> <span class="o">||</span> <span class="n">v_mensaje</span><span class="p">);</span>
           <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'- - - - -'</span><span class="p">);</span>
@@ -2822,107 +3101,109 @@ Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta u
 <p><img src="/assets/images/asgdb/auditoria/21.png" alt="21" /></p>
 
 <ol>
-  <li>EJERCICIO 1: Auditoría de accesos exitosos.</li>
+  <li>
+    <p>EJERCICIO 1: Auditoría de accesos exitosos.</p>
+
+    <p>Para mostrar los usuarios activos en la base de datos, vamos a hacer uso de la vista <code class="language-plaintext highlighter-rouge">pg_stat_activity</code>, y lo haremos realizando la siguiente consulta:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```sql
+ SELECT distinct usename
+ FROM pg_stat_activity
+ ```
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/22.png" alt="22" /></p>
+  </li>
+  <li>
+    <p>EJERCICIO 2: Auditoría de accesos fallidos.</p>
+
+    <p>Para realizar la auditoría de accesos fallidos, vamos a hacer uso del log de acceso de PostgreSQL. Para ello, vamos a activar el log de acceso en el fichero de configuración de PostgreSQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/postgresql/9.5/main/postgresql.conf</code>.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ sudo nano /etc/postgresql/9.5/main/postgresql.conf
+ ```
+</code></pre></div>    </div>
+
+    <p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ #log_line_prefix = ''            # special values: '%m' for timestamp, '%u' for user,
+ ```
+</code></pre></div>    </div>
+
+    <p>Y la vamos a modificar de la siguiente manera:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ log_line_prefix = '%m %u %d %r %p %h %a %q '
+ ```
+</code></pre></div>    </div>
+
+    <p>Y tambien vamos a modificar la siguiente linea:</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ log_statement = ‘all’
+ ```
+</code></pre></div>    </div>
+
+    <p>Para que se nos muestre el query que se esta ejecutando.</p>
+
+    <p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de PostgreSQL.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ sudo service postgresql restart
+ ```
+</code></pre></div>    </div>
+
+    <p>Y comprobamos que se ha realizado la auditoría correctamente.</p>
+
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
+ tail -f /var/log/postgresql/postgresql-13-main.log
+ ```
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/23.png" alt="23" /></p>
+  </li>
+  <li>
+    <p>EJERCICIO 3: Auditoría de DML.</p>
+
+    <p>Para realizar la auditoría de DML, vamos a hacer uso de la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. Para ello, vamos a crear una tabla en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code> y vamos a insertar, actualizar y borrar datos de la base de datos SCOTT.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">---INSERTAR DATOS</span>
+ <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+ <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+ <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
+ <span class="c1">---BORRAR DATOS</span>
+ <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
+ <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+ <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+ <span class="c1">---ACTUALIZAR DATOS</span>
+ <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+ <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+ <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/24.png" alt="24" /></p>
+
+    <p>Una vez realizadas estas operaciones, vamos a comprobar Audit Trigger para ver si se ha realizado la auditoría correctamente.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">select</span> <span class="n">audit</span><span class="p">.</span><span class="n">audit_table</span><span class="p">(</span><span class="s1">'DEPT'</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/25.png" alt="25" /></p>
+
+    <p>Para visualizar los datos de la auditoría, nos loguearemos con el usuario <code class="language-plaintext highlighter-rouge">postgres</code> y, concretamente, desde la base de datos que estamos auditando, en este caso, la base de datos <code class="language-plaintext highlighter-rouge">scott</code>, ejecutamos la siguiente consulta:</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">select</span> <span class="n">session_user_name</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">action_tstamp_clk</span><span class="p">,</span> <span class="n">client_query</span> 
+ <span class="k">from</span> <span class="n">audit</span><span class="p">.</span><span class="n">logged_actions</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/26.png" alt="26" /></p>
+
+    <p>Como podemos observar en la imagen, podemos ver el usuario, la acción que ha realizado (<strong>I</strong>nsert, <strong>U</strong>pdate, <strong>D</strong>elete), la tabla en la que ha realizado la acción, la fecha y hora en la que ha realizado la acción y el query que ha ejecutado.</p>
+
+    <p><img src="/assets/images/banners/mysql.png" alt="mysql" /></p>
+  </li>
 </ol>
-
-<p>Para mostrar los usuarios activos en la base de datos, vamos a hacer uso de la vista <code class="language-plaintext highlighter-rouge">pg_stat_activity</code>, y lo haremos realizando la siguiente consulta:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">distinct</span> <span class="n">usename</span>
-<span class="k">FROM</span> <span class="n">pg_stat_activity</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/22.png" alt="22" /></p>
-
-<ol>
-  <li>EJERCICIO 2: Auditoría de accesos fallidos.</li>
-</ol>
-
-<p>Para realizar la auditoría de accesos fallidos, vamos a hacer uso del log de acceso de PostgreSQL. Para ello, vamos a activar el log de acceso en el fichero de configuración de PostgreSQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/postgresql/9.5/main/postgresql.conf</code>.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-sudo nano /etc/postgresql/9.5/main/postgresql.conf
-```
-</code></pre></div></div>
-
-<p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-#log_line_prefix = ''            # special values: '%m' for timestamp, '%u' for user,
-```
-</code></pre></div></div>
-
-<p>Y la vamos a modificar de la siguiente manera:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-log_line_prefix = '%m %u %d %r %p %h %a %q '
-```
-</code></pre></div></div>
-
-<p>Y tambien vamos a modificar la siguiente linea:</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-log_statement = ‘all’
-```
-</code></pre></div></div>
-
-<p>Para que se nos muestre el query que se esta ejecutando.</p>
-
-<p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de PostgreSQL.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-sudo service postgresql restart
-```
-</code></pre></div></div>
-
-<p>Y comprobamos que se ha realizado la auditoría correctamente.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-tail -f /var/log/postgresql/postgresql-13-main.log
-```
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/23.png" alt="23" /></p>
-
-<ol>
-  <li>EJERCICIO 3: Auditoría de DML.</li>
-</ol>
-
-<p>Para realizar la auditoría de DML, vamos a hacer uso de la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. Para ello, vamos a crear una tabla en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code> y vamos a insertar, actualizar y borrar datos de la base de datos SCOTT.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">---INSERTAR DATOS</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
-<span class="c1">---BORRAR DATOS</span>
-<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
-<span class="c1">---ACTUALIZAR DATOS</span>
-<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/24.png" alt="24" /></p>
-
-<p>Una vez realizadas estas operaciones, vamos a comprobar Audit Trigger para ver si se ha realizado la auditoría correctamente.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="n">audit</span><span class="p">.</span><span class="n">audit_table</span><span class="p">(</span><span class="s1">'DEPT'</span><span class="p">);</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/25.png" alt="25" /></p>
-
-<p>Para visualizar los datos de la auditoría, nos loguearemos con el usuario <code class="language-plaintext highlighter-rouge">postgres</code> y, concretamente, desde la base de datos que estamos auditando, en este caso, la base de datos <code class="language-plaintext highlighter-rouge">scott</code>, ejecutamos la siguiente consulta:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="n">session_user_name</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">action_tstamp_clk</span><span class="p">,</span> <span class="n">client_query</span> 
-<span class="k">from</span> <span class="n">audit</span><span class="p">.</span><span class="n">logged_actions</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/26.png" alt="26" /></p>
-
-<p>Como podemos observar en la imagen, podemos ver el usuario, la acción que ha realizado (<strong>I</strong>nsert, <strong>U</strong>pdate, <strong>D</strong>elete), la tabla en la que ha realizado la acción, la fecha y hora en la que ha realizado la acción y el query que ha ejecutado.</p>
-
-<p><img src="/assets/images/banners/mysql.png" alt="mysql" /></p>
 
 <h3 id="ejercicio-8">Ejercicio 8</h3>
 
@@ -2935,104 +3216,524 @@ tail -f /var/log/postgresql/postgresql-13-main.log
 <p><img src="/assets/images/asgdb/auditoria/27.png" alt="27" /></p>
 
 <ul>
-  <li>Ejercicio 1: Auditoría de accesos exitosos. (<strong>EXTRA</strong> Auditoría de accesos fallidos.)</li>
+  <li>
+    <p>Ejercicio 1: Auditoría de accesos exitosos. (<strong>EXTRA</strong> Auditoría de accesos fallidos.)</p>
+
+    <p>Tras la instalación del plugin, vamos a necesitar modificar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">#Descomentamos las siguientes lineas</span>
+  general_log_file       <span class="o">=</span> /var/log/mysql/mysql.log
+  general_log            <span class="o">=</span> 1
+  <span class="c">#Y añadimos la siguiente linea</span>
+  log_error              <span class="o">=</span> /var/log/mysql/error.log
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/28.png" alt="28" /></p>
+
+    <p>Antes de reiniciar el servicio, vamos a cambiar el propietario del fichero de log de MySQL, para que el usuario <code class="language-plaintext highlighter-rouge">mysql</code> pueda escribir en el fichero.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo chown </span>mysql: /var/log/mysql/
+  systemctl restart mysql
+  systemctl restart mariadb
+</code></pre></div>    </div>
+
+    <p>Una vez reiniciado el servicio, vamos a comprobar que se ha realizado la auditoría correctamente. Para ello, intentaremos hacer accesos fallidos y accesos exitosos, para controlar que funciona correctamente.</p>
+
+    <p><img src="/assets/images/asgdb/auditoria/29.png" alt="29" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/30.png" alt="30" /></p>
+  </li>
+  <li>
+    <p>Ejercicio 3: Auditoría de DML.</p>
+
+    <p>El siguiente paso es editar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre></div>    </div>
+
+    <p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">server_audit_events</span><span class="o">=</span>CONNECT,QUERY,TABLE
+  <span class="nv">server_audit_logging</span><span class="o">=</span>ON
+  <span class="nv">server_audit_incl_users</span><span class="o">=</span>scott
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/31.png" alt="31" /></p>
+
+    <p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de MySQL.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>service mysql restart
+</code></pre></div>    </div>
+
+    <p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
+  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
+  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/32.png" alt="32" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/33.png" alt="33" /></p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
+  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
+  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/34.png" alt="34" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/35.png" alt="35" /></p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/36.png" alt="36" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/37.png" alt="37" /></p>
+  </li>
+  <li>
+    <p>Ejercicio 4: Sueldo superior a 2000.</p>
+
+    <p>Ahora vamos a auditar la tabla <code class="language-plaintext highlighter-rouge">emp</code> para que se nos muestre cuando se realice una inserción o actualización del sueldo de un empleado cuando este sea superior a 2000.</p>
+
+    <p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
+
+    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="s1">'JOSH'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'MERY'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/38.png" alt="38" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/39.png" alt="39" /></p>
+  </li>
 </ul>
-
-<p>Tras la instalación del plugin, vamos a necesitar modificar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Descomentamos las siguientes lineas</span>
-general_log_file       <span class="o">=</span> /var/log/mysql/mysql.log
-general_log            <span class="o">=</span> 1
-<span class="c">#Y añadimos la siguiente linea</span>
-log_error              <span class="o">=</span> /var/log/mysql/error.log
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/28.png" alt="28" /></p>
-
-<p>Antes de reiniciar el servicio, vamos a cambiar el propietario del fichero de log de MySQL, para que el usuario <code class="language-plaintext highlighter-rouge">mysql</code> pueda escribir en el fichero.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo chown </span>mysql: /var/log/mysql/
-systemctl restart mysql
-systemctl restart mariadb
-</code></pre></div></div>
-
-<p>Una vez reiniciado el servicio, vamos a comprobar que se ha realizado la auditoría correctamente. Para ello, intentaremos hacer accesos fallidos y accesos exitosos, para controlar que funciona correctamente.</p>
-
-<p><img src="/assets/images/asgdb/auditoria/29.png" alt="29" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/30.png" alt="30" /></p>
-
-<ul>
-  <li>Ejercicio 3: Auditoría de DML.</li>
-</ul>
-
-<p>El siguiente paso es editar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/mysql/mysql.conf.d/mysqld.cnf
-</code></pre></div></div>
-
-<p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">server_audit_events</span><span class="o">=</span>CONNECT,QUERY,TABLE
-<span class="nv">server_audit_logging</span><span class="o">=</span>ON
-<span class="nv">server_audit_incl_users</span><span class="o">=</span>scott
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/31.png" alt="31" /></p>
-
-<p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de MySQL.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service mysql restart
-</code></pre></div></div>
-
-<p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/32.png" alt="32" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/33.png" alt="33" /></p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/34.png" alt="34" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/35.png" alt="35" /></p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/36.png" alt="36" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/37.png" alt="37" /></p>
-
-<ul>
-  <li>Ejercicio 4: Sueldo superior a 2000.</li>
-</ul>
-
-<p>Ahora vamos a auditar la tabla <code class="language-plaintext highlighter-rouge">emp</code> para que se nos muestre cuando se realice una inserción o actualización del sueldo de un empleado cuando este sea superior a 2000.</p>
-
-<p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="s1">'JOSH'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'MERY'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/38.png" alt="38" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/39.png" alt="39" /></p>
 
 <h3 id="ejercicio-9">Ejercicio 9</h3>
 
-<p><strong>Averigua las posibilidades que ofrece MongoDB para auditar los cambios que va sufriendo un documento. Demuestra su funcionamiento.</strong></p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Services</title><link href="/hlc+sri/2023/02/05/kubernetes-ingress.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Services" /><published>2023-02-05T16:45:16+01:00</published><updated>2023-02-05T16:45:16+01:00</updated><id>/hlc+sri/2023/02/05/kubernetes-ingress</id><content type="html" xml:base="/hlc+sri/2023/02/05/kubernetes-ingress.html"><![CDATA[<h2 id="ejercicio-1-despliegue-y-acceso-de-la-aplicación-guestbook">Ejercicio 1: Despliegue y acceso de la aplicación GuestBook</h2>
+<p><strong>Averigua las posibilidades que ofrece MongoDB para auditar los cambios que va sufriendo un documento. Demuestra su funcionamiento.</strong></p>
+
+<p>MongoDB Enterprise incluye una capacidad de auditoría para instancias mongod y mongos. La función de auditoría permite a los administradores y usuarios realizar un seguimiento de la actividad del sistema para implementaciones con múltiples usuarios y aplicaciones.</p>
+
+<ul>
+  <li>
+    <p>Instalación de MongoDB Enterprise en Debian 11</p>
+
+    <ul>
+      <li>
+        <p>Importar la clave pública utilizada por el sistema de gestión de paquetes.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-qO</span> - https://www.mongodb.org/static/pgp/server-6.0.asc | <span class="nb">sudo </span>apt-key add -
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Cree un archivo /etc/apt/sources.list.d/mongodb-enterprise.list para MongoDB.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb http://repo.mongodb.com/apt/debian bullseye/mongodb-enterprise/6.0 main"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/mongodb-enterprise.list
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Vuelva a cargar la base de datos del paquete local.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt-get update
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Instale la última versión estable de MongoDB Enterprise.</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> mongodb-enterprise
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Habilitar y configurar la salida de auditoría.</p>
+
+    <p>La instalación de auditoría puede escribir eventos de auditoría en la consola, el syslog, un archivo JSON o un archivo BSON. Para habilitar la auditoría en MongoDB Enterprise, establezca un destino de salida de auditoría con <code class="language-plaintext highlighter-rouge">--auditDestination</code>.</p>
+  </li>
+  <li>
+    <p>Configuración de auditoría</p>
+
+    <p>MongoDB Enterprise admite la auditoría de varias operaciones. Una solución de auditoría completa debe incluir todos los procesos del servidor <code class="language-plaintext highlighter-rouge">mongod</code> y los procesos <code class="language-plaintext highlighter-rouge">mongos</code> en el cluster.</p>
+
+    <p>La función de auditoría puede escribir eventos de auditoría en la consola, el syslog (la opción no está disponible en Windows), un archivo JSON o un archivo BSON.</p>
+  </li>
+  <li>
+    <p>Habilitar y configurar la salida de auditoría</p>
+
+    <p>Para habilitar la auditoría en MongoDB Enterprise, establezca un destino de salida de auditoría con <code class="language-plaintext highlighter-rouge">--auditDestination</code>.</p>
+
+    <ul>
+      <li>
+        <p>Salida a Syslog</p>
+
+        <p>Para habilitar la auditoría e imprimir eventos de auditoría en el syslog (la opción no está disponible en Windows) en formato JSON, especifique syslog para la configuración –auditDestination. Por ejemplo:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> /data/db <span class="nt">--auditDestination</span> syslog
+</code></pre></div>        </div>
+
+        <p>También podemos incluir opciones según nuestras necesidades. Por ejemplo, si deseamos que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts, lo especificaremos con la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code>.</p>
+
+        <p>También puede especificar estas opciones en el archivo de configuración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
+     dbPath: data/db
+  auditLog:
+     destination: syslog
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Salida a la consola</p>
+
+        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en la salida estándar (es decir, stdout), especifique la consola para la configuración –auditDestination</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> /data/db <span class="nt">--auditDestination</span> console
+</code></pre></div>        </div>
+
+        <p>A lo igual que en la salida a syslog, podemos especificarle la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code> para que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts.</p>
+
+        <p>También puede especificar estas opciones en el archivo de configuración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
+     dbPath: data/db
+  auditLog:
+     destination: console
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Salida a un archivo JSON</p>
+
+        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en un archivo JSON, especifique el archivo para la configuración –auditDestination. Por ejemplo:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Opción</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>–auditDestination</td>
+              <td>file</td>
+            </tr>
+            <tr>
+              <td>–auditFormat</td>
+              <td>JSON</td>
+            </tr>
+            <tr>
+              <td>–auditPath</td>
+              <td>El fichero de salida. Acepta el nombre de ruta completo o el nombre de ruta relativo.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Por ejemplo, lo siguiente habilita la auditoría y registra los eventos de auditoría en un archivo con el nombre de ruta relativa <code class="language-plaintext highlighter-rouge">data/db/auditLog.json</code>:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> data/db <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> JSON <span class="nt">--auditPath</span> data/db/auditLog.json
+</code></pre></div>        </div>
+
+        <p>El archivo de auditoría se puede rotar con el comando <code class="language-plaintext highlighter-rouge">logRotate</code>, ya sea junto con el registro del servidor o de forma independiente. Los detalles de la rotación se pueden configurar con la opción de archivo de configuración <code class="language-plaintext highlighter-rouge">systemLog.logRotate</code> o la opción de línea de comandos <code class="language-plaintext highlighter-rouge">--logRotate</code>.</p>
+
+        <p>También puede especificar estas opciones en el archivo de configuración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
+     dbPath: data/db
+  auditLog:
+     destination: file
+     format: JSON
+     path: data/db/auditLog.json
+</code></pre></div>        </div>
+      </li>
+      <li>
+        <p>Salida a un archivo BSON</p>
+
+        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en un archivo BSON, especifique el archivo para la configuración –auditDestination. Por ejemplo:</p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Opción</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>–auditDestination</td>
+              <td>file</td>
+            </tr>
+            <tr>
+              <td>–auditFormat</td>
+              <td>BSON</td>
+            </tr>
+            <tr>
+              <td>–auditPath</td>
+              <td>El fichero de salida. Acepta el nombre de ruta completo o el nombre de ruta relativo.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>Por ejemplo, lo siguiente habilita la auditoría y registra los eventos de auditoría en un archivo con el nombre de ruta relativa <code class="language-plaintext highlighter-rouge">data/db/auditLog.bson</code>:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> data/db <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> BSON <span class="nt">--auditPath</span> data/db/auditLog.bson
+</code></pre></div>        </div>
+
+        <p>A lo igual que en los anteriores casos, podemos especificarle la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code> para que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts.</p>
+
+        <p>El archivo de auditoría se puede rotar con el comando <code class="language-plaintext highlighter-rouge">logRotate</code>, ya sea junto con el registro del servidor o de forma independiente. Los detalles de la rotación se pueden configurar con la opción de archivo de configuración <code class="language-plaintext highlighter-rouge">systemLog.logRotate</code> o la opción de línea de comandos <code class="language-plaintext highlighter-rouge">--logRotate</code>.</p>
+
+        <p>También puede especificar estas opciones en el archivo de configuración:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
+     dbPath: data/db
+  auditLog:
+     destination: file
+     format: BSON
+     path: data/db/auditLog.bson
+</code></pre></div>        </div>
+
+        <p>El siguiente ejemplo convierte el registro de auditoría en un formato legible mediante bsondump y genera el resultado:</p>
+
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  bsondump <span class="nt">--file</span> auditLog.bson
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>En mi caso, de las opciones anteriores, he decidido utilizar la salida a un archivo JSON. Para ello, hemos ejecutado el siguiente comando en nuestra consola:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mongod <span class="nt">--dbpath</span> /var/lib/mongodb/ <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> JSON <span class="nt">--auditPath</span> /var/lib/mongodb/auditLog.json
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/40.png" alt="40" /></p>
+
+<p>Una vez configurado, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>. Pero para leer el fichero, necesitamos un programa que nos permita leerlo. En mi caso, he utilizado el programa <code class="language-plaintext highlighter-rouge">jq</code> que nos permite leer ficheros JSON de forma sencilla.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>jq
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/41.png" alt="41" /></p>
+
+<p>Una vez instalado, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /var/lib/mongodb/auditLog.json | jq
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/42.png" alt="42" /></p>
+
+<p>Para darle un poco de movimiento a la auditoría, vamos a crear una base de datos y una colección. Para ello, vamos a utilizar el cliente de MongoDB que hemos instalado en el servidor.</p>
+
+<ul>
+  <li>
+    <p>Creamos el usuario:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongosh 
+  use admin
+  db.createUser<span class="o">({</span>user: <span class="s1">'admin'</span>, <span class="nb">pwd</span>: <span class="s1">'admin'</span>, roles: <span class="o">[{</span>role: <span class="s1">'userAdminAnyDatabase'</span>, db: <span class="s1">'admin'</span><span class="o">}</span>, <span class="o">{</span>role: <span class="s1">'readWriteAnyDatabase'</span>, db: <span class="s1">'admin'</span><span class="o">}]})</span> 
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/43.png" alt="43" /></p>
+  </li>
+  <li>
+    <p>Creamos la colección</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongosh <span class="nt">-u</span> admin <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
+  use auditoria
+  db.createCollection<span class="o">(</span><span class="s2">"Alumnos"</span><span class="o">)</span>
+  db.createCollection<span class="o">(</span><span class="s2">"Profesores"</span><span class="o">)</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/44.png" alt="44" /></p>
+  </li>
+  <li>
+    <p>Creamos inserciones</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.insertOne<span class="o">({</span>nombre: <span class="s2">"Juan"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 20<span class="o">})</span>
+  db.Alumnos.insertOne<span class="o">({</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"García"</span>, edad: 21<span class="o">})</span>
+  db.Alumnos.insertMany<span class="o">([{</span>nombre: <span class="s2">"Pedro"</span>, apellidos: <span class="s2">"González"</span>, edad: 22<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 23<span class="o">}])</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/45.png" alt="45" /></p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Profesores.insertOne<span class="o">({</span>nombre: <span class="s2">"Luis"</span>, apellidos: <span class="s2">"García"</span>, edad: 40<span class="o">})</span>
+  db.Profesores.insertOne<span class="o">({</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"González"</span>, edad: 41<span class="o">})</span>
+  db.Profesores.insertMany<span class="o">([{</span>nombre: <span class="s2">"Antonio"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 42<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 43<span class="o">}])</span>
+  db.Profesores.insertMany<span class="o">([{</span>nombre: <span class="s2">"Luis"</span>, apellidos: <span class="s2">"García"</span>, edad: 40<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"González"</span>, edad: 41<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Antonio"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 42<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 43<span class="o">}])</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/46.png" alt="46" /></p>
+  </li>
+  <li>
+    <p>Creamos un rol</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.createRole<span class="o">({</span> role: <span class="s2">"director"</span>,privileges: <span class="o">[{</span> resource: <span class="o">{</span> db: <span class="s2">"auditoria"</span>, collection: <span class="s2">""</span> <span class="o">}</span>, actions: <span class="o">[</span> <span class="s2">"find"</span>, <span class="s2">"insert"</span>, <span class="s2">"update"</span>, <span class="s2">"remove"</span> <span class="o">]</span> <span class="o">}]</span>, roles: <span class="o">[]</span> <span class="o">})</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/47.png" alt="47" /></p>
+
+    <p>Y se lo asignamos a un nuevo usuario:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.createUser<span class="o">({</span>user: <span class="s1">'director'</span>, <span class="nb">pwd</span>: <span class="s1">'director'</span>, roles: <span class="o">[{</span>role: <span class="s1">'director'</span>, db: <span class="s1">'auditoria'</span><span class="o">}]})</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/48.png" alt="48" /></p>
+  </li>
+</ul>
+
+<p>Para añadir más contenido a nuestra auditoría, vamos a realizar búsquedas con el usuario <code class="language-plaintext highlighter-rouge">director</code> que hemos creado.</p>
+
+<ul>
+  <li>
+    <p>Buscamos todos los alumnos</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.find<span class="o">()</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/49.png" alt="49" /></p>
+  </li>
+  <li>
+    <p>Buscamos todos los profesores</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Profesores.find<span class="o">()</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/50.png" alt="50" /></p>
+  </li>
+  <li>
+    <p>Buscamos a los alumnos que se llamen Ana</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.find<span class="o">({</span>nombre: <span class="s2">"Ana"</span><span class="o">})</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/asgdb/auditoria/51.png" alt="51" /></p>
+  </li>
+</ul>
+
+<p>Ahora, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /var/lib/mongodb/auditLog.json | jq
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>Creación de la colección y su correspondiente índice.</p>
+
+    <p><img src="/assets/images/asgdb/auditoria/52.png" alt="52" /></p>
+  </li>
+  <li>
+    <p>Creación del rol y del usuario.</p>
+
+    <p><img src="/assets/images/asgdb/auditoria/53.png" alt="53" /></p>
+
+    <p><img src="/assets/images/asgdb/auditoria/54.png" alt="54" /></p>
+  </li>
+  <li>
+    <p>Login con el nuevo usuario</p>
+
+    <p><img src="/assets/images/asgdb/auditoria/55.png" alt="55" /></p>
+  </li>
+  <li>
+    <p>Desconexion del usuario</p>
+
+    <p><img src="/assets/images/asgdb/auditoria/56.png" alt="56" /></p>
+  </li>
+</ul>
+
+<h3 id="ejercicio-10">Ejercicio 10</h3>
+
+<p><strong>Averigua si en MongoDB se pueden auditar los accesos a una colección concreta. Demuestra su funcionamiento.</strong></p>
+
+<p>En MongDB, podemos auditar los accesos a una colección concreta mediante la ejecución del siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.setLogLevel<span class="o">(</span>level, component<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Con él, podemos ver los accesos a la colección que se esté utilizando en ese momento. Para ello, vamos a crear una base de datos, una coleccion y utilizaremos nuevo usuario administrador para realizar las operaciones.</p>
+
+<p>Con esto, se establece un único nivel de detalle para los mensajes de registro.</p>
+
+<p>db.setLogLevel() toma los siguientes parámetros:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parámetro</th>
+      <th>Tipo</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>level</td>
+      <td>Número entero</td>
+      <td>El nivel de detalle de los mensajes de registro. Los valores posibles son: **0** (ninguno), **1** (errores), **2** (errores y advertencias), **3** (errores, advertencias y mensajes informativos), **4** (errores, advertencias, mensajes informativos y mensajes de depuración).</td>
+    </tr>
+    <tr>
+      <td>component</td>
+      <td>Cadena</td>
+      <td>El componente para el que se establece el nivel de detalle. Los valores posibles son: "accessControl", "command", "index", "query", "replication", "sharding", "storage", "write", "audit", "cluster", "control", "ftdc", "geo", "network", "query", "repl", "security", "sharding", "storage", "write".</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>En cuanto a su comportamiento, establece un único nivel de verbosidad. Para establecer varios niveles de detalle en una sola operación, tendremos que utilizar el comando <code class="language-plaintext highlighter-rouge">setParameter</code> para establecer el parámetro <code class="language-plaintext highlighter-rouge">logComponentVerbosity</code>. También puede especificar la configuración de verbosidad en el archivo de configuración.</p>
+
+<p>Para llevar a cabo el ejercicio, vamos a ejecutar el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.setLogLevel<span class="o">(</span>3, <span class="s2">"accessControl"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Pero, ¿qué significa esto? Pues que se establece un nivel de detalle (verbosidad) de 3 para el componente <code class="language-plaintext highlighter-rouge">accessControl</code>. Esto quiere decir que se mostrarán los mensajes de error, advertencia e información.</p>
+
+<p>Vamos a loguearnos con el usuario <code class="language-plaintext highlighter-rouge">admin</code> que hemos creado anteriormente y vamos crear un nuevo usuario administrador.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Accedemos a la consola de mongo</span>
+mongo <span class="nt">-u</span> admin <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
+<span class="c"># Accedemos a la base de datos</span>
+use audit
+<span class="c"># Creamos un nuevo usuario administrador</span>
+db.createUser <span class="o">({</span>user: <span class="s1">'asir'</span>, <span class="nb">pwd</span>: <span class="s1">'admin'</span>, roles: <span class="o">[{</span>role: <span class="s1">'root'</span>, db: <span class="s1">'admin'</span><span class="o">}]})</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/57.png" alt="57" /></p>
+
+<p>Ahora nos conectaremos con el nuevo usuario que hemos creado.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mongosh <span class="nt">-u</span> asir <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
+</code></pre></div></div>
+
+<p>Y creamos una dos colecciones, <code class="language-plaintext highlighter-rouge">1curso</code> y <code class="language-plaintext highlighter-rouge">2curso</code> e insertaremos las siguientes asignaturas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>use asir
+db.createCollection<span class="o">(</span><span class="s2">"Primero"</span><span class="o">)</span>
+db.createCollection<span class="o">(</span><span class="s2">"Segundo"</span><span class="o">)</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.Primero.insertMany<span class="o">([{</span>nombre: <span class="s2">"Sistemas Operativos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Lenguajes de Marcas"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Redes"</span>, horas: <span class="s2">"5"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Bases de Datos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Formación y Orientación Laboral"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Fundamento de hardware"</span>, horas: <span class="s2">"4"</span><span class="o">}])</span>
+
+db.Segundo.insertMany<span class="o">([{</span>nombre: <span class="s2">"Implantación de Aplicaciones Web"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Cloud Computing"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Seguridad Informática"</span>, horas: <span class="s2">"3"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Empresa e Iniciativa Emprendedora"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Administración de Sistemas Operativos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Administración de Sistemas Gestores de Bases de Datos"</span>, horas: <span class="s2">"3"</span><span class="o">}])</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/auditoria/58.png" alt="58" /></p>
+
+<p><img src="/assets/images/asgdb/auditoria/59.png" alt="59" /></p>
+
+<p>Ejecutamos el comando <code class="language-plaintext highlighter-rouge">db.setLogLevel(3, "accessControl")</code> para ver los accesos a la colección que se esté utilizando en ese momento.</p>
+
+<p><img src="/assets/images/asgdb/auditoria/60.png" alt="60" /></p>
+
+<p>Para la comprobación de su funcionamiento, he realizado 1 login corecto y otro incorrecto.</p>
+
+<p><img src="/assets/images/asgdb/auditoria/61.png" alt="61" /></p>
+
+<p>Y como podemos comprobar en la siguiente imagen:</p>
+
+<p><img src="/assets/images/asgdb/auditoria/62.png" alt="62" /></p>
+
+<p>…podemos ver que se ha registrado el acceso correcto y el incorrecto.</p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Services</title><link href="/hlc+sri/2023/02/05/kubernetes-ingress.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Services" /><published>2023-02-05T16:45:16+01:00</published><updated>2023-02-05T16:45:16+01:00</updated><id>/hlc+sri/2023/02/05/kubernetes-ingress</id><content type="html" xml:base="/hlc+sri/2023/02/05/kubernetes-ingress.html"><![CDATA[<h2 id="ejercicio-1-despliegue-y-acceso-de-la-aplicación-guestbook">Ejercicio 1: Despliegue y acceso de la aplicación GuestBook</h2>
 
 <p>Una vez que tenemos creado el despliegue de la aplicación GuestBook, que realizamos en el anterior taller, vamos a crear los Services correspondientes para acceder a ella:</p>
 
@@ -3403,460 +4104,4 @@ systemctl restart mariadb
 
     <p><img src="/assets/images/kubernetes/t4/12.png" alt="12" /></p>
   </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Ejercicio 1: Despliegue y acceso de la aplicación GuestBook]]></summary></entry><entry><title type="html">Taller Kubernetes: Trabajando con Deployments</title><link href="/hlc+sri/2023/02/04/kubernetes-deploy.html" rel="alternate" type="text/html" title="Taller Kubernetes: Trabajando con Deployments" /><published>2023-02-04T16:45:16+01:00</published><updated>2023-02-04T16:45:16+01:00</updated><id>/hlc+sri/2023/02/04/kubernetes-deploy</id><content type="html" xml:base="/hlc+sri/2023/02/04/kubernetes-deploy.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este taller vamos a trabajar con Deployments, que es un objeto de Kubernetes que nos permite crear un conjunto de Pods idénticos. En este caso, vamos a crear un Deployment que va a controlar un conjunto de Pods.</p>
-
-<h3 id="ejercicio-1-trabajando-con-deployments">Ejercicio 1: Trabajando con Deployments</h3>
-
-<ol>
-  <li>
-    <p>Crearemos un fichero yaml con la descripción del recurso Deployment, teniendo en cuenta los siguientes aspectos:</p>
-
-    <ul>
-      <li>Indicaremos nombres distintos para el Deployment y para el contenedor de los Pods que va a controlar.</li>
-      <li>El Deployment va a crear 2 réplicas.</li>
-      <li>La imagen que debemos desplegar es iesgn/test_web:latest.</li>
-      <li>Indicaremos de manera adecuada una etiqueta en la especificación del Pod que vas a definir que coincida con el selector del Deployment.</li>
-    </ul>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
-   <span class="na">labels</span><span class="pi">:</span>
-     <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
-   <span class="na">strategy</span><span class="pi">:</span>
-     <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
-   <span class="na">replicas</span><span class="pi">:</span> <span class="m">2</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">matchLabels</span><span class="pi">:</span>
-       <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-   <span class="na">template</span><span class="pi">:</span>
-     <span class="na">metadata</span><span class="pi">:</span>
-       <span class="na">labels</span><span class="pi">:</span>
-         <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-     <span class="na">spec</span><span class="pi">:</span>
-       <span class="na">containers</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:latest</span>
-         <span class="na">name</span><span class="pi">:</span> <span class="s">container-testweb</span>
-         <span class="na">ports</span><span class="pi">:</span>
-         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-           <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/0.png" alt="0" /></p>
-  </li>
-  <li>
-    <p>Creamos el deployment:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-deployment.yaml
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos los recursos que se han creado, en nuestro caso, Deployment, ReplicaSet y Pods.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/1.png" alt="1" /></p>
-  </li>
-  <li>
-    <p>Obtenemos la información detallada del Deployment:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe deployments.apps/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/2.png" alt="2" /></p>
-  </li>
-  <li>
-    <p>Crearemos un una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accede a la aplicación con un navegador web.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl port-forward deployments.apps/test-web-deployment 8080:80
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/3.png" alt="3" /></p>
-
-    <p><img src="/assets/images/kubernetes/t3/4.png" alt="4" /></p>
-  </li>
-  <li>
-    <p>Accederemos a los logs del despliegue para comprobar el acceso que has hecho en el punto anterior.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl logs deployments.apps/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/5.png" alt="5" /></p>
-  </li>
-  <li>
-    <p>Elimina el Deployment y comprueba que se han borrado todos los recursos creados.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl delete deployments.apps/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/6.png" alt="6" /></p>
-  </li>
-</ol>
-
-<h3 id="ejercicio-2-actualización-y-desactualización-de-nuestra-aplicación">Ejercicio 2: Actualización y desactualización de nuestra aplicación.</h3>
-
-<h4 id="primera-verisón">Primera verisón</h4>
-<p>El equipo de desarrollo ha creado una primera versión preliminar de una aplicación web y ha creado una imagen de contenedor con el siguiente nombre: iesgn/test_web:version1.</p>
-
-<p>Vamos a desplegar esta primera versión de la aplicación. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version1</code>.</p>
-
-<ol>
-  <li>
-    <p>Creamos un fichero yaml para desplegar la imagen: iesgn/test_web:version1.</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
- <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
- <span class="na">metadata</span><span class="pi">:</span>
-   <span class="na">name</span><span class="pi">:</span> <span class="s">test-web-deployment</span>
-   <span class="na">labels</span><span class="pi">:</span>
-     <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">revisionHistoryLimit</span><span class="pi">:</span> <span class="m">5</span>
-   <span class="na">strategy</span><span class="pi">:</span>
-     <span class="na">type</span><span class="pi">:</span> <span class="s">RollingUpdate</span>
-   <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-   <span class="na">selector</span><span class="pi">:</span>
-     <span class="na">matchLabels</span><span class="pi">:</span>
-       <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-   <span class="na">template</span><span class="pi">:</span>
-     <span class="na">metadata</span><span class="pi">:</span>
-       <span class="na">labels</span><span class="pi">:</span>
-         <span class="na">app</span><span class="pi">:</span> <span class="s">web</span>
-     <span class="na">spec</span><span class="pi">:</span>
-       <span class="na">containers</span><span class="pi">:</span>
-       <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version1</span>
-         <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-testweb</span>
-         <span class="na">ports</span><span class="pi">:</span>
-         <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http</span>
-           <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/7.png" alt="7" /></p>
-  </li>
-  <li>
-    <p>Creamos el deployment:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
-</code></pre></div>    </div>
-
-    <p><strong>NOTA</strong>: Anotaremos el despliegue para tener un registro de los cambios que se han ido realizando.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 1"</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/8.png" alt="8" /></p>
-  </li>
-  <li>
-    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/9.png" alt="9" /></p>
-  </li>
-</ol>
-
-<h4 id="segunda-versión">Segunda versión</h4>
-
-<p>Nuestro equipo de desarrollo ha seguido trabajando y ya tiene lista la versión 2 de nuestra aplicación, han creado una imagen que se llama: iesgn/test_web:version2. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version2</code>.Vamos a actualizar nuestro despliegue con la nueva versión, para ello:</p>
-
-<ol>
-  <li>Realiza la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</li>
-</ol>
-
-<ul>
-  <li>
-    <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
-<span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version2</span>
-<span class="nn">...</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Anotamos la versión 2 de la aplicación.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 2"</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Actualizamos el deployment:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<ol>
-  <li>Comprobamos que se han creado los recursos.</li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/10.png" alt="10" /></p>
-
-<ol>
-  <li>
-    <p>Visualizamos el historial de actualizaciones.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/11.png" alt="11" /></p>
-  </li>
-  <li>
-    <p>Creamos   una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
-  </li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl port-forward deployment.apps/test-web-deployment2 8080:80
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t3/12.png" alt="12" /></p>
-
-<h4 id="tercera-versión">Tercera versión</h4>
-
-<p>Finalmente después de un trabajo muy duro, el equipo de desarrollo ha creado la imagen iesgn/test_web:version3. Recuerda que primero debemos descargarnos la imagen del contenedor con un <code class="language-plaintext highlighter-rouge">docker pull iesgn/test_web:version3</code> y la vamos a poner en producción, para ello:</p>
-
-<ul>
-  <li>
-    <p>Realizamos la actualización del despliegue utilizando la nueva imagen y anotamos el registro de cambios.</p>
-
-    <ul>
-      <li>
-        <p>Cambiamos el fichero yaml y cambiamos lo siguiente:</p>
-
-        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">...</span>
-<span class="na">containers</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/test_web:version3</span>
-<span class="nn">...</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Anotamos la versión 3 de la aplicación.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment version 3"</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Actualizamos el deployment:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> test-web-deployment2.yaml
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Comprobamos que se han creado los recursos.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/13.png" alt="13" /></p>
-  </li>
-  <li>
-    <p>Visualizamos el historial de actualizaciones.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl rollout <span class="nb">history </span>deployment/test-web-deployment2
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/14.png" alt="14" /></p>
-  </li>
-  <li>
-    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/15.png" alt="15" /></p>
-  </li>
-</ul>
-
-<h4 id="rollback">Rollback</h4>
-
-<p>¡Vaya!, parece que esta versión tiene un fallo, y no se ve de forma adecuada la hoja de estilos, tenemos que volver a la versión anterior:</p>
-
-<ul>
-  <li>
-    <p>Realizamos el rollback a la versión anterior.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl rollout undo deployment/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/16.png" alt="16" /></p>
-  </li>
-  <li>
-    <p>Anotamos el rollback.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl annotate deployment/test-web-deployment2 kubernetes.io/change-cause<span class="o">=</span><span class="s2">"Deployment rollback"</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/17.png" alt="17" /></p>
-  </li>
-  <li>
-    <p>Comprobamos que se han creado los recursos.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl rollout <span class="nb">history </span>deployment/test-web-deployment
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/18.png" alt="18" /></p>
-  </li>
-  <li>
-    <p>Creamos una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 80, y accedemos a la aplicación con un navegador web.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/test-web-deployment 8080:80
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/19.png" alt="19" /></p>
-  </li>
-</ul>
-
-<h3 id="ejercicio-3-despliegue-de-la-aplicación-guestbook">Ejercicio 3: Despliegue de la aplicación GuestBook</h3>
-
-<p>En esta tarea vamos a desplegar una aplicación web que requiere de dos servicios para su ejecución. La aplicación se llama GuestBook y necesita los siguientes servicios:</p>
-
-<ul>
-  <li>
-    <p>La aplicación Guestbook es una aplicación web desarrollada en python que es servida en el puerto 5000/tcp. Utilizaremos la imagen iesgn/guestbook.</p>
-  </li>
-  <li>
-    <p>Esta aplicación guarda la información en una base de datos no relacional redis, que utiliza el puerto 6379/tcp para recibir las conexiones. Usaremos la imagen redis.</p>
-  </li>
-</ul>
-
-<p>Por lo tanto si tenemos dos servicios distintos, tendremos dos ficheros yaml para crear dos recursos Deployment, uno para cada servicio. Con esta manera de trabajar podemos obtener las siguientes características:</p>
-
-<ul>
-  <li>
-    <p>Cada conjunto de Pods creado en cada despliegue ejecutarán un solo proceso para ofrecer el servicio.</p>
-  </li>
-  <li>
-    <p>Cada conjunto de Pods se puede escalar de manera independiente. Esto es importante, si identificamos que al acceder a alguno de los servicios se crea un cuello de botella, podemos escalarlo para tener más Pods ejecutando el servicio.</p>
-  </li>
-  <li>
-    <p>Las actualizaciones de los distintos servicios no interfieren en el resto.</p>
-  </li>
-  <li>
-    <p>Lo estudiaremos en un módulo posterior, pero podremos gestionar el almacenamiento de cada servicio de forma independiente.</p>
-  </li>
-</ul>
-
-<p>Por lo tanto para desplegar la aplicaciones tendremos dos ficheros.yaml:</p>
-
-<ul>
-  <li>
-    <p>guestbook-deployment.yaml</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">guestbook</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">matchLabels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-    <span class="na">template</span><span class="pi">:</span>
-      <span class="na">metadata</span><span class="pi">:</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">app</span><span class="pi">:</span> <span class="s">guestbook</span>
-          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-      <span class="na">spec</span><span class="pi">:</span>
-        <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-guestbook</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/guestbook</span>
-          <span class="na">ports</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
-              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>redis-deployment.yaml</p>
-
-    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">redis</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">matchLabels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-    <span class="na">template</span><span class="pi">:</span>
-      <span class="na">metadata</span><span class="pi">:</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">app</span><span class="pi">:</span> <span class="s">redis</span>
-          <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-      <span class="na">spec</span><span class="pi">:</span>
-        <span class="na">containers</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-redis</span>
-            <span class="na">image</span><span class="pi">:</span> <span class="s">redis</span>
-            <span class="na">ports</span><span class="pi">:</span>
-              <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">redis-server</span>
-                <span class="na">containerPort</span><span class="pi">:</span> <span class="m">6379</span>
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<p>Para realizar el despliegue realiza los siguientes pasos:</p>
-
-<ul>
-  <li>
-    <p>Usando los ficheros anteriores, creamos los dos Deployments.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> guestbook-deployment.yaml
-kubectl apply <span class="nt">-f</span> redis-deployment.yaml
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Comprobamos que se han creado los recursos.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get all
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/20.png" alt="20" /></p>
-  </li>
-  <li>
-    <p>Crea una redirección utilizando el port-forward para acceder a la aplicación, sabiendo que la aplicación ofrece el servicio en el puerto 5000, y accede a la aplicación con un navegador web.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl port-forward deployment.apps/guestbook 8080:5000
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/kubernetes/t3/21.png" alt="21" /></p>
-
-    <p><img src="/assets/images/kubernetes/t3/22.png" alt="22" /></p>
-
-    <p>Para eliminarlo ejecuta:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl delete <span class="nt">-f</span> guestbook-deployment.yaml
-  kubectl delete <span class="nt">-f</span> redis-deployment.yaml
-</code></pre></div>    </div>
-
-    <p>¿Qué aparece en la página principal de la aplicación?. Aparece el siguiente mensaje: Waiting for database connection…. Por lo tanto podemos indicar varias conclusiones:</p>
-  </li>
-</ul>
-
-<ol>
-  <li>
-    <p>Hasta ahora no estamos accediendo de forma “normal” a las aplicaciones. El uso de la opción port-forward es un mecanismo que realmente nos posibilita acceder a la aplicación, pero utilizando un proxy. Deberíamos acceder a las aplicaciones usando una ip y un puerto determinado.</p>
-  </li>
-  <li>
-    <p>Parece que tampoco hay acceso entre los Pods de los distintos despliegues. Parece que los Pods de la aplicación guestbook no pueden acceder al Pod donde se está ejecutando la base de datos redis.</p>
-  </li>
-</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+</ol>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Ejercicio 1: Despliegue y acceso de la aplicación GuestBook]]></summary></entry></feed>
