@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-23T14:11:47+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-23T14:41:05+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este taller vamos a instalar un CMS (Content Management System) en un cluster de Kubernetes. Para ello, vamos a instalar la última versión de Helm y añadiremos el repositorio de bitnami, porque instalaremos un wordpress.</p>
 
@@ -2801,9 +2801,9 @@ systemctl start mnt-nfs.mount
     <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">AccesosFallidos</span>
   <span class="k">IS</span>
       <span class="k">CURSOR</span> <span class="n">c_fallo</span> <span class="k">IS</span>
-          <span class="k">SELECT</span> <span class="n">OS_USERNAME</span><span class="p">,</span><span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span>
+          <span class="k">SELECT</span> <span class="n">OS_USERNAME</span><span class="p">,</span><span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
           <span class="k">FROM</span> <span class="n">DBA_AUDIT_SESSION</span>
-          <span class="k">WHERE</span> <span class="n">ACTION_NAME</span> <span class="o">=</span> <span class="s1">'LOGON'</span><span class="p">;</span>
+          <span class="k">WHERE</span> <span class="n">ACTION_NAME</span> <span class="o">=</span> <span class="s1">'LOGON'</span>
           <span class="k">AND</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span>
           <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
       <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
@@ -3310,6 +3310,8 @@ Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta u
     <p><img src="/assets/images/asgdb/auditoria/39.png" alt="39" /></p>
   </li>
 </ul>
+
+<p><img src="/assets/images/banners/mongo.png" alt="mongo" /></p>
 
 <h3 id="ejercicio-9">Ejercicio 9</h3>
 
