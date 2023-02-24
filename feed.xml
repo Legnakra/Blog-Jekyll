@@ -1,4 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-24T00:51:55+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/12/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/aso/2023/02/12/ldap2</id><content type="html" xml:base="/aso/2023/02/12/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-24T09:40:14+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller: Corrector ortográfico de documentos markdown (test)</title><link href="/iaw/2023/02/19/jenkins1.html" rel="alternate" type="text/html" title="Taller: Corrector ortográfico de documentos markdown (test)" /><published>2023-02-19T16:45:16+01:00</published><updated>2023-02-19T16:45:16+01:00</updated><id>/iaw/2023/02/19/jenkins1</id><content type="html" xml:base="/iaw/2023/02/19/jenkins1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>maginemos que estamos escribiendo documentos markdown y lo guardamos en un repositorio de github. Queremos que cada vez que hagamos una modificación (commit - push) se pruebe (test) de forma automática si tienes alguna falta de ortografía. Ese proceso lo vamos a hacer de forma automática y continua con Jenkins. Recuerda que el repositorio es https://github.com/josedom24/ic-diccionario</p>
+
+<h2 id="definición-del-pipeline">Definición del pipeline</h2>
+
+<p>Hasta ahora al definir un pipeline lo hemos escrito directamente en la configuración. Otra forma de hacerlo es tener definido el pipeline en un fichero llamado Jenkinsfile que estará en un repositorio.</p>
+
+<ol>
+  <li>
+    <p>Vamos a crear un contenedor con debian, y vamos a usar el usuario root en la imagen.</p>
+  </li>
+  <li>
+    <p>Clonamos el repositorio con el comando <code class="language-plaintext highlighter-rouge">git</code> en el stage <code class="language-plaintext highlighter-rouge">clone</code>.</p>
+  </li>
+  <li>
+    <p>En el stage Install actualizamos e instalamos la herramienta que vamos a utilizar. Podríamos partir de una imagen construida por nosotros donde tuviéramos ya esta herramienta instalada, y no haría falta este paso.</p>
+  </li>
+  <li>
+    <p>En el stage Test hacemos la comprobación, hemos configurado el contenedor para que use UTF8.</p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Instalación de Jenkins en Debian 11</title><link href="/iaw/2023/02/17/jenkins-instalacion.html" rel="alternate" type="text/html" title="Instalación de Jenkins en Debian 11" /><published>2023-02-17T16:45:16+01:00</published><updated>2023-02-17T16:45:16+01:00</updated><id>/iaw/2023/02/17/jenkins-instalacion</id><content type="html" xml:base="/iaw/2023/02/17/jenkins-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>Tenemos muchos métodos para realizar la instalación de Jenkins: desde un paquete, desde un contenedor, desde un fichero WAR, etc. En este caso vamos a realizar la instalación desde un contenedor, en concreto desde un contenedor de Docker.</p>
+
+<h2 id="instalación-de-jenkins">Instalación de Jenkins</h2>
+
+<ol>
+  <li>
+    <p>Vamos a crear un contenedor con debian, y vamos a usar el usuario root en la imagen.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker run <span class="nt">-d</span> <span class="nt">-p</span> 8080:8080 <span class="nt">-p</span> 50000:50000 <span class="nt">--name</span> jenkins <span class="nt">-v</span> jenkins_home:/var/jenkins_home jenkins/jenkins:lts-jdk11
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/jenkins/instalacion/1.png" alt="1" /></p>
+  </li>
+  <li>
+    <p>Para obtener la la contraseña de administración que nos pregunta al principio ejecutamos:</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> docker <span class="nb">exec </span>jenkins <span class="nb">cat</span> /var/jenkins_home/secrets/initialAdminPassword
+ 028d75e925ba4afea7664579be5915b4
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/jenkins/instalacion/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>Ingresamos en nuestro navegador la dirección http://localhost:8080 e introducimos la contraseña que hemos obtenido en el paso anterior y pulsamos en continuar.</p>
+
+    <p><img src="/assets/images/jenkins/instalacion/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Seleccionamos la opción de instalar los plugins sugeridos y pulsamos en continuar.</p>
+
+    <p><img src="/assets/images/jenkins/instalacion/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Configuramos el usuario administrador y pulsamos en continuar.</p>
+
+    <p><img src="/assets/images/jenkins/instalacion/5.png" alt="5" /></p>
+  </li>
+  <li>
+    <p>Seleccionamos la dirección de Jenkins y pulsamos en continuar.</p>
+
+    <p><img src="/assets/images/jenkins/instalacion/6.png" alt="6" /></p>
+  </li>
+  <li>
+    <p>Y todo estaría listo y funcionando</p>
+
+    <p><img src="/assets/images/jenkins/instalacion/7.png" alt="7" /></p>
+
+    <p><img src="/assets/images/jenkins/instalacion/8.png" alt="8" /></p>
+  </li>
+</ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - Poblar un directorio LDAP desde un fichero CSV</title><link href="/aso/2023/02/12/ldap2.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP desde un fichero CSV" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/aso/2023/02/12/ldap2</id><content type="html" xml:base="/aso/2023/02/12/ldap2.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
 
@@ -200,8 +272,6 @@ shadow:         files ldap
   <li>LDAP acount for root DN: <code class="language-plaintext highlighter-rouge">cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
 </ul>
 
-<p>IMAGEN</p>
-
 <h3 id="configuramos-el-sistema-para-que-los-usuarios-puedan-acceder-por-ssh">Configuramos el sistema para que los usuarios puedan acceder por SSH</h3>
 
 <p>Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia <code class="language-plaintext highlighter-rouge">/home</code>:</p>
@@ -219,6 +289,20 @@ shadow:         files ldap
 
 ldapsearch <span class="nt">-x</span> <span class="nt">-u</span> <span class="nt">-LLL</span> <span class="nt">-o</span> ldif-wrap<span class="o">=</span>no <span class="s1">'(&amp;(objectClass=posixAccount)(uid='</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="s1">'))'</span> <span class="s1">'sshPublicKey'</span> | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</span> | <span class="nb">base64</span> <span class="nt">-d</span>
 </code></pre></div></div>
+
+<p>Este comando es bastante complejo, así que vamos a explicarlo:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ldapsearch</code>: comando para buscar en el directorio LDAP.</li>
+  <li><code class="language-plaintext highlighter-rouge">-x</code>: autenticación simple.</li>
+  <li><code class="language-plaintext highlighter-rouge">-u</code>: no mostrar el prompt.</li>
+  <li><code class="language-plaintext highlighter-rouge">-LLL</code>: no mostrar los mensajes de error.</li>
+  <li><code class="language-plaintext highlighter-rouge">-o ldif-wrap=no</code>: no mostrar los mensajes de error.</li>
+  <li><code class="language-plaintext highlighter-rouge">(&amp;(objectClass=posixAccount)(uid='"$1"'))'</code>: busca el usuario que se le pasa como parámetro.</li>
+  <li><code class="language-plaintext highlighter-rouge">sshPublicKey'</code>: busca la clave pública del usuario.</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</code>: elimina la parte de la clave pública que no nos interesa.</li>
+  <li><code class="language-plaintext highlighter-rouge">base64 -d</code>: decodifica la clave pública.</li>
+</ul>
 
 <p>Una vez creado, le damos permisos de ejecución:</p>
 
@@ -250,11 +334,15 @@ AuthorizedKeysCommandUser nobody
 
 <p><img src="/assets/images/LDAP/ldap2/4.png" alt="4" /></p>
 
-<p>Como tengo la clave de mi compañero Juan Jesús, comprueba que se puede conectar y que puede crear un fichero que yo podré leer:</p>
+<p>Para comprobar el funcionamiento completo, he añadido una nueva clave, la de mi compañero Antonio, y he comprobado que se puede acceder correctamente:</p>
 
 <p><img src="/assets/images/LDAP/ldap2/5.png" alt="5" /></p>
 
-<p><img src="/assets/images/LDAP/ldap2/6.png" alt="6" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python3-ldap pip install ldap3==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=mariajesus,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org IMAGEN Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: source /opt/search.sh maria Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa Como tengo la clave de mi compañero Juan Jesús, comprueba que se puede conectar y que puede crear un fichero que yo podré leer:]]></summary></entry><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<p><img src="/assets/images/LDAP/ldap2/6.png" alt="6" /></p>
+
+<p><img src="/assets/images/LDAP/ldap2/7.png" alt="7" /></p>
+
+<p><img src="/assets/images/LDAP/ldap2/8.png" alt="8" /></p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción En nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DNS asignado a la máquina, alfa.mariajesus.gonzalonazareno.org. En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información: Nombre del alumno Apellidos del alumno Dirección de correo electrónico Nombre del equipo Dirección IP del equipo Clave pública SSH del equipo El mío quedaría así: Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org Esquema openssh-lpk Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif: vi /etc/ldap/schema/openssh-lpk.ldif Y añadimos el siguiente contenido: dn: cn=openssh-lpk,cn=schema,cn=config objectClass: olcSchemaConfig cn: openssh-lpk olcAttributeTypes: ( 1.3.6.1.4.1.24552.500.1.1.1.13 NAME 'sshPublicKey' DESC 'MANDATORY: OpenSSH Public key' EQUALITY octetStringMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 ) olcObjectClasses: ( 1.3.6.1.4.1.24552.500.1.1.2.0 NAME 'ldapPublicKey' SUP top AUXILIARY DESC 'MANDATORY: OpenSSH LPK objectclass' MAY ( sshPublicKey $ uid ) ) Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina alfa: ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/ldap/schema/openssh-lpk.ldif Script en Python 🐍 Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando: python3 -m venv ldap El fin del entorno virtual es instalar el módulo python-ldap que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando: source ldap/bin/activate pip install python3-ldap pip install ldap3==2.6 Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado ldap.py: vi ldap.py Y añadimos el siguiente contenido: #!/usr/bin/env python import ldap3 from ldap3 import Connection, ALL from getpass import getpass from sys import exit ### VARIABLES # Shell que se le asigna a los usuarios shell = '/bin/bash' # Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/" home_dir = '/home/' # El valor inicial para los UID que se asignan al insertar usuarios. uid_number = 5000 # El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error. gid = 5000 ### VARIABLES # Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista. with open('usuarios.csv', 'r') as usuarios: usuarios = usuarios.readlines() ### Parametros para la conexion ldap_ip = 'ldaps://alfa.mariajesus.gonzalonazareno.org:636' dominio_base = 'dc=mariajesus,dc=gonzalonazareno,dc=org' user_admin = 'admin' contrasena = getpass('Contrasena: ') # Intenta realizar la conexion. conn = Connection(ldap_ip, 'cn={},{}'.format(user_admin, dominio_base),contrasena) # conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario. # Si no se establece la conexion imprime por pantalla un error de conexion. if not conn.bind(): print('No se ha podido conectar con ldap') if conn.result['description'] == 'invalidCredentials': print('Credenciales no validas.') # Termina el script. exit(0) # Recorre la lista de usuarios for user in usuarios: # Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente. user = user.split(',') cn = user[0] sn = user[1] mail = user[2] uid = user[3] ssh = user[4] #Anade el usuario. conn.add( 'uid={},ou=Personas,{}'.format(uid, dominio_base), object_class = [ 'inetOrgPerson', 'posixAccount', 'ldapPublicKey' ], attributes = { 'cn': cn, 'sn': sn, 'mail': mail, 'uid': uid, 'uidNumber': str(uid_number), 'gidNumber': str(gid), 'homeDirectory': '{}{}'.format(home_dir,uid), 'loginShell': shell, 'sshPublicKey': str(ssh) }) if conn.result['description'] == 'entryAlreadyExists': print('El usuario {} ya existe.'.format(uid)) # Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos) uid_number += 1 #Cierra la conexion. conn.unbind() Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando: python3 ldap.py Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP: ldapsearch -x -LLL -b dc=mariajesus,dc=gonzalonazareno,dc=org -D "cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org" -W Configuramos el sistema para que los usuarios sean autenticados por LDAP Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo /etc/ldap/ldap.conf y añadir las siguientes líneas: BASE dc=mariajesus,dc=gonzalonazareno,dc=org URI ldap://alfa.mariajesus.gonzalonazareno.org También deberemos modificar el archivo /etc/nsswitch.conf y añadir la siguiente línea: passwd: files systemd ldap group: files systemd ldap shadow: files ldap Instalamos el paquete libpam-ldap: apt install libpam-ldap Y lo configuramos: LDAP server URI: `ldap://127.0.0.1 Distinguished name of search base: dc=mariajesus,dc=gonzalonazareno,dc=org LDAP version: 3 LDAP acount for root DN: cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org Configuramos el sistema para que los usuarios puedan acceder por SSH Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia /home: echo "session requiered pam_mkhomedir.so" &gt;&gt; /etc/pam.d/common-session Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio /opt para que tenga los permisos necesarios, estando en un dorectorio perteneciente a root: vi /opt/search.sh #!/bin/bash # Busca la clave publica del usuario en el directorio LDAP. ldapsearch -x -u -LLL -o ldif-wrap=no '(&amp;(objectClass=posixAccount)(uid='"$1"'))' 'sshPublicKey' | sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p' | base64 -d Este comando es bastante complejo, así que vamos a explicarlo: ldapsearch: comando para buscar en el directorio LDAP. -x: autenticación simple. -u: no mostrar el prompt. -LLL: no mostrar los mensajes de error. -o ldif-wrap=no: no mostrar los mensajes de error. (&amp;(objectClass=posixAccount)(uid='"$1"'))': busca el usuario que se le pasa como parámetro. sshPublicKey': busca la clave pública del usuario. sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p': elimina la parte de la clave pública que no nos interesa. base64 -d: decodifica la clave pública. Una vez creado, le damos permisos de ejecución: chmod 755 /opt/search.sh Para hacer una prueba, ejecutamos el script: source /opt/search.sh maria Tras esta comprobación, nos dirigimos al fichero /etc/ssh/sshd_config y añadimos las siguientes líneas: AuthorizedKeysCommand /opt/search.sh AuthorizedKeysCommandUser nobody Reiniciamos el servicio SSH: systemctl restart sshd Y comprabamos que funciona correctamente: ssh mariajesus@alfa Para comprobar el funcionamiento completo, he añadido una nueva clave, la de mi compañero Antonio, y he comprobado que se puede acceder correctamente:]]></summary></entry><entry><title type="html">Taller Kubernetes: Instalación de un CMS con Helm</title><link href="/hlc+sri/2023/02/12/kubernetes-cms.html" rel="alternate" type="text/html" title="Taller Kubernetes: Instalación de un CMS con Helm" /><published>2023-02-12T16:45:16+01:00</published><updated>2023-02-12T16:45:16+01:00</updated><id>/hlc+sri/2023/02/12/kubernetes-cms</id><content type="html" xml:base="/hlc+sri/2023/02/12/kubernetes-cms.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En este taller vamos a instalar un CMS (Content Management System) en un cluster de Kubernetes. Para ello, vamos a instalar la última versión de Helm y añadiremos el repositorio de bitnami, porque instalaremos un wordpress.</p>
 
@@ -2663,1083 +2751,4 @@ systemctl start mnt-nfs.mount
   <li>Comprobamos desde <code class="language-plaintext highlighter-rouge">alfa</code> que se ha creado el directorio <code class="language-plaintext highlighter-rouge">/home/nfs/coffee</code>:</li>
 </ul>
 
-<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Auditoría en bases de datos</title><link href="/asgdb/2023/02/07/auditoria.html" rel="alternate" type="text/html" title="Auditoría en bases de datos" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/asgdb/2023/02/07/auditoria</id><content type="html" xml:base="/asgdb/2023/02/07/auditoria.html"><![CDATA[<h2 id="qué-es-una-auditoría-en-bases-de-datos">¿Qué es una auditoría en bases de datos?</h2>
-
-<p>Una auditoría en bases de datos es un proceso que permite verificar el correcto funcionamiento de una base de datos, así como el cumplimiento de las políticas de seguridad y de las normas de calidad de los datos.  Dicho de otra forma, es un proceso que permite medir, demostrar, monitorear y registrar los accesos a la información que se haya almacenada en en una base de datos.</p>
-
-<p>Un administrador puede realizar auditorías con acciones individuales, como el tipo de declaración de lenguaje de consulta estructurado (SQL) ejecutada, o en combinaciones de datos que pueden incluir el nombre del usuario, la aplicación o la marca de tiempo, por ejemplo. Los auditores deben auditar las actividades exitosas y fallidas, e incluir o excluir usuarios específicos de la auditoría.</p>
-
-<h2 id="ejercicios-prácticos">Ejercicios prácticos</h2>
-
-<p><img src="/assets/images/interconexion/oracle.png" alt="oracle" /></p>
-
-<h3 id="ejercicio-1">Ejercicio 1</h3>
-
-<p><strong>Activa desde SQL*Plus la auditoría de los intentos de acceso exitosos al sistema. Comprueba su funcionamiento.</strong></p>
-
-<p>Lo primero que debemos hacer es activar la auditoría, que en ORACLE depende de un parámetro de sistema, <code class="language-plaintext highlighter-rouge">AUDIT_TRAIL</code>. Este parámetro puede tener los siguientes valores:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">NONE</code>: No se realiza ninguna auditoría.</li>
-  <li><code class="language-plaintext highlighter-rouge">DB</code>: Se realiza una auditoría en la base de datos.</li>
-  <li><code class="language-plaintext highlighter-rouge">OS</code>: Se realiza una auditoría en el sistema operativo.</li>
-</ul>
-
-<p>Antes de nada, vamos a comprobar el valor actual del parámetro:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">parameter</span> <span class="n">audit</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/1.png" alt="1" /></p>
-
-<p>Como podemos ver, enmi caso, el valor actual es <code class="language-plaintext highlighter-rouge">BD</code>. Si por elcontrario, el valor actual hubiese sido <code class="language-plaintext highlighter-rouge">NONE</code>, por lo que no se podría realizar ninguna auditoría. Para activar la auditoría, debemos ejecutar el siguiente comando:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">alter</span> <span class="k">system</span> <span class="k">set</span> <span class="n">audit_trail</span><span class="o">=</span><span class="n">db</span> <span class="k">scope</span><span class="o">=</span><span class="n">spfile</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p>Para que la modificación sea efectiva, debemos reiniciar la base de datos:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">shutdown</span> <span class="k">immediate</span>
-<span class="k">SQL</span><span class="o">&gt;</span> <span class="n">startup</span>
-</code></pre></div></div>
-
-<p>Si comprobamos de nuevo el valor del parámetro, veremos que ahora es <code class="language-plaintext highlighter-rouge">DB</code>:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">show</span> <span class="k">parameter</span> <span class="n">audit_trail</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/2.png" alt="2" /></p>
-
-<p>Por lo que, podemos confirmar que los cambios se han realizado correctamente. Pero,ahora deberemos activar la auditoría de intentos fallidos al sistema.</p>
-
-<p>Por ejemplo, imaginemos que nos han contratado para realizar la  FCT en una empresa y que, por error, no somos capaces de acceder a la base de datos. Para ver nuestros intentos fallidos, deberá tener habilitada la auditoría de inicio de sesión, pero concretamente, la auditoría de intentos fallidos al sistema. Para ello, debemos ejecutar el siguiente comando:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">audit</span> <span class="k">session</span> <span class="n">ELSIF</span> <span class="n">p_codigo</span> <span class="o">=</span> <span class="n">ever</span> <span class="k">not</span> <span class="n">successful</span><span class="p">;</span>
-<span class="k">SQL</span><span class="o">&gt;</span> <span class="n">audit</span> <span class="k">session</span> <span class="k">by</span> <span class="n">maria</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/3.png" alt="3" /></p>
-
-<p>Vamos a entrar en la base de datos pero, vaya… ¡nos hemos equivocado de contraseña! Pero a la tercera va la vencida y, ¡por fin! ¡Hemos accedido!</p>
-
-<p>Si ahora comprobamos el contenido de la tabla <code class="language-plaintext highlighter-rouge">dba_audit_session</code>, veremos que se ha registrado el intento fallido:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">OS_USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="n">RETURNCODE</span>
-<span class="k">FROM</span> <span class="n">dba_audit_session</span>
-<span class="k">WHERE</span> <span class="n">username</span> <span class="o">=</span> <span class="s1">'MARIA'</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/4.png" alt="4" /></p>
-
-<p>En la imagen anterior podemos ver cuando nos hemos conectado a la base de datos y cuando hemos intentado acceder con una contraseña incorrecta. Cuando sucede esto, el valor de <code class="language-plaintext highlighter-rouge">returncode</code> es <code class="language-plaintext highlighter-rouge">ORA-01017</code>. El código <code class="language-plaintext highlighter-rouge">ORA-01017</code> significa que el usuario no existe o la contraseña es incorrecta. Si el valor de <code class="language-plaintext highlighter-rouge">returncode</code> es <code class="language-plaintext highlighter-rouge">0</code>, significa que el intento ha sido exitoso.</p>
-
-<p>Existen otros códigos de error que nos pueden ser de utilidad a la hora de realizar auditorías. Estos códigos de error son:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">ORA-00911</code>: Caracteres no válidos.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-01004</code>: Acceso denegado.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-01017</code>: Usuario o contraseña incorrectos.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-01045</code>: Sin permiso CREATE SESSION.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-28000</code>: Cuenta bloqueada.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-28001</code>: Contraseña expirada.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-28002</code>: Contraseña en periodo de caducidad.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-28003</code>: Contraseña vulnerable.</li>
-  <li><code class="language-plaintext highlighter-rouge">ORA-28011</code>: Contraseña en periodo de caducidad.</li>
-  <li>…etc.</li>
-</ul>
-
-<p>Pero en elsiguiente ejercicio, veremos como podemos traducir estos códigos de error a mensajes de texto comprensibles.</p>
-
-<p>En caso de que queramos desactivar la auditoría, debemos ejecutar el siguiente comando:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">NOAUDIT</span> <span class="k">CREATE</span> <span class="k">SESSION</span> <span class="k">WHENEVER</span> <span class="k">NOT</span> <span class="n">SUCCESSFUL</span><span class="p">;</span>
-</code></pre></div></div>
-
-<h3 id="ejercicio-2">Ejercicio 2</h3>
-
-<p><strong>Realiza un procedimiento en PL/SQL que te muestre los accesos fallidos junto con el motivo de los mismos, transformando el código de error almacenado en un mensaje de texto comprensible. Contempla todos los motivos posibles para que un acceso sea fallido.</strong></p>
-
-<p>Para realizar este ejercicio, vamos a crear un procedimiento en PL/SQL que nos muestre los accesos fallidos por credenciales incorrectas.</p>
-
-<ul>
-  <li>
-    <p>Creamos el procedimiento que nos mostrará los mensajes de error.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">MensajesTraducidos</span> <span class="p">(</span><span class="n">p_codigo</span> <span class="n">VARCHAR2</span><span class="p">)</span>
-  <span class="k">RETURN</span> <span class="n">VARCHAR2</span>
-  <span class="k">IS</span>
-      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
-  <span class="k">BEGIN</span>
-      <span class="k">CASE</span> <span class="n">p_codigo</span>
-          <span class="k">WHEN</span> <span class="mi">911</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Caracteres no validos'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">1004</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Acceso denegado'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">1017</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario o contrasena incorrectos'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">1033</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Usuario inexistente'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">1045</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Sin permiso CREATE SESSION'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28000</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28001</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña expirada'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28002</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28003</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña vulnerable'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28011</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Contraseña en periodo de caducidad'</span><span class="p">;</span>
-          <span class="k">WHEN</span> <span class="mi">28512</span> <span class="k">THEN</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Cuenta bloqueada'</span><span class="p">;</span>
-          <span class="k">ELSE</span> <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="s1">'Error desconocido. Por favor, contacte con el administrador.'</span><span class="p">;</span>
-      <span class="k">END</span> <span class="k">CASE</span><span class="p">;</span>
-  <span class="k">RETURN</span> <span class="n">v_mensaje</span><span class="p">;</span>
-  <span class="k">END</span><span class="p">;</span>
-  <span class="o">/</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos la cabecera del procedimiento que nos mostrará los accesos fallidos.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">CabeceraErroresLogin</span>
-  <span class="k">IS</span>
-  <span class="k">BEGIN</span>
-      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'-------------------------------'</span><span class="p">);</span>
-      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Accesos fallidos de conexion'</span><span class="p">);</span>
-      <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'-------------------------------'</span><span class="p">);</span>
-  <span class="k">END</span><span class="p">;</span>
-  <span class="o">/</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el procedimiento que nos mostrará los accesos fallidos.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">PROCEDURE</span> <span class="n">AccesosFallidos</span>
-  <span class="k">IS</span>
-      <span class="k">CURSOR</span> <span class="n">c_fallo</span> <span class="k">IS</span>
-          <span class="k">SELECT</span> <span class="n">OS_USERNAME</span><span class="p">,</span><span class="n">RETURNCODE</span><span class="p">,</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
-          <span class="k">FROM</span> <span class="n">DBA_AUDIT_SESSION</span>
-          <span class="k">WHERE</span> <span class="n">ACTION_NAME</span> <span class="o">=</span> <span class="s1">'LOGON'</span>
-          <span class="k">AND</span> <span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span>
-          <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
-      <span class="n">v_mensaje</span> <span class="n">VARCHAR2</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
-  <span class="k">BEGIN</span>
-      <span class="n">CabeceraErroresLogin</span><span class="p">;</span>
-      <span class="k">FOR</span> <span class="n">fallo</span> <span class="k">IN</span> <span class="n">c_fallo</span> <span class="n">LOOP</span>
-          <span class="n">v_mensaje</span><span class="p">:</span><span class="o">=</span><span class="n">MensajesTraducidos</span><span class="p">(</span><span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Usuario del sistema: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">OS_USERNAME</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Usuario: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">USERNAME</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Fecha: '</span> <span class="o">||</span> <span class="n">TO_CHAR</span><span class="p">(</span><span class="n">fallo</span><span class="p">.</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="s1">'DD/MM/YYYY HH24:MI:SS'</span><span class="p">));</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Codigo de error: '</span> <span class="o">||</span> <span class="n">fallo</span><span class="p">.</span><span class="n">RETURNCODE</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'Mensaje: '</span> <span class="o">||</span> <span class="n">v_mensaje</span><span class="p">);</span>
-          <span class="n">DBMS_OUTPUT</span><span class="p">.</span><span class="n">PUT_LINE</span><span class="p">(</span><span class="s1">'- - - - -'</span><span class="p">);</span>
-      <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
-  <span class="k">END</span><span class="p">;</span>
-  <span class="o">/</span>
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Ejecutamos el procedimiento.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">SQL</span><span class="o">&gt;</span> <span class="k">EXEC</span> <span class="n">AccesosFallidos</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/5.png" alt="5" /></p>
-  </li>
-</ul>
-
-<h3 id="ejercicio-3">Ejercicio 3</h3>
-
-<p><strong>Activa la auditoría de las operaciones DML realizadas por SCOTT. Comprueba su funcionamiento.</strong></p>
-
-<p>En DML (Data Manipulation Language) se incluyen las sentencias que permiten modificar los datos de una base de datos. Estas sentencias son:</p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">INSERT</code>: Inserta un nuevo registro en una tabla.</li>
-  <li><code class="language-plaintext highlighter-rouge">UPDATE</code>: Modifica los datos de un registro.</li>
-  <li><code class="language-plaintext highlighter-rouge">DELETE</code>: Elimina un registro de una tabla.</li>
-</ul>
-
-<p>Estas sentencias se pueden ejecutar de forma directa o mediante un procedimiento almacenado. En este ejercicio, vamos a realizar una auditoría de las operaciones DML realizadas por el usuario <code class="language-plaintext highlighter-rouge">SCOTT</code>. Para ello, debemos ejecutar el siguiente comando:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="n">AUDIT</span> <span class="k">INSERT</span> <span class="k">TABLE</span><span class="p">,</span> <span class="k">UPDATE</span> <span class="k">TABLE</span><span class="p">,</span> <span class="k">DELETE</span> <span class="k">TABLE</span> <span class="k">BY</span> <span class="n">SCOTT</span> <span class="k">BY</span> <span class="k">ACCESS</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p>Para comprobar que la auditoría se ha realizado correctamente, vamos a insertar un nuevo registro en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
-<span class="c1">---</span>
-<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7876</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7902</span><span class="p">;</span>
-<span class="k">DELETE</span> <span class="n">EMP</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7934</span><span class="p">;</span>
-<span class="c1">---</span>
-<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">1000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7788</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">2000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7839</span><span class="p">;</span>
-<span class="k">UPDATE</span> <span class="n">EMP</span> <span class="k">SET</span> <span class="n">COMM</span> <span class="o">=</span> <span class="mi">3000</span> <span class="k">WHERE</span> <span class="n">EMPNO</span> <span class="o">=</span> <span class="mi">7844</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/6.png" alt="6" /></p>
-
-<p>Si conectándonos con el usuario administrador, o ‘SYSDBA’, ejecutamos la siguiente sentencia:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SQL</span><span class="o">&gt;</span> <span class="k">SELECT</span> <span class="n">OBJ_NAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
-<span class="k">FROM</span> <span class="n">DBA_AUDIT_TRAIL</span>
-<span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/7.png" alt="7" /></p>
-
-<h3 id="ejercicio-4">Ejercicio 4</h3>
-
-<p><strong>Realiza una auditoría de grano fino para almacenar información sobre la inserción de empleados con sueldo superior a 2000 en la tabla emp de scott.</strong></p>
-
-<p>¿Auditoría de grano fino?</p>
-
-<p>¡Pues claro que sí!</p>
-
-<p>De hecho, es la auditoría que vamos a realizar en este ejercicio.</p>
-
-<p>La auditoría de grano fino o FGA (Fine-Grained Auditing) es una característica de Oracle Database que permite registrar los cambios que se producen en los datos de una base de datos. Registrando los cambios que se producen en los datos, podemos realizar este tipo de auditoría que nos permiten conocer qué cambios se han producido en los datos, y por qué usuario se han producido.</p>
-
-<p>Permite que las políticas de auditoría se asocien con columnas en las tablas de la aplicación junto con las condiciones necesarias para que se genere un registro de auditoría. Las políticas de FGA se asignan a las tablas de aplicaciones mediante la API de FGA. Las políticas de auditoría detalladas se pueden usar para crear registros de auditoría cuando se accede a una tabla durante períodos específicos o se accede a columnas específicas. FGA complementa la nueva auditoría unificada de Oracle Database 12c al permitir que las condiciones de auditoría se asocien con columnas específicas.</p>
-
-<p>Los registros de seguimiento de auditoría creados por Fine Grained Auditing se pueden capturar y analizar en Oracle Audit Vault y Database Firewall, alertando automáticamente al equipo de seguridad sobre posibles actividades maliciosas.</p>
-
-<p>El único inconveniente de esta auditoría es que requiere de una licencia adicional de Oracle Database Enterprise Edition y que para el rendimiento de la base de datos, es recomendable que se use únicamente en casos puntuales, ya que lo disminuye.</p>
-
-<p>Pero, dejémonos de cháchara y vamos a realizar la auditoría de grano fino que nos pide el ejercicio.</p>
-
-<p>Debemos tener en cuenta que, deberemos hacerlo en cualquier versión de Oracle, siempre y cuando esta sea superior a la 11g, ya que es a partir de esta versión donde se implementó la auditoría de grano fino.</p>
-
-<p>Lo primero que vamos a hacer es crear un procedimiento para que, un objeto en concreto de una tabla, se audite cuando se realice una inserción en dicha tabla.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">BEGIN</span>
-    <span class="n">DBMS_FGA</span><span class="p">.</span><span class="n">ADD_POLICY</span> <span class="p">(</span>
-        <span class="n">object_schema</span> <span class="o">=&gt;</span> <span class="s1">'SCOTT'</span><span class="p">,</span>
-        <span class="n">object_name</span> <span class="o">=&gt;</span> <span class="s1">'EMP'</span><span class="p">,</span>
-        <span class="n">policy_name</span> <span class="o">=&gt;</span> <span class="s1">'AUDITAR_EMPLEADOS'</span><span class="p">,</span>
-        <span class="n">audit_condition</span> <span class="o">=&gt;</span> <span class="s1">'SAL &gt; 2000'</span><span class="p">,</span>
-        <span class="n">statement_types</span> <span class="o">=&gt;</span> <span class="s1">'INSERT'</span><span class="p">);</span>
-<span class="k">END</span><span class="p">;</span>
-<span class="o">/</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/8.png" alt="8" /></p>
-
-<p>Para la comprobación, vamos a insertar varios empleados, 1 con un salario inferior a 2000 y otro con un salario superior a 2000.</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7934</span><span class="p">,</span> <span class="s1">'FRANK'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7782</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">2100</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-
-<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7935</span><span class="p">,</span> <span class="s1">'JUAN'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7782</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">1300</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/9.png" alt="9" /></p>
-
-<p>Ahora, vamos a comprobar que se ha realizado la auditoría de grano fino correctamente. Para ello, vamos a ejecutar la siguiente sentencia:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">DB_USER</span><span class="p">,</span> <span class="n">OBJECT_NAME</span><span class="p">,</span> <span class="n">SQL_TEXT</span><span class="p">,</span> <span class="k">CURRENT_USER</span><span class="p">,</span> <span class="nb">TIMESTAMP</span>
-<span class="k">FROM</span> <span class="n">DBA_FGA_AUDIT_TRAIL</span>
-<span class="k">WHERE</span> <span class="n">POLICY_NAME</span> <span class="o">=</span> <span class="s1">'AUDITAR_EMPLEADOS'</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/10.png" alt="10" /></p>
-
-<p>Como podemos observar, se muestra la información de la inserción de los empleados, pero solo se muestra la información del empleado que tiene un salario superior a 2000, que era el que se tenía que auditar.</p>
-
-<h3 id="ejercicio-5">Ejercicio 5</h3>
-
-<p><strong>Explica la diferencia entre auditar una operación by access o by session ilustrándolo con ejemplos.</strong></p>
-
-<p>Vamos a diferenciar entre estas dos opciones de auditoría:</p>
-
-<ul>
-  <li>
-    <p><strong>Auditoría by access</strong>: Cuando se realiza una auditoría by access, se registra la información de la operación que se ha realizado, pero no se registra la información del usuario que ha realizado la operación. 
-Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta una sentencia, la auditoría by access, registrará la información de la sentencia que se ha ejecutado, pero no registrará la información del usuario que ha ejecutado la sentencia.</p>
-  </li>
-  <li>
-    <p><strong>Auditoría by session</strong>: Cuando se realiza una auditoría by session, se registra la información de la operación que se ha realizado, y se registra la información del usuario que ha realizado la operación.
-Por ejemplo, si tenemos un usuario que se conecta a la base de datos y ejecuta una sentencia, la auditoría by session, registrará la información de la sentencia que se ha ejecutado, y registrará la información del usuario que ha ejecutado la sentencia.</p>
-  </li>
-</ul>
-
-<p>Pero para probar verdaderamente su funcionamiento, vamos a insertar nuevos registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code> de la base de datos <code class="language-plaintext highlighter-rouge">SCOTT</code> y vamos a comprobar que se ha realizado la auditoría correctamente.</p>
-
-<h4 id="auditoría-by-session">Auditoría by session</h4>
-
-<ol>
-  <li>
-    <p>Activamosla auditoría en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">AUDIT</span> <span class="k">INSERT</span><span class="p">,</span><span class="k">UPDATE</span><span class="p">,</span><span class="k">DELETE</span> <span class="k">ON</span> <span class="n">DEPT</span> <span class="k">BY</span> <span class="k">SESSION</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/11.png" alt="11" /></p>
-  </li>
-  <li>
-    <p>Realizamos la inserción de los registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
- <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/12.png" alt="12" /></p>
-  </li>
-  <li>
-    <p>Realizamos la consulta para comprobar que se ha realizado la auditoría correctamente;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">OBJ_NAME</span>
- <span class="k">FROM</span> <span class="n">DBA_AUDIT_TRAIL</span>
- <span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span>
- <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/13.png" alt="13" /></p>
-  </li>
-</ol>
-
-<h4 id="auditoría-by-access">Auditoría by access</h4>
-
-<ol>
-  <li>
-    <p>Activamos la auditoría en la tabla <code class="language-plaintext highlighter-rouge">EMP</code>;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">AUDIT</span> <span class="k">INSERT</span><span class="p">,</span><span class="k">UPDATE</span><span class="p">,</span><span class="k">DELETE</span> <span class="k">ON</span> <span class="n">DEPT</span> <span class="k">BY</span> <span class="k">ACCESS</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/14.png" alt="14" /></p>
-  </li>
-  <li>
-    <p>Realizamos la inserción de los registros en la tabla <code class="language-plaintext highlighter-rouge">DEPT</code>;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7799</span><span class="p">,</span> <span class="s1">'CHARLES'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7799</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">2100</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
- <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">EMP</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'CHRIS'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7987</span><span class="p">,</span> <span class="n">TO_DATE</span><span class="p">(</span><span class="s1">'23-01-1982'</span><span class="p">,</span> <span class="s1">'DD-MM-YYYY'</span><span class="p">),</span> <span class="mi">1300</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/15.png" alt="15" /></p>
-  </li>
-  <li>
-    <p>Realizamos la consulta para comprobar que se ha realizado la auditoría correctamente;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">USERNAME</span><span class="p">,</span> <span class="n">ACTION_NAME</span><span class="p">,</span> <span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">OBJ_NAME</span>
- <span class="k">FROM</span> <span class="n">DBA_AUDIT_OBJECT</span>
- <span class="k">WHERE</span> <span class="n">USERNAME</span> <span class="o">=</span> <span class="s1">'SCOTT'</span>
- <span class="k">ORDER</span> <span class="k">BY</span> <span class="nb">TIMESTAMP</span> <span class="k">DESC</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/16.png" alt="16" /></p>
-  </li>
-</ol>
-
-<p>Para resumir es que la diferencia entre <code class="language-plaintext highlighter-rouge">BY ACCESS</code> y <code class="language-plaintext highlighter-rouge">BY SESSION</code> radica en cómo la vista del diccionario de datos DBA_AUDIT_TRAIL registra las acciones que capturan:</p>
-
-<p>POR ACCESO: Inserta un registro en la pista de auditoría para cada declaración auditada.</p>
-
-<p>POR SESIÓN: inserta solo un registro de auditoría en la pista de auditoría, para cada usuario y objeto de esquema, durante una sesión que incluye una acción auditada.</p>
-
-<h3 id="ejercicio-6">Ejercicio 6</h3>
-
-<p><strong>Documenta las diferencias entre los valores db y db_extended del parámetro audit_trail de ORACLE. Demuéstralas poniendo un ejemplo de la información sobre una operación concreta recopilada con cada uno de ellos.</strong></p>
-
-<p>El parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> de Oracle, nos permite controlar el tipo de auditoría que se va a realizar en la base de datos. Este parámetro puede tener varios valores, pero vamos a centrarnos en los siguientes:</p>
-
-<ul>
-  <li>
-    <p><strong>db</strong>: Dirige los registros de auditoría a la pista de auditoría de la base de datos (la tabla SYS.AUD$), excepto los registros que siempre se escriben en la pista de auditoría del sistema operativo. Utilice esta configuración para una base de datos general para facilitar la gestión.</p>
-
-    <p>Si la base de datos se inició en modo de solo lectura con AUDIT_TRAIL establecido en db, Oracle Database establece internamente AUDIT_TRAIL en os. Consulte el registro de alertas para obtener más información.</p>
-  </li>
-  <li>
-    <p><strong>db_extended</strong>: Realiza todas las acciones de AUDIT_TRAIL=db y también completa las columnas de tipo CLOB de enlace SQL y texto SQL de la tabla SYS.AUD$, cuando están disponibles. Estas dos columnas se rellenan solo cuando se especifica este parámetro. Cuando se usa la auditoría estándar con DB, EXTENDIDA, los predicados de la base de datos privada virtual (VPD) y los nombres de las políticas también se completan en la tabla SYS.AUD$.</p>
-
-    <p>Si la base de datos se inició en modo de solo lectura con AUDIT_TRAIL establecido en db, extendido, Oracle Database establece internamente AUDIT_TRAIL en os. Consulte el registro de alertas para obtener más información.</p>
-  </li>
-</ul>
-
-<p>Hasta ahora, hemos estado realizando auditoría con el parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> en el valor <code class="language-plaintext highlighter-rouge">db</code>, pero vamos a cambiarlo a <code class="language-plaintext highlighter-rouge">db_extended</code> y vamos a activarla.</p>
-
-<ol>
-  <li>
-    <p>Cambiamos el valor del parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> a <code class="language-plaintext highlighter-rouge">db_extended</code>, pero primero vamos a comprbar el valor actual del parámetro;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SHOW</span> <span class="k">PARAMETER</span> <span class="n">audit_trail</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/17.png" alt="17" /></p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">ALTER</span> <span class="k">SYSTEM</span> <span class="k">SET</span> <span class="n">audit_trail</span> <span class="o">=</span> <span class="n">db</span><span class="p">,</span><span class="n">extended</span> <span class="k">SCOPE</span><span class="o">=</span><span class="n">SPFILE</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/18.png" alt="18" /></p>
-  </li>
-  <li>
-    <p>Reiniciamos la base de datos;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">SHUTDOWN</span> <span class="k">IMMEDIATE</span><span class="p">;</span>
- <span class="n">STARTUP</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/19.png" alt="19" /></p>
-  </li>
-  <li>
-    <p>Comprobamos que el valor del parámetro <code class="language-plaintext highlighter-rouge">audit_trail</code> es <code class="language-plaintext highlighter-rouge">db_extended</code>;</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SHOW</span> <span class="k">PARAMETER</span> <span class="n">audit_trail</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/20.png" alt="20" /></p>
-  </li>
-</ol>
-
-<p><img src="/assets/images/interconexion/postgresql.png" alt="postgres" /></p>
-
-<h3 id="ejercicio-7">Ejercicio 7</h3>
-
-<p><strong>Averigua si en Postgres se pueden realizar los cuatro primeros apartados. Si es así, documenta el proceso adecuadamente.</strong></p>
-
-<p>En PostgreSQL, la auditoría se realiza a travésde extensiones, como <code class="language-plaintext highlighter-rouge">pgAudit</code> o <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. En este caso, vamos a utilizar la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>.</p>
-
-<p>En mi caso, he decidido instalar la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code> en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code>, pero también se puede instalar en cualquier otra base de datos.</p>
-
-<p>Su proceso de instalación es muy sencillo. Lo primero que haremos será descargarnos la extensión desde el siguiente enlace:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://raw.githubusercontent.com/2ndQuadrant/audit-trigger/master/audit.sql
-</code></pre></div></div>
-
-<p>Cuando tengamos la extensión descargada, ingresamos en el servidor de PostgreSQL y ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo</span> <span class="nt">-u</span> postgres psql
-<span class="se">\i</span> audit.sql
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/21.png" alt="21" /></p>
-
-<ol>
-  <li>
-    <p>EJERCICIO 1: Auditoría de accesos exitosos.</p>
-
-    <p>Para mostrar los usuarios activos en la base de datos, vamos a hacer uso de la vista <code class="language-plaintext highlighter-rouge">pg_stat_activity</code>, y lo haremos realizando la siguiente consulta:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```sql
- SELECT distinct usename
- FROM pg_stat_activity
- ```
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/22.png" alt="22" /></p>
-  </li>
-  <li>
-    <p>EJERCICIO 2: Auditoría de accesos fallidos.</p>
-
-    <p>Para realizar la auditoría de accesos fallidos, vamos a hacer uso del log de acceso de PostgreSQL. Para ello, vamos a activar el log de acceso en el fichero de configuración de PostgreSQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/postgresql/9.5/main/postgresql.conf</code>.</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- sudo nano /etc/postgresql/9.5/main/postgresql.conf
- ```
-</code></pre></div>    </div>
-
-    <p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- #log_line_prefix = ''            # special values: '%m' for timestamp, '%u' for user,
- ```
-</code></pre></div>    </div>
-
-    <p>Y la vamos a modificar de la siguiente manera:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- log_line_prefix = '%m %u %d %r %p %h %a %q '
- ```
-</code></pre></div>    </div>
-
-    <p>Y tambien vamos a modificar la siguiente linea:</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- log_statement = ‘all’
- ```
-</code></pre></div>    </div>
-
-    <p>Para que se nos muestre el query que se esta ejecutando.</p>
-
-    <p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de PostgreSQL.</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- sudo service postgresql restart
- ```
-</code></pre></div>    </div>
-
-    <p>Y comprobamos que se ha realizado la auditoría correctamente.</p>
-
-    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```bash
- tail -f /var/log/postgresql/postgresql-13-main.log
- ```
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/23.png" alt="23" /></p>
-  </li>
-  <li>
-    <p>EJERCICIO 3: Auditoría de DML.</p>
-
-    <p>Para realizar la auditoría de DML, vamos a hacer uso de la extensión <code class="language-plaintext highlighter-rouge">Audit Trigger</code>. Para ello, vamos a crear una tabla en la base de datos <code class="language-plaintext highlighter-rouge">postgres</code> y vamos a insertar, actualizar y borrar datos de la base de datos SCOTT.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">---INSERTAR DATOS</span>
- <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
- <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
- <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">DEPT</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
- <span class="c1">---BORRAR DATOS</span>
- <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
- <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
- <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">DEPT</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
- <span class="c1">---ACTUALIZAR DATOS</span>
- <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
- <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
- <span class="k">UPDATE</span> <span class="n">DEPT</span> <span class="k">SET</span> <span class="n">LOC</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">DEPTNO</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/24.png" alt="24" /></p>
-
-    <p>Una vez realizadas estas operaciones, vamos a comprobar Audit Trigger para ver si se ha realizado la auditoría correctamente.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">select</span> <span class="n">audit</span><span class="p">.</span><span class="n">audit_table</span><span class="p">(</span><span class="s1">'DEPT'</span><span class="p">);</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/25.png" alt="25" /></p>
-
-    <p>Para visualizar los datos de la auditoría, nos loguearemos con el usuario <code class="language-plaintext highlighter-rouge">postgres</code> y, concretamente, desde la base de datos que estamos auditando, en este caso, la base de datos <code class="language-plaintext highlighter-rouge">scott</code>, ejecutamos la siguiente consulta:</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">select</span> <span class="n">session_user_name</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">action_tstamp_clk</span><span class="p">,</span> <span class="n">client_query</span> 
- <span class="k">from</span> <span class="n">audit</span><span class="p">.</span><span class="n">logged_actions</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/26.png" alt="26" /></p>
-
-    <p>Como podemos observar en la imagen, podemos ver el usuario, la acción que ha realizado (<strong>I</strong>nsert, <strong>U</strong>pdate, <strong>D</strong>elete), la tabla en la que ha realizado la acción, la fecha y hora en la que ha realizado la acción y el query que ha ejecutado.</p>
-
-    <p><img src="/assets/images/banners/mysql.png" alt="mysql" /></p>
-  </li>
-</ol>
-
-<h3 id="ejercicio-8">Ejercicio 8</h3>
-
-<p><strong>Averigua si en MySQL se pueden realizar los apartados 1, 3 y 4. Si es así, documenta el proceso adecuadamente.</strong></p>
-
-<p>Para auditar en MySQL, vamos a necesitar dos bases de datos. Para hacer la aditoría vamos a recurrir de un plugin <code class="language-plaintext highlighter-rouge">server_audit</code> que nos permite auditar las acciones que se realizan en el servidor de MySQL.</p>
-
-<p>Para instalar el plugin, deberemos ejecutar <code class="language-plaintext highlighter-rouge">INSTALL SONAME 'server_audit';</code> conectados en la base de datos.</p>
-
-<p><img src="/assets/images/asgdb/auditoria/27.png" alt="27" /></p>
-
-<ul>
-  <li>
-    <p>Ejercicio 1: Auditoría de accesos exitosos. (<strong>EXTRA</strong> Auditoría de accesos fallidos.)</p>
-
-    <p>Tras la instalación del plugin, vamos a necesitar modificar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c">#Descomentamos las siguientes lineas</span>
-  general_log_file       <span class="o">=</span> /var/log/mysql/mysql.log
-  general_log            <span class="o">=</span> 1
-  <span class="c">#Y añadimos la siguiente linea</span>
-  log_error              <span class="o">=</span> /var/log/mysql/error.log
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/28.png" alt="28" /></p>
-
-    <p>Antes de reiniciar el servicio, vamos a cambiar el propietario del fichero de log de MySQL, para que el usuario <code class="language-plaintext highlighter-rouge">mysql</code> pueda escribir en el fichero.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo chown </span>mysql: /var/log/mysql/
-  systemctl restart mysql
-  systemctl restart mariadb
-</code></pre></div>    </div>
-
-    <p>Una vez reiniciado el servicio, vamos a comprobar que se ha realizado la auditoría correctamente. Para ello, intentaremos hacer accesos fallidos y accesos exitosos, para controlar que funciona correctamente.</p>
-
-    <p><img src="/assets/images/asgdb/auditoria/29.png" alt="29" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/30.png" alt="30" /></p>
-  </li>
-  <li>
-    <p>Ejercicio 3: Auditoría de DML.</p>
-
-    <p>El siguiente paso es editar el fichero de configuración de MySQL, que se encuentra en la ruta <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code>.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nano /etc/mysql/mysql.conf.d/mysqld.cnf
-</code></pre></div>    </div>
-
-    <p>Una vez dentro del fichero de configuración, vamos a buscar la siguiente línea:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">server_audit_events</span><span class="o">=</span>CONNECT,QUERY,TABLE
-  <span class="nv">server_audit_logging</span><span class="o">=</span>ON
-  <span class="nv">server_audit_incl_users</span><span class="o">=</span>scott
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/31.png" alt="31" /></p>
-
-    <p>Una vez modificado el fichero de configuración, vamos a reiniciar el servicio de MySQL.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>service mysql restart
-</code></pre></div>    </div>
-
-    <p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="s1">'COMPRAS'</span><span class="p">,</span> <span class="s1">'BARCELONA'</span><span class="p">);</span>
-  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="s1">'CONTABILIDAD'</span><span class="p">,</span> <span class="s1">'SEVILLA'</span><span class="p">);</span>
-  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">dept</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">70</span><span class="p">,</span> <span class="s1">'VENTAS'</span><span class="p">,</span> <span class="s1">'MADRID'</span><span class="p">);</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/32.png" alt="32" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/33.png" alt="33" /></p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">50</span><span class="p">;</span>
-  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">60</span><span class="p">;</span>
-  <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">dept</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">70</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/34.png" alt="34" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/35.png" alt="35" /></p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'BARCELONA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'SEVILLA'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
-  <span class="k">UPDATE</span> <span class="n">dept</span> <span class="k">SET</span> <span class="n">loc</span> <span class="o">=</span> <span class="s1">'MADRID'</span> <span class="k">WHERE</span> <span class="n">deptno</span> <span class="o">=</span> <span class="mi">30</span><span class="p">;</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/36.png" alt="36" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/37.png" alt="37" /></p>
-  </li>
-  <li>
-    <p>Ejercicio 4: Sueldo superior a 2000.</p>
-
-    <p>Ahora vamos a auditar la tabla <code class="language-plaintext highlighter-rouge">emp</code> para que se nos muestre cuando se realice una inserción o actualización del sueldo de un empleado cuando este sea superior a 2000.</p>
-
-    <p>Nos conectamos con el usuario que queremos auditar, en este caso, el usuario <code class="language-plaintext highlighter-rouge">scott</code> y vamos a realizar las operaciones que queremos auditar.</p>
-
-    <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="s1">'JOSH'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-  <span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">emp</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">7987</span><span class="p">,</span> <span class="s1">'MERY'</span><span class="p">,</span> <span class="s1">'CLERK'</span><span class="p">,</span> <span class="mi">7902</span><span class="p">,</span> <span class="s1">'1980-12-17'</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="k">NULL</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/38.png" alt="38" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/39.png" alt="39" /></p>
-  </li>
-</ul>
-
-<p><img src="/assets/images/banners/mongo.png" alt="mongo" /></p>
-
-<h3 id="ejercicio-9">Ejercicio 9</h3>
-
-<p><strong>Averigua las posibilidades que ofrece MongoDB para auditar los cambios que va sufriendo un documento. Demuestra su funcionamiento.</strong></p>
-
-<p>MongoDB Enterprise incluye una capacidad de auditoría para instancias mongod y mongos. La función de auditoría permite a los administradores y usuarios realizar un seguimiento de la actividad del sistema para implementaciones con múltiples usuarios y aplicaciones.</p>
-
-<ul>
-  <li>
-    <p>Instalación de MongoDB Enterprise en Debian 11</p>
-
-    <ul>
-      <li>
-        <p>Importar la clave pública utilizada por el sistema de gestión de paquetes.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  wget <span class="nt">-qO</span> - https://www.mongodb.org/static/pgp/server-6.0.asc | <span class="nb">sudo </span>apt-key add -
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Cree un archivo /etc/apt/sources.list.d/mongodb-enterprise.list para MongoDB.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">echo</span> <span class="s2">"deb http://repo.mongodb.com/apt/debian bullseye/mongodb-enterprise/6.0 main"</span> | <span class="nb">sudo tee</span> /etc/apt/sources.list.d/mongodb-enterprise.list
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Vuelva a cargar la base de datos del paquete local.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt-get update
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Instale la última versión estable de MongoDB Enterprise.</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> mongodb-enterprise
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Habilitar y configurar la salida de auditoría.</p>
-
-    <p>La instalación de auditoría puede escribir eventos de auditoría en la consola, el syslog, un archivo JSON o un archivo BSON. Para habilitar la auditoría en MongoDB Enterprise, establezca un destino de salida de auditoría con <code class="language-plaintext highlighter-rouge">--auditDestination</code>.</p>
-  </li>
-  <li>
-    <p>Configuración de auditoría</p>
-
-    <p>MongoDB Enterprise admite la auditoría de varias operaciones. Una solución de auditoría completa debe incluir todos los procesos del servidor <code class="language-plaintext highlighter-rouge">mongod</code> y los procesos <code class="language-plaintext highlighter-rouge">mongos</code> en el cluster.</p>
-
-    <p>La función de auditoría puede escribir eventos de auditoría en la consola, el syslog (la opción no está disponible en Windows), un archivo JSON o un archivo BSON.</p>
-  </li>
-  <li>
-    <p>Habilitar y configurar la salida de auditoría</p>
-
-    <p>Para habilitar la auditoría en MongoDB Enterprise, establezca un destino de salida de auditoría con <code class="language-plaintext highlighter-rouge">--auditDestination</code>.</p>
-
-    <ul>
-      <li>
-        <p>Salida a Syslog</p>
-
-        <p>Para habilitar la auditoría e imprimir eventos de auditoría en el syslog (la opción no está disponible en Windows) en formato JSON, especifique syslog para la configuración –auditDestination. Por ejemplo:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> /data/db <span class="nt">--auditDestination</span> syslog
-</code></pre></div>        </div>
-
-        <p>También podemos incluir opciones según nuestras necesidades. Por ejemplo, si deseamos que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts, lo especificaremos con la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code>.</p>
-
-        <p>También puede especificar estas opciones en el archivo de configuración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
-     dbPath: data/db
-  auditLog:
-     destination: syslog
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Salida a la consola</p>
-
-        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en la salida estándar (es decir, stdout), especifique la consola para la configuración –auditDestination</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> /data/db <span class="nt">--auditDestination</span> console
-</code></pre></div>        </div>
-
-        <p>A lo igual que en la salida a syslog, podemos especificarle la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code> para que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts.</p>
-
-        <p>También puede especificar estas opciones en el archivo de configuración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
-     dbPath: data/db
-  auditLog:
-     destination: console
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Salida a un archivo JSON</p>
-
-        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en un archivo JSON, especifique el archivo para la configuración –auditDestination. Por ejemplo:</p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Opción</th>
-              <th>Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>–auditDestination</td>
-              <td>file</td>
-            </tr>
-            <tr>
-              <td>–auditFormat</td>
-              <td>JSON</td>
-            </tr>
-            <tr>
-              <td>–auditPath</td>
-              <td>El fichero de salida. Acepta el nombre de ruta completo o el nombre de ruta relativo.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>Por ejemplo, lo siguiente habilita la auditoría y registra los eventos de auditoría en un archivo con el nombre de ruta relativa <code class="language-plaintext highlighter-rouge">data/db/auditLog.json</code>:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> data/db <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> JSON <span class="nt">--auditPath</span> data/db/auditLog.json
-</code></pre></div>        </div>
-
-        <p>El archivo de auditoría se puede rotar con el comando <code class="language-plaintext highlighter-rouge">logRotate</code>, ya sea junto con el registro del servidor o de forma independiente. Los detalles de la rotación se pueden configurar con la opción de archivo de configuración <code class="language-plaintext highlighter-rouge">systemLog.logRotate</code> o la opción de línea de comandos <code class="language-plaintext highlighter-rouge">--logRotate</code>.</p>
-
-        <p>También puede especificar estas opciones en el archivo de configuración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
-     dbPath: data/db
-  auditLog:
-     destination: file
-     format: JSON
-     path: data/db/auditLog.json
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>Salida a un archivo BSON</p>
-
-        <p>Para habilitar la auditoría e imprimir los eventos de auditoría en un archivo BSON, especifique el archivo para la configuración –auditDestination. Por ejemplo:</p>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Opción</th>
-              <th>Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>–auditDestination</td>
-              <td>file</td>
-            </tr>
-            <tr>
-              <td>–auditFormat</td>
-              <td>BSON</td>
-            </tr>
-            <tr>
-              <td>–auditPath</td>
-              <td>El fichero de salida. Acepta el nombre de ruta completo o el nombre de ruta relativo.</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <p>Por ejemplo, lo siguiente habilita la auditoría y registra los eventos de auditoría en un archivo con el nombre de ruta relativa <code class="language-plaintext highlighter-rouge">data/db/auditLog.bson</code>:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongod <span class="nt">--dbpath</span> data/db <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> BSON <span class="nt">--auditPath</span> data/db/auditLog.bson
-</code></pre></div>        </div>
-
-        <p>A lo igual que en los anteriores casos, podemos especificarle la opción <code class="language-plaintext highlighter-rouge">--bind_ip</code> para que los clientes remotos se conecten a su implementación o si los miembros de su implementación se ejecutan en diferentes hosts.</p>
-
-        <p>El archivo de auditoría se puede rotar con el comando <code class="language-plaintext highlighter-rouge">logRotate</code>, ya sea junto con el registro del servidor o de forma independiente. Los detalles de la rotación se pueden configurar con la opción de archivo de configuración <code class="language-plaintext highlighter-rouge">systemLog.logRotate</code> o la opción de línea de comandos <code class="language-plaintext highlighter-rouge">--logRotate</code>.</p>
-
-        <p>También puede especificar estas opciones en el archivo de configuración:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  storage:
-     dbPath: data/db
-  auditLog:
-     destination: file
-     format: BSON
-     path: data/db/auditLog.bson
-</code></pre></div>        </div>
-
-        <p>El siguiente ejemplo convierte el registro de auditoría en un formato legible mediante bsondump y genera el resultado:</p>
-
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  bsondump <span class="nt">--file</span> auditLog.bson
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<p>En mi caso, de las opciones anteriores, he decidido utilizar la salida a un archivo JSON. Para ello, hemos ejecutado el siguiente comando en nuestra consola:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mongod <span class="nt">--dbpath</span> /var/lib/mongodb/ <span class="nt">--auditDestination</span> file <span class="nt">--auditFormat</span> JSON <span class="nt">--auditPath</span> /var/lib/mongodb/auditLog.json
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/40.png" alt="40" /></p>
-
-<p>Una vez configurado, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>. Pero para leer el fichero, necesitamos un programa que nos permita leerlo. En mi caso, he utilizado el programa <code class="language-plaintext highlighter-rouge">jq</code> que nos permite leer ficheros JSON de forma sencilla.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>jq
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/41.png" alt="41" /></p>
-
-<p>Una vez instalado, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /var/lib/mongodb/auditLog.json | jq
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/42.png" alt="42" /></p>
-
-<p>Para darle un poco de movimiento a la auditoría, vamos a crear una base de datos y una colección. Para ello, vamos a utilizar el cliente de MongoDB que hemos instalado en el servidor.</p>
-
-<ul>
-  <li>
-    <p>Creamos el usuario:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongosh 
-  use admin
-  db.createUser<span class="o">({</span>user: <span class="s1">'admin'</span>, <span class="nb">pwd</span>: <span class="s1">'admin'</span>, roles: <span class="o">[{</span>role: <span class="s1">'userAdminAnyDatabase'</span>, db: <span class="s1">'admin'</span><span class="o">}</span>, <span class="o">{</span>role: <span class="s1">'readWriteAnyDatabase'</span>, db: <span class="s1">'admin'</span><span class="o">}]})</span> 
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/43.png" alt="43" /></p>
-  </li>
-  <li>
-    <p>Creamos la colección</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  mongosh <span class="nt">-u</span> admin <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
-  use auditoria
-  db.createCollection<span class="o">(</span><span class="s2">"Alumnos"</span><span class="o">)</span>
-  db.createCollection<span class="o">(</span><span class="s2">"Profesores"</span><span class="o">)</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/44.png" alt="44" /></p>
-  </li>
-  <li>
-    <p>Creamos inserciones</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.insertOne<span class="o">({</span>nombre: <span class="s2">"Juan"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 20<span class="o">})</span>
-  db.Alumnos.insertOne<span class="o">({</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"García"</span>, edad: 21<span class="o">})</span>
-  db.Alumnos.insertMany<span class="o">([{</span>nombre: <span class="s2">"Pedro"</span>, apellidos: <span class="s2">"González"</span>, edad: 22<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 23<span class="o">}])</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/45.png" alt="45" /></p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Profesores.insertOne<span class="o">({</span>nombre: <span class="s2">"Luis"</span>, apellidos: <span class="s2">"García"</span>, edad: 40<span class="o">})</span>
-  db.Profesores.insertOne<span class="o">({</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"González"</span>, edad: 41<span class="o">})</span>
-  db.Profesores.insertMany<span class="o">([{</span>nombre: <span class="s2">"Antonio"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 42<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 43<span class="o">}])</span>
-  db.Profesores.insertMany<span class="o">([{</span>nombre: <span class="s2">"Luis"</span>, apellidos: <span class="s2">"García"</span>, edad: 40<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"María"</span>, apellidos: <span class="s2">"González"</span>, edad: 41<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Antonio"</span>, apellidos: <span class="s2">"Martínez"</span>, edad: 42<span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Ana"</span>, apellidos: <span class="s2">"Pérez"</span>, edad: 43<span class="o">}])</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/46.png" alt="46" /></p>
-  </li>
-  <li>
-    <p>Creamos un rol</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.createRole<span class="o">({</span> role: <span class="s2">"director"</span>,privileges: <span class="o">[{</span> resource: <span class="o">{</span> db: <span class="s2">"auditoria"</span>, collection: <span class="s2">""</span> <span class="o">}</span>, actions: <span class="o">[</span> <span class="s2">"find"</span>, <span class="s2">"insert"</span>, <span class="s2">"update"</span>, <span class="s2">"remove"</span> <span class="o">]</span> <span class="o">}]</span>, roles: <span class="o">[]</span> <span class="o">})</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/47.png" alt="47" /></p>
-
-    <p>Y se lo asignamos a un nuevo usuario:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.createUser<span class="o">({</span>user: <span class="s1">'director'</span>, <span class="nb">pwd</span>: <span class="s1">'director'</span>, roles: <span class="o">[{</span>role: <span class="s1">'director'</span>, db: <span class="s1">'auditoria'</span><span class="o">}]})</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/48.png" alt="48" /></p>
-  </li>
-</ul>
-
-<p>Para añadir más contenido a nuestra auditoría, vamos a realizar búsquedas con el usuario <code class="language-plaintext highlighter-rouge">director</code> que hemos creado.</p>
-
-<ul>
-  <li>
-    <p>Buscamos todos los alumnos</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.find<span class="o">()</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/49.png" alt="49" /></p>
-  </li>
-  <li>
-    <p>Buscamos todos los profesores</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Profesores.find<span class="o">()</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/50.png" alt="50" /></p>
-  </li>
-  <li>
-    <p>Buscamos a los alumnos que se llamen Ana</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  db.Alumnos.find<span class="o">({</span>nombre: <span class="s2">"Ana"</span><span class="o">})</span>
-</code></pre></div>    </div>
-
-    <p><img src="/assets/images/asgdb/auditoria/51.png" alt="51" /></p>
-  </li>
-</ul>
-
-<p>Ahora, vamos a comprobar que la auditoría funciona de forma correcta mirando los logs que se han generado de MongoDB en el fichero <code class="language-plaintext highlighter-rouge">auditLog.json</code>.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /var/lib/mongodb/auditLog.json | jq
-</code></pre></div></div>
-
-<ul>
-  <li>
-    <p>Creación de la colección y su correspondiente índice.</p>
-
-    <p><img src="/assets/images/asgdb/auditoria/52.png" alt="52" /></p>
-  </li>
-  <li>
-    <p>Creación del rol y del usuario.</p>
-
-    <p><img src="/assets/images/asgdb/auditoria/53.png" alt="53" /></p>
-
-    <p><img src="/assets/images/asgdb/auditoria/54.png" alt="54" /></p>
-  </li>
-  <li>
-    <p>Login con el nuevo usuario</p>
-
-    <p><img src="/assets/images/asgdb/auditoria/55.png" alt="55" /></p>
-  </li>
-  <li>
-    <p>Desconexion del usuario</p>
-
-    <p><img src="/assets/images/asgdb/auditoria/56.png" alt="56" /></p>
-  </li>
-</ul>
-
-<h3 id="ejercicio-10">Ejercicio 10</h3>
-
-<p><strong>Averigua si en MongoDB se pueden auditar los accesos a una colección concreta. Demuestra su funcionamiento.</strong></p>
-
-<p>En MongDB, podemos auditar los accesos a una colección concreta mediante la ejecución del siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.setLogLevel<span class="o">(</span>level, component<span class="o">)</span>
-</code></pre></div></div>
-
-<p>Con él, podemos ver los accesos a la colección que se esté utilizando en ese momento. Para ello, vamos a crear una base de datos, una coleccion y utilizaremos nuevo usuario administrador para realizar las operaciones.</p>
-
-<p>Con esto, se establece un único nivel de detalle para los mensajes de registro.</p>
-
-<p>db.setLogLevel() toma los siguientes parámetros:</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Parámetro</th>
-      <th>Tipo</th>
-      <th>Descripción</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>level</td>
-      <td>Número entero</td>
-      <td>El nivel de detalle de los mensajes de registro. Los valores posibles son: **0** (ninguno), **1** (errores), **2** (errores y advertencias), **3** (errores, advertencias y mensajes informativos), **4** (errores, advertencias, mensajes informativos y mensajes de depuración).</td>
-    </tr>
-    <tr>
-      <td>component</td>
-      <td>Cadena</td>
-      <td>El componente para el que se establece el nivel de detalle. Los valores posibles son: "accessControl", "command", "index", "query", "replication", "sharding", "storage", "write", "audit", "cluster", "control", "ftdc", "geo", "network", "query", "repl", "security", "sharding", "storage", "write".</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>En cuanto a su comportamiento, establece un único nivel de verbosidad. Para establecer varios niveles de detalle en una sola operación, tendremos que utilizar el comando <code class="language-plaintext highlighter-rouge">setParameter</code> para establecer el parámetro <code class="language-plaintext highlighter-rouge">logComponentVerbosity</code>. También puede especificar la configuración de verbosidad en el archivo de configuración.</p>
-
-<p>Para llevar a cabo el ejercicio, vamos a ejecutar el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.setLogLevel<span class="o">(</span>3, <span class="s2">"accessControl"</span><span class="o">)</span>
-</code></pre></div></div>
-
-<p>Pero, ¿qué significa esto? Pues que se establece un nivel de detalle (verbosidad) de 3 para el componente <code class="language-plaintext highlighter-rouge">accessControl</code>. Esto quiere decir que se mostrarán los mensajes de error, advertencia e información.</p>
-
-<p>Vamos a loguearnos con el usuario <code class="language-plaintext highlighter-rouge">admin</code> que hemos creado anteriormente y vamos crear un nuevo usuario administrador.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Accedemos a la consola de mongo</span>
-mongo <span class="nt">-u</span> admin <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
-<span class="c"># Accedemos a la base de datos</span>
-use audit
-<span class="c"># Creamos un nuevo usuario administrador</span>
-db.createUser <span class="o">({</span>user: <span class="s1">'asir'</span>, <span class="nb">pwd</span>: <span class="s1">'admin'</span>, roles: <span class="o">[{</span>role: <span class="s1">'root'</span>, db: <span class="s1">'admin'</span><span class="o">}]})</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/57.png" alt="57" /></p>
-
-<p>Ahora nos conectaremos con el nuevo usuario que hemos creado.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mongosh <span class="nt">-u</span> asir <span class="nt">-p</span> admin <span class="nt">--authenticationDatabase</span> admin
-</code></pre></div></div>
-
-<p>Y creamos una dos colecciones, <code class="language-plaintext highlighter-rouge">1curso</code> y <code class="language-plaintext highlighter-rouge">2curso</code> e insertaremos las siguientes asignaturas:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>use asir
-db.createCollection<span class="o">(</span><span class="s2">"Primero"</span><span class="o">)</span>
-db.createCollection<span class="o">(</span><span class="s2">"Segundo"</span><span class="o">)</span>
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>db.Primero.insertMany<span class="o">([{</span>nombre: <span class="s2">"Sistemas Operativos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Lenguajes de Marcas"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Redes"</span>, horas: <span class="s2">"5"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Bases de Datos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Formación y Orientación Laboral"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Fundamento de hardware"</span>, horas: <span class="s2">"4"</span><span class="o">}])</span>
-
-db.Segundo.insertMany<span class="o">([{</span>nombre: <span class="s2">"Implantación de Aplicaciones Web"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Cloud Computing"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Seguridad Informática"</span>, horas: <span class="s2">"3"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Empresa e Iniciativa Emprendedora"</span>, horas: <span class="s2">"4"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Administración de Sistemas Operativos"</span>, horas: <span class="s2">"6"</span><span class="o">}</span>, <span class="o">{</span>nombre: <span class="s2">"Administración de Sistemas Gestores de Bases de Datos"</span>, horas: <span class="s2">"3"</span><span class="o">}])</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/asgdb/auditoria/58.png" alt="58" /></p>
-
-<p><img src="/assets/images/asgdb/auditoria/59.png" alt="59" /></p>
-
-<p>Ejecutamos el comando <code class="language-plaintext highlighter-rouge">db.setLogLevel(3, "accessControl")</code> para ver los accesos a la colección que se esté utilizando en ese momento.</p>
-
-<p><img src="/assets/images/asgdb/auditoria/60.png" alt="60" /></p>
-
-<p>Para la comprobación de su funcionamiento, he realizado 1 login corecto y otro incorrecto.</p>
-
-<p><img src="/assets/images/asgdb/auditoria/61.png" alt="61" /></p>
-
-<p>Y como podemos comprobar en la siguiente imagen:</p>
-
-<p><img src="/assets/images/asgdb/auditoria/62.png" alt="62" /></p>
-
-<p>…podemos ver que se ha registrado el acceso correcto y el incorrecto.</p>]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[¿Qué es una auditoría en bases de datos?]]></summary></entry><entry><title type="html">Movimiento de Datos</title><link href="/asgdb/2023/02/07/movimientos.html" rel="alternate" type="text/html" title="Movimiento de Datos" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/asgdb/2023/02/07/movimientos</id><content type="html" xml:base="/asgdb/2023/02/07/movimientos.html"><![CDATA[]]></content><author><name></name></author><category term="ASGDB" /><summary type="html"><![CDATA[]]></summary></entry></feed>
+<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
