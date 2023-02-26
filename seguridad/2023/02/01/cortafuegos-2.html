@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 17 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 23 mins</span>
   </p></header>
 </div>
     </div>
@@ -699,23 +699,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Vamos a utilizar dos máquinas en openstack, que vamos a crear con la receta heat: <a href="https://fp.josedomingo.org/seguridadgs/u03/escenario2.yaml">escenario2.yaml</a>. La receta heat ha deshabilitado el cortafuego que nos ofrece openstack (todos los puertos de todos los protocolos están abiertos). Una máquina (que tiene asignada una IP flotante) hará de cortafuegos, y la otra será una máquina de la red interna 192.168.100.0/24.</p>
 
-<h2 id="preparación-del-escenario">Preparación del escenario</h2>
-
-<p>Limpiamos las reglas de iptables y nftables</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-F</span>
-iptables <span class="nt">-t</span> nat <span class="nt">-F</span>
-iptables <span class="nt">-Z</span>
-iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/iptables/ej2/1.png" alt="1"></p>
-
 <h2 id="configuración-de-las-rutas-por-defecto">Configuración de las rutas por defecto</h2>
 
 <h3 id="lan">LAN</h3>
 
-<p>Configuramos la ruta por defecto de la LAN. Para ello, nos conectarmos a la máquina <code class="language-plaintext highlighter-rouge">lan</code>:</p>
+<p>Configuramos la ruta por defecto de la LAN. Su fin es que la ruta por defecto de la LAN sea la del cortafuegos. Para ello, nos conectamos a la máquina <code class="language-plaintext highlighter-rouge">lan</code>:</p>
 
 <p><img src="/assets/images/iptables/ej2/1.png" alt="1"></p>
 
@@ -727,6 +715,10 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="creamos-las-tablas-filter-y-nat">Creamos las tablas filter y nat</h3>
 
+<p>En NFTables las reglas se agrupan en tablas. Estas tablas contienen las cadenas, que a su vez, contienen las reglas. Las tablas se pueden crear con el comando <code class="language-plaintext highlighter-rouge">nft add table</code>. Las cadenas se pueden crear con el comando <code class="language-plaintext highlighter-rouge">nft add chain</code>. Las reglas se pueden crear con el comando <code class="language-plaintext highlighter-rouge">nft add rule</code>.</p>
+
+<p>En nuestro caso, vamos a crear las tablas <code class="language-plaintext highlighter-rouge">filter</code> y <code class="language-plaintext highlighter-rouge">nat</code>, y de esta manera, quedarían las reglas ordenadas según el esquema de red que hemos definido:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add table inet filter
 <span class="nb">sudo </span>nft add table inet nat
 </code></pre></div></div>
@@ -734,6 +726,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/3.png" alt="3"></p>
 
 <h3 id="creamos-las-cadenas-de-la-tabla-filter">Creamos las cadenas de la tabla filter</h3>
+
+<p>Las primeras cadenas que vamos a crear son las de la tabla <code class="language-plaintext highlighter-rouge">filter</code>. Estas cadenas son las que se encargan de filtrar el tráfico de entrada, salida y de redirección. En este caso, vamos a crear las cadenas <code class="language-plaintext highlighter-rouge">input</code>, <code class="language-plaintext highlighter-rouge">output</code> y <code class="language-plaintext highlighter-rouge">forward</code>:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add chain inet filter input <span class="o">{</span> <span class="nb">type </span>filter hook input priority 0 <span class="se">\;</span> counter <span class="se">\;</span> policy accept <span class="se">\;</span> <span class="o">}</span>
 <span class="nb">sudo </span>nft add chain inet filter output <span class="o">{</span> <span class="nb">type </span>filter hook output priority 0 <span class="se">\;</span> counter <span class="se">\;</span> policy accept <span class="se">\;</span> <span class="o">}</span>
@@ -744,6 +738,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="creamos-las-cadenas-de-la-tabla-nat">Creamos las cadenas de la tabla nat</h3>
 
+<p>Las cadenas que vamos a crear son las de la tabla <code class="language-plaintext highlighter-rouge">nat</code>. Estas cadenas son las que se encargan de hacer el SNAT y el DNAT. En este caso, vamos a crear las cadenas <code class="language-plaintext highlighter-rouge">prerouting</code> y <code class="language-plaintext highlighter-rouge">postrouting</code>:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add chain inet nat prerouting <span class="o">{</span> <span class="nb">type </span>nat hook prerouting priority 0 <span class="se">\;</span> <span class="o">}</span>
 <span class="nb">sudo </span>nft add chain inet nat postrouting <span class="o">{</span> <span class="nb">type </span>nat hook postrouting priority 100 <span class="se">\;</span> <span class="o">}</span>
 </code></pre></div></div>
@@ -752,13 +748,19 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="tráfico-ssh-de-entrada-al-cortafuegos">Tráfico ssh de entrada al cortafuegos</h3>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter input ip saddr 172.29.0.0/16 tcp dport 22 ct state new,established counter accept
+<p>Para permitir el tráfico ssh de entrada al cortafuegos, es necesario crear las reglas que nos permitan dicha conexión, a través de las cadenas <code class="language-plaintext highlighter-rouge">input</code> y <code class="language-plaintext highlighter-rouge">output</code> por el puerto 22 de las redes del instituto. Para ello, vamos a crear las siguientes reglas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter input ip saddr 172.22.0.0/16 tcp dport 22 ct state new,established counter accept
+<span class="nb">sudo </span>nft add rule inet filter output ip daddr 172.22.0.0/16 tcp sport 22 ct state established counter accept
+<span class="nb">sudo </span>nft add rule inet filter input ip saddr 172.29.0.0/16 tcp dport 22 ct state new,established counter accept
 <span class="nb">sudo </span>nft add rule inet filter output ip daddr 172.29.0.0/16 tcp sport 22 ct state established counter accept
 </code></pre></div></div>
 
 <p><img src="/assets/images/iptables/ej2/6.png" alt="6"></p>
 
 <h3 id="política-por-defecto-de-la-tabla-filter">Política por defecto de la tabla filter</h3>
+
+<p>La política por defecto de la tabla <code class="language-plaintext highlighter-rouge">filter</code> es <code class="language-plaintext highlighter-rouge">accept</code>. Las vamos a cambiar a <code class="language-plaintext highlighter-rouge">drop</code> debido a que no queremos que se permita ningún tráfico que no esté especificado en las reglas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft chain inet filter input <span class="o">{</span> policy drop <span class="se">\;</span> <span class="o">}</span>
 <span class="nb">sudo </span>nft chain inet filter output <span class="o">{</span> policy drop <span class="se">\;</span> <span class="o">}</span>
@@ -777,6 +779,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="activamos-el-bit-de-forward">Activamos el bit de forward</h3>
 
+<p>Para que el cortafuegos pueda hacer el forward de paquetes, es necesario activar el bit de forward. Para ello, vamos a activar el bit de forward con el siguiente comando:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo </span>1 | <span class="nb">sudo tee</span> /proc/sys/net/ipv4/ip_forward
 </code></pre></div></div>
 
@@ -784,12 +788,16 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="snat">SNAT</h3>
 
+<p>Crearemos la regla SNAT con la que el cortafuegos va a hacer el SNAT de los paquetes que salgan por la interfaz <code class="language-plaintext highlighter-rouge">ens3</code> hacia la LAN. Para ello, vamos a crear la siguiente regla:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet nat postrouting oifname <span class="s2">"ens3"</span> ip saddr 192.168.100.0/24 counter masquerade
 </code></pre></div></div>
 
 <p><img src="/assets/images/iptables/ej2/11.png" alt="11"></p>
 
 <h3 id="tráfico-ssh-de-salida-al-cortafuegos-hacia-la-lan">Tráfico ssh de salida al cortafuegos hacia la LAN</h3>
+
+<p>El tráfico ssh de salida al cortafuegos hacia la LAN, es necesario crear las reglas que nos permitan dicha conexión, a través de las cadenas <code class="language-plaintext highlighter-rouge">input</code> y <code class="language-plaintext highlighter-rouge">output</code> por el puerto 22 de la LAN. Para ello, vamos a crear las siguientes reglas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter output oifname <span class="s2">"ens4"</span> ip daddr 192.168.100.0/24 tcp dport 22 ct state new,established counter accept
 <span class="nb">sudo </span>nft add rule inet filter input iifname <span class="s2">"ens4"</span> ip saddr 192.168.100.0/24 tcp sport 22 ct state established counter accept
@@ -806,6 +814,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="tráfico-loopback">Tráfico loopback</h3>
 
+<p>El tráfico loopback es aquel que se genera dentro de la misma máquina. Para permitir el tráfico loopback, es necesario crear las reglas que nos permitan dicha conexión, a través de las cadenas <code class="language-plaintext highlighter-rouge">input</code> y <code class="language-plaintext highlighter-rouge">output</code>. Para ello, vamos a crear las siguientes reglas:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter output oifname <span class="s2">"lo"</span> counter accept
 <span class="nb">sudo </span>nft add rule inet filter input iifname <span class="s2">"lo"</span> counter accept
 </code></pre></div></div>
@@ -820,6 +830,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="permitimos-el-tráfico-icmp-de-entrada">Permitimos el tráfico ICMP de entrada</h3>
 
+<p>Vamos a configurar también el permiso de tráfico ICMP de entrada. Este tráfico ICMP es el que se genera cuando hacemos ping a una máquina o cuando hacemos traceroute. Para permitir el tráfico ICMP de entrada, es necesario crear las reglas que nos permitan dicha conexión, a través de las cadenas <code class="language-plaintext highlighter-rouge">input</code> y <code class="language-plaintext highlighter-rouge">output</code>. Para ello, vamos a crear las siguientes reglas:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter input iifname <span class="s2">"ens3"</span> icmp <span class="nb">type </span>echo-request counter accept
 <span class="nb">sudo </span>nft add rule inet filter output oifname <span class="s2">"ens3"</span> icmp <span class="nb">type </span>echo-reply counter accept
 </code></pre></div></div>
@@ -831,6 +843,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/17.png" alt="17"></p>
 
 <h3 id="permitimos-el-tráfico-icmp-de-salida-hacia-la-lan">Permitimos el tráfico ICMP de salida hacia la LAN</h3>
+
+<p>Ahora le toca el turno al tráfico ICMP de salida hacia la LAN. Para permitir el tráfico ICMP de salida hacia la LAN, es necesario crear las reglas que nos permitan dicha conexión, a través de las cadenas <code class="language-plaintext highlighter-rouge">input</code> y <code class="language-plaintext highlighter-rouge">output</code>. Para ello, vamos a crear las siguientes reglas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter output oifname <span class="s2">"ens4"</span> icmp <span class="nb">type </span>echo-request counter accept
 <span class="nb">sudo </span>nft add rule inet filter input iifname <span class="s2">"ens4"</span> icmp <span class="nb">type </span>echo-reply counter accept
@@ -844,6 +858,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="forward-tráfico-icmp-de-salida-desde-lan-hacia-internet">FORWARD: tráfico ICMP de salida desde LAN hacia internet</h3>
 
+<p>Ahora vamos a permitir el tráfico ICMP de salida desde la LAN hacia internet. Para permitir el tráfico ICMP de salida desde la LAN hacia internet, es necesario crear las reglas que nos permitan dicha conexión, a través de la cadena <code class="language-plaintext highlighter-rouge">forward</code>. Para ello, vamos a crear las siguientes reglas:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens4"</span> oifname <span class="s2">"ens3"</span> ip saddr 192.168.100.0/24 icmp <span class="nb">type </span>echo-request counter accept
 <span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens3"</span> oifname <span class="s2">"ens4"</span> ip daddr 192.168.100.0/24 icmp <span class="nb">type </span>echo-reply counter accept
 </code></pre></div></div>
@@ -855,6 +871,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/21.png" alt="21"></p>
 
 <h3 id="forward-tráfico-dns-saliente-desde-lan">FORWARD: tráfico DNS saliente desde LAN</h3>
+
+<p>Vamos a permitir el tráfico DNS saliente desde la LAN. Para permitir el tráfico DNS saliente desde la LAN, es necesario crear las reglas que nos permitan dicha conexión, a través de la cadena <code class="language-plaintext highlighter-rouge">forward</code>. Para ello, vamos a crear las siguientes reglas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens4"</span> oifname <span class="s2">"ens3"</span> ip saddr 192.168.100.0/24 udp dport 53 ct state new,established counter accept
 <span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens3"</span> oifname <span class="s2">"ens4"</span> ip daddr 192.168.100.0/24 udp sport 53 ct state established counter accept
@@ -870,6 +888,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/23.png" alt="23"></p>
 
 <h3 id="forward-tráfico-httphttps-saliente-desde-lan">FORWARD: tráfico HTTP/HTTPS saliente desde LAN</h3>
+
+<p>Ahora vamos a permitir el tráfico HTTP/HTTPS saliente desde la LAN. Para permitir el tráfico HTTP/HTTPS saliente desde la LAN, es necesario crear las reglas que nos permitan dicha conexión, a través de la cadena <code class="language-plaintext highlighter-rouge">forward</code>. Para ello, vamos a crear las siguientes reglas:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens4"</span> oifname <span class="s2">"ens3"</span> ip protocol tcp ip saddr 192.168.100.0/24 tcp dport <span class="o">{</span> 80,443 <span class="o">}</span> ct state new,established counter accept
 <span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens3"</span> oifname <span class="s2">"ens4"</span> ip protocol tcp ip daddr 192.168.100.0/24 tcp sport <span class="o">{</span> 80,443 <span class="o">}</span> ct state established counter accept
@@ -893,6 +913,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 
 <h3 id="forward-tráfico-http-entrante-hacia-lan">FORWARD: tráfico HTTP entrante hacia LAN</h3>
 
+<p>Le toca el turno al tráfico HTTP entrante hacia la LAN. Para permitir el tráfico HTTP entrante hacia la LAN, es necesario crear las reglas que nos permitan dicha conexión, a través de la cadena <code class="language-plaintext highlighter-rouge">forward</code>. Para ello, vamos a crear las siguientes reglas:</p>
+
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens3"</span> oifname <span class="s2">"ens4"</span> ip daddr 192.168.100.0/24 tcp dport 80 ct state new,established counter accept
 <span class="nb">sudo </span>nft add rule inet filter forward iifname <span class="s2">"ens4"</span> oifname <span class="s2">"ens3"</span> ip saddr 192.168.100.0/24 tcp sport 80 ct state established counter accept
 </code></pre></div></div>
@@ -900,6 +922,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/27.png" alt="27"></p>
 
 <h3 id="aplicamos-una-regla-dnat">Aplicamos una regla DNAT</h3>
+
+<p>Ahora vamos a aplicar una regla DNAT para que cuando se acceda al puerto 80 de la máquina <code class="language-plaintext highlighter-rouge">router-fw</code>, se redirija al puerto 80 de la máquina <code class="language-plaintext highlighter-rouge">lan</code>:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nft add rule inet nat prerouting iifname <span class="s2">"ens3"</span> tcp dport 80 counter dnat ip to 192.168.100.10
 </code></pre></div></div>
@@ -918,6 +942,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <p><img src="/assets/images/iptables/ej2/30.png" alt="30"></p>
 
 <h3 id="hacer-persistente-las-reglas">Hacer persistente las reglas</h3>
+
+<p>Con todo lo anterior, ya tenemos las reglas necesarias para que la máquina <code class="language-plaintext highlighter-rouge">router-fw</code> funcione como cortafuegos. Ahora vamos a hacer persistente las reglas, para que se mantengan tras reiniciar la máquina. Para ello, vamos a guardar las reglas en un fichero de configuración y vamos a configurar el servicio <code class="language-plaintext highlighter-rouge">nftables</code> para que se inicie al arrancar el sistema:</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nft list ruleset <span class="o">&gt;</span> /etc/nftables.conf
 <span class="nb">sudo </span>systemctl <span class="nb">enable </span>nftables
@@ -1015,7 +1041,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
  Lo comprobamos conectándonos a nuestro host:
 
  ```bash
- ssh maria@192.168.15.32
+ ssh maria@172.29.0.62
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej2/41.png" alt="41"></p>
@@ -1051,7 +1077,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
     <p>Probamos que funciona conectándonos a nuestra máquina host:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> ssh maria@192.168.15.32
+<div class="highlight"><pre class="highlight"><code> ssh maria@172.29.0.62
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej2/45.png" alt="45"></p>
@@ -1070,7 +1096,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
     <p>Probamos que funciona correctamente desde mi máquina host:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> telnet 172.22.200.80 25
+<div class="highlight"><pre class="highlight"><code> telnet 172.22.200.224 25
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej2/47.png" alt="47"></p>
@@ -1106,7 +1132,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
     <p>Y comprobamos que funciona correctamente conectándonos a la máquina LAN:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> ssh debian@172.22.200.80
+<div class="highlight"><pre class="highlight"><code> ssh debian@172.22.200.224
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej2/51.png" alt="51"></p>
@@ -1123,7 +1149,7 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
     <p>Y comprobamos que funciona correctamente:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-p</span> 2222 debian@172.22.200.80
+<div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-p</span> 2222 debian@172.22.200.224
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej2/53.png" alt="53"></p>
@@ -1148,8 +1174,8 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
         <p>Eliminamos las reglas que nos permiten realizar las consultas DNS a cualquier servidor:</p>
 
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nft delete rule inet filter forward handle <span class="k">*</span>
-  <span class="nb">sudo </span>nft delete rule inet filter forward handle <span class="k">*</span>
+<div class="highlight"><pre class="highlight"><code>  <span class="nb">sudo </span>nft delete rule inet filter forward handle 42
+  <span class="nb">sudo </span>nft delete rule inet filter forward handle 43
 </code></pre></div>        </div>
 
         <p><img src="/assets/images/iptables/ej2/55.png" alt="55"></p>
@@ -1215,10 +1241,10 @@ iptables <span class="nt">-t</span> nat <span class="nt">-Z</span>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/aso/2023/02/07/LDAPs.html" title="Taller Kubernetes: Trabajando con Pods">Escenario - LDAPs</a></li>
-<li><a class="post-link" href="/seguridad/2022/10/10/payload.html" title="Taller Kubernetes: Trabajando con Pods">¿Qué diferencia hay entre exploit, vulnerabilidad y payload?</a></li>
-<li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-2.html" title="Taller Kubernetes: Trabajando con Pods">Cortafuegos II: Perimetral con nftables</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" title="Taller Kubernetes: Trabajando con Pods">Kubernetes: Instalación y configuración de minikube y kubectl</a></li>
+        <li><a class="post-link" href="/asgdb/2023/02/07/auditoria.html" title="Taller Kubernetes: Trabajando con Pods">Auditoría en bases de datos</a></li>
+<li><a class="post-link" href="/iaw/2023/01/12/docker-almacenamiento.html" title="Taller Kubernetes: Trabajando con Pods">Taller Docker - Almacenamiento y Redes</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Kubernetes: Trabajando con Pods">Acceso remoto con OpenVPN y certificados x509</a></li>
+<li><a class="post-link" href="/iaw/2023/02/19/jenkins1.html" title="Taller Kubernetes: Trabajando con Pods">Taller: Corrector ortográfico de documentos markdown (test)</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

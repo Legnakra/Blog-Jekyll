@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
   </p></header>
 </div>
     </div>
@@ -702,30 +702,100 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p>Vamos a crear un contenedor con debian, y vamos a usar el usuario root en la imagen.</p>
   </li>
   <li>
+    <p>Instalamos git y nano</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> FROM debian:latest
+ RUN apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> git nano
+ USER root
+</code></pre></div>    </div>
+  </li>
+  <li>
     <p>Clonamos el repositorio con el comando <code class="language-plaintext highlighter-rouge">git</code> en el stage <code class="language-plaintext highlighter-rouge">clone</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> pipeline <span class="o">{</span>
+ agent any
+ stages <span class="o">{</span>
+     stage<span class="o">(</span><span class="s1">'clone'</span><span class="o">)</span> <span class="o">{</span>
+         steps <span class="o">{</span>
+             sh <span class="s1">'git clone https://github.com/legnakra/ic-diccionario'</span>
+         <span class="o">}</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>En el stage Install actualizamos e instalamos la herramienta que vamos a utilizar. Podríamos partir de una imagen construida por nosotros donde tuviéramos ya esta herramienta instalada, y no haría falta este paso.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> stage<span class="o">(</span><span class="s1">'Install'</span><span class="o">)</span> <span class="o">{</span>
+     steps <span class="o">{</span>
+         sh <span class="s1">'apt-get update'</span>
+         sh <span class="s1">'apt-get install -y aspell aspell-es'</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>En el stage Test hacemos la comprobación, hemos configurado el contenedor para que use UTF8.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> stage<span class="o">(</span><span class="s1">'Test'</span><span class="o">)</span> <span class="o">{</span>
+     steps <span class="o">{</span>
+         sh <span class="s1">'export LANG=es_ES.UTF-8'</span>
+         sh <span class="s1">'aspell --lang=es --mode=tex check ic-diccionario/README.md'</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
 </ol>
+
+<h2 id="disparador-del-pipeline">Disparador del pipeline</h2>
+
+<p>Tenemos varias formas de activar de forma automática la ejecución del pipeline:</p>
+
+<p>En este ejercicio vamos a usar la opción Consultar repositorio (SCM). Esta opción no es exactamente cuando se hace un push en el repositorio, sino que se pone un programador cron indicando cada cuanto tiempo se mira el repositorio, si ha cambiado el repositorio se lanza el pipeline. Nosotros vamos a poner: * * * * *, miraremos el repositorio cada minuto:</p>
+
+<p>IMAGEN</p>
+
+<h2 id="notificaciones-del-pipeline">Notificaciones del pipeline</h2>
+
+<p>Vamos a aprender como podemos hacer que el pipeline mande un correo al finalizar. Para ello lo primero instala un servidor de correo de forma adecuada en la máquina que tiene Jenkins. Lo siguiente es configurar Jenkins en Administrar Jenkins -&gt; Configurar el sistema:</p>
+
+<p>IMAGEN</p>
+
+<p>Y al pileline le añadimos las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    stages <span class="o">{</span>
+    ...
+    <span class="o">}</span>
+    post <span class="o">{</span>
+         always <span class="o">{</span>
+          mail to: <span class="s1">'usuario@example.com'</span>,
+          subject: <span class="s2">"Status of pipeline: </span><span class="k">${</span><span class="nv">currentBuild</span><span class="p">.fullDisplayName</span><span class="k">}</span><span class="s2">"</span>,
+          body: <span class="s2">"</span><span class="k">${</span><span class="nv">env</span><span class="p">.BUILD_URL</span><span class="k">}</span><span class="s2"> has result </span><span class="k">${</span><span class="nv">currentBuild</span><span class="p">.result</span><span class="k">}</span><span class="s2">"</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
 
 
     </div>
 
 </article>
 <div class="post-nav">
-<a class="previous" href="/iaw/2023/02/17/jenkins-instalacion.html" title="Instalación de Jenkins en Debian 11">Instalación de Jenkins en Debian 11...</a><span></span>
+<a class="previous" href="/iaw/2023/02/17/jenkins-pipelines.html" title="Introducción a los Pipelines de Jenkins">Introducción a los Pipelines de Jenkins...</a><span></span>
 </div>
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2023/02/08/kubernetes-parametrizados.html" title="">Taller Kubernetes: Despliegues parametrizados</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="">Virtualización en Linux</a></li>
-<li><a class="post-link" href="/iaw/2023/02/09/docker-bookmedik.html" title="">Implantación de aplicaciones web PHP en docker</a></li>
-<li><a class="post-link" href="/iaw/2022/12/19/despliegue-python.html" title="">Despliegue de una aplicación Python</a></li>
+        <li><a class="post-link" href="/iaw/2023/02/17/jenkins-instalacion.html" title="">Instalación de Jenkins en Debian 11</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/12/12/talleres-dns.html" title="">Talleres DNS</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/02/05/kubernetes-ingress.html" title="">Taller Kubernetes: Trabajando con Services</a></li>
+<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="">Instalación y migración de una aplicación web PHP</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-24T09:40:14+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller: Corrector ortográfico de documentos markdown (test)</title><link href="/iaw/2023/02/19/jenkins1.html" rel="alternate" type="text/html" title="Taller: Corrector ortográfico de documentos markdown (test)" /><published>2023-02-19T16:45:16+01:00</published><updated>2023-02-19T16:45:16+01:00</updated><id>/iaw/2023/02/19/jenkins1</id><content type="html" xml:base="/iaw/2023/02/19/jenkins1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-02-26T11:46:14+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller: Corrector ortográfico de documentos markdown (test)</title><link href="/iaw/2023/02/19/jenkins1.html" rel="alternate" type="text/html" title="Taller: Corrector ortográfico de documentos markdown (test)" /><published>2023-02-19T16:45:16+01:00</published><updated>2023-02-19T16:45:16+01:00</updated><id>/iaw/2023/02/19/jenkins1</id><content type="html" xml:base="/iaw/2023/02/19/jenkins1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>maginemos que estamos escribiendo documentos markdown y lo guardamos en un repositorio de github. Queremos que cada vez que hagamos una modificación (commit - push) se pruebe (test) de forma automática si tienes alguna falta de ortografía. Ese proceso lo vamos a hacer de forma automática y continua con Jenkins. Recuerda que el repositorio es https://github.com/josedom24/ic-diccionario</p>
 
@@ -11,13 +11,149 @@
     <p>Vamos a crear un contenedor con debian, y vamos a usar el usuario root en la imagen.</p>
   </li>
   <li>
+    <p>Instalamos git y nano</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> FROM debian:latest
+ RUN apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> git nano
+ USER root
+</code></pre></div>    </div>
+  </li>
+  <li>
     <p>Clonamos el repositorio con el comando <code class="language-plaintext highlighter-rouge">git</code> en el stage <code class="language-plaintext highlighter-rouge">clone</code>.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> pipeline <span class="o">{</span>
+ agent any
+ stages <span class="o">{</span>
+     stage<span class="o">(</span><span class="s1">'clone'</span><span class="o">)</span> <span class="o">{</span>
+         steps <span class="o">{</span>
+             sh <span class="s1">'git clone https://github.com/legnakra/ic-diccionario'</span>
+         <span class="o">}</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>En el stage Install actualizamos e instalamos la herramienta que vamos a utilizar. Podríamos partir de una imagen construida por nosotros donde tuviéramos ya esta herramienta instalada, y no haría falta este paso.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> stage<span class="o">(</span><span class="s1">'Install'</span><span class="o">)</span> <span class="o">{</span>
+     steps <span class="o">{</span>
+         sh <span class="s1">'apt-get update'</span>
+         sh <span class="s1">'apt-get install -y aspell aspell-es'</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
   </li>
   <li>
     <p>En el stage Test hacemos la comprobación, hemos configurado el contenedor para que use UTF8.</p>
+
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> stage<span class="o">(</span><span class="s1">'Test'</span><span class="o">)</span> <span class="o">{</span>
+     steps <span class="o">{</span>
+         sh <span class="s1">'export LANG=es_ES.UTF-8'</span>
+         sh <span class="s1">'aspell --lang=es --mode=tex check ic-diccionario/README.md'</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="disparador-del-pipeline">Disparador del pipeline</h2>
+
+<p>Tenemos varias formas de activar de forma automática la ejecución del pipeline:</p>
+
+<p>En este ejercicio vamos a usar la opción Consultar repositorio (SCM). Esta opción no es exactamente cuando se hace un push en el repositorio, sino que se pone un programador cron indicando cada cuanto tiempo se mira el repositorio, si ha cambiado el repositorio se lanza el pipeline. Nosotros vamos a poner: * * * * *, miraremos el repositorio cada minuto:</p>
+
+<p>IMAGEN</p>
+
+<h2 id="notificaciones-del-pipeline">Notificaciones del pipeline</h2>
+
+<p>Vamos a aprender como podemos hacer que el pipeline mande un correo al finalizar. Para ello lo primero instala un servidor de correo de forma adecuada en la máquina que tiene Jenkins. Lo siguiente es configurar Jenkins en Administrar Jenkins -&gt; Configurar el sistema:</p>
+
+<p>IMAGEN</p>
+
+<p>Y al pileline le añadimos las siguientes líneas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    stages <span class="o">{</span>
+    ...
+    <span class="o">}</span>
+    post <span class="o">{</span>
+         always <span class="o">{</span>
+          mail to: <span class="s1">'usuario@example.com'</span>,
+          subject: <span class="s2">"Status of pipeline: </span><span class="k">${</span><span class="nv">currentBuild</span><span class="p">.fullDisplayName</span><span class="k">}</span><span class="s2">"</span>,
+          body: <span class="s2">"</span><span class="k">${</span><span class="nv">env</span><span class="p">.BUILD_URL</span><span class="k">}</span><span class="s2"> has result </span><span class="k">${</span><span class="nv">currentBuild</span><span class="p">.result</span><span class="k">}</span><span class="s2">"</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Introducción a los Pipelines de Jenkins</title><link href="/iaw/2023/02/17/jenkins-pipelines.html" rel="alternate" type="text/html" title="Introducción a los Pipelines de Jenkins" /><published>2023-02-17T18:45:16+01:00</published><updated>2023-02-17T18:45:16+01:00</updated><id>/iaw/2023/02/17/jenkins-pipelines</id><content type="html" xml:base="/iaw/2023/02/17/jenkins-pipelines.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En Jenkins se pueden realizar distintos tipos de tareas automatizadas. Pero nosotros vamos a usar los Pipelines.</p>
+
+<p>Un Pipeline es una secuencia de tareas automatizadas que definen el ciclo de vida de la aplicación de nuestro flujo de integración/entrega/despliegue continuo. Podemos decir que un Pipeline es un conjunto de instrucciones del proceso que siga una aplicación desde el repositorio de control de versiones hasta que llega a los usuarios.</p>
+
+<p><img src="/assets/images/jenkins/pipelines/1.png" alt="1" /></p>
+
+<ul>
+  <li>
+    <p><strong>Disparadores</strong>: Motivo por el cual se comienza la ejecución de tareas automáticas. Puede ser por varios motivos: push en un repositorio github, ejecución cada cierto tiempo, finalización de otra tarea,…</p>
+  </li>
+  <li>
+    <p><strong>Stage</strong>: Son las etapas lógicas en las que se dividen los flujos de trabajo de Jenkins. Es una práctica recomendada dividir nuestro flujo de trabajo en etapas ya que nos ayudará a organizar nuestros pipelines en fases. Ejemplos de fases: build, test, deploy,…</p>
+  </li>
+  <li>
+    <p><strong>Steps</strong>: Son las tareas ó comandos que ejecutados de forma secuencial implementan la lógica de nuestro flujo de trabajo.</p>
+  </li>
+  <li>
+    <p><strong>Node</strong>: Máquina que es parte del entorno de Jenkins y es capaz de ejecutar un Pipeline Jenkins. También llamada agentes de ejecución. Pueden ser la misma máquina donde tenemos instalado Jenkins, o máquinas configuradas para este fin. También podemos usar contenedores docker como agentes de ejecución. Es importante reseñar que el directorio de trabajo (workspace) es compartido por los steps del nodo, de forma que steps de un nodo pueden acceder a ficheros/directorios generados por steps de ese mismo nodo.</p>
+  </li>
+  <li>
+    <p><strong>Notificaciones</strong>: Por ejemplo que envíe un correo electrónico al terminar.</p>
+  </li>
+</ul>
+
+<h2 id="creando-pipelines">Creando Pipelines</h2>
+
+<ol>
+  <li>
+    <p>Creamos una Nueva Tarea, y le ponemos un nombre y elegimos el tipo Pipeline:</p>
+
+    <p><img src="/assets/images/jenkins/pipelines/2.png" alt="2" /></p>
+  </li>
+  <li>
+    <p>En el apartado Pipeline, escribimos nuestro primer pipeline:</p>
+
+    <div class="language-groovy highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">pipeline</span> <span class="o">{</span>
+     <span class="n">agent</span> <span class="n">any</span>
+     <span class="n">stages</span> <span class="o">{</span>
+         <span class="n">stage</span><span class="o">(</span><span class="s1">'Build'</span><span class="o">)</span> <span class="o">{</span>
+             <span class="n">steps</span> <span class="o">{</span>
+                 <span class="n">echo</span> <span class="s1">'Tareas para construir, instalar,...'</span>
+             <span class="o">}</span>
+         <span class="o">}</span>
+         <span class="n">stage</span><span class="o">(</span><span class="s1">'Test'</span><span class="o">)</span> <span class="o">{</span>
+             <span class="n">steps</span> <span class="o">{</span>
+                 <span class="n">echo</span> <span class="s1">'Tareas para realizar test.'</span>
+             <span class="o">}</span>
+         <span class="o">}</span>
+         <span class="n">stage</span><span class="o">(</span><span class="s1">'Deploy'</span><span class="o">)</span> <span class="o">{</span>
+             <span class="n">steps</span> <span class="o">{</span>
+                 <span class="n">echo</span> <span class="s1">'Tareas para desplegar, construir, ...'</span>
+             <span class="o">}</span>
+         <span class="o">}</span>
+     <span class="o">}</span>
+ <span class="o">}</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/jenkins/pipelines/3.png" alt="3" /></p>
+  </li>
+  <li>
+    <p>Le damos a Guardar y ya podemos Construir ahora para ejecutar el pipeline y construir un Build:</p>
+
+    <p><img src="/assets/images/jenkins/pipelines/4.png" alt="4" /></p>
+  </li>
+  <li>
+    <p>Y si vemos la Console Output vemos la salida del build:</p>
+
+    <p><img src="/assets/images/jenkins/pipelines/5.png" alt="5" /></p>
   </li>
 </ol>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Instalación de Jenkins en Debian 11</title><link href="/iaw/2023/02/17/jenkins-instalacion.html" rel="alternate" type="text/html" title="Instalación de Jenkins en Debian 11" /><published>2023-02-17T16:45:16+01:00</published><updated>2023-02-17T16:45:16+01:00</updated><id>/iaw/2023/02/17/jenkins-instalacion</id><content type="html" xml:base="/iaw/2023/02/17/jenkins-instalacion.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
@@ -2466,289 +2602,4 @@ kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
   <li>Contraseña: bmV4dGNsb3Vk</li>
 </ul>
 
-<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - LDAPs</title><link href="/aso/2023/02/07/LDAPs.html" rel="alternate" type="text/html" title="Escenario - LDAPs" /><published>2023-02-07T16:45:16+01:00</published><updated>2023-02-07T16:45:16+01:00</updated><id>/aso/2023/02/07/LDAPs</id><content type="html" xml:base="/aso/2023/02/07/LDAPs.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este escenario vamos a ver como configurar un servidor LDAP en nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> para que utilice el protocolo ldaps:// a la vez que el ldap:// utilizando el certificado x509 de la práctica de https o solicitando el correspondiente a través de gestiona. Realiza las modificaciones adecuadas en los clientes ldap de alfa para que todas las consultas se realicen por defecto utilizando ldaps://.</p>
-
-<h2 id="preparamos-el-escenario">Preparamos el escenario</h2>
-
-<h3 id="obtenemos-el-certificado">Obtenemos el certificado</h3>
-
-<p>Para llevar a cabo esta práctica, vamos a hacer uso de SSL/TLS para la comunicación entre el servidor LDAP que tenemos instalado en <code class="language-plaintext highlighter-rouge">alfa</code> y sus clientes. Por ello, vamos a necesitar un certificado X.509 para el servidor LDAP.</p>
-
-<ul>
-  <li>
-    <p>Realizamos una petición de certificado para el servidor LDAP a través de Gestiona.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openssl genrsa 4096 <span class="o">&gt;</span> /etc/ssl/private/alfa.key
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Creamos el CSR (Certificate Signing Request) para el servidor LDAP firmado por el CA del centro.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  openssl req <span class="nt">-new</span> <span class="nt">-key</span> /etc/ssl/private/alfa.key <span class="nt">-out</span> /root/alfa.csr
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Configuramos los datos del CSR.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Country Name <span class="o">(</span>2 letter code<span class="o">)</span> <span class="o">[</span>AU]:ES
-  State or Province Name <span class="o">(</span>full name<span class="o">)</span> <span class="o">[</span>Some-State]:Sevilla
-  Locality Name <span class="o">(</span>eg, city<span class="o">)</span> <span class="o">[]</span>:Dos Hermanas
-  Organization Name <span class="o">(</span>eg, company<span class="o">)</span> <span class="o">[</span>Internet Widgits Pty Ltd]:IES Gonzalo Nazareno
-  Organizational Unit Name <span class="o">(</span>eg, section<span class="o">)</span> <span class="o">[]</span>:Informática
-  Common Name <span class="o">(</span>e.g. server FQDN or YOUR name<span class="o">)</span> <span class="o">[]</span>:alfa.mariajesus.gonzalonazareno.org
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Enviamos el CSR al CA del centro para que nos genere el certificado X.509.</p>
-  </li>
-  <li>
-    <p>Ya obtenidos el certificado y la clave privada, los copiamos a su ubicación correspondiente.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">cp</span> /root/alfa.crt /etc/ssl/certs/alfa.crt
-  <span class="nb">cp</span> /root/alfa.key /etc/ssl/private/alfa.key
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Los añadimos a su directorio correspondiente, para de esta manera poder utilizarlos en el servidor LDAP.</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">mv </span>gonzalonazareno.crt /etc/ssl/certs/
-  <span class="nb">mv </span>alfa.crt /etc/ssl/certs/
-</code></pre></div>    </div>
-  </li>
-  <li>
-    <p>Para que el usuario LDAP pueda hacer uso de la clave, vamos a añadir ACL’s que le permitirán al usuario <code class="language-plaintext highlighter-rouge">openldap</code> tener acceso a ambos ficheros. Para ello, ejecutaremos lo siguiente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  setfacl <span class="nt">-m</span> u:openldap:r-x /etc/ssl/private
-  setfacl <span class="nt">-m</span> u:openldap:r-x /etc/ssl/private/alfa.key
-</code></pre></div>    </div>
-  </li>
-</ul>
-
-<h3 id="configuración-del-servidor-ldap">Configuración del servidor LDAP</h3>
-
-<p>Ahora que ya tenemos el certificado X.509, vamos a proceder a configurar el servidor LDAP para que utilice SSL/TLS. Para ello, vamosamodificarl el fichero <code class="language-plaintext highlighter-rouge">ldap_config.ldif</code> con las siguientes líneas:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dn: <span class="nv">cn</span><span class="o">=</span>config
-changetype: modify
-replace: olcTLSCACertificateFile
-olcTLSCACertificateFile: /etc/ssl/certs/gonzalonazareno.crt
--
-replace: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /etc/ssl/private/alfa.key
--
-replace: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/ssl/certs/alfa.crt
-</code></pre></div></div>
-
-<p>Para que esta modificación se haga efectiva, aplicamos los cambios con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapmodify <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> ldap_config.ldif
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Y modificamos <code class="language-plaintext highlighter-rouge">/etc/default/slapd</code> para que el servidor LDAP escuche por el puerto 636.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">SLAPD_SERVICES</span><span class="o">=</span><span class="s2">"ldap:/// ldapi:/// ldaps:///"</span>
-</code></pre></div></div>
-
-<p>Y reiniciamos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart slapd
-</code></pre></div></div>
-
-<p>Para comprobar que el puerto esta escuchando, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>netstat <span class="nt">-tulpn</span> | <span class="nb">grep </span>slapd
-</code></pre></div></div>
-
-<p>El siguiente paso es configurar los clientos para que usen LDAPs como método predeterminado de consultas. Para ello, lo vamosa hacer a través del paquete <code class="language-plaintext highlighter-rouge">ca-certificates</code>. Copiaremos el certificado del CA del centro en el directorio <code class="language-plaintext highlighter-rouge">/usr/local/share/ca-certificates/</code> y lo añadiremos a la lista de certificados de confianza.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /etc/ssl/certs/gonzalonazareno.crt /usr/local/share/ca-certificates/
-</code></pre></div></div>
-
-<p>Para probar que el certificado funciona, vamos a hacer una consulta al servidor LDAP desde el cliente LDAP de <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-H</span> ldaps://localhost:636
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Y también desde otro cliente, en este caso desde <code class="language-plaintext highlighter-rouge">delta</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-H</span> ldaps://alfa.mariajesus.gonzalonazareno.org:636
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Para que <code class="language-plaintext highlighter-rouge">alfa</code> use el protocolo <code class="language-plaintext highlighter-rouge">ldaps</code> por defecto, lo haremos de la siguiente manera:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /etc/default/slapd
-
-<span class="nv">SLAPD_SERVICES</span><span class="o">=</span><span class="s2">"ldaps:/// ldapi:///"</span>
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Y reiniciamos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart slapd
-</code></pre></div></div>
-
-<p>Si realizamos una consulta ldap, nos saltará elsiguiente error:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Por lo tanto, para que use por defecto ldaps, también debemos añadir o modificar la siguiente línea en el fichero <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">BASE</span><span class="o">=</span><span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-<span class="nv">URI</span><span class="o">=</span>ldaps://alfa.mariajesus.gonzalonazareno.org
-</code></pre></div></div>
-
-<p>Ahora, si realizamos una consulta, nos devolverá los resultados:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<h2 id="configuración-del-cliente-ubuntu">Configuración del cliente Ubuntu</h2>
-
-<p>Para configurar el cliente Ubuntu, vamos a hacer uso del paquete <code class="language-plaintext highlighter-rouge">ca-certificates</code>. Copiaremos el certificado del CA del centro en el directorio <code class="language-plaintext highlighter-rouge">/usr/local/share/ca-certificates/</code> y lo añadiremos a la lista de certificados de confianza.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> /etc/ssl/certs/gonzalonazareno.crt /usr/local/share/ca-certificates/
-</code></pre></div></div>
-
-<p>Y actualizamos la lista de certificados de confianza.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>update-ca-certificates
-</code></pre></div></div>
-
-<p>Ahora, vamos a configurar el cliente, como hicimos en <a href="https://sysmaria.netlify.app/aso/2023/01/22/ldap1.html">este post</a>. Por ello, vamos a modificar su configuración PAM, para crear un directorio <code class="language-plaintext highlighter-rouge">/home</code> de forma automática, con la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session required pam_mkhomedir.so <span class="nv">skel</span><span class="o">=</span>/etc/skel/ <span class="nb">umask</span><span class="o">=</span>0077
-</code></pre></div></div>
-
-<p>Para su comprobación, he creado un usuario nuevo (coffee) y he iniciado sesión con él.</p>
-
-<p>IMAGEN</p>
-
-<p>Si creamos un fichero, podemos ver que tenemos permisos de lectura y escritura.</p>
-
-<p>IMAGEN</p>
-
-<p>Como última comprobación, vamos a ver que, desde <code class="language-plaintext highlighter-rouge">alfa</code> se han efectuado los cambios.</p>
-
-<p>IMAGEN</p>
-
-<h2 id="configuración-del-cliente-rocky-linux">Configuración del cliente Rocky Linux</h2>
-
-<p>Para configurar el cliente Rocky Linux, instalaremos el paquete openldap-clients.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nb">install </span>openldap-clients
-</code></pre></div></div>
-
-<p>Editamos el fichero <code class="language-plaintext highlighter-rouge">/etc/pam.d/system-auth</code> y añadimos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">BASE</span><span class="o">=</span><span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-<span class="nv">URI</span><span class="o">=</span>ldap://alfa.mariajesus.gonzalonazareno.org
-</code></pre></div></div>
-
-<p>Y permitimos que acceda a su propia <code class="language-plaintext highlighter-rouge">/home</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session sufficient pam_mkhomedir.so <span class="nb">umask</span><span class="o">=</span>0022 <span class="nv">skel</span><span class="o">=</span>/etc/skel/
-</code></pre></div></div>
-
-<p>Configurado esto, comprobamos que funciona correctamente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2">"dc=mariajesus,dc=gonzalonazareno,dc=org"</span>
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Verificamos su autenticación.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ldapwhoami <span class="nt">-x</span> <span class="nt">-D</span> <span class="s2">"uid=coffee,ou=Personas,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span>
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>Instalaremos los paquetes necesarios para hacer login con LDAP.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dnf <span class="nt">-y</span> <span class="nb">install </span>openldap-clients sssd sssd-ldap oddjob-mkhomedir 
-</code></pre></div></div>
-
-<p>Y ejecutamos <code class="language-plaintext highlighter-rouge">authselect select sssd with-mkhomedir --force</code> para que se cree el directorio <code class="language-plaintext highlighter-rouge">/home</code> de forma automática.</p>
-
-<p>Añadiremos las siguienteslíneas para la configuración de SSSD:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>domain/default]
-id_provider <span class="o">=</span> ldap
-autofs_provider <span class="o">=</span> ldap
-auth_provider <span class="o">=</span> ldap
-chpass_provider <span class="o">=</span> ldap
-ldap_uri <span class="o">=</span> ldap://alfa.mariajesus.gonzalonazareno.org
-ldap_search_base <span class="o">=</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
-ldap_id_use_start_tls <span class="o">=</span> True
-ldap_tls_cacertdir <span class="o">=</span> /etc/openldap/cacerts
-cache_credentials <span class="o">=</span> True
-ldap_tls_reqcert <span class="o">=</span> allow
-
-<span class="o">[</span>sssd]
-services <span class="o">=</span> nss, pam, autofs
-domains <span class="o">=</span> default
-
-<span class="o">[</span>nss]
-homedir_substring <span class="o">=</span> /home/nfs
-</code></pre></div></div>
-
-<p>Cambiamos sus permisos y reiniciamos el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">chmod </span>600 /etc/sssd/sssd.conf 
-systemctl restart sssd
-systemctl <span class="nb">enable </span>sssd
-</code></pre></div></div>
-
-<p>Montamos el directorio del usuario <code class="language-plaintext highlighter-rouge">coffee</code> en el cliente.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>Unit]
-<span class="nv">Description</span><span class="o">=</span>script de montaje NFS
-<span class="nv">Requires</span><span class="o">=</span>NetworkManager.service
-<span class="nv">After</span><span class="o">=</span>NetworkManager.service
-<span class="o">[</span>Mount]
-<span class="nv">What</span><span class="o">=</span>172.16.0.1:/home/nfs
-<span class="nv">Where</span><span class="o">=</span>/home/nfs
-<span class="nv">Options</span><span class="o">=</span>_netdev,auto
-<span class="nv">Type</span><span class="o">=</span>nfs
-<span class="o">[</span>Install]
-<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
-</code></pre></div></div>
-
-<p>Reiniciamos los demonios y el servicio.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
-systemctl start mnt-nfs.mount
-</code></pre></div></div>
-
-<p>IMAGEN</p>
-
-<p>IMAGEN</p>
-
-<p>Tras esto, comprobamos que funciona correctamente:</p>
-
-<ul>
-  <li>Nos conectamos a <code class="language-plaintext highlighter-rouge">bravo</code>:</li>
-</ul>
-
-<p>IMAGEN</p>
-
-<ul>
-  <li>Comprobamos desde <code class="language-plaintext highlighter-rouge">alfa</code> que se ha creado el directorio <code class="language-plaintext highlighter-rouge">/home/nfs/coffee</code>:</li>
-</ul>
-
-<p>IMAGEN</p>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
