@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 12 mins</span>
   </p></header>
 </div>
     </div>
@@ -693,9 +693,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>En <a href="https://sysmaria.netlify.app/iaw/2023/02/09/docker-bookmedik.html">este post</a> realizamos la implantación de una aplicación en Docker. En este post vamos a realizar el despliegue de la misma aplicación en Kubernetes.</p>
 
+<h2 id="ejercicio-1-despliegue-en-minikube">Ejercicio 1: Despliegue en minikube</h2>
 <p>En mi casi caso, voy a elegir bookmedik como aplicación a desplegar. Para ello, voy a utilizar el siguiente <a href="">repositorio</a> que contiene el código de la aplicación.</p>
 
-<h2 id="despliegue-de-la-aplicación">Despliegue de la aplicación</h2>
+<h3 id="despliegue-de-la-aplicación">Despliegue de la aplicación</h3>
 
 <ol>
   <li>
@@ -985,6 +986,226 @@ document.addEventListener('DOMContentLoaded', function(event) {
   </li>
 </ul>
 
+<ol>
+  <li>Ahora nos toca escalar el despliegue de la aplicación a 3 réplicas y lo podemos hacer de dos formas:
+    <ul>
+      <li>Modificando el fichero de despliegue y aplicando los cambios, haciéndolo persistente.</li>
+      <li>Modificando el despliegue en caliente, es decir, sin hacer persistente el cambio, ejecutando <code class="language-plaintext highlighter-rouge">kubectl scale &lt;deploy-name&gt; --replicas=&lt;num_replicas&gt;</code>.</li>
+    </ul>
+  </li>
+</ol>
+
+<p>En mi caso, quiero hacerlo de forma no persistente, por lo que ejecuto el comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl scale deployment/bookmedik <span class="nt">--replicas</span><span class="o">=</span>3
+</code></pre></div></div>
+
+<p>Y comprobamos que se ha escalado correctamente.</p>
+
+<p><img src="/assets/images/kubernetes/p1/13.png" alt="13"></p>
+
+<ol>
+  <li>Vamos a crear una imagen docker, pero con alguna modficación, para probar el despliegue de una nueva versión de la aplicación.</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Modificamos el fichero <code class="language-plaintext highlighter-rouge">index.php</code> de la aplicación para que muestre la versión de la aplicación.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/14.png" alt="14"></p>
+
+    <p>En mi caso, le he cambiado el texto de la página principal y de la pestaña del navegador.</p>
+  </li>
+  <li>
+    <p>Creamos la imagen docker con la nueva versión de la aplicación.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v1_1 <span class="nb">.</span>
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/15.png" alt="15"></p>
+  </li>
+  <li>
+    <p>Subimos la imagen a docker hub.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>docker push legnakra/bookmedik:v1_1
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/16.png" alt="16"></p>
+  </li>
+  <li>
+    <p>Modificamos el fichero de despliegue para que use la nueva versión de la imagen.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/17.png" alt="17"></p>
+  </li>
+  <li>
+    <p>Aplicamos los cambios.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> bookmedik-deployment.yaml
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/18.png" alt="18"></p>
+
+    <p><img src="/assets/images/kubernetes/p1/18-1.png" alt="18.1"></p>
+  </li>
+  <li>
+    <p>Comprobamos que se ha desplegado la nueva versión de la aplicación.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/19.png" alt="19"></p>
+
+    <p>Y que podemos acceder a la zona de administración.</p>
+
+    <p><img src="/assets/images/kubernetes/p1/20.png" alt="20"></p>
+  </li>
+</ul>
+
+<h2 id="ejercicio-2-despliegue-en-otra-distribución-de-kubernetes">Ejercicio 2: Despliegue en otra distribución de kubernetes</h2>
+
+<p>En esta parte, vamos a instalar un cluster de kubernetes. Pero lo haremos en una distribución diferente a la que hemos usado hasta ahora. Pero debemos hacerlo en otra versión, y he decidido hacerlo en k3s, que es una versión ligera de kubernetes.</p>
+
+<ol>
+  <li>Creamos 3 nodos, uno maestro y dos esclavos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -*- mode: ruby -*-</span>
+<span class="c"># vi: set ft=ruby :</span>
+ 
+Vagrant.configure<span class="o">(</span><span class="s2">"2"</span><span class="o">)</span> <span class="k">do</span> |config|
+  config.vm.define :controller <span class="k">do</span> |controller|
+    controller.vm.box <span class="o">=</span> <span class="s2">"debian/buster64"</span>
+    controller.vm.hostname <span class="o">=</span> <span class="s2">"controller"</span>
+    controller.vm.network :private_network, ip: <span class="s2">"192.168.0.10"</span>
+      use_dhcp_assigned_default_route: <span class="nb">true
+    </span>controller.nfs.verify_installed <span class="o">=</span> <span class="nb">false
+    </span>controller.vm.synced_folder <span class="s1">'.'</span>, <span class="s1">'/vagrant'</span>, disabled: <span class="nb">true
+    </span>controller.vm.provider <span class="s2">"virtualbox"</span> <span class="k">do</span> |v|
+      v.memory <span class="o">=</span> 3072
+      v.cpus <span class="o">=</span> 2
+    end
+  end
+  config.vm.define :worker1 <span class="k">do</span> |worker1|
+    worker1.vm.box <span class="o">=</span> <span class="s2">"debian/buster64"</span>
+    worker1.vm.hostname <span class="o">=</span> <span class="s2">"worker1"</span>
+    worker1.vm.network :private_network, ip: <span class="s2">"192.168.0.20"</span>
+      use_dhcp_assigned_default_route: <span class="nb">true
+    </span>worker1.nfs.verify_installed <span class="o">=</span> <span class="nb">false
+    </span>worker1.vm.synced_folder <span class="s1">'.'</span>, <span class="s1">'/vagrant'</span>, disabled: <span class="nb">true
+    </span>worker1.vm.provider <span class="s2">"virtualbox"</span> <span class="k">do</span> |v|
+      v.memory <span class="o">=</span> 3072
+      v.cpus <span class="o">=</span> 2
+    end
+  end
+  config.vm.define :worker2 <span class="k">do</span> |worker2|
+    worker2.vm.box <span class="o">=</span> <span class="s2">"debian/buster64"</span>
+    worker2.vm.hostname <span class="o">=</span> <span class="s2">"worker2"</span>
+    worker2.vm.network :private_network, ip: <span class="s2">"192.168.0.30"</span>
+      use_dhcp_assigned_default_route: <span class="nb">true
+    </span>worker2.nfs.verify_installed <span class="o">=</span> <span class="nb">false
+    </span>worker2.vm.synced_folder <span class="s1">'.'</span>, <span class="s1">'/vagrant'</span>, disabled: <span class="nb">true
+    </span>worker2.vm.provider <span class="s2">"virtualbox"</span> <span class="k">do</span> |v|
+      v.memory <span class="o">=</span> 3072
+      v.cpus <span class="o">=</span> 2
+    end
+  end
+end
+</code></pre></div></div>
+
+<ol>
+  <li>Instalamos k3s en el nodo maestro.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  curl <span class="nt">-sfL</span> https://get.k3s.io | sh -
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/p1/21.png" alt="21"></p>
+
+<p>Y comprobamos que está listo.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get nodes
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/p1/22.png" alt="22"></p>
+
+<ol>
+  <li>Ejecutamos lo siguiente:</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">K3S_URL</span><span class="o">=</span>https://192.168.100.204:6443 <span class="nv">K3S_TOKEN</span><span class="o">=</span>K109d83321078b1251b47400613bf42a38be6f518f9cf06e935adfc4028aa41e40d::server:dd38882e5d393f22076ce24cddda40e3 sh -
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/p1/23.png" alt="23"></p>
+
+<p><img src="/assets/images/kubernetes/p1/24.png" alt="24"></p>
+
+<ol>
+  <li>Comprobamos que los nodos están listos.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl get nodes
+</code></pre></div></div>
+
+<p><img src="/assets/images/kubernetes/p1/25.png" alt="25"></p>
+
+<ol>
+  <li>Instalamos git en el nodo maestro ( <code class="language-plaintext highlighter-rouge">controller</code>).</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  apt <span class="nb">install </span>git
+</code></pre></div></div>
+
+<ol>
+  <li>Clonamos el repositorio de la aplicación.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  git clone https://github.com/Legnakra/Kubernetes-bookmedik.git
+</code></pre></div></div>
+
+<ol>
+  <li>Rehacemos los pasos que hicimos en el ejercicio anterior:</li>
+</ol>
+
+<ul>
+  <li>
+    <p>Creamos los ficheros yaml para crear un <code class="language-plaintext highlighter-rouge">ConfigMap</code> y un <code class="language-plaintext highlighter-rouge">Secret</code> donde guardaremos las variables de entorno.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="se">\</span>
+<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik
+
+kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="se">\</span>
+<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root 
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/26.png" alt="26"></p>
+  </li>
+  <li>
+    <p>Creamos los recursos:</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> pvc-bookmedik.yaml
+kubectl apply <span class="nt">-f</span> mariadb-deployment.yaml
+kubectl apply <span class="nt">-f</span> mariadb-service.yaml
+kubectl apply <span class="nt">-f</span> bookmedik-deployment.yaml  
+kubectl apply <span class="nt">-f</span> bookmedik-service.yaml
+kubectl apply <span class="nt">-f</span> bookmedik-ingress.yaml  
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/27.png" alt="27"></p>
+  </li>
+  <li>
+    <p>Comprobamos que todo está listo.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>kubectl get all
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/kubernetes/p1/28.png" alt="28"></p>
+
+    <p><img src="/assets/images/kubernetes/p1/29.png" alt="29"></p>
+  </li>
+</ul>
 
 
     </div>
@@ -996,10 +1217,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html" title="Instalación de Jenkins en Debian 11">Configuración de un servidor de correo en un VPS</a></li>
-<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Instalación de Jenkins en Debian 11">Crear un sitio web estático con Jekyll</a></li>
-<li><a class="post-link" href="/aso/2023/01/04/journald.html" title="Instalación de Jenkins en Debian 11">Recolección centralizada de logs de sistema, mediante journald</a></li>
-<li><a class="post-link" href="/iaw/2023/01/09/java-simple.html" title="Instalación de Jenkins en Debian 11">Desarrollo y despliegue de una aplicación Java simple</a></li>
+        <li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="Instalación de Jenkins en Debian 11">Despliegue de aplicaciones Java</a></li>
+<li><a class="post-link" href="/asgdb/2023/02/07/movimientos.html" title="Instalación de Jenkins en Debian 11">Movimiento de Datos</a></li>
+<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Instalación de Jenkins en Debian 11">Montaje NFS mediante systemd</a></li>
+<li><a class="post-link" href="/iaw/2023/02/17/jenkins-instalacion.html" title="Instalación de Jenkins en Debian 11">Instalación de Jenkins en Debian 11</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
