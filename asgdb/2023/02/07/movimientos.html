@@ -1112,20 +1112,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <strong>INTO TABLE</strong>: Nos permite indicar la tabla a la que se van a importar los datos.</li>
     </ul>
   </li>
-  <li>
-    <p><strong>Importación de datos a Oracle</strong></p>
-
-    <p>Creamos un nuevo usuario en Oracle para poder importar los datos.</p>
-
-    <p><code class="language-plaintext highlighter-rouge">sql
-  CREATE USER mov IDENTIFIED BY admin;
-  DEFAULT TABLESPACE users 
-  TEMPORARY TABLESPACE temp
-  PROFILE DEFAULT;
-  GRANT CONNECT, RESOURCE TO mov;
-     </code></p>
-  </li>
+  <li><strong>Importación de datos a Oracle</strong></li>
 </ul>
+
+<p>Creamos un nuevo usuario en Oracle para poder importar los datos.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">USER</span> <span class="n">mov</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="k">admin</span><span class="p">;</span>
+<span class="k">DEFAULT</span> <span class="n">TABLESPACE</span> <span class="n">users</span> 
+<span class="k">TEMPORARY</span> <span class="n">TABLESPACE</span> <span class="k">temp</span>
+<span class="n">PROFILE</span> <span class="k">DEFAULT</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">CONNECT</span><span class="p">,</span> <span class="n">RESOURCE</span> <span class="k">TO</span> <span class="n">mov</span><span class="p">;</span>
+</code></pre></div></div>
 
 <p><img src="/assets/images/asgdb/movimientos/30.png" alt="30"></p>
 
@@ -1158,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlldr mov/admin <span class="nv">control</span><span class="o">=</span>/home/oracle/dept.ctl <span class="nv">log</span><span class="o">=</span>/home/oracle/dept.log
 </code></pre></div></div>
 
-<p><img src="/assets/images/asgdb/movimientos/34.png" alt="34"></p>
+<p><img src="/assets/images/asgdb/movimientos/33.png" alt="33"></p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlldr mov/admin <span class="nv">control</span><span class="o">=</span>/home/oracle/emp.ctl <span class="nv">log</span><span class="o">=</span>/home/oracle/emp.log
 </code></pre></div></div>
@@ -1187,10 +1184,10 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/aso/2023/02/12/ldap2.html" title="Taller Kubernetes: Despliegues parametrizados">Escenario - Poblar un directorio LDAP desde un fichero CSV</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/01/03/dns.html" title="Taller Kubernetes: Despliegues parametrizados">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack...</a></li>
-<li><a class="post-link" href="/seguridad/2022/12/02/cripto.html" title="Taller Kubernetes: Despliegues parametrizados">Cifrado asimétrico con gpg y openssl </a></li>
-<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Kubernetes: Despliegues parametrizados">Acceso remoto con OpenVPN y certificados x509</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="Taller Kubernetes: Despliegues parametrizados">Prueba: Introducción a la implantación de aplicaciones web</a></li>
+<li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-1.html" title="Taller Kubernetes: Despliegues parametrizados">Cortafuegos I: De nodo con iptables</a></li>
+<li><a class="post-link" href="/iaw/2023/02/17/jenkins-instalacion.html" title="Taller Kubernetes: Despliegues parametrizados">Instalación de Jenkins en Debian 11</a></li>
+<li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="Taller Kubernetes: Despliegues parametrizados">Despliegue de aplicaciones Java</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
