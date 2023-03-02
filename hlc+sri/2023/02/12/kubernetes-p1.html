@@ -926,8 +926,8 @@ document.addEventListener('DOMContentLoaded', function(event) {
    <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik-ingress</span>
    <span class="na">annotations</span><span class="pi">:</span>
      <span class="na">nginx.ingress.kubernetes.io/rewrite-target</span><span class="pi">:</span> <span class="s">/</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">rules</span><span class="pi">:</span>
+ <span class="s">spec:nano</span>
+   <span class="s">rules</span><span class="err">:</span>
    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-bookmedik.org</span>
      <span class="na">http</span><span class="pi">:</span>
        <span class="na">paths</span><span class="pi">:</span>
@@ -1135,14 +1135,14 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> <span class="nb">sudo cat</span> /var/lib/rancher/k3s/server/node-token
- K104d08e43aeaf1e2b7a066fd584a559fa891f16b39929e3c12f4e9e21e2b94b398::server:542b4234e58a8ba0d760916453be86e7
+ K100ce50339c5ff211169afea38d299cc60ea62c65b98d102b49df1e1c535b8da7f::server:611c1ed3c8c978a4048e541fac5e1061
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Ejecutamos lo siguiente:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">K3S_URL</span><span class="o">=</span>https://192.168.121.129:6443 <span class="nv">K3S_TOKEN</span><span class="o">=</span>K104d08e43aeaf1e2b7a066fd584a559fa891f16b39929e3c12f4e9e21e2b94b398::server:542b4234e58a8ba0d760916453be86e7 sh -
+<div class="highlight"><pre class="highlight"><code> curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">K3S_URL</span><span class="o">=</span>https://192.168.121.241:6443 <span class="nv">K3S_TOKEN</span><span class="o">=</span>K100ce50339c5ff211169afea38d299cc60ea62c65b98d102b49df1e1c535b8da7f::server:611c1ed3c8c978a4048e541fac5e1061 sh -
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/kubernetes/p1/23.png" alt="23"></p>
@@ -1182,11 +1182,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
         <p>Creamos los ficheros yaml para crear un <code class="language-plaintext highlighter-rouge">ConfigMap</code> y un <code class="language-plaintext highlighter-rouge">Secret</code> donde guardaremos las variables de entorno.</p>
 
         <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik
+<div class="highlight"><pre class="highlight"><code>kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik
 
-kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root 
+kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root 
 </code></pre></div>        </div>
 
         <p><img src="/assets/images/kubernetes/p1/26.png" alt="26"></p>
@@ -1279,10 +1277,10 @@ kubectl apply <span class="nt">-f</span> bookmedik-ingress.yaml
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="Instalación de Jenkins en Debian 11">Prueba: Introducción a la implantación de aplicaciones web</a></li>
-<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Instalación de Jenkins en Debian 11">Montaje NFS mediante systemd</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/12/12/talleres-dns.html" title="Instalación de Jenkins en Debian 11">Talleres DNS</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Instalación de Jenkins en Debian 11">Cloud Computing IaaS. OpenStack</a></li>
+        <li><a class="post-link" href="/aso/2023/01/04/journald.html" title="Instalación de Jenkins en Debian 11">Recolección centralizada de logs de sistema, mediante journald</a></li>
+<li><a class="post-link" href="/python/2022/11/06/github.html" title="Instalación de Jenkins en Debian 11">Introducción a GitHub</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Instalación de Jenkins en Debian 11">Instalación de nginx con PHP con vagrant y ansible</a></li>
+<li><a class="post-link" href="/jekyll/2022/09/29/origen.html" title="Instalación de Jenkins en Debian 11">Crear un sitio web estático con Jekyll</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>

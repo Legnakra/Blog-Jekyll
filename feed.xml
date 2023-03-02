@@ -1,4 +1,58 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-03-01T23:02:36+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Taller: Corrector ortográfico de documentos markdown (test)</title><link href="/iaw/2023/02/19/jenkins1.html" rel="alternate" type="text/html" title="Taller: Corrector ortográfico de documentos markdown (test)" /><published>2023-02-19T16:45:16+01:00</published><updated>2023-02-19T16:45:16+01:00</updated><id>/iaw/2023/02/19/jenkins1</id><content type="html" xml:base="/iaw/2023/02/19/jenkins1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-03-02T20:41:39+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Escenario - Poblar un directorio LDAP empleando certificado x509</title><link href="/aso/2023/02/21/ldaps.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP empleando certificado x509" /><published>2023-02-21T16:45:16+01:00</published><updated>2023-02-21T16:45:16+01:00</updated><id>/aso/2023/02/21/ldaps</id><content type="html" xml:base="/aso/2023/02/21/ldaps.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la configuración del servidor LDAP para que se comunique con el servidor de autenticación mediante certificados x509.</p>
+
+<h2 id="creamos-el-certificado-x509">Creamos el certificado x509</h2>
+
+<p>Como parte principal y esencial de esta práctica, vamos a crear un certificado x509 para el servidor LDAP. Para ello, vamos a utilizar el comando <code class="language-plaintext highlighter-rouge">openssl</code> que nos permite generar certificados x509. Para ello ejecutaremos el siguiente comando:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+openssl genrsa 4096 &gt; /etc/ssl/private/alfa.key
+```
+
+Una vez ejecutado, debemos introducir los datos del certificado. Para ello, introduciremos los siguientes datos:
+
+```bash
+Country Name (2 letter code) [AU]:ES
+State or Province Name (full name) [Some-State]:Sevilla
+Locality Name (eg, city) []:Dos Hermanas
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:IES Gonzalo Nazareno
+Organizational Unit Name (eg, section) []:Informática
+Common Name (e.g. server FQDN or YOUR name) []:alfa.mariajesus.gonzalonazareno.org
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap3/1.png" alt="1" /></p>
+
+<p>Ya generado el fichero, lo pasamos a nuestra máquina host por medio de <code class="language-plaintext highlighter-rouge">scp</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+scp alfa.csr maria@172.22.2.125:/home/maria
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap3/2.png" alt="2" /></p>
+
+<p>Lo mandamos a la autoridad certificadora para que nos lo firme y, de ser que lo hayamos generado correctamente, nos devolverá un certificado firmado. Lo descargamos y lo copiamos en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>:</p>
+
+<p><img src="/assets/images/LDAP/ldap3/3.png" alt="3" /></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
+scp alfa.crt alfa:172.22.201.46:/home/maria
+```
+</code></pre></div></div>
+
+<p><img src="/assets/images/LDAP/ldap3/4.png" alt="4" /></p>
+
+<p>Como podemos ver, el certificado ya está firmado y listo para ser utilizado.</p>
+
+<h2 id="configuración-del-servidor-ldap">Configuración del servidor LDAP</h2>
+
+<p>Una vez que tenemos el certificado x509, vamos a configurar el servidor LDAP para que se comunique con el servidor de autenticación mediante certificados x509. Para ello, vamos a realizar los siguientes pasos:</p>
+
+<ol>
+  <li>Modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> para que el servidor LDAP se comunique con el servidor de autenticación mediante certificados x509.</li>
+</ol>]]></content><author><name></name></author><category term="ASO" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Taller: Corrector ortográfico de documentos markdown (test)</title><link href="/iaw/2023/02/19/jenkins1.html" rel="alternate" type="text/html" title="Taller: Corrector ortográfico de documentos markdown (test)" /><published>2023-02-19T16:45:16+01:00</published><updated>2023-02-19T16:45:16+01:00</updated><id>/iaw/2023/02/19/jenkins1</id><content type="html" xml:base="/iaw/2023/02/19/jenkins1.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>maginemos que estamos escribiendo documentos markdown y lo guardamos en un repositorio de github. Queremos que cada vez que hagamos una modificación (commit - push) se pruebe (test) de forma automática si tienes alguna falta de ortografía. Ese proceso lo vamos a hacer de forma automática y continua con Jenkins. Recuerda que el repositorio es https://github.com/josedom24/ic-diccionario</p>
 
@@ -763,8 +817,8 @@ AuthorizedKeysCommandUser nobody
    <span class="na">name</span><span class="pi">:</span> <span class="s">bookmedik-ingress</span>
    <span class="na">annotations</span><span class="pi">:</span>
      <span class="na">nginx.ingress.kubernetes.io/rewrite-target</span><span class="pi">:</span> <span class="s">/</span>
- <span class="na">spec</span><span class="pi">:</span>
-   <span class="na">rules</span><span class="pi">:</span>
+ <span class="s">spec:nano</span>
+   <span class="s">rules</span><span class="err">:</span>
    <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-bookmedik.org</span>
      <span class="na">http</span><span class="pi">:</span>
        <span class="na">paths</span><span class="pi">:</span>
@@ -962,13 +1016,13 @@ AuthorizedKeysCommandUser nobody
     <p>Identificamos el token del nodo maestro.</p>
 
     <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo cat</span> /var/lib/rancher/k3s/server/node-token
- K104d08e43aeaf1e2b7a066fd584a559fa891f16b39929e3c12f4e9e21e2b94b398::server:542b4234e58a8ba0d760916453be86e7
+ K100ce50339c5ff211169afea38d299cc60ea62c65b98d102b49df1e1c535b8da7f::server:611c1ed3c8c978a4048e541fac5e1061
 </code></pre></div>    </div>
   </li>
   <li>
     <p>Ejecutamos lo siguiente:</p>
 
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">K3S_URL</span><span class="o">=</span>https://192.168.121.129:6443 <span class="nv">K3S_TOKEN</span><span class="o">=</span>K104d08e43aeaf1e2b7a066fd584a559fa891f16b39929e3c12f4e9e21e2b94b398::server:542b4234e58a8ba0d760916453be86e7 sh -
+    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> curl <span class="nt">-sfL</span> https://get.k3s.io | <span class="nv">K3S_URL</span><span class="o">=</span>https://192.168.121.241:6443 <span class="nv">K3S_TOKEN</span><span class="o">=</span>K100ce50339c5ff211169afea38d299cc60ea62c65b98d102b49df1e1c535b8da7f::server:611c1ed3c8c978a4048e541fac5e1061 sh -
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/kubernetes/p1/23.png" alt="23" /></p>
@@ -1004,11 +1058,9 @@ AuthorizedKeysCommandUser nobody
       <li>
         <p>Creamos los ficheros yaml para crear un <code class="language-plaintext highlighter-rouge">ConfigMap</code> y un <code class="language-plaintext highlighter-rouge">Secret</code> donde guardaremos las variables de entorno.</p>
 
-        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik
+        <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create cm cm-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">mysql_usuario</span><span class="o">=</span>bookmedik <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">basededatos</span><span class="o">=</span>bookmedik
 
-kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root 
+kubectl create secret generic secret-mariadb <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">password</span><span class="o">=</span>bookmedik <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">rootpass</span><span class="o">=</span>root 
 </code></pre></div>        </div>
 
         <p><img src="/assets/images/kubernetes/p1/26.png" alt="26" /></p>
@@ -2434,435 +2486,4 @@ systemctl restart nginx
 
 <p><a href="https://www.docker.com/">https://www.docker.com/</a></p>
 
-<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry><entry><title type="html">Taller Kubernetes: Despliegues parametrizados</title><link href="/hlc+sri/2023/02/08/kubernetes-parametrizados.html" rel="alternate" type="text/html" title="Taller Kubernetes: Despliegues parametrizados" /><published>2023-02-08T16:45:16+01:00</published><updated>2023-02-08T16:45:16+01:00</updated><id>/hlc+sri/2023/02/08/kubernetes-parametrizados</id><content type="html" xml:base="/hlc+sri/2023/02/08/kubernetes-parametrizados.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este taller vamos a ver cómo podemos desplegar aplicaciones parametrizadas en Kubernetes. Para ello, vamos a utilizar un ejemplo muy sencillo: una aplicación web que gestione las temperaturas de una localidad y el despliegue y acceso a Nextcloud.</p>
-
-<h2 id="ejercicio-1-configurando-nuestra-aplicación-temperaturas">Ejercicio 1: Configurando nuestra aplicación Temperaturas</h2>
-
-<p>Recordamos que el componente frontend hace peticiones al componente backend utilizando el nombre temperaturas-backend, que es el nombre que asignamos al Service ClusterIP para el acceso al backend.</p>
-
-<p>Vamos a cambiar la configuración de la aplicación para indicar otro nombre.</p>
-
-<p>Podemos configurar el nombre del servidor backend al que vamos acceder desde el frontend modificando la variable de entorno TEMP_SERVER a la hora de crear el despliegue del frontend.</p>
-
-<p>Por defecto el valor de esa variable es:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">TEMP_SERVER temperaturas-backend:5000</span>
-</code></pre></div></div>
-
-<p>Vamos a modificar esta variable en el despliegue del frontend y cambiaremos el nombre del Service del backend para que coincidan, para ello realiza los siguientes pasos:</p>
-
-<ol>
-  <li>
-    <p>Vamos a crear el recurso con los siguientes valores:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl create cm temperaturas <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">SERVIDOR_TEMPERATURAS</span><span class="o">=</span>servidor-temperaturas:5000
-</code></pre></div>    </div>
-
-    <p>Y verificamos que se ha creado correctamente:</p>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl get cm
-</code></pre></div>    </div>
-
-    <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> kubectl describe cm temperaturas
-</code></pre></div>    </div>
-  </li>
-</ol>
-
-<p><img src="/assets/images/kubernetes/t5/1.png" alt="1" /></p>
-
-<ol>
-  <li>
-    <p>Creamos los ficheros necesarios para el despliegue de la aplicación:</p>
-
-    <ul>
-      <li>
-        <p>frontend-deployment.yaml</p>
-
-        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-frontend</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">replicas</span><span class="pi">:</span> <span class="m">3</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">matchLabels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-    <span class="na">template</span><span class="pi">:</span>
-      <span class="na">metadata</span><span class="pi">:</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-          <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-      <span class="na">spec</span><span class="pi">:</span>
-        <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-temperaturas</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/temperaturas_frontend</span>
-          <span class="na">ports</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-server</span>
-              <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3000</span>
-          <span class="na">env</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">TEMP_SERVER</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">configMapKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">SERVIDOR_TEMPERATURAS</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>frontend-service.yaml</p>
-
-        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-frontend</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
-    <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3000</span>
-      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-server</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">frontend</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>backend-deployment.yaml</p>
-
-        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">temperaturas-backend</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">matchLabels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-        <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-    <span class="na">template</span><span class="pi">:</span>
-      <span class="na">metadata</span><span class="pi">:</span>
-        <span class="na">labels</span><span class="pi">:</span>
-          <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-          <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-      <span class="na">spec</span><span class="pi">:</span>
-        <span class="na">containers</span><span class="pi">:</span>
-          <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contendor-servidor-temperaturas</span>
-            <span class="na">image</span><span class="pi">:</span> <span class="s">iesgn/temperaturas_backend</span>
-            <span class="na">ports</span><span class="pi">:</span>
-              <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">api-server</span>
-                <span class="na">containerPort</span><span class="pi">:</span> <span class="m">5000</span>
-</code></pre></div>        </div>
-      </li>
-      <li>
-        <p>backend-service.yaml</p>
-
-        <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-  <span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-  <span class="na">metadata</span><span class="pi">:</span>
-    <span class="na">name</span><span class="pi">:</span> <span class="s">servidor-temperaturas</span>
-    <span class="na">labels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-  <span class="na">spec</span><span class="pi">:</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
-    <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">5000</span>
-      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">api-server</span>
-    <span class="na">selector</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">temperaturas</span>
-      <span class="na">tier</span><span class="pi">:</span> <span class="s">backend</span>
-</code></pre></div>        </div>
-      </li>
-    </ul>
-  </li>
-  <li>
-    <p>Y realizamos el despliegue de la aplicación:</p>
-  </li>
-</ol>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
-  kubectl get all
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t5/2.png" alt="2" /></p>
-
-<p><img src="/assets/images/kubernetes/t5/3.png" alt="3" /></p>
-
-<ol>
-  <li>Accedemos a la aplicación y verificamos que funciona correctamente:</li>
-</ol>
-
-<p><img src="/assets/images/kubernetes/t5/4.png" alt="4" /></p>
-
-<p><img src="/assets/images/kubernetes/t5/5.png" alt="5" /></p>
-
-<h2 id="ejercicio-2-desplegando-nextcloud">Ejercicio 2: Desplegando Nextcloud</h2>
-
-<p>Vamos a realizar el despliegue de la aplicación NextCloud + MariaDB. Para ello ten en cuenta lo siguiente:</p>
-
-<ul>
-  <li>
-    <p>El despliegue de la base de datos se realizará con una imagen de MariaDB:10.5.</p>
-  </li>
-  <li>
-    <p>Las variables de entorno que se deben configurar son:</p>
-
-    <ul>
-      <li>MYSQL_HOST: nombre del servicio que se creará para la base de datos.</li>
-      <li>MYSQL_DATABASE: nombre de la base de datos que se creará.</li>
-      <li>MYSQL_USER: nombre del usuario que se creará.</li>
-      <li>MYSQL_PASSWORD: contraseña del usuario que se creará.</li>
-    </ul>
-  </li>
-  <li>
-    <p>Deberemos usar un recurso Secret para los datos sensibles y un COnfigMAp para el resto de variables de entorno.</p>
-  </li>
-</ul>
-
-<h3 id="paso-1-crear-el-recurso-secret">Paso 1: Crear el recurso Secret</h3>
-
-<p>Para crear el recurso Secret, ejecuta el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create cm bd-datos <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_user</span><span class="o">=</span>nextcloud <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_dbname</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_datos_configmap.yaml
-
-kubectl create secret generic bd-passwords <span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_password</span><span class="o">=</span>nextcloud <span class="se">\</span>
-<span class="nt">--from-literal</span><span class="o">=</span><span class="nv">bd_rootpassword</span><span class="o">=</span>nextcloud <span class="nt">-o</span> yaml <span class="nt">--dry-run</span><span class="o">=</span>client <span class="o">&gt;</span> bd_passwords_secret.yaml
-</code></pre></div></div>
-
-<p>Y los desplegamos:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> bd_datos_configmap.yaml
-kubectl apply <span class="nt">-f</span> bd_passwords_secret.yaml
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t5/6.png" alt="6" /></p>
-
-<h3 id="paso-2-creamos-el-fichero-de-despliegue-de-la-base-de-datos">Paso 2: Creamos el fichero de despliegue de la base de datos</h3>
-
-<p>Creamos el fichero de despliegue de la base de datos:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-deployment</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-      <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-        <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-mariadb</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:10.5</span>
-          <span class="na">ports</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">3306</span>
-            <span class="na">name</span><span class="pi">:</span> <span class="s">db-port</span>
-          <span class="na">env</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">configMapKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">configMapKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">secretKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_ROOT_PASSWORD</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">secretKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_root_password</span>
-</code></pre></div></div>
-
-<h3 id="paso-3-creamos-el-servicio-de-la-base-de-datos">Paso 3: Creamos el servicio de la base de datos</h3>
-
-<p>Creamos el servicio de la base de datos:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">mariadb-service</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">database</span>
-  <span class="na">ports</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">port</span><span class="pi">:</span> <span class="m">3306</span>
-    <span class="na">targetPort</span><span class="pi">:</span> <span class="s">db-port</span>
-  <span class="na">type</span><span class="pi">:</span> <span class="s">ClusterIP</span>
-</code></pre></div></div>
-
-<h3 id="paso-4-creamos-el-despliegue-de-nextcloud">Paso 4: Creamos el despliegue de Nextcloud</h3>
-
-<p>Creamos el despliegue de Nextcloud:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">apps/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Deployment</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-deployment</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">replicas</span><span class="pi">:</span> <span class="m">1</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">matchLabels</span><span class="pi">:</span>
-      <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-      <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-  <span class="na">template</span><span class="pi">:</span>
-    <span class="na">metadata</span><span class="pi">:</span>
-      <span class="na">labels</span><span class="pi">:</span>
-        <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-        <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-    <span class="na">spec</span><span class="pi">:</span>
-      <span class="na">containers</span><span class="pi">:</span>
-        <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">contenedor-nextcloud</span>
-          <span class="na">image</span><span class="pi">:</span> <span class="s">nextcloud:latest</span>
-          <span class="na">ports</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">80</span>
-              <span class="na">name</span><span class="pi">:</span> <span class="s">http-port</span>
-            <span class="pi">-</span> <span class="na">containerPort</span><span class="pi">:</span> <span class="m">443</span>
-              <span class="na">name</span><span class="pi">:</span> <span class="s">https-port</span>
-          <span class="na">env</span><span class="pi">:</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_HOST</span>
-              <span class="na">value</span><span class="pi">:</span> <span class="s">mariadb-service</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_USER</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">configMapKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_user</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_PASSWORD</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">secretKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_password</span>
-            <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">MYSQL_DATABASE</span>
-              <span class="na">valueFrom</span><span class="pi">:</span>
-                <span class="na">configMapKeyRef</span><span class="pi">:</span>
-                  <span class="na">name</span><span class="pi">:</span> <span class="s">bd-datos</span>
-                  <span class="na">key</span><span class="pi">:</span> <span class="s">bd_dbname</span>
-</code></pre></div></div>
-
-<h3 id="paso-6-creamos-el-servicio-de-nextcloud">Paso 6: Creamos el servicio de Nextcloud</h3>
-
-<p>Creamos el servicio de Nextcloud:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">selector</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-  <span class="na">ports</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">http-sv-port</span>
-      <span class="na">port</span><span class="pi">:</span> <span class="m">80</span>
-      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">http-port</span>
-    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">https-sv-port</span>
-      <span class="na">port</span><span class="pi">:</span> <span class="m">443</span>
-      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">https-port</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">NodePort</span>
-</code></pre></div></div>
-
-<h3 id="paso-7-creamos-el-fichero-ingress">Paso 7: Creamos el fichero ingress</h3>
-
-<p>Creamos el fichero ingress:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">networking.k8s.io/v1</span>
-<span class="na">kind</span><span class="pi">:</span> <span class="s">Ingress</span>
-<span class="na">metadata</span><span class="pi">:</span>
-  <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-ingress</span>
-  <span class="na">labels</span><span class="pi">:</span>
-    <span class="na">app</span><span class="pi">:</span> <span class="s">nextcloud</span>
-    <span class="na">type</span><span class="pi">:</span> <span class="s">frontend</span>
-<span class="na">spec</span><span class="pi">:</span>
-  <span class="na">rules</span><span class="pi">:</span>
-  <span class="pi">-</span> <span class="na">host</span><span class="pi">:</span> <span class="s">www.maria-nextcloud.org</span>
-    <span class="na">http</span><span class="pi">:</span>
-      <span class="na">paths</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="na">path</span><span class="pi">:</span> <span class="s">/</span>
-        <span class="na">pathType</span><span class="pi">:</span> <span class="s">Prefix</span>
-        <span class="na">backend</span><span class="pi">:</span>
-          <span class="na">service</span><span class="pi">:</span>
-            <span class="na">name</span><span class="pi">:</span> <span class="s">nextcloud-service</span>
-              <span class="s">port</span><span class="err">:</span>
-                <span class="na">number</span><span class="pi">:</span> <span class="s">http-sv-port</span>
-</code></pre></div></div>
-
-<h3 id="paso-8-desplegamos-la-aplicación">Paso 8: Desplegamos la aplicación</h3>
-
-<p>Desplegamos la aplicación:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply <span class="nt">-f</span> <span class="nb">.</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t5/7.png" alt="7" /></p>
-
-<p>Y comprobamos que están desplegados los servicios:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get all
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t5/8.png" alt="8" /></p>
-
-<h3 id="paso-9-modificamos-el-fichero-etchosts">Paso 9: Modificamos el fichero /etc/hosts</h3>
-
-<p>Modificamos el fichero /etc/hosts:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/hosts
-</code></pre></div></div>
-
-<p>Y añadimos la siguiente línea:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.100.185 www.maria-nextcloud.org
-</code></pre></div></div>
-
-<p><img src="/assets/images/kubernetes/t5/9.png" alt="9" /></p>
-
-<h3 id="paso-10-accedemos-a-la-aplicación">Paso 10: Accedemos a la aplicación</h3>
-
-<p>Accedemos a la aplicación:</p>
-
-<p><img src="/assets/images/kubernetes/t5/10.png" alt="10" /></p>
-
-<p>Introducimos las credenciales:</p>
-
-<ul>
-  <li>Usuario: nextcloud</li>
-  <li>Contraseña: bmV4dGNsb3Vk</li>
-</ul>
-
-<p><img src="/assets/images/kubernetes/t5/11.png" alt="11" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
+<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry></feed>
