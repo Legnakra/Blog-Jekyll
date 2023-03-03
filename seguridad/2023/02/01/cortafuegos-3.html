@@ -818,8 +818,8 @@ iptables <span class="nt">-P</span> OUTPUT DROP
 
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.16.0.200/16 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 10.0.0.187/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> REJECT
- iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 10.0.0.187/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> REJECT
+ iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 10.0.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> REJECT
+ iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 10.0.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> REJECT
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej3/9.png" alt="9"></p>
@@ -867,6 +867,10 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <p>Para probarlo, haremos ping desde la máquina <code class="language-plaintext highlighter-rouge">bravo</code> hacia la máquina <code class="language-plaintext highlighter-rouge">LAN</code>.</p>
 
     <p><img src="/assets/images/iptables/ej3/17.png" alt="17"></p>
+
+    <p>Y probamos que podemos conectarnos por ssh a la máquina <code class="language-plaintext highlighter-rouge">LAN</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/18.png" alt="18"></p>
   </li>
   <li>
     <p>Desde cualquier máquina de la LAN se puede conectar por ssh a la máquina Bravo.</p>
@@ -1124,10 +1128,10 @@ iptables -A INPUT -p tcp --tcp-flags ALL NONE  -m recent --name blacklist_60 --s
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2023/02/03/kubernetes-replicaset.html" title="Taller Kubernetes: Trabajando con Pods">Taller Kubernetes: Trabajando con ReplicaSet </a></li>
-<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Taller Kubernetes: Trabajando con Pods">Introducción a la programación Python</a></li>
-<li><a class="post-link" href="/aso/2022/12/28/nfs-systemd.html" title="Taller Kubernetes: Trabajando con Pods">Montaje NFS mediante systemd</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/03/kubernetes-pods.html" title="Taller Kubernetes: Trabajando con Pods">Taller Kubernetes: Trabajando con Pods</a></li>
+        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-2.html" title="Taller Kubernetes: Trabajando con Pods">Cortafuegos II: Perimetral con nftables</a></li>
+<li><a class="post-link" href="/aso/2022/11/10/kernel.html" title="Taller Kubernetes: Trabajando con Pods">Compilación de un kernel a medida</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/12/05/escenario.html" title="Taller Kubernetes: Trabajando con Pods">Escenario en OpenStack</a></li>
+<li><a class="post-link" href="/aso/2023/02/21/ldaps.html" title="Taller Kubernetes: Trabajando con Pods">Escenario - Poblar un directorio LDAP empleando certificado x509</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
