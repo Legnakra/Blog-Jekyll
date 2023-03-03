@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Cluster de Alta Disponibilidad | sysmaria</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Cluster de Alta Disponibilidad">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Introducción">
+<meta property="og:description" content="Introducción">
+<link rel="canonical" href="/hlc+sri/2023/02/25/cluster.html">
+<meta property="og:url" content="/hlc+sri/2023/02/25/cluster.html">
+<meta property="og:site_name" content="sysmaria">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2023-02-25T16:45:16+01:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Cluster de Alta Disponibilidad">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2023-02-25T16:45:16+01:00","datePublished":"2023-02-25T16:45:16+01:00","description":"Introducción","headline":"Cluster de Alta Disponibilidad","mainEntityOfPage":{"@type":"WebPage","@id":"/hlc+sri/2023/02/25/cluster.html"},"url":"/hlc+sri/2023/02/25/cluster.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="/feed.xml" title="sysmaria">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="sysmaria" src="" onerror="this.style.display='none'">
+  sysmaria
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/categories.html">CATEGORIAS</a>
+
+
+
+
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/cluster.png)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/cluster.png">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Cluster de Alta Disponibilidad </h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2023-02-25T16:45:16+01:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 25, 2023
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+  </p></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<div id="click-to-top" class="click-to-top">
+  <i class="fa fa-arrow-up"></i>
+</div>
+<script>
+  (function () {
+    const clickToTop = document.getElementById('click-to-top');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 100) {
+        clickToTop.classList.add('show')
+      }else {
+        clickToTop.classList.remove('show')
+      }
+    });
+    clickToTop.addEventListener('click', () => {
+      window.smoothScrollTo(0);
+    });
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver instalar una aplicacioń php, en nuestro caso <code class="language-plaintext highlighter-rouge">WordPress</code>, sobre dos cluster de alta disponibilidad, uno con <code class="language-plaintext highlighter-rouge">Keepalived</code> y otro con <code class="language-plaintext highlighter-rouge">Pacemaker</code>.</p>
+
+<p>Un cluster de alta disponibilidad es un conjunto de servidores que trabajan juntos para proporcionar un servicio de red, almacenamiento o aplicaciones. Los servidores de un cluster de alta disponibilidad se denominan nodos. Los nodos de un cluster de alta disponibilidad se configuran para que se comuniquen entre sí y para que trabajen juntos para proporcionar un servicio de red, almacenamiento o aplicaciones.</p>
+
+<p>El escenario lo podemos encontrar en el siguiente <a href="https://github.com/josedom24/escenarios-HA/tree/master/07-HA-IPFailover-Apache2%2BDRBD%2BGFS2">repositorio</a>, donde nos encontramos el vagrantfile necesario para crear las tres máquinas virtuales necesarias para el escenario y el playbook de ansible para instalar el cluster.</p>
+
+<h2 id="construimos-el-escenario">Construimos el escenario</h2>
+
+<p>Para construir el escenario, nos situamos en el directorio donde tenemos el vagrantfile y ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant up
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/1.png" alt="1"></p>
+
+<p>Una vez terminado el proceso, podemos comprobar que tenemos las tres máquinas virtuales creadas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/2.png" alt="2"></p>
+
+<p>Nos desplazamos al directorio donde tenemos el playbook de ansible y ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook <span class="nt">-b</span> site.yaml
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/3.png" alt="3"></p>
+
+<h2 id="comenzamos">Comenzamos</h2>
+
+<h3 id="cluster-de-ha-activo-pasivo">Cluster de HA activo-pasivo</h3>
+
+<p>Tras levantar el escenario y aplicar la receta de ansible, podemos comprobar que se ha configurado correctamente el cluster y que los servicios se han instalado.</p>
+
+<p>Para ello, nos conectamos al <code class="language-plaintext highlighter-rouge">nodo1</code> y comprobamos el estado del cluster:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant ssh nodo1
+<span class="nb">sudo </span>su
+pcs status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/4.png" alt="4"></p>
+
+<p>El siguiente paso es comprobar que podemos acceder a la web a través del navegador, deberemos cambiar la configuración de nuestra máquina host para que emplee la IP del <code class="language-plaintext highlighter-rouge">nodo1</code> como servidor DNS, para ello, en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> añadimos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nameserver 192.168.121.40
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/5.png" alt="5"></p>
+
+<p>Si nos dirigimos a la url <a href="www.example.com/index.php">www.example.com/index.php</a>, podemos ver que podemos acceder a la web y en el <code class="language-plaintext highlighter-rouge">index.php</code> podemos ver que efectivamente, está funcionando con el nodo1.</p>
+
+<p><img src="/assets/images/cluster/6.png" alt="6"></p>
+
+<p>En caso que el nodo1 se apague, la web funcionará sobre el nodo2. Por ello, apagaremos de forma manual el nodo1.</p>
+
+<p><img src="/assets/images/cluster/7.png" alt="7"></p>
+
+<p>Y cuando accedamos al <code class="language-plaintext highlighter-rouge">index.php</code>, y como podemos comprobar en la siguiente imagen, el servidor web está activo gracias al <code class="language-plaintext highlighter-rouge">nodo2</code>.</p>
+
+<p><img src="/assets/images/cluster/8.png" alt="8"></p>
+
+<h4 id="mariadb-galera-cluster">MariaDB Galera Cluster</h4>
+
+<p>Ahora instalaremos en los dos nodos un <strong>Galera MariaDB</strong> para emplearlo como base de datos en alta disponibilidad y que usará nuestro Wordpress, para ello, ejecutamos en ambos nodos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>mariadb-server
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/9.png" alt="9"></p>
+
+<p>Para tener una base de datos segura, vamos a securizar mariadb de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql_secure_installation
+</code></pre></div></div>
+
+<p>Tras dejar a punto el gestor de base de datos, vamos a elegir un nodo, que en nuestro caso será el nodo 1, por lo que detenemos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/10.png" alt="10">]</p>
+
+<p>Y modificamos el fichero del cluster Galera de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/mysql/mariadb.conf.d/60-galera.cnf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> 1
+<span class="c">#Nombre del cluster                            </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera     </span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+<span class="c">#Formato de binlog</span>
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.101
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/11.png" alt="11"></p>
+
+<p>Creamos el cluster de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>galera_new_cluster
+</code></pre></div></div>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/12.png" alt="12"></p>
+
+<p>Para comprobar que el cluster está funcionando correctamente, ejecutamos el siguiente comando dentro de la base de datos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SHOW STATUS LIKE <span class="s1">'wsrep_cluster_size'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/13.png" alt="13"></p>
+
+<p>Como podemos ver en la imagen anterior, el cluster está formado por un nodo, por lo que ahora vamos a añadir el nodo2 al cluster. Realizamos los mismos pasos que en el nodo1, pero en este caso, cambiamos la dirección IP del nodo2 en el fichero de configuración del cluster.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> 1
+<span class="c">#Nombre del cluster </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera</span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.102
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/14.png" alt="14"></p>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/15.png" alt="15"></p>
+
+<p>Ahora, ejecutamos de nuevo el comando <code class="language-plaintext highlighter-rouge">SHOW STATUS LIKE 'wsrep_cluster_size';</code> para comprobar que el cluster está formado por dos nodos.</p>
+
+<p><img src="/assets/images/cluster/16.png" alt="16"></p>
+
+<p>Ya comprobado que nuestro cluster de mariadb Galera funciona correctamente, vamos a crear una base de datos y un usuario para que el wordpress pueda acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE DATABASE wordpress<span class="p">;</span>
+GRANT ALL PRIVILEGES ON wordpress.<span class="k">*</span> TO <span class="s1">'wordpress'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'wordpress'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/17.png" alt="17"></p>
+
+<h4 id="wordpress">Wordpress</h4>
+
+<p>Ahora le toca el turno a wordpres, por lo que nos lo vamos a descargar en el nodo 1. Navegamos a la carpeta <code class="language-plaintext highlighter-rouge">/var/www/html</code> y ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://es.wordpress.org/latest-es_ES.tar.gz
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/18.png" alt="18"></p>
+
+<p>Lo descomprimimos, y le cambiamos el propietario a <code class="language-plaintext highlighter-rouge">www-data</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xvzf</span> latest-es_ES.tar.gz
+<span class="nb">chown</span> <span class="nt">-R</span> www-data: wordpress/
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/19.png" alt="19"></p>
+
+<p>Accedemos a <a href="https://www.example.com/wordress">https://www.example.com/wordress</a> e instalamos wordpress:</p>
+
+<p><img src="/assets/images/cluster/20.png" alt="20"></p>
+
+<p>Como podemos ver en la imagen anterior, está instalado y le hemos añadido una nueva entrada.</p>
+
+<h4 id="comprobar-alta-disponibilidad">Comprobar Alta disponibilidad</h4>
+
+<p>Si apagásemos el nodo1, todos los recursos de este nodo deberían de pasar al nodo2, y por ello vamos a comprobarlo:</p>
+
+<ul>
+  <li>
+    <p>Apagamos nodo1 y verificamos en el nodo2 el estado del cluster:</p>
+
+    <p><img src="/assets/images/cluster/21.png" alt="21"></p>
+  </li>
+</ul>
+
+<p>Como podemos ver, se hemos podido acceder a nuestra nueva entrada y por ello, podemos verificar, que la configuración de nuestra cluster en alta disponibilidad, con una aplicación php y una base de datos, funciona correctamente.</p>
+
+<p><img src="/assets/images/cluster/22.png" alt="22"></p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/aso/2023/02/21/ldaps.html" title="Escenario - Poblar un directorio LDAP empleando certificado x509">Escenario - Poblar un directorio LDAP...</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-1.html" title="">Cortafuegos I: De nodo con iptables</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/02/12/kubernetes-cms.html" title="">Taller Kubernetes: Instalación de un CMS con Helm </a></li>
+<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="">Certificados digitales. HTTPS</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="">Prueba: Introducción a la implantación de aplicaciones web</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">MENÚ 📝</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div></div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

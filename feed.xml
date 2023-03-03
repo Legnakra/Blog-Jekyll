@@ -1,4 +1,220 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-03-03T09:58:28+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Escenario - Poblar un directorio LDAP empleando certificado x509</title><link href="/aso/2023/02/21/ldaps.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP empleando certificado x509" /><published>2023-02-21T16:45:16+01:00</published><updated>2023-02-21T16:45:16+01:00</updated><id>/aso/2023/02/21/ldaps</id><content type="html" xml:base="/aso/2023/02/21/ldaps.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-03-03T21:47:51+01:00</updated><id>/feed.xml</id><title type="html">sysmaria</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Cluster de Alta Disponibilidad</title><link href="/hlc+sri/2023/02/25/cluster.html" rel="alternate" type="text/html" title="Cluster de Alta Disponibilidad" /><published>2023-02-25T16:45:16+01:00</published><updated>2023-02-25T16:45:16+01:00</updated><id>/hlc+sri/2023/02/25/cluster</id><content type="html" xml:base="/hlc+sri/2023/02/25/cluster.html"><![CDATA[<h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver instalar una aplicacioń php, en nuestro caso <code class="language-plaintext highlighter-rouge">WordPress</code>, sobre dos cluster de alta disponibilidad, uno con <code class="language-plaintext highlighter-rouge">Keepalived</code> y otro con <code class="language-plaintext highlighter-rouge">Pacemaker</code>.</p>
+
+<p>Un cluster de alta disponibilidad es un conjunto de servidores que trabajan juntos para proporcionar un servicio de red, almacenamiento o aplicaciones. Los servidores de un cluster de alta disponibilidad se denominan nodos. Los nodos de un cluster de alta disponibilidad se configuran para que se comuniquen entre sí y para que trabajen juntos para proporcionar un servicio de red, almacenamiento o aplicaciones.</p>
+
+<p>El escenario lo podemos encontrar en el siguiente <a href="https://github.com/josedom24/escenarios-HA/tree/master/07-HA-IPFailover-Apache2%2BDRBD%2BGFS2">repositorio</a>, donde nos encontramos el vagrantfile necesario para crear las tres máquinas virtuales necesarias para el escenario y el playbook de ansible para instalar el cluster.</p>
+
+<h2 id="construimos-el-escenario">Construimos el escenario</h2>
+
+<p>Para construir el escenario, nos situamos en el directorio donde tenemos el vagrantfile y ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant up
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/1.png" alt="1" /></p>
+
+<p>Una vez terminado el proceso, podemos comprobar que tenemos las tres máquinas virtuales creadas:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/2.png" alt="2" /></p>
+
+<p>Nos desplazamos al directorio donde tenemos el playbook de ansible y ejecutamos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ansible-playbook <span class="nt">-b</span> site.yaml
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/3.png" alt="3" /></p>
+
+<h2 id="comenzamos">Comenzamos</h2>
+
+<h3 id="cluster-de-ha-activo-pasivo">Cluster de HA activo-pasivo</h3>
+
+<p>Tras levantar el escenario y aplicar la receta de ansible, podemos comprobar que se ha configurado correctamente el cluster y que los servicios se han instalado.</p>
+
+<p>Para ello, nos conectamos al <code class="language-plaintext highlighter-rouge">nodo1</code> y comprobamos el estado del cluster:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant ssh nodo1
+<span class="nb">sudo </span>su
+pcs status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/4.png" alt="4" /></p>
+
+<p>El siguiente paso es comprobar que podemos acceder a la web a través del navegador, deberemos cambiar la configuración de nuestra máquina host para que emplee la IP del <code class="language-plaintext highlighter-rouge">nodo1</code> como servidor DNS, para ello, en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> añadimos la siguiente línea:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nameserver 192.168.121.40
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/5.png" alt="5" /></p>
+
+<p>Si nos dirigimos a la url <a href="www.example.com/index.php">www.example.com/index.php</a>, podemos ver que podemos acceder a la web y en el <code class="language-plaintext highlighter-rouge">index.php</code> podemos ver que efectivamente, está funcionando con el nodo1.</p>
+
+<p><img src="/assets/images/cluster/6.png" alt="6" /></p>
+
+<p>En caso que el nodo1 se apague, la web funcionará sobre el nodo2. Por ello, apagaremos de forma manual el nodo1.</p>
+
+<p><img src="/assets/images/cluster/7.png" alt="7" /></p>
+
+<p>Y cuando accedamos al <code class="language-plaintext highlighter-rouge">index.php</code>, y como podemos comprobar en la siguiente imagen, el servidor web está activo gracias al <code class="language-plaintext highlighter-rouge">nodo2</code>.</p>
+
+<p><img src="/assets/images/cluster/8.png" alt="8" /></p>
+
+<h4 id="mariadb-galera-cluster">MariaDB Galera Cluster</h4>
+
+<p>Ahora instalaremos en los dos nodos un <strong>Galera MariaDB</strong> para emplearlo como base de datos en alta disponibilidad y que usará nuestro Wordpress, para ello, ejecutamos en ambos nodos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>mariadb-server
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/9.png" alt="9" /></p>
+
+<p>Para tener una base de datos segura, vamos a securizar mariadb de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql_secure_installation
+</code></pre></div></div>
+
+<p>Tras dejar a punto el gestor de base de datos, vamos a elegir un nodo, que en nuestro caso será el nodo 1, por lo que detenemos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/10.png" alt="10" />]</p>
+
+<p>Y modificamos el fichero del cluster Galera de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/mysql/mariadb.conf.d/60-galera.cnf
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> 1
+<span class="c">#Nombre del cluster                            </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera     </span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+<span class="c">#Formato de binlog</span>
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.101
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/11.png" alt="11" /></p>
+
+<p>Creamos el cluster de la siguiente manera:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>galera_new_cluster
+</code></pre></div></div>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/12.png" alt="12" /></p>
+
+<p>Para comprobar que el cluster está funcionando correctamente, ejecutamos el siguiente comando dentro de la base de datos:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SHOW STATUS LIKE <span class="s1">'wsrep_cluster_size'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/13.png" alt="13" /></p>
+
+<p>Como podemos ver en la imagen anterior, el cluster está formado por un nodo, por lo que ahora vamos a añadir el nodo2 al cluster. Realizamos los mismos pasos que en el nodo1, pero en este caso, cambiamos la dirección IP del nodo2 en el fichero de configuración del cluster.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> 1
+<span class="c">#Nombre del cluster </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera</span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.102
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/14.png" alt="14" /></p>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl start mariadb.service
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/15.png" alt="15" /></p>
+
+<p>Ahora, ejecutamos de nuevo el comando <code class="language-plaintext highlighter-rouge">SHOW STATUS LIKE 'wsrep_cluster_size';</code> para comprobar que el cluster está formado por dos nodos.</p>
+
+<p><img src="/assets/images/cluster/16.png" alt="16" /></p>
+
+<p>Ya comprobado que nuestro cluster de mariadb Galera funciona correctamente, vamos a crear una base de datos y un usuario para que el wordpress pueda acceder a ella.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE DATABASE wordpress<span class="p">;</span>
+GRANT ALL PRIVILEGES ON wordpress.<span class="k">*</span> TO <span class="s1">'wordpress'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'wordpress'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/17.png" alt="17" /></p>
+
+<h4 id="wordpress">Wordpress</h4>
+
+<p>Ahora le toca el turno a wordpres, por lo que nos lo vamos a descargar en el nodo 1. Navegamos a la carpeta <code class="language-plaintext highlighter-rouge">/var/www/html</code> y ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://es.wordpress.org/latest-es_ES.tar.gz
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/18.png" alt="18" /></p>
+
+<p>Lo descomprimimos, y le cambiamos el propietario a <code class="language-plaintext highlighter-rouge">www-data</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">tar</span> <span class="nt">-xvzf</span> latest-es_ES.tar.gz
+<span class="nb">chown</span> <span class="nt">-R</span> www-data: wordpress/
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/19.png" alt="19" /></p>
+
+<p>Accedemos a <a href="https://www.example.com/wordress">https://www.example.com/wordress</a> e instalamos wordpress:</p>
+
+<p><img src="/assets/images/cluster/20.png" alt="20" /></p>
+
+<p>Como podemos ver en la imagen anterior, está instalado y le hemos añadido una nueva entrada.</p>
+
+<h4 id="comprobar-alta-disponibilidad">Comprobar Alta disponibilidad</h4>
+
+<p>Si apagásemos el nodo1, todos los recursos de este nodo deberían de pasar al nodo2, y por ello vamos a comprobarlo:</p>
+
+<ul>
+  <li>
+    <p>Apagamos nodo1 y verificamos en el nodo2 el estado del cluster:</p>
+
+    <p><img src="/assets/images/cluster/21.png" alt="21" /></p>
+  </li>
+</ul>
+
+<p>Como podemos ver, se hemos podido acceder a nuestra nueva entrada y por ello, podemos verificar, que la configuración de nuestra cluster en alta disponibilidad, con una aplicación php y una base de datos, funciona correctamente.</p>
+
+<p><img src="/assets/images/cluster/22.png" alt="22" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Escenario - Poblar un directorio LDAP empleando certificado x509</title><link href="/aso/2023/02/21/ldaps.html" rel="alternate" type="text/html" title="Escenario - Poblar un directorio LDAP empleando certificado x509" /><published>2023-02-21T16:45:16+01:00</published><updated>2023-02-21T16:45:16+01:00</updated><id>/aso/2023/02/21/ldaps</id><content type="html" xml:base="/aso/2023/02/21/ldaps.html"><![CDATA[<h2 id="introducción">Introducción</h2>
 
 <p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la configuración del servidor LDAP para que se comunique con el servidor de autenticación mediante certificados x509.</p>
 
@@ -1954,536 +2170,4 @@ systemctl restart nginx
   <li>Contraseña: <code class="language-plaintext highlighter-rouge">bmV4dGNsb3Vk</code></li>
 </ul>
 
-<p><img src="/assets/images/kubernetes/t6/17.png" alt="17" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry><entry><title type="html">Implantación de aplicaciones web PHP en docker</title><link href="/iaw/2023/02/09/docker-bookmedik.html" rel="alternate" type="text/html" title="Implantación de aplicaciones web PHP en docker" /><published>2023-02-09T16:45:16+01:00</published><updated>2023-02-09T16:45:16+01:00</updated><id>/iaw/2023/02/09/docker-bookmedik</id><content type="html" xml:base="/iaw/2023/02/09/docker-bookmedik.html"><![CDATA[<h2 id="introducción">Introducción</h2>
-
-<p>En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a>. Crearemos una imagen Docker para implementar dicha aplicación.</p>
-
-<h2 id="aspectos-a-tener-en-cuenta">Aspectos a tener en cuenta</h2>
-
-<ul>
-  <li>Contenedor mariadb
-    <ul>
-      <li>Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb.</li>
-      <li>El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script.</li>
-      <li>Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información.</li>
-      <li>El contenedor mariadb debe tener un volumen para guardar la base de datos.</li>
-    </ul>
-  </li>
-  <li>Contenedor bookmedik
-    <ul>
-      <li>Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP.</li>
-      <li>La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto.</li>
-      <li>Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas:
-        <ul>
-          <li>Que modifique el fichero <code class="language-plaintext highlighter-rouge">core\controller\Database.php</code> para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información.</li>
-          <li>Que se inicialice la base de datos con el fichero <code class="language-plaintext highlighter-rouge">schema.sql</code>.</li>
-          <li>Que ejecute el servidor web.</li>
-        </ul>
-      </li>
-      <li>El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web.</li>
-      <li>La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build.</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="preparamos-el-escenario">Preparamos el escenario</h2>
-
-<p>Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker <span class="nt">--version</span>
-</code></pre></div></div>
-
-<p>En caso de no tenerlo, lo instalaremos con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>docker.io docker compose
-</code></pre></div></div>
-
-<p>Clonamos el repositorio de la aplicación web:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/evilnapsis/bookmedik.git
-</code></pre></div></div>
-
-<h2 id="tarea-1-creación-de-una-imagen-docker-con-una-aplicación-web-desde-una-imagen-base">Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base</h2>
-
-<p>Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">schema.sql</code> para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas:</p>
-
-<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">bookmedik</span><span class="p">;</span>
-<span class="n">USE</span> <span class="n">bookmedik</span><span class="p">;</span>
-</code></pre></div></div>
-
-<p>Nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">core/controller/Database.php</code> para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas:</p>
-
-<div class="language-php highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?php</span>
-<span class="kd">class</span> <span class="nc">Database</span> <span class="p">{</span>
-        <span class="k">public</span> <span class="k">static</span> <span class="nv">$db</span><span class="p">;</span>
-        <span class="k">public</span> <span class="k">static</span> <span class="nv">$con</span><span class="p">;</span>
-        <span class="k">function</span> <span class="n">Database</span><span class="p">(){</span>
-                <span class="nv">$this</span><span class="o">-&gt;</span><span class="n">user</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'USUARIO_BOOKMEDIK'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">pass</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'CONTRA_BOOKMEDIK'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">host</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'DATABASE_HOST'</span><span class="p">);</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">ddbb</span><span class="o">=</span><span class="nb">getenv</span><span class="p">(</span><span class="s1">'NOMBRE_DB'</span><span class="p">);</span>
-        <span class="p">}</span>
-
-        <span class="k">function</span> <span class="n">connect</span><span class="p">(){</span>
-                <span class="nv">$con</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">mysqli</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">host</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">user</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">pass</span><span class="p">,</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="n">ddbb</span><span class="p">);</span>
-                <span class="nv">$con</span><span class="o">-&gt;</span><span class="nf">query</span><span class="p">(</span><span class="s2">"set sql_mode=''"</span><span class="p">);</span>
-                <span class="k">return</span> <span class="nv">$con</span><span class="p">;</span>
-        <span class="p">}</span>
-
-        <span class="k">public</span> <span class="k">static</span> <span class="k">function</span> <span class="n">getCon</span><span class="p">(){</span>
-                <span class="k">if</span><span class="p">(</span><span class="k">self</span><span class="o">::</span><span class="nv">$con</span><span class="o">==</span><span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="k">self</span><span class="o">::</span><span class="nv">$db</span><span class="o">==</span><span class="kc">null</span><span class="p">){</span>
-                        <span class="k">self</span><span class="o">::</span><span class="nv">$db</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Database</span><span class="p">();</span>
-                        <span class="k">self</span><span class="o">::</span><span class="nv">$con</span> <span class="o">=</span> <span class="k">self</span><span class="o">::</span><span class="nv">$db</span><span class="o">-&gt;</span><span class="nf">connect</span><span class="p">();</span>
-                <span class="p">}</span>
-                <span class="k">return</span> <span class="k">self</span><span class="o">::</span><span class="nv">$con</span><span class="p">;</span>
-        <span class="p">}</span>
-<span class="p">}</span>
-<span class="cp">?&gt;</span>
-</code></pre></div></div>
-
-<p>Ya teniendo todo esto realizado, vamos a crear el fichero <code class="language-plaintext highlighter-rouge">Dockerfile</code> para crear la imagen docker. Para ello, debemos crear un fichero llamado <code class="language-plaintext highlighter-rouge">Dockerfile</code> en la raíz del proyecto y añadir el siguiente contenido:</p>
-
-<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> debian:bullseye</span>
-<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
-<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>apache2 libapache2-mod-php php php-mysql mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
-<span class="k">COPY</span><span class="s"> bookmedik /var/www/html/</span>
-<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
-<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh <span class="o">&amp;&amp;</span> <span class="nb">rm</span> /var/www/html/index.html
-<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
-</code></pre></div></div>
-
-<p>Y el fichero <code class="language-plaintext highlighter-rouge">script.sh</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
-
-mysql <span class="nt">-u</span> <span class="nv">$USUARIO_BOOKMEDIK</span> <span class="nt">--password</span><span class="o">=</span><span class="nv">$CONTRA_BOOKMEDIK</span> <span class="nt">-h</span> <span class="nv">$DATABASE_HOST</span> <span class="nv">$NOMBRE_DB</span> &lt; /var/www/html/schema.sql
-
-/usr/sbin/apache2ctl <span class="nt">-D</span> FOREGROUND
-</code></pre></div></div>
-
-<p>El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v1 <span class="nb">.</span>
-</code></pre></div></div>
-
-<p>Si ejecutamos <code class="language-plaintext highlighter-rouge">docker images</code>, podremos ver que la imagen se ha creado correctamente:</p>
-
-<h2 id="tarea-2-despliegue-en-el-entorno-de-desarrollo">Tarea 2: Despliegue en el entorno de desarrollo</h2>
-
-<p>En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: <code class="language-plaintext highlighter-rouge">Usuario: admin // contraseña: admin.</code></p>
-
-<p>Por ello, creamos el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para levantar ambos contenedores:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">bookmedik</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v1</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">8081:80</span>
-    <span class="na">depends_on</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">db</span>
-  <span class="na">db</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
-      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
-<span class="na">volumes</span><span class="pi">:</span>
-    <span class="na">mariadb_data</span><span class="pi">:</span>
-</code></pre></div></div>
-
-<p>Levantamos el escenario con <code class="language-plaintext highlighter-rouge">docker compose up -d</code>y con <code class="language-plaintext highlighter-rouge">docker ps</code> podemos ver que los contenedores se han levantado correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/1.png" alt="1" /></p>
-
-<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/2.png" alt="2" /></p>
-
-<h2 id="tarea-3-creación-de-una-imagen-docker-con-una-aplicación-web-desde-una-imagen-php">Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP</h2>
-
-<p>Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado <code class="language-plaintext highlighter-rouge">Dockerfile</code> en la raíz del proyecto y añadiremos el siguiente contenido:</p>
-
-<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> php:7.4-apache-bullseye</span>
-<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
-<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> docker-php-ext-install mysqli pdo pdo_mysql <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
-<span class="k">ADD</span><span class="s"> bookmedik /var/www/html/</span>
-<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
-<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh
-<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
-</code></pre></div></div>
-
-<p>Y creamos una nueva imagen:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v2 <span class="nb">.</span>
-</code></pre></div></div>
-
-<p>EL fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> quedaría de la siguiente forma:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">bookmedik</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v2</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">8081:80</span>
-    <span class="na">depends_on</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">db</span>
-  <span class="na">db</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb:latest</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
-      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
-<span class="na">volumes</span><span class="pi">:</span>
-    <span class="na">mariadb_data</span><span class="pi">:</span>
-</code></pre></div></div>
-
-<p>Realizamos el despliegue con <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/3.png" alt="3" /></p>
-
-<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/4.png" alt="4" /></p>
-
-<p><img src="/assets/images/docker/p1/5.png" alt="5" /></p>
-
-<h2 id="tarea-4-ejecución-de-una-aplicación-php-en-docker-con-nginx">Tarea 4: Ejecución de una aplicación PHP en docker con nginx</h2>
-
-<p>En esta tarea, vamos a tener que crear dos imágenes:</p>
-<ul>
-  <li>Una que contrendrá la aplicación PHP y será nginx la encargada de servirla.</li>
-  <li>Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione.</li>
-</ul>
-
-<p>Creamos el <code class="language-plaintext highlighter-rouge">Dockerfile</code> con php-fpm y sus correspondientes modulos:</p>
-
-<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> php:7.4-fpm</span>
-<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
-<span class="k">RUN </span>docker-php-ext-install mysqli
-</code></pre></div></div>
-
-<p>Creamos la imagen:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/php-fpm-mysql:v1 <span class="nb">.</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/p1/6.png" alt="6" /></p>
-
-<p>Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido:</p>
-
-<div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> nginx</span>
-<span class="k">MAINTAINER</span><span class="s"> María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com"</span>
-<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get <span class="nb">install </span>mariadb-client <span class="nt">-y</span> <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
-<span class="k">ADD</span><span class="s"> default.conf /etc/nginx/conf.d/</span>
-<span class="k">ADD</span><span class="s"> bookmedik /usr/share/nginx/html</span>
-<span class="k">ADD</span><span class="s"> script.sh /opt/</span>
-<span class="k">RUN </span><span class="nb">chmod</span> +x /opt/script.sh <span class="o">&amp;&amp;</span> <span class="nb">rm</span> /usr/share/nginx/html/index.html
-<span class="k">ENTRYPOINT</span><span class="s"> ["/opt/script.sh"]</span>
-</code></pre></div></div>
-
-<p>En el docker file anterior, hemos establecido el fichero <code class="language-plaintext highlighter-rouge">default.conf</code> como el fichero de configuración de nginx. Este fichero contendrá la siguiente información:</p>
-
-<div class="language-nginx highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">nano</span> <span class="s">default.conf</span>
-
-<span class="s">server</span> <span class="p">{</span>
-    <span class="kn">listen</span>       <span class="mi">80</span><span class="p">;</span>
-    <span class="kn">listen</span>  <span class="s">[::]:80</span><span class="p">;</span>
-    <span class="kn">server_name</span>  <span class="s">localhost</span><span class="p">;</span>
-    <span class="kn">error_log</span>  <span class="n">/var/log/nginx/error.log</span><span class="p">;</span>
-    <span class="kn">access_log</span> <span class="n">/var/log/nginx/access.log</span><span class="p">;</span>
-    <span class="kn">root</span>   <span class="n">/usr/share/nginx/html</span><span class="p">;</span>
-    <span class="kn">index</span>  <span class="s">index.php</span> <span class="s">index.html</span><span class="p">;</span>
-
-    <span class="kn">location</span> <span class="p">~</span> <span class="sr">\.php$</span> <span class="p">{</span>
-        <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="p">=</span><span class="mi">404</span><span class="p">;</span>
-        <span class="kn">fastcgi_split_path_info</span> <span class="s">^(.+</span><span class="err">\</span><span class="s">.php)(/.+)</span>$<span class="p">;</span>
-        <span class="kn">fastcgi_pass</span> <span class="s">book_php:9000</span><span class="p">;</span>
-        <span class="kn">fastcgi_index</span> <span class="s">index.php</span><span class="p">;</span>
-        <span class="kn">include</span> <span class="s">fastcgi_params</span><span class="p">;</span>
-        <span class="kn">fastcgi_param</span> <span class="s">SCRIPT_FILENAME</span> <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
-        <span class="kn">fastcgi_param</span> <span class="s">PATH_INFO</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</code></pre></div></div>
-
-<p>Y también deberemos modificar <code class="language-plaintext highlighter-rouge">script.sh</code> para adaptarlo a nginx:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
-
-<span class="nb">sleep </span>10
-
-mysql <span class="nt">-u</span> <span class="nv">$USUARIO_BOOKMEDIK</span> <span class="nt">--password</span><span class="o">=</span><span class="nv">$CONTRA_BOOKMEDIK</span> <span class="nt">-h</span> <span class="nv">$DATABASE_HOST</span> <span class="nv">$NOMBRE_DB</span> &lt; /usr/share/nginx/html/schema.sql
-
-nginx <span class="nt">-g</span> <span class="s2">"daemon off;"</span>
-</code></pre></div></div>
-
-<p>Creamos la imagen:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v3 <span class="nb">.</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/p1/7.png" alt="7" /></p>
-
-<p>Antes de modificar el <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> debemos tener en cuenta que:</p>
-<ul>
-  <li>Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta.</li>
-  <li>Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm.</li>
-</ul>
-
-<p>Por lo que el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> quedaría de la siguiente forma:</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">bookmedik</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v3</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">8082:80</span>
-    <span class="na">depends_on</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">db</span>
-      <span class="pi">-</span> <span class="s">php</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">phpdocs:/usr/share/nginx/html/</span>
-  <span class="na">db</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
-      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
-  <span class="na">php</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">book_php</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/php-fpm-mysql:v1</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">phpdocs:/usr/share/nginx/html/</span> 
-
-<span class="na">volumes</span><span class="pi">:</span>
-    <span class="na">mariadb_data</span><span class="pi">:</span>
-    <span class="na">phpdocs</span><span class="pi">:</span>
-</code></pre></div></div>
-
-<p>Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente.</p>
-
-<p>Ahora, ejecutamos el <code class="language-plaintext highlighter-rouge">docker compose.yaml</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker-compose up <span class="nt">-d</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/p1/8.png" alt="8" /></p>
-
-<p>Y comprobamos que todo funciona como esperábamos:</p>
-
-<p><img src="/assets/images/docker/p1/9.png" alt="9" /></p>
-
-<p>Si accedemos a la aplicación, podremos ver que funciona correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/10.png" alt="10" /></p>
-
-<p><img src="/assets/images/docker/p1/11.png" alt="11" /></p>
-
-<h2 id="tarea-5-puesta-en-producción-de-nuestra-aplicación">Tarea 5: Puesta en producción de nuestra aplicación</h2>
-
-<p>Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS.</p>
-
-<p>⬜️ bookmedik.mariatec.es     CNAME       mariatec.es</p>
-
-<p>Y le generamos un certificado de <code class="language-plaintext highlighter-rouge">Let's Encrypt</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot certonly <span class="nt">--standalone</span> <span class="nt">-d</span> bookmedik.mariatec.es
-</code></pre></div></div>
-
-<p>Instalamos docker y docker-compose en nuestro VPS:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt upgrade <span class="nt">-y</span> <span class="o">&amp;&amp;</span> <span class="nb">sudo </span>apt <span class="nb">install </span>docker.io docker-compose-plugin <span class="nt">-y</span>
-</code></pre></div></div>
-
-<p>Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull legnakra/bookmedik:v2
-</code></pre></div></div>
-
-<p>En mi caso he elegido la versión 2, ya que es la que tiene el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> adaptado para el VPS.</p>
-
-<p>Creamos el virtualhost en nginx para que actúe de proxy inverso:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/nginx/sites-available/bookmedik.mariatec.es
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server <span class="o">{</span>
-        listen 80<span class="p">;</span>
-        listen <span class="o">[</span>::]:80<span class="p">;</span>
-
-        server_name bookmedik.mariatec.es<span class="p">;</span>
-
-        <span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
-<span class="o">}</span>
-
-server <span class="o">{</span>
-        listen 443 ssl http2<span class="p">;</span>
-        listen <span class="o">[</span>::]:443 ssl http2<span class="p">;</span>
-
-        ssl    on<span class="p">;</span>
-        ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem<span class="p">;</span>
-        ssl_certificate_key     /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem<span class="p">;</span>
-
-        index index.html index.php index.htm index.nginx-debian.html<span class="p">;</span>
-
-        server_name bookmedik.mariatec.es<span class="p">;</span>
-
-        location / <span class="o">{</span>
-                proxy_pass http://localhost:8083<span class="p">;</span>
-                include proxy_params<span class="p">;</span>
-        <span class="o">}</span>
-
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>Creamos el enlace simbólico y reiniciamos nginx:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/
-systemctl restart nginx
-</code></pre></div></div>
-
-<p>En mi caso, he subido los ficheros a github, por lo que he clonado <a href="https://github.com/Legnakra/Docker-Bookmedik/tree/main/Tarea%204">el repositorio</a> y el repositorio de <a href="https://github.com/evilnapsis/bookmedik">Bookmedik</a> en mi VPS, dejando la estructura de carpetas de la siguiente forma:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── Bookmedik
-│   ├── docker-compose.yaml
-│   ├── Dockerfile
-│   ├── scripts
-│   ├── bookmedik
-│   │   ├── PhpWord
-│   │   ├── core
-│   │   ├── assets
-│   │   ├── report
-│   │   ├── index.php
-│   │   ├── instalation.txt
-│   │   ├── schema.sql
-│   │   ├── logout.php
-│   │   ├── README.md
-</code></pre></div></div>
-
-<p>Realizamos la ejecución del comando <code class="language-plaintext highlighter-rouge">docker-compose up -d</code> y comprobamos que todo funciona correctamente:</p>
-
-<p><img src="/assets/images/docker/p1/12.png" alt="12" /></p>
-
-<p>Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente.</p>
-
-<p><img src="/assets/images/docker/p1/13.png" alt="13" /></p>
-
-<p><strong>NOTA</strong>: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS.</p>
-
-<p><img src="/assets/images/docker/p1/14.png" alt="14" /></p>
-
-<h2 id="tarea-6-modificación-de-la-aplicación">Tarea 6: Modificación de la aplicación</h2>
-
-<p>Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea <code class="language-plaintext highlighter-rouge">&lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;</code>.</p>
-
-<p>Para ello, vamos a utilizar la imagen de <code class="language-plaintext highlighter-rouge">legnakra/bookmedik:v1</code> que ya tiene el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para generar la nueva imagen.</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano <span class="sb">`</span>core/app/view/login-view.php<span class="sb">`</span>
-<span class="nt">---</span>
-&lt;h4 <span class="nv">class</span><span class="o">=</span><span class="s2">"title"</span><span class="o">&gt;</span>María Jesús Alloza Rodríguez&lt;/h4&gt;
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/p1/15.png" alt="15" /></p>
-
-<p>Creamos la nueva imagen</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> legnakra/bookmedik:v1_2 <span class="nb">.</span>
-</code></pre></div></div>
-<p><img src="/assets/images/docker/p1/16.png" alt="16" /></p>
-
-<p>La resubimos a DockerHub:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker push legnakra/bookmedik:v1_2
-</code></pre></div></div>
-
-<p>Eliminamos los contenedores que están en ejecución, modificamos el fichero <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code> para que descargue la nueva imagen y ejecutamos el <code class="language-plaintext highlighter-rouge">docker-compose.yaml</code>:</p>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker compose down
-</code></pre></div></div>
-
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano docker-compose.yaml
-</code></pre></div></div>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s1">'</span><span class="s">3.8'</span>
-<span class="na">services</span><span class="pi">:</span>
-  <span class="na">bookmedik</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bookmedik-app</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">legnakra/bookmedik:v1_2</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">USUARIO_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">CONTRA_BOOKMEDIK</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">DATABASE_HOST</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-      <span class="na">NOMBRE_DB</span><span class="pi">:</span> <span class="s">bookmedik</span>
-    <span class="na">ports</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">8081:80</span>
-    <span class="na">depends_on</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">db</span>
-  <span class="na">db</span><span class="pi">:</span>
-    <span class="na">container_name</span><span class="pi">:</span> <span class="s">bd_mariadb</span>
-    <span class="na">image</span><span class="pi">:</span> <span class="s">mariadb</span>
-    <span class="na">restart</span><span class="pi">:</span> <span class="s">always</span>
-    <span class="na">environment</span><span class="pi">:</span>
-      <span class="na">MARIADB_ROOT_PASSWORD</span><span class="pi">:</span> <span class="s">root</span>
-      <span class="na">MARIADB_DATABASE</span><span class="pi">:</span> <span class="s">bookmedik</span>
-      <span class="na">MARIADB_USER</span><span class="pi">:</span> <span class="s">admin</span>
-      <span class="na">MARIADB_PASSWORD</span><span class="pi">:</span> <span class="s">admin</span>
-    <span class="na">volumes</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">mariadb_data:/var/lib/mysql</span>
-<span class="na">volumes</span><span class="pi">:</span>
-    <span class="na">mariadb_data</span><span class="pi">:</span>
-</code></pre></div></div>
-
-<p><img src="/assets/images/docker/p1/17.png" alt="17" /></p>
-
-<p>Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker.</p>
-
-<h2 id="conclusiones">Conclusiones</h2>
-
-<p>Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas.</p>
-
-<h2 id="bibliografía">Bibliografía</h2>
-
-<p><a href="https://www.docker.com/">https://www.docker.com/</a></p>
-
-<p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es</a></p>]]></content><author><name></name></author><category term="IAW" /><summary type="html"><![CDATA[Introducción En este post vamos a reaizar la implantación de una aplicación web PHP en docker. Vamos a hacer uso de Bookmedik. Crearemos una imagen Docker para implementar dicha aplicación. Aspectos a tener en cuenta Contenedor mariadb Es necesario que nuestra aplicación guarde su información en un contenedor docker mariadb. El script para generar la base de datos y los registros lo encuentras en el repositorio y se llama schema.sql. Deberemos crear un usuario con su contraseña en la base de datos. La base de datos se llama bookmedik y se crea al ejecutar el script. Ejecuta el contenedor mariadb y carga los datos del script schema.sql. Para más información. El contenedor mariadb debe tener un volumen para guardar la base de datos. Contenedor bookmedik Vamos a crear tres versiones de la imagen que nos permite implantar la aplicación PHP. La imagen deberá crear las variables de entorno necesarias con datos de conexión por defecto. Al crear un contenedor a partir de estas imágenes se ejecutará un script bash que realizará las siguientes tareas: Que modifique el fichero core\controller\Database.php para que lea las variables de entorno. Para obtener las variables de entorno en PHP usar la función getenv. Para más información. Que se inicialice la base de datos con el fichero schema.sql. Que ejecute el servidor web. El contenedor que crearemos debe tener un volumen para guardar los logs del servidor web. La imagen la tenemos que crear en tu entorno de desarrollo con el comando docker build. Preparamos el escenario Lo primero que deberemos hacer es cerciorarnos de que tenemos instalado docker en nuestro entorno de desarrollo. Para ello, ejecutamos el siguiente comando: $ docker --version En caso de no tenerlo, lo instalaremos con el siguiente comando: sudo apt install docker.io docker compose Clonamos el repositorio de la aplicación web: git clone https://github.com/evilnapsis/bookmedik.git Tarea 1: Creación de una imagen docker con una aplicación web desde una imagen base Llegados a este punto, y teniendo el repositorio forkado a nuestro usuario, vamos a modificar el fichero schema.sql para que se ejecute al crear el contenedor. Por ello, deberemos eliminar las siguientes líneas: CREATE DATABASE bookmedik; USE bookmedik; Nos dirigimos al fichero core/controller/Database.php para que lea las variables de entorno. Para ello, debemos modificar las siguientes líneas: &lt;?php class Database { public static $db; public static $con; function Database(){ $this-&gt;user=getenv('USUARIO_BOOKMEDIK');$this-&gt;pass=getenv('CONTRA_BOOKMEDIK');$this-&gt;host=getenv('DATABASE_HOST');$this-&gt;ddbb=getenv('NOMBRE_DB'); } function connect(){ $con = new mysqli($this-&gt;host,$this-&gt;user,$this-&gt;pass,$this-&gt;ddbb); $con-&gt;query("set sql_mode=''"); return $con; } public static function getCon(){ if(self::$con==null &amp;&amp; self::$db==null){ self::$db = new Database(); self::$con = self::$db-&gt;connect(); } return self::$con; } } ?&gt; Ya teniendo todo esto realizado, vamos a crear el fichero Dockerfile para crear la imagen docker. Para ello, debemos crear un fichero llamado Dockerfile en la raíz del proyecto y añadir el siguiente contenido: FROM debian:bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install apache2 libapache2-mod-php php php-mysql mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* COPY bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /var/www/html/index.html ENTRYPOINT ["/opt/script.sh"] Y el fichero script.sh: #! /bin/sh mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /var/www/html/schema.sql /usr/sbin/apache2ctl -D FOREGROUND El script que hemos creado, tendrá como destino el directorio raíz del repositorio, para añadirlo al contenedor. Y ya podríamos crear la imagen del contenedor con el siguiente comando: docker build -t legnakra/bookmedik:v1 . Si ejecutamos docker images, podremos ver que la imagen se ha creado correctamente: Tarea 2: Despliegue en el entorno de desarrollo En esta tarea, crearemos un scritp con docker-compose que levantará el escenario con los contenedores. Debemos tener en cuenta que para acceder a la aplicación, las credenciales serán: Usuario: admin // contraseña: admin. Por ello, creamos el fichero docker-compose.yaml para levantar ambos contenedores: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Levantamos el escenario con docker compose up -dy con docker ps podemos ver que los contenedores se han levantado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 3: Creación de una imagen docker con una aplicación web desde una imagen PHP Ahora le toca el turno a la imagen de PHP. Para ello, crearemos un fichero llamado Dockerfile en la raíz del proyecto y añadiremos el siguiente contenido: FROM php:7.4-apache-bullseye MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; docker-php-ext-install mysqli pdo pdo_mysql &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD bookmedik /var/www/html/ ADD script.sh /opt/ RUN chmod +x /opt/script.sh ENTRYPOINT ["/opt/script.sh"] Y creamos una nueva imagen: docker build -t legnakra/bookmedik:v2 . EL fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v2 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb:latest restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Realizamos el despliegue con docker-compose up -d y como vemos en la imagen anterior, ambos contenedores se están ejecutando y en la siguiente, comprobamos que la imagen se ha creado correctamente: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 4: Ejecución de una aplicación PHP en docker con nginx En esta tarea, vamos a tener que crear dos imágenes: Una que contrendrá la aplicación PHP y será nginx la encargada de servirla. Otra que tendrá los modulos de PHP necesarios para que la aplicación funcione. Creamos el Dockerfile con php-fpm y sus correspondientes modulos: FROM php:7.4-fpm MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN docker-php-ext-install mysqli Creamos la imagen: docker build -t legnakra/php-fpm-mysql:v1 . Para crear el dockerfile con la aplicación y nginx como servidor web, añadimos el siguiente contenido: FROM nginx MAINTAINER María Jesús Alloza Rodríguez "mariajesus.allozarodriguez@gmail.com" RUN apt-get update &amp;&amp; apt-get upgrade -y &amp;&amp; apt-get install mariadb-client -y &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* ADD default.conf /etc/nginx/conf.d/ ADD bookmedik /usr/share/nginx/html ADD script.sh /opt/ RUN chmod +x /opt/script.sh &amp;&amp; rm /usr/share/nginx/html/index.html ENTRYPOINT ["/opt/script.sh"] En el docker file anterior, hemos establecido el fichero default.conf como el fichero de configuración de nginx. Este fichero contendrá la siguiente información: nano default.conf server { listen 80; listen [::]:80; server_name localhost; error_log /var/log/nginx/error.log; access_log /var/log/nginx/access.log; root /usr/share/nginx/html; index index.php index.html; location ~ \.php$ { try_files $uri =404; fastcgi_split_path_info ^(.+\.php)(/.+)$; fastcgi_pass book_php:9000; fastcgi_index index.php; include fastcgi_params; fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name; fastcgi_param PATH_INFO $fastcgi_path_info; } } Y también deberemos modificar script.sh para adaptarlo a nginx: #! /bin/sh sleep 10 mysql -u $USUARIO_BOOKMEDIK --password=$CONTRA_BOOKMEDIK -h $DATABASE_HOST $NOMBRE_DB &lt; /usr/share/nginx/html/schema.sql nginx -g "daemon off;" Creamos la imagen: docker build -t legnakra/bookmedik:v3 . Antes de modificar el docker-compose.yaml debemos tener en cuenta que: Los contenedores que tienen php-fpm y nginx, deben estar en la misma ruta. Las variables de entorno que se pasan al contenedor de nginx, deben también estar en el contenedor de php-fpm. Por lo que el fichero docker-compose.yaml quedaría de la siguiente forma: version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v3 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8082:80 depends_on: - db - php volumes: - phpdocs:/usr/share/nginx/html/ db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: bookmedik MARIADB_PASSWORD: bookmedik volumes: - mariadb_data:/var/lib/mysql php: container_name: book_php image: legnakra/php-fpm-mysql:v1 restart: always environment: USUARIO_BOOKMEDIK: bookmedik CONTRA_BOOKMEDIK: bookmedik DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik volumes: - phpdocs:/usr/share/nginx/html/ volumes: mariadb_data: phpdocs: Tras todos los pasos anteriores, podemos cerciorarnos en la imagen anterior, que las imágenes que hemos confeccionado se han creado correctamente. Ahora, ejecutamos el docker compose.yaml: docker-compose up -d Y comprobamos que todo funciona como esperábamos: Si accedemos a la aplicación, podremos ver que funciona correctamente: Tarea 5: Puesta en producción de nuestra aplicación Vamos a poner en producción la aplicación a través de nuestro VPS, por lo que lo primero que deberemo de hacer es crear un registro CNAME en nuestro DNS para que apunte a la IP de nuestro VPS. ⬜️ bookmedik.mariatec.es CNAME mariatec.es Y le generamos un certificado de Let's Encrypt: certbot certonly --standalone -d bookmedik.mariatec.es Instalamos docker y docker-compose en nuestro VPS: sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install docker.io docker-compose-plugin -y Al tener las imágenes creadas subidas a Docker Hub, podemos descargarlas en nuestro VPS: docker pull legnakra/bookmedik:v2 En mi caso he elegido la versión 2, ya que es la que tiene el fichero docker-compose.yaml adaptado para el VPS. Creamos el virtualhost en nginx para que actúe de proxy inverso: nano /etc/nginx/sites-available/bookmedik.mariatec.es server { listen 80; listen [::]:80; server_name bookmedik.mariatec.es; return 301 https://$host$request_uri; } server { listen 443 ssl http2; listen [::]:443 ssl http2; ssl on; ssl_certificate /etc/letsencrypt/live/bookmedik.mariatec.es/fullchain.pem; ssl_certificate_key /etc/letsencrypt/live/bookmedik.mariatec.es/privkey.pem; index index.html index.php index.htm index.nginx-debian.html; server_name bookmedik.mariatec.es; location / { proxy_pass http://localhost:8083; include proxy_params; } } Creamos el enlace simbólico y reiniciamos nginx: ln -s /etc/nginx/sites-available/bookmedik /etc/nginx/sites-enabled/ systemctl restart nginx En mi caso, he subido los ficheros a github, por lo que he clonado el repositorio y el repositorio de Bookmedik en mi VPS, dejando la estructura de carpetas de la siguiente forma: ├── Bookmedik │   ├── docker-compose.yaml │   ├── Dockerfile │   ├── scripts │   ├── bookmedik │   │   ├── PhpWord │   │   ├── core │   │   ├── assets │   │   ├── report │   │   ├── index.php │   │   ├── instalation.txt │   │   ├── schema.sql │   │   ├── logout.php │   │   ├── README.md Realizamos la ejecución del comando docker-compose up -d y comprobamos que todo funciona correctamente: Y como podemos comprobar en la siguiente imagen, la aplicación funciona correctamente. NOTA: A la hora de hacer el despliegue, debemos cerciorarnos de cambiar el puerto de escucha, dado que puede caber la posibilidad (o que sea muy probable) de que el puerto 8080 esté ocupado. En mi caso, he puesto el puerto de escucha en el 8083 debido a que ya tengo aplicaciones desplegadas en mi VPS. Tarea 6: Modificación de la aplicación Vamos a modificar la aplicación para que nos muestre nuestro nombre en la línea &lt;h4 class="title"&gt;Acceder a BookMedik&lt;/h4&gt;. Para ello, vamos a utilizar la imagen de legnakra/bookmedik:v1 que ya tiene el fichero docker-compose.yaml para generar la nueva imagen. nano `core/app/view/login-view.php` --- &lt;h4 class="title"&gt;María Jesús Alloza Rodríguez&lt;/h4&gt; Creamos la nueva imagen docker build -t legnakra/bookmedik:v1_2 . La resubimos a DockerHub: docker push legnakra/bookmedik:v1_2 Eliminamos los contenedores que están en ejecución, modificamos el fichero docker-compose.yaml para que descargue la nueva imagen y ejecutamos el docker-compose.yaml: docker compose down nano docker-compose.yaml version: '3.8' services: bookmedik: container_name: bookmedik-app image: legnakra/bookmedik:v1_2 restart: always environment: USUARIO_BOOKMEDIK: admin CONTRA_BOOKMEDIK: admin DATABASE_HOST: bd_mariadb NOMBRE_DB: bookmedik ports: - 8081:80 depends_on: - db db: container_name: bd_mariadb image: mariadb restart: always environment: MARIADB_ROOT_PASSWORD: root MARIADB_DATABASE: bookmedik MARIADB_USER: admin MARIADB_PASSWORD: admin volumes: - mariadb_data:/var/lib/mysql volumes: mariadb_data: Y con esto daríamos terminado como desplegar una aplicación PHP en un VPS con contenedores Docker. Conclusiones Docker es una herramienta muy útil para el despliegue de aplicaciones, ya que nos permite crear contenedores que contienen todo lo necesario para que la aplicación funcione correctamente. Además, nos permite crear imágenes que podemos subir a Docker Hub para que otras personas puedan descargarlas y utilizarlas. Bibliografía https://www.docker.com/ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04-es]]></summary></entry></feed>
+<p><img src="/assets/images/kubernetes/t6/17.png" alt="17" /></p>]]></content><author><name></name></author><category term="HLC+SRI" /><summary type="html"><![CDATA[Introducción]]></summary></entry></feed>
