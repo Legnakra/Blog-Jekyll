@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
   </p></header>
 </div>
     </div>
@@ -737,7 +737,7 @@ pcs status
 
 <p>El siguiente paso es comprobar que podemos acceder a la web a través del navegador, deberemos cambiar la configuración de nuestra máquina host para que emplee la IP del <code class="language-plaintext highlighter-rouge">nodo1</code> como servidor DNS, para ello, en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> añadimos la siguiente línea:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nameserver 192.168.121.40
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nameserver 192.168.121.48
 </code></pre></div></div>
 
 <p><img src="/assets/images/cluster/5.png" alt="5"></p>
@@ -783,7 +783,7 @@ pcs status
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 <span class="o">[</span>galera]
 <span class="c">#Activa el cluster</span>
-wsrep_on                 <span class="o">=</span> 1
+wsrep_on                 <span class="o">=</span> ON
 <span class="c">#Nombre del cluster                            </span>
 wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
 <span class="c">#Ruta al módulo de Galera     </span>
@@ -819,7 +819,7 @@ bind-address <span class="o">=</span> 0.0.0.0
 
 <p>Para comprobar que el cluster está funcionando correctamente, ejecutamos el siguiente comando dentro de la base de datos:</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SHOW STATUS LIKE <span class="s1">'wsrep_cluster_size'</span><span class="p">;</span>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql <span class="nt">-u</span> root <span class="nt">-p</span> <span class="nt">-e</span> <span class="s2">"SHOW STATUS LIKE 'wsrep_cluster_size'"</span>
 </code></pre></div></div>
 
 <p><img src="/assets/images/cluster/13.png" alt="13"></p>
@@ -856,14 +856,14 @@ bind-address <span class="o">=</span> 0.0.0.0
 
 <p><img src="/assets/images/cluster/15.png" alt="15"></p>
 
-<p>Ahora, ejecutamos de nuevo el comando <code class="language-plaintext highlighter-rouge">SHOW STATUS LIKE 'wsrep_cluster_size';</code> para comprobar que el cluster está formado por dos nodos.</p>
+<p>Ahora, ejecutamos de nuevo el comando <code class="language-plaintext highlighter-rouge">mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"</code> para comprobar que el cluster está formado por dos nodos.</p>
 
 <p><img src="/assets/images/cluster/16.png" alt="16"></p>
 
 <p>Ya comprobado que nuestro cluster de mariadb Galera funciona correctamente, vamos a crear una base de datos y un usuario para que el wordpress pueda acceder a ella.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE DATABASE wordpress<span class="p">;</span>
-GRANT ALL PRIVILEGES ON wordpress.<span class="k">*</span> TO <span class="s1">'wordpress'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'wordpress'</span><span class="p">;</span>
+GRANT ALL ON wordpress.<span class="k">*</span> TO <span class="s1">'wordpress'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'wordpress'</span><span class="p">;</span>
 </code></pre></div></div>
 
 <p><img src="/assets/images/cluster/17.png" alt="17"></p>
@@ -907,6 +907,248 @@ GRANT ALL PRIVILEGES ON wordpress.<span class="k">*</span> TO <span class="s1">'
 
 <p><img src="/assets/images/cluster/22.png" alt="22"></p>
 
+<h3 id="cluster-de-ha-activo-activo">Cluster de HA activo-activo</h3>
+
+<p>Siguiendo las instrucciones que encontraremos en el <a href="https://github.com/josedom24/escenarios-HA/tree/master/07-HA-IPFailover-Apache2+DRBD+GFS2">escenario 7</a>, convertiremos el clúster en activo-activo. Vamos a instalar el <a href="https://github.com/josedom24/escenarios-HA/blob/master/07-HA-IPFailover-Apache2%2BDRBD%2BGFS2/fencing.md">fencing</a> para que el clúster funcione de manera adecuada.</p>
+
+<p>Partiendo del ejercicio anterior, donde hemos configurado un cluster de <strong>IP Failover + Apache2 + DRBD</strong>, vamos a agregar un sistema de almacenamiento distribuido <strong>GFS2</strong>, por lo que podremos configurar nuestros sistema <strong>DRBD</strong> como Dual-primary, y la IP ClusterIP podrá estar asignado a cualquiera de los nodos, ya que los nodos podrán escribir o leer al mismo tiempo.</p>
+
+<p>En definitiva, vamos a convertir nuestro clúster en activo-activo.</p>
+
+<h4 id="instalación-de-gfs2">Instalación de GFS2</h4>
+
+<p>En este apartado vamos a configurar GFS2 como sistema de almacenamiento distribuido para conseguir el cluster de alta disponibilidad activo-activo.</p>
+
+<p>Además vamos a instalar el programa DLM (Distributed Lock Manager) que será el encargado de gestionar el acceso del clúster al almacenamiento distribuido.</p>
+
+<p>En los dos nodos, instalamos el paquete <code class="language-plaintext highlighter-rouge">gfs2-utils</code> y <code class="language-plaintext highlighter-rouge">dlm</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>gfs2-utils dlm-controld
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/23.png" alt="23"></p>
+
+<p>El DLM se tiene que ejecutar en los dos nodos, vamos a crear un recurso <strong>ocf:pacemaker:controld</strong> y lo vamos a clonar. Para ello, nos dirigimos a la consola del nodo1 y ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs cluster cib dlm_cfg
+pcs <span class="nt">-f</span> dlm_cfg resource create dlm ocf:pacemaker:controld op monitor <span class="nv">interval</span><span class="o">=</span>60s
+pcs <span class="nt">-f</span> dlm_cfg resource clone dlm clone-max<span class="o">=</span>2 clone-node-max<span class="o">=</span>1
+pcs cluster cib-push dlm_cfg <span class="nt">--config</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/24.png" alt="24"></p>
+
+<p>Comrpobamos que el recurso se ha creado correctamente:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/25.png" alt="25"></p>
+
+<h4 id="creamos-el-sistema-de-archivos-gfs2">Creamos el sistema de archivos GFS2</h4>
+
+<p>Antes de continuar, vamos a deshabilitar el recurso que controlaba el sistema de archivo del ejercicio anterior:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs resource disable WebFS
+</code></pre></div></div>
+
+<p>Y veremos como los recursos <code class="language-plaintext highlighter-rouge">WebFS</code> y <code class="language-plaintext highlighter-rouge">WebSite</code> se han detenido:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs status
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/26.png" alt="26"></p>
+
+<p>El siguiente paso será formatear el dispositivo de bloques del nodo1 con el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkfs.gfs2 <span class="nt">-p</span> lock_dlm <span class="nt">-j</span> 2 <span class="nt">-t</span> mycluster:web /dev/drbd1
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/27.png" alt="27"></p>
+
+<p>Las opciones que hemos utilizado son:</p>
+
+<ul>
+  <li>
+<code class="language-plaintext highlighter-rouge">-p lock_dlm</code>: Indica que vamos a usar el programa DLM (Distributed Lock Manager) para gestionar los cambiso del sistema de archivo.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">-j 2</code>: Se va a reservar espacio para 2 journals (registro donde se almacena información necesaria para recuperar los datos afectados por una transición en caso de que falle) uno para cada nodo.</li>
+  <li>
+<code class="language-plaintext highlighter-rouge">-t mycluster:web</code>: El nombre de la tabla de bloqueo (lock) (<code class="language-plaintext highlighter-rouge">web</code>) en el cluster <code class="language-plaintext highlighter-rouge">mycluster</code> (nombre del cluster que indicamos al crearlo con corosync y que lo podemos encontrar en <code class="language-plaintext highlighter-rouge">/etc/corosync/corosync.conf</code>).</li>
+</ul>
+
+<p>A continuación, vamos a guardar la información en el dispositivo de bloques. Creamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mount /dev/drbd1 /mnt
+<span class="nb">cd</span> /mnt
+<span class="nb">echo</span> <span class="s2">"&lt;h1&gt;Prueba con GFS2&lt;/h1&gt;"</span> <span class="o">&gt;&gt;</span> index.html
+<span class="nb">cd
+</span>umount /mnt
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/28.png" alt="28"></p>
+
+<p>Una vez terminado esto, vamos a reconfigurar el recurso <code class="language-plaintext highlighter-rouge">WebFS</code> del cluster con el nuevo sistema de fichero que hemos configurado:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs resource update WebFS <span class="nv">fstype</span><span class="o">=</span>gfs2
+</code></pre></div></div>
+
+<p>Y como va a necesitr que DLM esté activado, tenemos que añadir dos restricciones: la primera es para que el recurso <code class="language-plaintext highlighter-rouge">WebFS</code> se ejecute en el mismo nodo que el recurso <code class="language-plaintext highlighter-rouge">dlm-clone</code>, y la segunda es para que el recurso <code class="language-plaintext highlighter-rouge">dlm-clone</code> se ejecute antes que el recurso <code class="language-plaintext highlighter-rouge">WebFS</code>.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs constraint colocation add WebFS with dlm-clone INFINITY
+pcs constraint order dlm-clone <span class="k">then </span>WebFS
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/29.png" alt="29"></p>
+
+<p>El último paso que nos queda para terminar de configurar el sistema de archivos GFS2, es montar el sistema de archivos en los dos nodos y reconfigurar el recurso <code class="language-plaintext highlighter-rouge">WebData-clone</code> indicando que se ejecuten como primario en el DRBD.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs cluster cib active_cfg
+pcs <span class="nt">-f</span> active_cfg resource clone WebFS
+pcs <span class="nt">-f</span> active_cfg constraint
+pcs <span class="nt">-f</span> active_cfg resource update WebData-clone promoted-max<span class="o">=</span>2
+pcs cluster cib-push active_cfg <span class="nt">--config</span>
+pcs resource <span class="nb">enable </span>WebFS
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/30.png" alt="30"></p>
+
+<p>En este momento tenemos el DRBD como dual-primary y el sistema de ficheros GFS2 montado en los dos nodos. Cualquiera de los servidores web pueden escribir ficheros en /var/www/html, por lo que podemos clonar el recurso WebSite y quitar la restricción de colocación que hacía que el servidor web se activa en el nodo que tenía asignada la VirtualIP. Para ello:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs cluster cib active_cfg
+pcs <span class="nt">-f</span> active_cfg resource clone WebSite
+pcs cluster cib-push active_cfg <span class="nt">--config</span>
+pcs constraint colocation delete WebSite-clone VirtualIP
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/31.png" alt="31"></p>
+
+<p>Si realizamos un <code class="language-plaintext highlighter-rouge">pcs status</code> veremos que el recurso <code class="language-plaintext highlighter-rouge">WebSite</code> se ha clonado y que la IP ClusterIP se ha asignado a ambos nodos, y podemos ver que está activo:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs status
+lsblk <span class="nt">-f</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/32.png" alt="32"></p>
+
+<p><img src="/assets/images/cluster/33.png" alt="33"></p>
+
+<p>Ahora, solo queda configurar el <code class="language-plaintext highlighter-rouge">Fencing</code> para que en caso de fallo de un nodo, se pueda recuperar el servicio, y el <code class="language-plaintext highlighter-rouge">STONITH</code> para que en caso de fallo de un nodo, se pueda recuperar el servicio y que el nodo que ha fallado se pueda recuperar. Para ver los agentes que tenemos disponibles, ejecutamos el siguiente comando:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs stonith list
+</code></pre></div></div>
+<p><img src="/assets/images/cluster/34.png" alt="34"></p>
+
+<p>Al estar usando <em>KVM</em> como hipervisor, vamos a hacer uso del <code class="language-plaintext highlighter-rouge">external/libvirt</code> para el <code class="language-plaintext highlighter-rouge">STONITH</code>. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">libvirt-clients</code>:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>libvirt-clients
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/35.png" alt="35"></p>
+
+<p>Ambos nodos deberán de ser capaces de acceder al host a través de SSH, generaremos el par de claves en ambos nodos y las añadimos al fichero de authorized_keys del host:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh-keygen <span class="nt">-t</span> rsa
+ssh-copy-id 192.168.121.1
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/36.png" alt="36"></p>
+
+<p>Comprobamos que los parámetros que necesitamos para configurar el <code class="language-plaintext highlighter-rouge">STONITH</code> están bien:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs stonith describe external/libvirt
+</code></pre></div></div>
+
+<p>Como vemos en la siguiente imagen, hemos de indicar dos parámetros de forma obligatoria:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">hostlist</code>: Lista de nodos que se van a utilizar para el <code class="language-plaintext highlighter-rouge">STONITH</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">hostlist</span><span class="o">=</span><span class="s2">"nodo1:06-HA-IPFailover-Apache2DRBDGFS2_nodo1,nodo2:06-HA-IPFailover-Apache2DRBDGFS2_nodo2"</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">hypervisor_uri</code>: URI del servidor KVM.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">hypervisor_uri</span><span class="o">=</span><span class="s2">"qemu+ssh://192.168.121.1/system"</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>Ya tenemos todo configurado para poder hacer uso del <code class="language-plaintext highlighter-rouge">STONITH</code>. Solo nos resta habilitar el <code class="language-plaintext highlighter-rouge">Fencing</code> en el cluster:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pcs cluster cib stonith_cfg
+pcs <span class="nt">-f</span> stonith_cfg stonith create fencing-libvirt external/libvirt <span class="se">\</span>
+ <span class="nv">hostlist</span><span class="o">=</span><span class="s2">"nodo1:06-HA-IPFailover-Apache2DRBDGFS2_nodo1,nodo2:06-HA-IPFailover-Apache2DRBDGFS2_nodo2"</span> <span class="se">\</span>
+ <span class="nv">hypervisor_uri</span><span class="o">=</span><span class="s2">"qemu+ssh://192.168.121.1/system"</span>
+pcs <span class="nt">-f</span> stonith_cfg property <span class="nb">set </span>stonith-enabled<span class="o">=</span><span class="nb">true
+</span>pcs cluster cib-push stonith_cfg <span class="nt">--config</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/37.png" alt="37"></p>
+
+<h4 id="prueba-de-funcionamiento">Prueba de funcionamiento</h4>
+
+<p>Para poder realizar las pruebas de funcionamiento del cluster, vamos a volver a instalar Wordpress, dado que al formatear el dispositivo de bloques hemos perdido toda la información que teníamos en el sistema de ficheros. Sólo debemos realizar los pasos que hemos realizado en el apartado <a href="####Wordpress">Instalación de Wordpress</a>. La información no es necesario recuperarla porque está guardada en la base de datos, por lo que solo debemos configurar de nuevo las variables de la base de datos que ya teníamos de antemano.</p>
+
+<p>Una vez instalado Wordpress, accederemos a la página y veremos que el post sigue existiendo. La imagen he tenido que añadirla de nuevo, dado que no se había guardado en la base de datos, pero el post existía.</p>
+
+<p><img src="/assets/images/cluster/38.png" alt="38"></p>
+
+<h4 id="balanceador-de-carga">Balanceador de carga</h4>
+
+<p>Para que el balanceador de carga, vamos a instalar un <em>HAproxy</em> en el nodo dns y lo configuraremos de la siguiente forma:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>haproxy
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /etc/haproxy/haproxy.cfg
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>frontend servidores_web
+        <span class="nb">bind</span> <span class="k">*</span>:80
+        mode http
+        stats <span class="nb">enable
+        </span>stats uri /ha_stats
+        stats auth  cda:cda
+        default_backend servidores_web_backend
+
+backend servidores_web_backend
+        mode http
+        balance roundrobin
+        server backend1 10.1.1.101:80 check
+        server backend2 10.1.1.102:80 check
+</code></pre></div></div>
+
+<p><img src="/assets/images/cluster/39.png" alt="39"></p>
+
+<p>Realizado esto, también modificaremos las zonas dns, y para ello, debemos modificar los siguientes ficheros de configuración de las zonas dns:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /var/cache/bind/db.10.1.1
+
+<span class="c">###</span>
+
+103     PTR     www.example.com
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nano /var/cache/bind/db.example.com
+
+<span class="c">###</span>
+
+www     PTR     10.1.1.103
+</code></pre></div></div>
+
+<p>Tras estas modificaciones, deberemos reiniciar el servicio <code class="language-plaintext highlighter-rouge">bind9</code> para que se apliquen los cambios:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl restart bind9
+</code></pre></div></div>
+
+<p>Solo nos queda comprobar que podemos acceder a la web:</p>
+
+<p><img src="/assets/images/cluster/40.png" alt="40"></p>
 
 
     </div>
@@ -918,10 +1160,10 @@ GRANT ALL PRIVILEGES ON wordpress.<span class="k">*</span> TO <span class="s1">'
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-1.html" title="">Cortafuegos I: De nodo con iptables</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/12/kubernetes-cms.html" title="">Taller Kubernetes: Instalación de un CMS con Helm </a></li>
-<li><a class="post-link" href="/seguridad/2023/01/02/Criptograf%C3%ADa3.html" title="">Certificados digitales. HTTPS</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="">Prueba: Introducción a la implantación de aplicaciones web</a></li>
+        <li><a class="post-link" href="/hlc+sri/2023/01/21/almacenamiento.html" title="">Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt...</a></li>
+<li><a class="post-link" href="/aso/2023/02/07/LDAPs.html" title="">Escenario - LDAPs</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="">Infraestructura como código</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/13/integridad.html" title=""> Integridad, firmas y autenticación </a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
