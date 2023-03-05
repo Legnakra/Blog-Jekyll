@@ -1239,8 +1239,9 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
     <p>Pero en el caso de que solo querramos el contenido de datos que contienen las tablas,es decir, solo los datos que se han generado con las sentencias <code class="language-plaintext highlighter-rouge">insert</code>, podemos usar el siguiente comando:</p>
 
-    <p>```bash
-  $ mysqldump -v –opt –no-create-info –skip-triggers –default-character-set=utf8 -u your_username -p your_db_name &gt; db_data_your_db_name_<code class="language-plaintext highlighter-rouge">date +%Y%m%d_%H%M%S</code>.sql</p>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--no-create-info</span> <span class="nt">--skip-triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name <span class="o">&gt;</span> db_data_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+</code></pre></div>    </div>
   </li>
   <li>
     <p><strong>Backup parcial</strong>: Esta opción, como su nombre indica, se realiza si solo nos interesa hacer una copia de un conjunto de tablas y lo podemos hacer de dos maneras: o especificamos una por una las tablas de las que queremos realizar la copia de seguridad, o realizamos una copia completa usando el parámetro <code class="language-plaintext highlighter-rouge">--ignore-table</code> para que, como suguiere el parámetro, se realiza la copia completa ignorando las tablas mencionadas.</p>
@@ -1271,7 +1272,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
     <p>Otra forma sería conectándonos al servidor a traves de ssh:</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>  <span class="se">\$</span> ssh ssh<span class="se">\_</span>username@server <span class="se">\"</span>mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your<span class="se">\_</span>username <span class="nt">--password</span><span class="o">=</span>your<span class="se">\_</span>password your<span class="se">\_</span>db<span class="se">\_</span>name | <span class="nb">gzip</span> <span class="nt">-c</span><span class="se">\"</span> <span class="o">&gt;</span> db<span class="se">\_</span>backup<span class="se">\_</span>your<span class="se">\_</span>db<span class="se">\_</span>name<span class="se">\_</span><span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql.gz
+<div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>ssh ssh_username@server <span class="s2">"mysqldump -v --opt --events --routines --triggers --default-character-set=utf8 -u your_username --password=your_password your_db_name | gzip -c"</span> <span class="o">&gt;</span> db_backup_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql.gz
 </code></pre></div>    </div>
   </li>
 </ul>
@@ -1536,10 +1537,10 @@ mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2022/11/13/ansible-nginx.html" title="Taller Kubernetes: Despliegues parametrizados">Instalación de nginx con PHP con vagrant y ansible</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html" title="Taller Kubernetes: Despliegues parametrizados">Configuración de un servidor de correo en un VPS</a></li>
-<li><a class="post-link" href="/iaw/2023/01/27/docker-multicontenedor.html" title="Taller Kubernetes: Despliegues parametrizados">Taller Docker - Escenarios multicontenedor en Docker</a></li>
-<li><a class="post-link" href="/iaw/2023/02/19/jenkins1.html" title="Taller Kubernetes: Despliegues parametrizados">Taller: Corrector ortográfico de documentos markdown (test)</a></li>
+        <li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller Kubernetes: Despliegues parametrizados">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/iaw/2023/02/09/docker-bookmedik.html" title="Taller Kubernetes: Despliegues parametrizados">Implantación de aplicaciones web PHP en docker</a></li>
+<li><a class="post-link" href="/asgdb/2023/02/07/copia-seguridad.html" title="Taller Kubernetes: Despliegues parametrizados">Copias de Seguridad y Restauración</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/02/08/kubernetes-parametrizados.html" title="Taller Kubernetes: Despliegues parametrizados">Taller Kubernetes: Despliegues parametrizados</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
