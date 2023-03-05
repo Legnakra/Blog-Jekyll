@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 19 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 29 mins</span>
   </p></header>
 </div>
     </div>
@@ -727,17 +727,17 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <h2 id="puntos-a-tener-en-cuenta">Puntos a tener en cuenta</h2>
 
 <ol>
-  <li>Vamos a configurar la política por defecto DROP para las cadenas <strong>INPUT</strong>, <strong>FORWARD</strong> y <strong>OUTPUT</strong>.</li>
-</ol>
+  <li>
+    <p>Vamos a configurar la política por defecto DROP para las cadenas <strong>INPUT</strong>, <strong>FORWARD</strong> y <strong>OUTPUT</strong>.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-P</span> INPUT DROP 
-iptables <span class="nt">-P</span> FORWARD DROP
-iptables <span class="nt">-P</span> OUTPUT DROP
-</code></pre></div></div>
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-P</span> INPUT DROP 
+ iptables <span class="nt">-P</span> FORWARD DROP
+ iptables <span class="nt">-P</span> OUTPUT DROP
+</code></pre></div>    </div>
 
-<p><img src="/assets/images/iptables/ej3/1.png" alt="1"></p>
-
-<ol>
+    <p><img src="/assets/images/iptables/ej3/1.png" alt="1"></p>
+  </li>
   <li>Se pueden usar las extensiones que creamos adecuadas, pero al menos debe implementarse seguimiento de la conexión.</li>
   <li>Debemos implementar que el cortafuegos funcione después de un reinicio de la máquina.</li>
   <li>Debes indicar pruebas de funcionamiento de todas las reglas.</li>
@@ -751,12 +751,9 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <p>La máquina Alfa tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> <span class="c">#Reglas para el puerto 2222 para la red del centro</span>
- iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 2222 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.22.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 2222 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
- <span class="c">#Reglas para el puerto 2222 para la VPN</span>
- iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.29.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 2222 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.29.0.0/16 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 2222 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">--dport</span> 2222 <span class="nt">-i</span> ens3 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 10.0.0.249:22
+ iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej3/2.png" alt="2"></p>
@@ -764,7 +761,7 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <p>Para comprobar su funcionamiento desde el exterior, debemos conectarnos a la máquina <code class="language-plaintext highlighter-rouge">alfa</code> por ssh, pero indicando el puerto 2222.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> ssh <span class="nt">-p</span> 2222 maria@172.22.201.46
+<div class="highlight"><pre class="highlight"><code> ssh maria@172.22.201.46 <span class="nt">-p</span> 2222 
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej3/3.png" alt="3"></p>
@@ -817,9 +814,10 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <p>A la máquina Alfa se le puede hacer ping desde la DMZ, pero desde la LAN se le debe rechazar la conexión (REJECT) y desde el exterior se rechazará de manera silenciosa.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.16.0.200/16 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 10.0.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> REJECT
- iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 10.0.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> REJECT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 172.16.0.200/16 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 172.16.0.200/16 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> REJECT
+ iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 192.168.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> REJECT
 </code></pre></div>    </div>
 
     <p><img src="/assets/images/iptables/ej3/9.png" alt="9"></p>
@@ -831,6 +829,10 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <p>Y desde la maquina LAN hacia la máquina <code class="language-plaintext highlighter-rouge">alfa</code>, podemos ver, que se rechaza la conexión.</p>
 
     <p><img src="/assets/images/iptables/ej3/11.png" alt="11"></p>
+
+    <p>POr último, desde el exterior, no se puede hacer ping a la máquina <code class="language-plaintext highlighter-rouge">alfa</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/12.png" alt="12"></p>
   </li>
   <li>
     <p>La máquina Alfa puede hacer ping a la LAN, la DMZ y al exterior.</p>
@@ -840,73 +842,93 @@ iptables <span class="nt">-P</span> OUTPUT DROP
  iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/12.png" alt="12"></p>
+    <p><img src="/assets/images/iptables/ej3/13.png" alt="13"></p>
 
     <p>Para probarlo, haremos ping desde alfa hacia el exterior. En mi caso, he hecho ping a mi máquina.</p>
 
-    <p><img src="/assets/images/iptables/ej3/13.png" alt="13"></p>
+    <p><img src="/assets/images/iptables/ej3/14.png" alt="14"></p>
 
     <p>Hacemos ping desde alfa hacia la DMZ</p>
 
-    <p><img src="/assets/images/iptables/ej3/14.png" alt="14"></p>
+    <p><img src="/assets/images/iptables/ej3/15.png" alt="15"></p>
 
     <p>Hacemos ping desde alfa hacia la LAN</p>
 
-    <p><img src="/assets/images/iptables/ej3/15.png" alt="15"></p>
+    <p><img src="/assets/images/iptables/ej3/16.png" alt="16"></p>
   </li>
   <li>
     <p>Desde la máquina Bravo se puede hacer ping y conexión ssh a las máquinas de la LAN.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> OUTPUT <span class="nt">-d</span> 10.0.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> INPUT <span class="nt">-s</span> 10.0.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 172.16.0.200/16 <span class="nt">-d</span> 192.168.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-d</span> 172.16.0.200/16 <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 172.16.0.200/24 <span class="nt">-d</span> 192.168.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-d</span> 172.16.0.200/24 <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
-
-    <p><img src="/assets/images/iptables/ej3/16.png" alt="16"></p>
-
-    <p>Para probarlo, haremos ping desde la máquina <code class="language-plaintext highlighter-rouge">bravo</code> hacia la máquina <code class="language-plaintext highlighter-rouge">LAN</code>.</p>
 
     <p><img src="/assets/images/iptables/ej3/17.png" alt="17"></p>
 
-    <p>Y probamos que podemos conectarnos por ssh a la máquina <code class="language-plaintext highlighter-rouge">LAN</code>.</p>
+    <p>Para probarlo, haremos ping desde la máquina <code class="language-plaintext highlighter-rouge">bravo</code> hacia lan.</p>
 
     <p><img src="/assets/images/iptables/ej3/18.png" alt="18"></p>
+
+    <p>Y probamos que podemos conectarnos por ssh a la máquina <code class="language-plaintext highlighter-rouge">LAN</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/19.png" alt="19"></p>
   </li>
   <li>
     <p>Desde cualquier máquina de la LAN se puede conectar por ssh a la máquina Bravo.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 10.0.0.0/24 <span class="nt">-d</span> 172.16.0.200/32 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 172.16.0.200/32 <span class="nt">-d</span> 10.0.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-d</span> 172.16.0.200/32 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-s</span> 172.16.0.200/16 <span class="nt">-d</span> 192.168.0.0/24 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 22 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/18.png" alt="18"></p>
+    <p><img src="/assets/images/iptables/ej3/20.png" alt="20"></p>
+
+    <p>Para comprobarlo, nos conectaremos a <code class="language-plaintext highlighter-rouge">bravo</code>desde <code class="language-plaintext highlighter-rouge">charlie</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/21.png" alt="21"></p>
+
+    <p>Y nos conectamos a <code class="language-plaintext highlighter-rouge">bravo</code> desde <code class="language-plaintext highlighter-rouge">delta</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/22.png" alt="22"></p>
   </li>
   <li>
     <p>Configura la máquina Alfa para que las máquinas de LAN y DMZ puedan acceder al exterior.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 172.16.0.0/16 <span class="nt">-o</span> enp0s8 <span class="nt">-j</span> MASQUERADE
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 10.0.0.0/24 <span class="nt">-o</span> enp0s8 <span class="nt">-j</span> MASQUERADE
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> ens8 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens7 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 172.16.0.0/16 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-t</span> nat <span class="nt">-A</span> POSTROUTING <span class="nt">-s</span> 192.168.0.0/24 <span class="nt">-o</span> ens3 <span class="nt">-j</span> MASQUERADE
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens3 <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-request <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> br-intra <span class="nt">-p</span> icmp <span class="nt">-m</span> icmp <span class="nt">--icmp-type</span> echo-reply <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/19.png" alt="19"></p>
+    <p><img src="/assets/images/iptables/ej3/23.png" alt="23"></p>
+
+    <p>Y comprobamos que podemos navegar desde <code class="language-plaintext highlighter-rouge">bravo</code>y desde <code class="language-plaintext highlighter-rouge">charlie</code>.</p>
+
+    <p><img src="/assets/images/iptables/ej3/24.png" alt="24"></p>
+
+    <p><img src="/assets/images/iptables/ej3/25.png" alt="25"></p>
   </li>
   <li>
     <p>Las máquinas de la LAN pueden hacer ping al exterior y navegar.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens7 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
- iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens7 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code> iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> br-intra <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> br-intra <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/20.png" alt="20"></p>
+    <p><img src="/assets/images/iptables/ej3/26.png" alt="26"></p>
+
+    <p>Para probar el funcionamiento de estas reglas, vamos a realizarlo desde <code class="language-plaintext highlighter-rouge">delta</code> con el comando curl para comprobar que podemos navegar.</p>
+
+    <p><img src="/assets/images/iptables/ej3/27.png" alt="27"></p>
   </li>
   <li>
     <p>La máquina Bravo puede navegar. Instala un servidor web, un servidor ftp y un servidor de correos si no los tienes aún.</p>
@@ -914,49 +936,67 @@ iptables <span class="nt">-P</span> OUTPUT DROP
     <div class="language-bash highlighter-rouge">
 <div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
 iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/21.png" alt="21"></p>
+    <p><img src="/assets/images/iptables/ej3/28.png" alt="28"></p>
+
+    <p>Para probar el funcionamiento de estas reglas, vamos a realizarlo desde <code class="language-plaintext highlighter-rouge">bravo</code> con el comando curl para comprobar que podemos navegar.</p>
+
+    <p><img src="/assets/images/iptables/ej3/29.png" alt="29"></p>
   </li>
   <li>
     <p>Configura la máquina Alfa para que los servicios web y ftp sean accesibles desde el exterior.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> ens8 <span class="nt">--dport</span> 80 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens6 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens6 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
-
-iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> enp0s8 <span class="nt">--dport</span> 21 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens6 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> ens3 <span class="nt">--dport</span> 80 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> ens3 <span class="nt">--dport</span> 21 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 172.16.0.200
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/22.png" alt="22"></p>
+    <p><img src="/assets/images/iptables/ej3/30.png" alt="30"></p>
+
+    <p>La comprobamos desde <code class="language-plaintext highlighter-rouge">delta</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>telnet 172.22.201.46 21
+</code></pre></div>    </div>
+
+    <p><img src="/assets/images/iptables/ej3/31.png" alt="31"></p>
   </li>
   <li>
     <p>El servidor web y el servidor ftp deben ser accesibles desde la LAN y desde el exterior.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> enp3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens7 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
-
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> enp0s7 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens7 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> br-intra <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> br-intra <span class="nt">-p</span> tcp <span class="nt">--sport</span> 21 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/23.png" alt="23"></p>
+    <p><img src="/assets/images/iptables/ej3/32.png" alt="32"></p>
   </li>
   <li>
     <p>El servidor de correos sólo debe ser accesible desde la LAN.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 25 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
-iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <span class="nt">-o</span> ens7 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 25 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> br-intra <span class="nt">-o</span> ens8 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 25 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens8 <span class="nt">-o</span> br-intra <span class="nt">-p</span> tcp <span class="nt">--sport</span> 25 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/24.png" alt="24"></p>
+    <p><img src="/assets/images/iptables/ej3/34.png" alt="34"></p>
+
+    <p>Si comprobamos desde el exterior, no funciona.</p>
+
+    <p><img src="/assets/images/iptables/ej3/35.png" alt="35"></p>
+
+    <p>Pero si probamos desde <code class="language-plaintext highlighter-rouge">delta</code> funciona.</p>
+
+    <p><img src="/assets/images/iptables/ej3/36.png" alt="36"></p>
   </li>
   <li>
     <p>En la máquina Charlie instala un servidor mysql si no lo tiene aún. A este servidor se puede acceder desde la DMZ, pero no desde el exterior.</p>
@@ -966,16 +1006,24 @@ iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens3 <spa
 iptables <span class="nt">-A</span> FORWARD <span class="nt">-i</span> ens7 <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 3306 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/25.png" alt="25"></p>
+    <p><img src="/assets/images/iptables/ej3/37.png" alt="37"></p>
+
+    <p>Y podemos probar que no funciona desde el exterior.</p>
+
+    <p><img src="/assets/images/iptables/ej3/38.png" alt="38"></p>
   </li>
   <li>
     <p>Evita ataques DoS por ICMP Flood, limitando el número de peticiones por segundo desde una misma IP.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> enp0s3 <span class="nt">-p</span> icmp <span class="nt">-m</span> state <span class="nt">--state</span> NEW <span class="nt">--icmp-type</span> echo-request <span class="nt">-m</span> limit <span class="nt">--limit</span> 1/s <span class="nt">--limit-burst</span> 1 <span class="nt">-j</span> ACCEPT
+<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> icmp <span class="nt">-m</span> state <span class="nt">--state</span> NEW <span class="nt">--icmp-type</span> echo-request <span class="nt">-m</span> limit <span class="nt">--limit</span> 1/s <span class="nt">--limit-burst</span> 1 <span class="nt">-j</span> ACCEPT
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/26.png" alt="26"></p>
+    <p><img src="/assets/images/iptables/ej3/39.png" alt="39"></p>
+
+    <p>Y como podemos ver, desde bravo y desde charlie, se evita el ataque.</p>
+
+    <p><img src="/assets/images/iptables/ej3/40.png" alt="40"></p>
   </li>
   <li>
     <p>Evita ataques DoS por SYN Flood.</p>
@@ -987,21 +1035,74 @@ iptables <span class="nt">-A</span> syn-flood <span class="nt">-m</span> limit <
 iptables <span class="nt">-A</span> syn-flood <span class="nt">-j</span> DROP
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/27.png" alt="27"></p>
+    <p><img src="/assets/images/iptables/ej3/41.png" alt="41"></p>
+
+    <p>Y podemos comprobar desde delta que se evitan los ataques DoS y que los paquetes, se descartan.</p>
+
+    <p><img src="/assets/images/iptables/ej3/42.png" alt="42"></p>
   </li>
   <li>
     <p>Evita que realicen escaneos de puertos a Alfa.</p>
 
     <div class="language-bash highlighter-rouge">
-<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--tcp-flags</span> ALL NONE <span class="nt">-m</span> limit <span class="nt">--limit</span> 3/m <span class="nt">--limit-burst</span> 5 <span class="nt">-j</span> LOG <span class="nt">--log-prefix</span> <span class="s2">"Firewall"</span>
-iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--tcp-flags</span> ALL NONE  <span class="nt">-m</span> recent <span class="nt">--name</span> blacklist_60 <span class="nt">--set</span> <span class="nt">-m</span> comment <span class="nt">--comment</span> <span class="s2">"Blacklist"</span> <span class="nt">-j</span> DROP
+<div class="highlight"><pre class="highlight"><code>iptables <span class="nt">-N</span> antiscan
+iptables <span class="nt">-A</span> antiscan <span class="nt">-j</span> DROP
 </code></pre></div>    </div>
 
-    <p><img src="/assets/images/iptables/ej3/28.png" alt="28"></p>
+    <p><img src="/assets/images/iptables/ej3/43.png" alt="43"></p>
+
+    <p>Desde el exterior, realizamos un escaneo a <code class="language-plaintext highlighter-rouge">alfa</code> y como podemos ver, se evita el escaneo.</p>
+
+    <p><img src="/assets/images/iptables/ej3/44.png" alt="44"></p>
   </li>
 </ol>
 
 <h2 id="extra">Extra</h2>
+
+<ul>
+  <li>
+    <p>Se podrán realizar peticiones DNS a otros servidores desde el servidor DNS que tenemos en charlie.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  iptables <span class="nt">-A</span> OUTPUT <span class="nt">-p</span> tcp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--dport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--sport</span> 53 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Se podrá navegar desde <code class="language-plaintext highlighter-rouge">alfa</code>.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 80 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> OUTPUT <span class="nt">-o</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--dport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> INPUT <span class="nt">-i</span> ens3 <span class="nt">-p</span> tcp <span class="nt">--sport</span> 443 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>En este escenario estamos configurando un servidor LDAP, concretamente en lamáquina <code class="language-plaintext highlighter-rouge">alfa</code>. Por ello, debemos permitir que se realicen consultas desde cualquier máquina que esté en nuestro escenario y desde el exterior.</p>
+
+    <div class="language-bash highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> ens3 <span class="nt">--dport</span> 389 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 192.168.0.2
+  iptables <span class="nt">-t</span> nat <span class="nt">-A</span> PREROUTING <span class="nt">-p</span> tcp <span class="nt">-i</span> ens3 <span class="nt">--dport</span> 636 <span class="nt">-j</span> DNAT <span class="nt">--to</span> 192.168.0.2
+
+  iptables <span class="nt">-A</span> OUTPUT <span class="nt">-p</span> tcp <span class="nt">--dport</span> 389 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--sport</span> 389 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+  iptables <span class="nt">-A</span> OUTPUT <span class="nt">-p</span> tcp <span class="nt">--dport</span> 636 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> INPUT <span class="nt">-p</span> tcp <span class="nt">--sport</span> 636 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--dport</span> 389 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--sport</span> 389 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--dport</span> 636 <span class="nt">-m</span> state <span class="nt">--state</span> NEW,ESTABLISHED <span class="nt">-j</span> ACCEPT
+  iptables <span class="nt">-A</span> FORWARD <span class="nt">-p</span> tcp <span class="nt">--sport</span> 636 <span class="nt">-m</span> state <span class="nt">--state</span> ESTABLISHED <span class="nt">-j</span> ACCEPT
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="guardar-las-reglas">Guardar las reglas</h2>
 
 <p>Las reglas que se ejecutan en la consola no se guardan de forma permanente, por lo que si reiniciamos la máquina, se perderán. Para que esto no ocurra, debemos guardar las reglas en un fichero de configuración, que se cargará automáticamente al arrancar el sistema.</p>
 
@@ -1016,105 +1117,175 @@ iptables-save &gt; /etc/iptables/rules.v4
 El fichero con las reglas quedaría de la siguiente forma:
 
 ```bash
-#Limpiamos las reglas
+### Limpieza de reglas
 iptables -F
 iptables -t nat -F
 iptables -Z
 iptables -t nat -Z
 
-#Establecemos la política por defecto a DROP
+### Política por defecto.
 iptables -P INPUT DROP
-iptables -P FORWARD DROP
 iptables -P OUTPUT DROP
+iptables -P FORWARD DROP
 
-#Reglas para el loopback
+### La máquina Alfa debe tener permitido el tráfico para la interfaz loopback.
 iptables -A INPUT -i lo -p icmp -j ACCEPT
 iptables -A OUTPUT -o lo -p icmp -j ACCEPT
 
-#Conexión ssh por el puerto 2222 a la máquina Alfa
-iptables -t nat -A PREROUTING -p tcp --dport 2222 -i ens3 -j DNAT --172.29.0.62:22
-iptables -A INPUT -i ens3-p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+### La máquina Alfa tiene un servidor ssh escuchando por el puerto 22, pero al acceder desde el exterior habrá que conectar al puerto 2222.
+iptables -t nat -A PREROUTING -p tcp --dport 2222 -i ens3 -j DNAT --to 10.0.0.219:22
+iptables -A INPUT -i ens3 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A OUTPUT -o ens3 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 
-#Conexión ssh a cualquier máquina de LAN y DMZ
-iptables -A OUTPUT -d 10.0.0.0/24 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A INPUT -s 10.0.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+### Los contenedores lxc de Alfa (que son Charlie y Delta) deben seguir funcionando.
+iptables -A POSTROUTING -o lxcbr0 -p udp -m udp --dport 68 -j CHECKSUM --checksum-fill
+iptables -A INPUT -i lxcbr0 -p tcp -m tcp --dport 53 -j ACCEPT
+iptables -A INPUT -i lxcbr0 -p udp -m udp --dport 53 -j ACCEPT
+iptables -A INPUT -i lxcbr0 -p tcp -m tcp --dport 67 -j ACCEPT
+iptables -A INPUT -i lxcbr0 -p udp -m udp --dport 67 -j ACCEPT
+iptables -A FORWARD -o lxcbr0 -j ACCEPT
+iptables -A FORWARD -i lxcbr0 -j ACCEPT
+
+### Alfa tendrá permitida la conexion ssh a cualquier máquina de la red LAN y la red DMZ (de esta forma podremos seguir trabajando con el escenario en cuanto a la hora de conectarnos por ssh).
+iptables -A OUTPUT -d 192.168.0.0/24 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 192.168.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+
 iptables -A OUTPUT -d 172.16.0.0/16 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A INPUT -s 172.16.0.0/16 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 
-#Conexión ssh desde Bravo y Delta a la máquina Alfa
-iptables -A INPUT -s 172.16.0.0/16 -p --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -d 172.16.0.0/16 -p --sport 22 -m state --state ESTABLISHED -j ACCEPT
-iptables -A INPUT -s 192.168.0.0/24 -p --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A OUTPUT -d 192.168.0.0/24 -p --sport 22 -m state --state ESTABLISHED -j ACCEPT
+### Desde Charlie y Bravo se debe permitir la conexion ssh por el puerto 22 a la maquina Alfa.
+iptables -A OUTPUT -d 192.168.0.2/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 192.168.0.2/24 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
 
-#Ping a Alfa desde la red DMZ, pero rechazar ping desde la red LAN
+iptables -A OUTPUT -d 172.16.0.200/16 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -s 172.16.0.200/16 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+### A la maquina Alfa se le puede hacer ping desde la DMZ, pero desde la LAN se le debe rechazar la conexión (REJECT) y desde el exterior se rechazara de manera silenciosa.
+#iptables -A INPUT -s 172.16.0.200/16 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
 iptables -A OUTPUT -d 172.16.0.200/16 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
-iptables -A INPUT -s 10.0.0.187/24 -p icmp -m icmp --icmp-type echo-request -j REJECT
-iptables -A OUTPUT -d 10.0.0.187/24 -p icmp -m icmp --icmp-type echo-reply -j REJECT
 
-#Ping hacia LAN, DMZ y exterior
+iptables -A INPUT -s 192.168.0.0/24 -p icmp -m icmp --icmp-type echo-request -j REJECT
+iptables -A OUTPUT -d 192.168.0.0/24 -p icmp -m icmp --icmp-type echo-reply -j REJECT
+
+### La maquina Alfa puede hacer ping a la LAN, la DMZ y al exterior.
 iptables -A OUTPUT -p icmp -m icmp --icmp-type echo-request -j ACCEPT
 iptables -A INPUT -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
 
-#Ping desde Bravo a Alfa y conexión ssh desde LAN
-iptables -A FORWARD -s 172.16.0.200/32 -d 10.0.0.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
-iptables -A FORWARD -d 172.16.0.200/32 -s 10.0.0.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
-iptables -A FORWARD -s 172.16.0.200/32 -d 10.0.0.0/24 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -d 172.16.0.200/32 -s 10.0.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+### Desde la maquina Bravo se puede hacer ping y conexion ssh a las maquinas de la LAN.
+iptables -A FORWARD -s 172.16.0.200/16 -d 192.168.0.0/24 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -d 172.16.0.200/16 -s 192.168.0.0/24 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
 
-#Conexión ssh desde LAN a Bravo
-iptables -A FORWARD -s 10.0.0.0/24 -d 172.16.0.200/32 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -s 172.16.0.200/32 -d 10.0.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -s 172.16.0.200/24 -d 192.168.0.0/24 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -d 172.16.0.200/24 -s 192.168.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 
-#Conexión al exterior desde DMZ y desde LAN
-iptables -t nat -A POSTROUTING -s 172.16.0.0/16 -o enp0s8 -j MASQUERADE
-iptables -A FORWARD -i ens3 -o ens8 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
-iptables -A FORWARD -i ens8 -o ens3 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
+### Desde cualquier maquina de la LAN se puede conectar por ssh a la maquina Bravo.
+iptables -A FORWARD -s 192.168.0.0/24 -d 172.16.0.200/32 -p tcp --dport 22 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -s 172.16.0.200/16 -d 192.168.0.0/24 -p tcp --sport 22 -m state --state ESTABLISHED -j ACCEPT
 
-iptables -t nat -A POSTROUTING -s 10.0.0.0/24 -o enp0s8 -j MASQUERADE
-iptables -A FORWARD -i ens7 -o ens8 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
-iptables -A FORWARD -i ens8 -o ens7 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
+### Configura la maquina Alfa para que las maquinas de LAN y DMZ puedan acceder al exterior.
+iptables -t nat -A POSTROUTING -s 172.16.0.0/16 -o ens3 -j MASQUERADE
+iptables -A FORWARD -i ens8 -o ens3 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -i ens3 -o ens8 -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
 
-#Navegación de LAN
-iptables -A FORWARD -i ens7 -o ens8 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens8 -o ens7 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o ens3 -j MASQUERADE
+iptables -A FORWARD -i br-intra -o ens3 -p icmp -m icmp --icmp-type echo-request -j ACCEPT
+iptables -A FORWARD -i ens3 -o br-intra -p icmp -m icmp --icmp-type echo-reply -j ACCEPT
 
-iptables -A FORWARD -i ens7 -o ens8 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens8 -o ens7 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+### Las maquinas de la LAN pueden hacer ping al exterior y navegar.
+iptables -A FORWARD -i br-intra -o ens3 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens3 -o br-intra -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
 
-#Bravo puede navegar por internet
+iptables -A FORWARD -i br-intra -o ens3 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens3 -o br-intra -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+
+### La maquina Bravo puede navegar.
 iptables -A FORWARD -i ens8 -o ens3 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
 iptables -A FORWARD -i ens3 -o ens8 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
 
-iptables -A FORWARD -i ens3 -o ens8 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens8 -o ens3 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o ens3 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens3 -o ens8 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
 
-#Servicios web y ftp accesibles desde el exterior
-iptables -t nat -A PREROUTING -p tcp -i ens8 --dport 80 -j DNAT --to 172.16.0.200
-iptables -A FORWARD -i ens3 -o ens6 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens6 -o ens3 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+### Las consultas DNS estarán permitidas en el escenario (las consultas a Charlie desde el exterior, también).
+iptables -A OUTPUT -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
 
-iptables -t nat -A PREROUTING -p tcp -i enp0s8 --dport 21 -j DNAT --to 172.16.0.200
-iptables -A FORWARD -i ens8 -o ens3 -p tcp --dport 21 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens6 -o ens8 -p tcp --sport 21 -m state --state ESTABLISHED -j ACCEPT
+iptables -t nat -A PREROUTING -p udp -i ens3 --dport 53 -j DNAT --to 192.168.0.2
+iptables -A FORWARD -p udp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p udp --sport 53 -m state --state ESTABLISHED -j ACCEPT
 
-#Servidor de correo accesible solo desde LAN
-iptables -A FORWARD -i ens7 -o ens3 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
-iptables -A FORWARD -i ens3 -o ens7 -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
+### Al servidor MariaDb en Delta se puede acceder desde la DMZ, pero no desde el exterior.
+iptables -A FORWARD -i ens8 -o br-intra -p tcp --dport 3306 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i br-intra -o ens8 -p tcp --sport 3306 -m state --state ESTABLISHED -j ACCEPT
 
-#Evitar DoS por ICMP Flood
-iptables -A INPUT -i enp0s3 -p icmp -m state --state NEW --icmp-type echo-request -m limit --limit 1/s --limit-burst 1 -j ACCEPT
+### Configura la maquina Alfa para que los servicios web y ftp sean accesibles desde el exterior.
+iptables -t nat -A PREROUTING -p tcp -i ens3 --dport 80 -j DNAT --to 172.16.0.200
+iptables -A FORWARD -i ens3 -o ens8 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o ens3 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
 
-#Evitar DoS por SYN Flood
-iptables -N syn-flood
-iptables -A INPUT -p tcp --syn -j syn-flood
-iptables -A syn-flood -m limit --limit 1/s --limit-burst 3 -j RETURN
-iptables -A syn-flood -j DROP
+iptables -t nat -A PREROUTING -p tcp -i ens3 --dport 21 -j DNAT --to 172.16.0.200
+iptables -A FORWARD -i ens3 -o ens8 -p tcp --dport 21 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o ens3 -p tcp --sport 21 -m state --state ESTABLISHED -j ACCEPT
 
-#Evitar escaneos a los puertos de Alfa
-iptables -A INPUT -p tcp --tcp-flags ALL NONE -m limit --limit 3/m --limit-burst 5 -j LOG --log-prefix "Firewall&gt; Null scan "
-iptables -A INPUT -p tcp --tcp-flags ALL NONE  -m recent --name blacklist_60 --set -m comment --comment "Drop/Blacklist Null scan" -j DROP
+### El servidor web y el servidor ftp deben ser accesibles desde la LAN.
+iptables -A FORWARD -i br-intra -o ens8 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o br-intra -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -i br-intra -o ens8 -p tcp --dport 21 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o br-intra -p tcp --sport 21 -m state --state ESTABLISHED -j ACCEPT
+
+### El servidor de correos solo debe ser accesible desde la LAN.
+iptables -A FORWARD -i br-intra -o ens8 -p tcp --dport 25 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i ens8 -o br-intra -p tcp --sport 25 -m state --state ESTABLISHED -j ACCEPT
+
+### Evita ataques DoS por ICMP Flood, limitando el numero de peticiones por segundo desde una misma IP.
+iptables -A INPUT -i ens8 -p icmp -m state --state NEW --icmp-type echo-request -m limit --limit 1/s --limit-burst 1 -j ACCEPT
+
+### Evita ataques DoS por SYN Flood.
+iptables -N syn_flood
+iptables -A INPUT -p tcp --syn -j syn_flood
+iptables -A syn_flood -m limit --limit 1/s --limit-burst 3 -j RETURN
+iptables -A syn_flood -j DROP
+
+### Evita que realicen escaneos de puertos a Alfa.
+iptables -N antiscan
+iptables -A antiscan -j DROP
+
+### El servidor DNS de Charlie podrá hacer peticiones DNS a otros servidores.
+iptables -A OUTPUT -p tcp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 53 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp --sport 53 -m state --state ESTABLISHED -j ACCEPT
+
+### Alfa tendrá permitido navegar.
+iptables -A OUTPUT -o ens3 -p tcp --dport 80 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i ens3 -p tcp --sport 80 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A OUTPUT -o ens3 -p tcp --dport 443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -i ens3 -p tcp --sport 443 -m state --state ESTABLISHED -j ACCEPT
+
+### Se podrán hacer consultas al servidor LDAP desde cualquier maquina del escenario y desde el exterior.
+iptables -t nat -A PREROUTING -p tcp -i ens3 --dport 389 -j DNAT --to 192.168.0.2
+iptables -t nat -A PREROUTING -p tcp -i ens3 --dport 636 -j DNAT --to 192.168.0.2
+
+iptables -A OUTPUT -p tcp --dport 389 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --sport 389 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A OUTPUT -p tcp --dport 636 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp --sport 636 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 389 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp --sport 389 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -p tcp --dport 636 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp --sport 636 -m state --state ESTABLISHED -j ACCEPT
+
+### El director Bacula en Delta podrá conectarse a todas las máquinas del escenario.
+iptables -A OUTPUT -p tcp -m multiport --sport 9101,9102,9103 -m state --state ESTABLISHED -j ACCEPT
+iptables -A INPUT -p tcp -m multiport --dport 9101,9102,9103 -m state --state NEW,ESTABLISHED -j ACCEPT
+
+iptables -A FORWARD -p tcp -m multiport --dport 9101,9102,9103 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -p tcp -m multiport --sport 9101,9102,9103 -m state --state ESTABLISHED -j ACCEPT
 ```
 </code></pre></div></div>
 
@@ -1128,10 +1299,10 @@ iptables -A INPUT -p tcp --tcp-flags ALL NONE  -m recent --name blacklist_60 --s
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/hlc+sri/2023/02/10/kubernetes-almacenamiento.html" title="Taller Kubernetes: Trabajando con Pods">Taller Kubernetes: Almacenamiento en Kubernetes</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/09/29/infraestructura.html" title="Taller Kubernetes: Trabajando con Pods">Infraestructura como código</a></li>
+        <li><a class="post-link" href="/hlc+sri/2023/01/28/iscsi.html" title="Taller Kubernetes: Trabajando con Pods">Taller de Almacenamiento - Introducción a iSCSI </a></li>
+<li><a class="post-link" href="/hlc+sri/2023/01/15/servidor-correo.html" title="Taller Kubernetes: Trabajando con Pods">Configuración de un servidor de correo en un VPS</a></li>
 <li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Taller Kubernetes: Trabajando con Pods">Instalación y migración de una aplicación web PHP</a></li>
-<li><a class="post-link" href="/iaw/2023/02/11/docker-python.html" title="Taller Kubernetes: Trabajando con Pods">Implantación de aplicaciones web Python en docker</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Taller Kubernetes: Trabajando con Pods">Virtualización en Linux</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
