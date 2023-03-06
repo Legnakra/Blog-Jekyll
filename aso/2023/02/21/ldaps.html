@@ -697,29 +697,24 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Como parte principal y esencial de esta práctica, vamos a crear un certificado x509 para el servidor LDAP. Para ello, vamos a utilizar el comando <code class="language-plaintext highlighter-rouge">openssl</code> que nos permite generar certificados x509. Para ello ejecutaremos el siguiente comando:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-openssl genrsa 4096 &gt; /etc/ssl/private/alfa.key
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openssl genrsa 4096 <span class="o">&gt;</span> /etc/ssl/private/alfa.key
+</code></pre></div></div>
 
-Una vez ejecutado, debemos introducir los datos del certificado. Para ello, introduciremos los siguientes datos:
+<p>Una vez ejecutado, debemos introducir los datos del certificado. Para ello, introduciremos los siguientes datos:</p>
 
-```bash
-Country Name (2 letter code) [AU]:ES
-State or Province Name (full name) [Some-State]:Sevilla
-Locality Name (eg, city) []:Dos Hermanas
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:IES Gonzalo Nazareno
-Organizational Unit Name (eg, section) []:Informática
-Common Name (e.g. server FQDN or YOUR name) []:alfa.mariajesus.gonzalonazareno.org
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Country Name <span class="o">(</span>2 letter code<span class="o">)</span> <span class="o">[</span>AU]:ES
+State or Province Name <span class="o">(</span>full name<span class="o">)</span> <span class="o">[</span>Some-State]:Sevilla
+Locality Name <span class="o">(</span>eg, city<span class="o">)</span> <span class="o">[]</span>:Dos Hermanas
+Organization Name <span class="o">(</span>eg, company<span class="o">)</span> <span class="o">[</span>Internet Widgits Pty Ltd]:IES Gonzalo Nazareno
+Organizational Unit Name <span class="o">(</span>eg, section<span class="o">)</span> <span class="o">[]</span>:Informática
+Common Name <span class="o">(</span>e.g. server FQDN or YOUR name<span class="o">)</span> <span class="o">[]</span>:alfa.mariajesus.gonzalonazareno.org
 </code></pre></div></div>
 
 <p><img src="/assets/images/LDAP/ldap3/1.png" alt="1"></p>
 
 <p>Ya generado el fichero, lo pasamos a nuestra máquina host por medio de <code class="language-plaintext highlighter-rouge">scp</code>:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-scp alfa.csr maria@172.22.2.125:/home/maria
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp alfa.csr maria@172.22.2.125:/home/maria
 </code></pre></div></div>
 
 <p><img src="/assets/images/LDAP/ldap3/2.png" alt="2"></p>
@@ -728,22 +723,18 @@ scp alfa.csr maria@172.22.2.125:/home/maria
 
 <p><img src="/assets/images/LDAP/ldap3/3.png" alt="3"></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-scp alfa.crt alfa:172.22.201.46:/home/maria
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp alfa.crt alfa:172.22.201.46:/home/maria
 </code></pre></div></div>
 
 <p><img src="/assets/images/LDAP/ldap3/4.png" alt="4"></p>
 
 <p>Movemos el certificado generado por la CA a la carpeta <code class="language-plaintext highlighter-rouge">/etc/ssl/certs</code>, movemos también el certificado del centro que podemos encontrar <a href="https://dit.gonzalonazareno.org/gestiona/info/documentacion/doc/gonzalonazareno.crt">aquí</a> y le damos los permisos adecuados para que el servidor LDAP pueda leerlo:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-mv alfa.crt /etc/ssl/certs
-mv gonzalonazareno.crt /etc/ssl/certs
-chown root:root /etc/ssl/certs/gonzalonazareno.crt
-chown root:root /etc/ssl/certs/alfa.crt
-chmod 644 /etc/ssl/certs/alfa.crt
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mv </span>alfa.crt /etc/ssl/certs
+<span class="nb">mv </span>gonzalonazareno.crt /etc/ssl/certs
+<span class="nb">chown </span>root:root /etc/ssl/certs/gonzalonazareno.crt
+<span class="nb">chown </span>root:root /etc/ssl/certs/alfa.crt
+<span class="nb">chmod </span>644 /etc/ssl/certs/alfa.crt
 </code></pre></div></div>
 
 <p>Como podemos ver, el certificado ya está firmado y listo para ser utilizado.</p>
@@ -754,9 +745,7 @@ chmod 644 /etc/ssl/certs/alfa.crt
 
 <p>Primero deberemos instalar el paquete <code class="language-plaintext highlighter-rouge">acl</code> para poder utilizar las ACLs:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```bash
-apt-get install acl
-```
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt-get <span class="nb">install </span>acl
 </code></pre></div></div>
 
 <p>Una vez instalado, ejecutamos los siguientes comandos para dar permisos de lectura al usuario <code class="language-plaintext highlighter-rouge">openldap</code> sobre el directorio <code class="language-plaintext highlighter-rouge">/etc/ssl/private</code> y sobre el fichero <code class="language-plaintext highlighter-rouge">alfa.key</code>:</p>
@@ -950,10 +939,10 @@ ldapsearch <span class="nt">-x</span> <span class="nt">-b</span> <span class="s2
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Cluster de Alta Disponibilidad ">Instalación y migración de una aplicación web PHP</a></li>
-<li><a class="post-link" href="/asgdb/2023/02/07/movimientos.html" title="Cluster de Alta Disponibilidad ">Movimiento de Datos</a></li>
-<li><a class="post-link" href="/python/2022/11/06/github.html" title="Cluster de Alta Disponibilidad ">Introducción a GitHub</a></li>
-<li><a class="post-link" href="/seguridad/2023/01/13/vpn-d.html" title="Cluster de Alta Disponibilidad ">VPN sitio a sitio con WireGuard</a></li>
+        <li><a class="post-link" href="/asgdb/2023/02/07/copia-seguridad.html" title="Cluster de Alta Disponibilidad ">Copias de Seguridad y Restauración</a></li>
+<li><a class="post-link" href="/python/2022/09/29/inicio-python.html" title="Cluster de Alta Disponibilidad ">Introducción a la programación Python</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/01/10/correo.html" title="Cluster de Alta Disponibilidad ">Servidor de correo en los servidores de clase</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Cluster de Alta Disponibilidad ">Virtualización en Linux</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
