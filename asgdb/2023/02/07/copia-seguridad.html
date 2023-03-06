@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 37 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 38 mins</span>
   </p></header>
 </div>
     </div>
@@ -708,7 +708,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <h2 id="ejercicios-prácticos">Ejercicios prácticos</h2>
 
-<p><img src="/assets/images/interconexion/oracle.png" alt="oracle"></p>
+<p><img src="/assets/images/interconexionoracle.png" alt="oracle"></p>
 
 <h3 id="ejercicio-1">Ejercicio 1</h3>
 
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <span class="nb">chown </span>oracle:oinstall /opt/oracle/backup
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-1.png" alt="1-1"></p>
+<p><img src="/assets/images/asgdb/backup/1-1.png" alt="1-1"></p>
 
 <p>Nos conectamos a la base de datos y creamos un directorio en el que se almacenarán los archivos de exportación, al que le asignaremos los permisos necesarios para que el usuario scott pueda acceder a él.</p>
 
@@ -735,21 +735,21 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <span class="k">GRANT</span> <span class="k">READ</span><span class="p">,</span> <span class="k">WRITE</span> <span class="k">ON</span> <span class="n">DIRECTORY</span> <span class="n">EXPORT_DIR</span> <span class="k">TO</span> <span class="n">scott</span><span class="p">;</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-2.png" alt="1-2"></p>
+<p><img src="/assets/images/asgdb/backup/1-2.png" alt="1-2"></p>
 
 <p>Le adjudicamos también permisos para que pueda exportar los datos.</p>
 
 <div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">GRANT</span> <span class="n">DATAPUMP_EXP_FULL_DATABASE</span> <span class="k">TO</span> <span class="n">scott</span><span class="p">;</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-3.png" alt="1-3"></p>
+<p><img src="/assets/images/asgdb/backup/1-3.png" alt="1-3"></p>
 
 <p>Ahora vamos a crear un script que realice la copia de seguridad lógica de la base de datos.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>expdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">LOGFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.log <span class="nv">COMPRESSION</span><span class="o">=</span>ALL <span class="nv">DUMPFILE</span><span class="o">=</span>compress.dmp <span class="nv">FILESIZE</span><span class="o">=</span>60M <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-4.png" alt="1-4"></p>
+<p><img src="/assets/images/asgdb/backup/1-4.png" alt="1-4"></p>
 
 <p>Los parámetros que hemos utilizado son los siguientes:</p>
 
@@ -806,7 +806,11 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Como podemos ver en la imagen, se han creado 3 ficheros:</p>
 
-<p><img src="/assets/images/interconexion/1-5.png" alt="1-5"></p>
+<p><img src="/assets/images/asgdb/backup/1-5.png" alt="1-5"></p>
+
+<h3 id="ejercicio-2">Ejercicio 2</h3>
+
+<p><strong>Restaura la copia de seguridad lógica creada en el punto anterior.</strong></p>
 
 <p>Para probar la eficacia de la copia de seguridad, vamos a eliminar dos tablas de dos bases de datos diferentes.</p>
 
@@ -814,26 +818,69 @@ document.addEventListener('DOMContentLoaded', function(event) {
 <span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">maria</span><span class="p">.</span><span class="n">salgrade</span><span class="p">;</span>
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-6.png" alt="1-6"></p>
+<p><img src="/assets/images/asgdb/backup/1-6.png" alt="1-6"></p>
 
 <p>Una vez que hemos hecho la eliminación de ambas tablas, vamos a realizar una restauración de la copia de seguridad. <strong>NOTA</strong>: No nos olvidemos de poner la contraseña de encriptación, ya que en caso contrario, no nos dejará restaurar la copia de seguridad.</p>
 
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>impdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup20230306.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger
 </code></pre></div></div>
 
-<p><img src="/assets/images/interconexion/1-7.png" alt="1-7"></p>
+<p><img src="/assets/images/asgdb/backup/1-7.png" alt="1-7"></p>
 
 <p>Y como podemos ver, se han restaurado las tablas que habíamos eliminado.</p>
 
-<p><img src="/assets/images/interconexion/1-8.png" alt="1-8"></p>
-
-<h3 id="ejercicio-2">Ejercicio 2</h3>
-
-<p><strong>Restaura la copia de seguridad lógica creada en el punto anterior.</strong></p>
+<p><img src="/assets/images/asgdb/backup/1-8.png" alt="1-8"></p>
 
 <h3 id="ejercicio-3">Ejercicio 3</h3>
 
 <p><strong>Pon tu base de datos en modo ArchiveLog y realiza con RMAN una copia de seguridad física en caliente.</strong></p>
+
+<p>Como podemos recordar, en el ejercicio anterior, hemos realizado una copia de seguridad lógica de la base de datos, y ahora vamos a restaurarla.</p>
+
+<p><img src="/assets/images/asgdb/backup/1-4.png" alt="1-4"></p>
+
+<p>Para restaurar la base de datos, debemos hacerlo en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>, pero ¿qué es el modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>?</p>
+
+<p>El modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code> es un modo de operación de Oracle que permite que la base de datos pueda recuperarse de un fallo, ya sea por un fallo del sistema o por un fallo del usuario. Para ello, Oracle guarda los cambios que se realizan en la base de datos en un fichero de log, que se llama <code class="language-plaintext highlighter-rouge">Archivelog</code>. Cuando se produce un fallo, Oracle puede recuperar la base de datos a partir de los ficheros de log.</p>
+
+<p>Para activar el modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>, debemos realizar una serie de pasos:</p>
+
+<ul>
+  <li>Paramos la base de datos.</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sqlplus / as sysdba
+shutdown immediate<span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Iniciamos la base de datos:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Startup</span> <span class="n">mount</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Modificamos la base de datos para que se ejecute en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">DATABASE</span> <span class="n">ARCHIVELOG</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Y por último, iniciamos la base de datos en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ALTER</span> <span class="k">DATABASE</span> <span class="k">OPEN</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/backup/3-1.png" alt="3-1"></p>
+
+<p>En la imagen podemos ver que los comandos han funcionado correctamente, pero la verdadera prueba de fuego es ejecutando en el cliente de Oracle el comando <code class="language-plaintext highlighter-rouge">select log_mode from v$database;</code> y comprobar que nos devuelve <code class="language-plaintext highlighter-rouge">ARCHIVELOG</code>.</p>
+
+<p><img src="/assets/images/asgdb/backup/3-2.png" alt="3-2"></p>
+
+<p>Y efectivamente, nos devuelve <code class="language-plaintext highlighter-rouge">ARCHIVELOG</code>, por lo que ya podríamos realizar la copia de seguridad.</p>
 
 <h3 id="ejercicio-4">Ejercicio 4</h3>
 
@@ -843,7 +890,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p><strong>Borra un fichero de control e intenta recuperar la base de datos a partir de la copia de seguridad creada en el punto anterior.</strong></p>
 
-<p><img src="/assets/images/interconexion/postgresql.png" alt="postgres"></p>
+<p><img src="/assets/images/asgdb/backup/postgresql.png" alt="postgres"></p>
 
 <h3 id="ejercicio-6">Ejercicio 6</h3>
 
@@ -1613,10 +1660,10 @@ mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-2.html" title="Taller Kubernetes: Despliegues parametrizados">Cortafuegos II: Perimetral con nftables</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html" title="Taller Kubernetes: Despliegues parametrizados">Kubernetes: Trabajando con un Pod multicontenedor</a></li>
-<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Taller Kubernetes: Despliegues parametrizados">Instalación y migración de una aplicación web PHP</a></li>
-<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Kubernetes: Despliegues parametrizados">Acceso remoto con OpenVPN y certificados x509</a></li>
+        <li><a class="post-link" href="/iaw/2023/01/09/java-simple.html" title="Taller Kubernetes: Despliegues parametrizados">Desarrollo y despliegue de una aplicación Java simple</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/17/OpenStack.html" title="Taller Kubernetes: Despliegues parametrizados">Cloud Computing IaaS. OpenStack</a></li>
+<li><a class="post-link" href="/hlc+sri/2022/11/06/virtualizaci%C3%B3n.html" title="Taller Kubernetes: Despliegues parametrizados">Virtualización en Linux</a></li>
+<li><a class="post-link" href="/seguridad/2022/12/13/integridad.html" title="Taller Kubernetes: Despliegues parametrizados"> Integridad, firmas y autenticación </a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
