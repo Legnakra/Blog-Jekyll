@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 35 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 37 mins</span>
   </p></header>
 </div>
     </div>
@@ -746,10 +746,86 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 <p>Ahora vamos a crear un script que realice la copia de seguridad lógica de la base de datos.</p>
 
-<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>expdp scott/tiger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">SCHEMAS</span><span class="o">=</span>scott <span class="nv">DUMPFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.dmp <span class="nv">LOGFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.log
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>expdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">LOGFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.log <span class="nv">COMPRESSION</span><span class="o">=</span>ALL <span class="nv">DUMPFILE</span><span class="o">=</span>compress.dmp <span class="nv">FILESIZE</span><span class="o">=</span>60M <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger
 </code></pre></div></div>
 
 <p><img src="/assets/images/interconexion/1-4.png" alt="1-4"></p>
+
+<p>Los parámetros que hemos utilizado son los siguientes:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parámetro</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>scott</td>
+      <td>Usuario que realiza la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>tigger</td>
+      <td>Contraseña del usuario</td>
+    </tr>
+    <tr>
+      <td>DIRECTORY=EXPORT_DIR</td>
+      <td>Directorio donde se almacenará la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>DUMPFILE=backup<code class="language-plaintext highlighter-rouge">date +%Y%m%d</code>.dmp</td>
+      <td>Fichero donde se almacenará la copia de seguridad junto con su fecha</td>
+    </tr>
+    <tr>
+      <td>FULL=YES</td>
+      <td>Indica que se realiza una copia de seguridad completa</td>
+    </tr>
+    <tr>
+      <td>LOGFILE=backup<code class="language-plaintext highlighter-rouge">date +%Y%m%d</code>.log</td>
+      <td>Fichero donde se almacenará el log de la copia de seguridad junto con su fecha</td>
+    </tr>
+    <tr>
+      <td>COMPRESSION=ALL</td>
+      <td>Indica que se comprime la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>DUMPFILE=compress.dmp</td>
+      <td>Fichero donde se almacenará la copia de seguridad comprimida</td>
+    </tr>
+    <tr>
+      <td>FILESIZE=60M</td>
+      <td>Tamaño máximo de los ficheros de la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>ENCRYPTION_PASSWORD=tigger</td>
+      <td>Contraseña para encriptar la copia de seguridad</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Como podemos ver en la imagen, se han creado 3 ficheros:</p>
+
+<p><img src="/assets/images/interconexion/1-5.png" alt="1-5"></p>
+
+<p>Para probar la eficacia de la copia de seguridad, vamos a eliminar dos tablas de dos bases de datos diferentes.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">maria2</span><span class="p">.</span><span class="n">dept</span><span class="p">;</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">maria</span><span class="p">.</span><span class="n">salgrade</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/1-6.png" alt="1-6"></p>
+
+<p>Una vez que hemos hecho la eliminación de ambas tablas, vamos a realizar una restauración de la copia de seguridad. <strong>NOTA</strong>: No nos olvidemos de poner la contraseña de encriptación, ya que en caso contrario, no nos dejará restaurar la copia de seguridad.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>impdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup20230306.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger
+</code></pre></div></div>
+
+<p><img src="/assets/images/interconexion/1-7.png" alt="1-7"></p>
+
+<p>Y como podemos ver, se han restaurado las tablas que habíamos eliminado.</p>
+
+<p><img src="/assets/images/interconexion/1-8.png" alt="1-8"></p>
 
 <h3 id="ejercicio-2">Ejercicio 2</h3>
 
@@ -1537,10 +1613,10 @@ mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2023/01/09/java-cms.html" title="Taller Kubernetes: Despliegues parametrizados">Despliegue de aplicaciones Java</a></li>
-<li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Taller Kubernetes: Despliegues parametrizados">Configuración de HTTPS en nuestro VPS</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-instalacion.html" title="Taller Kubernetes: Despliegues parametrizados">Kubernetes: Instalación y configuración de minikube y kubectl</a></li>
-<li><a class="post-link" href="/aso/2023/01/22/ldap1.html" title="Taller Kubernetes: Despliegues parametrizados">Escenario - Configuración de LDAP en Alfa</a></li>
+        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-2.html" title="Taller Kubernetes: Despliegues parametrizados">Cortafuegos II: Perimetral con nftables</a></li>
+<li><a class="post-link" href="/hlc+sri/2023/02/01/kubernetes-multicontenedor.html" title="Taller Kubernetes: Despliegues parametrizados">Kubernetes: Trabajando con un Pod multicontenedor</a></li>
+<li><a class="post-link" href="/iaw/2022/11/17/migracion.html" title="Taller Kubernetes: Despliegues parametrizados">Instalación y migración de una aplicación web PHP</a></li>
+<li><a class="post-link" href="/seguridad/2023/01/09/vpn.html" title="Taller Kubernetes: Despliegues parametrizados">Acceso remoto con OpenVPN y certificados x509</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
