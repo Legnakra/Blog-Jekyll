@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
 
 
 
-    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 38 mins</span>
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 41 mins</span>
   </p></header>
 </div>
     </div>
@@ -881,6 +881,32 @@ shutdown immediate<span class="p">;</span>
 <p><img src="/assets/images/asgdb/backup/3-2.png" alt="3-2"></p>
 
 <p>Y efectivamente, nos devuelve <code class="language-plaintext highlighter-rouge">ARCHIVELOG</code>, por lo que ya podríamos realizar la copia de seguridad.</p>
+
+<p>La copia de seguridad la vamos a realizar con el comando <code class="language-plaintext highlighter-rouge">RMAN</code>, que es el comando de Oracle para realizar copias de seguridad.</p>
+
+<p>RMAN (Recovery Manager) es una herramienta de Oracle que nos permite realizar copias de seguridad de la base de datos, restaurar la base de datos, realizar copias de seguridad de los ficheros de log, etc. Una estrategia completa de alta disponibilidad y recuperación ante desastres requiere procedimientos confiables de copia de seguridad, restauración y recuperación de datos. Oracle Recovery Manager (RMAN) proporciona una base integral para realizar copias de seguridad y recuperar de manera eficiente la base de datos de Oracle. Está diseñado para trabajar íntimamente con el servidor, proporcionando detección de corrupción a nivel de bloque durante la copia de seguridad y la restauración. RMAN optimiza el rendimiento y el consumo de espacio durante el respaldo con multiplexación de archivos y compresión de conjuntos de respaldo, y se integra con Oracle Secure Backup, así como con productos de administración de medios de terceros, para respaldo en cinta.</p>
+
+<p>RMAN se ocupa de todos los procedimientos de base de datos subyacentes antes y después de la copia de seguridad o la restauración, lo que libera la dependencia del sistema operativo y los scripts SQL*Plus. Proporciona una interfaz común, a través de la línea de comandos y Enterprise Manager, para tareas de copia de seguridad en diferentes sistemas operativos host y ofrece funciones que no están disponibles a través de métodos administrados por el usuario, como la paralelización de flujos de datos de copia de seguridad/restauración, política de retención de archivos de copia de seguridad e historial detallado. de todas las copias de seguridad.</p>
+
+<p>Y tras esta mediana introducción, vamos a realizar la copia de seguridad. Para ello, iniciaremos rman y nos conectaremos a la base de datos.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rman
+connect target
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/backup/3-3.png" alt="3-3"></p>
+
+<p>Una vez conectados, nos vamos a configurar la ruta a la que vamos a guardar la copia de seguridad. Para ello, ejecutamos el comando <code class="language-plaintext highlighter-rouge">configure</code>.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">configure</span> <span class="n">channel</span> <span class="n">device</span> <span class="k">type</span> <span class="n">disk</span> <span class="n">format</span> <span class="s1">'/opt/oracle/rman'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="/assets/images/asgdb/backup/3-4.png" alt="3-4"></p>
+
+<p>Tras ello, lo que nos queda realizar el backup de la base de datos ejecutando el siguiente comando dentro de rman:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bakcup</span> <span class="k">database</span><span class="p">;</span> 
+</code></pre></div></div>
 
 <h3 id="ejercicio-4">Ejercicio 4</h3>
 
@@ -1648,6 +1674,9 @@ mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <
   <li>
     <p><a href="https://www.digitalocean.com/community/tutorials/how-to-back-up-restore-and-migrate-a-mongodb-database-on-ubuntu-20-04-es">Backup y Restore de MongoDB</a></p>
   </li>
+  <li>
+    <p><a href="https://www.oracle.com/es/database/technologies/high-availability/rman.html">RMAN</a></p>
+  </li>
 </ul>
 
 
@@ -1660,10 +1689,10 @@ mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <
 <div class="post-related">
       <div>Related Articles</div>
       <ul>
-        <li><a class="post-link" href="/iaw/2022/11/27/https.html" title="Taller Kubernetes: Despliegues parametrizados">Configuración de HTTPS en nuestro VPS</a></li>
-<li><a class="post-link" href="/hlc+sri/2023/02/12/kubernetes-cms.html" title="Taller Kubernetes: Despliegues parametrizados">Taller Kubernetes: Instalación de un CMS con Helm </a></li>
-<li><a class="post-link" href="/iaw/2023/02/17/jenkins-pipelines.html" title="Taller Kubernetes: Despliegues parametrizados">Introducción a los Pipelines de Jenkins</a></li>
-<li><a class="post-link" href="/hlc+sri/2022/10/10/prueba.html" title="Taller Kubernetes: Despliegues parametrizados">Prueba: Introducción a la implantación de aplicaciones web</a></li>
+        <li><a class="post-link" href="/seguridad/2023/02/01/cortafuegos-2.html" title="Taller Kubernetes: Despliegues parametrizados">Cortafuegos II: Perimetral con nftables</a></li>
+<li><a class="post-link" href="/iaw/2022/12/17/wsgi.html" title="Taller Kubernetes: Despliegues parametrizados">Desplegando aplicaciones flask con apache2 + mod_wsgi </a></li>
+<li><a class="post-link" href="/iaw/2023/02/09/docker-bookmedik.html" title="Taller Kubernetes: Despliegues parametrizados">Implantación de aplicaciones web PHP en docker</a></li>
+<li><a class="post-link" href="/iaw/2023/01/27/docker-imagen.html" title="Taller Kubernetes: Despliegues parametrizados">Taller Docker - Creación de imágenes Docker</a></li>
 </ul>
     </div>
 <div class="post-comments"></div></section>
