@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</title>
+  <meta name='description' content="Tomando como referencia el escenario, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.">
+  <link rel='canonical' href="flexton.netlify.com/2023/01/03/dns/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/dns.png )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack</h1>
+        <div class="c-article__date">
+          <span>2023, Jan 03</span>
+        </div>
+      </header>
+      <p>Tomando como referencia el <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a>, vamos a realizar la instalación de un servidor web, un servidor de base de datos y un servidor DNS.</p>
+
+<h1 id="servidor-dns">Servidor DNS</h1>
+<p>Vamos a instalar un servidor dns en <code class="language-plaintext highlighter-rouge">charlie</code> que nos permita gestionar la resolución directa e inversa de nuestros nombres. Vamos a poseer un servidor dns con autoridad sobre un subdominio de nuestro dominio principal gonzalonazareno.org, que se llamará <code class="language-plaintext highlighter-rouge">mariajesus.gonzalonazareno.org</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt-get <span class="nb">install </span>bind9</code></pre></figure>
+
+<h2 id="creamos-las-vistas">Creamos las vistas</h2>
+
+<p>Para ello, vamos a crear vistas pero, ¿qué es una vista? Una vista es una forma de organizar las zonas de resolución en un servidor DNS. Una vista es una zona de resolución que se puede configurar de forma independiente. Por ejemplo, podemos tener una vista para la resolución de los nombres de las máquinas de la red interna y otra vista para la resolución de los nombres de las máquinas de la red externa.</p>
+
+<p>De esta forma, podemos tener un servidor DNS que resuelva los nombres de las máquinas de la red interna y otro servidor DNS que resuelva los nombres de las máquinas de la red externa.</p>
+
+<p>En nuestro caso, vamos a crear cinco vistas:</p>
+
+<ul>
+  <li>Una vista que será la que tendrán <code class="language-plaintext highlighter-rouge">alfa</code>, <code class="language-plaintext highlighter-rouge">charlie</code> y <code class="language-plaintext highlighter-rouge">delta</code> con la IP <code class="language-plaintext highlighter-rouge">192.168.0.0</code>.</li>
+  <li>Una vista DMZ que resuelva a bravo con la IP <code class="language-plaintext highlighter-rouge">172.16.0.0</code>.</li>
+  <li>Una vista externa que se muestre al exterior con la IP <code class="language-plaintext highlighter-rouge">172.22.0.0</code>.</li>
+  <li>Dos vistas para la resolución inversa, una para la vista interna y otra para la vista DMZ.</li>
+</ul>
+
+<p>Para realizar la configuración, debemos realizarla en el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.local</code>, quedando de la siguiente manera:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">view interna <span class="o">{</span>
+    match-clients <span class="o">{</span> 192.168.0.0/24<span class="p">;</span> 127.0.0.1<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.interna.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"0.168.192.in-addr.arpa"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"16.172.in-addr.arpa"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.16.172"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+view externa <span class="o">{</span>
+    match-clients <span class="o">{</span> 172.22.0.0/16<span class="p">;</span> 192.168.202.2<span class="p">;</span> 172.29.0.0/16<span class="p">;</span><span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span> 
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.externa.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span>
+
+view dmz <span class="o">{</span>
+    match-clients <span class="o">{</span> 172.16.0.0/16<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+    allow-recursion <span class="o">{</span> any<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"mariajesus.gonzalonazareno.org"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.dmz.mariajesus.gonzalonazareno.org"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"16.172.in-addr.arpa"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.16.172"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        zone <span class="s2">"0.168.192.in-addr.arpa"</span>
+        <span class="o">{</span>
+               <span class="nb">type </span>master<span class="p">;</span>
+               file <span class="s2">"db.0.168.192"</span><span class="p">;</span>
+        <span class="o">}</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/zones.rfc1918"</span><span class="p">;</span>
+        include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span>
+<span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/1.png" alt="1" /></p>
+
+<p>Y también modificaremos el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf</code> de la siguiente manera:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">// This is the primary configuration file <span class="k">for </span>the BIND DNS server named.
+//
+// Please <span class="nb">read</span> /usr/share/doc/bind9/README.Debian.gz <span class="k">for </span>information on the
+// structure of BIND configuration files <span class="k">in </span>Debian, <span class="k">*</span>BEFORE<span class="k">*</span> you customize
+// this configuration file.
+//
+// If you are just adding zones, please <span class="k">do </span>that <span class="k">in</span> /etc/bind/named.conf.local
+
+include <span class="s2">"/etc/bind/named.conf.options"</span><span class="p">;</span>
+include <span class="s2">"/etc/bind/named.conf.local"</span><span class="p">;</span>
+//include <span class="s2">"/etc/bind/named.conf.default-zones"</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/2.png" alt="2" /></p>
+
+<h2 id="creamos-las-zonas">Creamos las zonas</h2>
+
+<h3 id="zona-externa">Zona Externa</h3>
+
+<p>Para crear la zona externa, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.externa.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span>    86400
+@       IN      SOA     alfa.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      alfa.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       172.22.201.46
+dns         IN      CNAME   alfa
+www         IN      CNAME   alfa</code></pre></figure>
+
+<p><img src="/images/dns-escenario/3.png" alt="3" /></p>
+
+<h3 id="zona-interna">Zona Interna</h3>
+
+<p>Para crear la zona interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.interna.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       192.168.0.1
+bravo       IN      A       172.16.0.200
+charlie     IN      A       192.168.0.2
+delta       IN      A       192.168.0.3
+bd          IN      CNAME   delta
+dns         IN      CNAME   charlie
+www         IN      CNAME   bravo</code></pre></figure>
+
+<p><img src="/images/dns-escenario/4.png" alt="4" /></p>
+
+<h3 id="zona-dmz">Zona DMZ</h3>
+
+<p>Para crear la zona DMZ, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.dmz.mariajesus.gonzalonazareno.org</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> mariajesus.gonzalonazareno.org.
+
+alfa        IN      A       172.16.0.1
+bravo       IN      A       172.16.0.200
+charlie     IN      A       192.168.0.2
+delta       IN      A       192.168.0.3
+bd          IN      CNAME   delta
+dns         IN      CNAME   charlie
+www         IN      CNAME   bravo</code></pre></figure>
+
+<p><img src="/images/dns-escenario/5.png" alt="5" /></p>
+
+<h3 id="zona-inversa-interna">Zona Inversa Interna</h3>
+
+<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.0.168.192</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> 0.168.192.in-addr.arpa.
+
+1       IN      PTR     alfa.mariajesus.gonzalonazareno.org.
+2       IN      PTR     charlie.mariajesus.gonzalonazareno.org.
+3       IN      PTR     delta.mariajesus.gonzalonazareno.org.</code></pre></figure>
+
+<p><img src="/images/dns-escenario/6.png" alt="6" /></p>
+
+<h3 id="zona-inversa-dmz">Zona Inversa DMZ</h3>
+
+<p>Para crear la zona inversa interna, debemos crear el fichero <code class="language-plaintext highlighter-rouge">/var/cache/bind/db.16.172</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$TTL</span>    86400
+@       IN      SOA     charlie.mariajesus.gonzalonazareno.org. root.mariajesus.gonzalonazareno.org. <span class="o">(</span>
+                              1         <span class="p">;</span> Serial
+                         604800         <span class="p">;</span> Refresh
+                          86400         <span class="p">;</span> Retry
+                        2419200         <span class="p">;</span> Expire
+                          86400 <span class="o">)</span>       <span class="p">;</span> Negative Cache TTL
+<span class="p">;</span>
+@       IN      NS      charlie.mariajesus.gonzalonazareno.org.
+
+<span class="nv">$ORIGIN</span> 16.172.in-addr.arpa.
+
+1.0     IN      PTR     alfa.mariajesus.gonzalonazareno.org.
+200.0   IN      PTR     bravo.mariajesus.gonzalonazareno.org.</code></pre></figure>
+
+<p><img src="/images/dns-escenario/7.png" alt="7" /></p>
+
+<p>No debemos olvidar que también debemos modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/zones.rfc1918</code> para desactivar las zonas inversas por defecto:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">zone <span class="s2">"10.in-addr.arpa"</span>      <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+
+//zone <span class="s2">"16.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"17.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"18.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"19.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"20.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"21.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+//zone <span class="s2">"22.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"23.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"24.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"25.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"26.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"27.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"28.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"29.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"30.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span>
+zone <span class="s2">"31.172.in-addr.arpa"</span>  <span class="o">{</span> <span class="nb">type </span>master<span class="p">;</span> file <span class="s2">"/etc/bind/db.empty"</span><span class="p">;</span> <span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/8.png" alt="8" /></p>
+
+<h3 id="configuración-del-forwarder">Configuración del forwarder</h3>
+
+<p>Vamos a modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/bind/named.conf.options</code> para que el servidor <code class="language-plaintext highlighter-rouge">papión</code> actúe como forwarder:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">       forwarders <span class="o">{</span>
+              192.168.202.2<span class="p">;</span>
+       <span class="o">}</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/9.png" alt="9" /></p>
+
+<p>Reiniciamos el servicio bind9:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl restart bind9</code></pre></figure>
+
+<h2 id="servidor-web">Servidor Web</h2>
+
+<p>En <code class="language-plaintext highlighter-rouge">bravo</code> vamos a instalar un servidor web apache. Recuerda que es una máquina con rocky linux. Para ello, debemos ejecutar los siguientes comandos:</p>
+
+<p>Recordemos que esta máquina es una máquina con un sistema Rocky Linux.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>dnf <span class="nb">install </span>httpd php php-mysqlnd php-gd php-fpm</code></pre></figure>
+
+<p>Iniciamos, habilitamos el servicio apache y comprobamos que está en ejecución:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>systemctl <span class="nb">enable </span>httpd
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>php-fpm
+<span class="nb">sudo </span>systemctl status httpd</code></pre></figure>
+
+<p><img src="/images/dns-escenario/10.png" alt="10" /></p>
+
+<h3 id="configuración-del-virtualhost">Configuración del VirtualHost</h3>
+
+<ul>
+  <li>Creamos los directorios <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-available</code> y <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-enabled</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">       
+<span class="nb">mkdir</span> /etc/httpd/sites-available /etc/httpd/sites-enabled</code></pre></figure>
+
+<ul>
+  <li>Configuramos <code class="language-plaintext highlighter-rouge">/etc/httpd/conf/httpd.conf</code> para que cargue los ficheros de configuración de los VirtualHosts:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#Añadimos esta línea al final del fichero</span>
+IncludeOptional sites-enabled/<span class="k">*</span>.conf</code></pre></figure>
+
+<ul>
+  <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf</code>. Recordemos también que debemos incluir la configuración para agregar php al servidor web, por lo que el fichero quedaría con el siguiente contenido:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">&lt;VirtualHost <span class="k">*</span>:80&gt;
+    ServerName www.mariajesus.gonzalonazareno.org
+    DocumentRoot /var/www/html/mariajesus
+    ErrorLog /var/www/html/mariajesus/log/error.log
+    CustomLog /var/www/html/mariajesus/log/access.log combined
+    &lt;FilesMatch <span class="se">\.</span>php<span class="nv">$&gt;</span>
+        SetHandler <span class="s2">"proxy:unix:/run/php-fpm/www.sock|fcgi://localhost"</span>
+    &lt;/FilesMatch&gt;
+&lt;/VirtualHost&gt;</code></pre></figure>
+
+<ul>
+  <li>Creamos el enlace simbólico en <code class="language-plaintext highlighter-rouge">/etc/httpd/sites-enabled</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/httpd/sites-available/www.mariajesus.gonzalonazareno.org.conf /etc/httpd/sites-enabled/www.mariajesus.gonzalonazareno.org.conf</code></pre></figure>
+
+<ul>
+  <li>Creamos el fichero <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus/info.php</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-php" data-lang="php"><span class="cp">&lt;?php</span>
+<span class="nb">phpinfo</span><span class="p">();</span>
+<span class="cp">?&gt;</span></code></pre></figure>
+
+<ul>
+  <li>Creamos el index.html en <code class="language-plaintext highlighter-rouge">/var/www/html/mariajesus</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">'utf-8'</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">'viewport'</span> <span class="na">content=</span><span class="s">'width=device-width, initial-scale=1'</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;</span>www.mariajesus.gonzalonazareno.org<span class="nt">&lt;/title&gt;</span>
+       <span class="nt">&lt;style </span><span class="na">type=</span><span class="s">"text/css"</span><span class="nt">&gt;</span>
+      <span class="o">/*&lt;![</span><span class="nt">CDATA</span><span class="o">[*/</span>
+
+            <span class="nt">html</span> <span class="p">{</span>
+             <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+             <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+           <span class="p">}</span>  
+             <span class="nt">body</span> <span class="p">{</span>
+       <span class="nl">background</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">20</span><span class="p">,</span><span class="m">72</span><span class="p">,</span><span class="m">50</span><span class="p">);</span>
+       <span class="nl">background</span><span class="p">:</span> <span class="n">-moz-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span>  <span class="p">;</span>
+       <span class="nl">background</span><span class="p">:</span> <span class="n">-webkit-linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">)</span> <span class="p">;</span>
+       <span class="nl">background</span><span class="p">:</span> <span class="n">linear-gradient</span><span class="p">(</span><span class="m">180deg</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">23</span><span class="p">,</span><span class="m">43</span><span class="p">,</span><span class="m">70</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">30%</span><span class="p">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="m">90%</span><span class="p">);</span>
+       <span class="nl">background-repeat</span><span class="p">:</span> <span class="nb">no-repeat</span><span class="p">;</span>
+       <span class="nl">background-attachment</span><span class="p">:</span> <span class="nb">fixed</span><span class="p">;</span>
+       <span class="nl">filter</span><span class="p">:</span> <span class="n">progid</span><span class="p">:</span><span class="n">DXImageTransform</span><span class="p">.</span><span class="n">Microsoft</span><span class="p">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">startColorstr</span><span class="err">=</span><span class="s1">"#3c6eb4"</span><span class="p">,</span><span class="n">endColorstr</span><span class="err">=</span><span class="s1">"#3c95b4"</span><span class="p">,</span><span class="n">GradientType</span><span class="err">=</span><span class="m">1</span><span class="p">);</span> 
+             <span class="nl">color</span><span class="p">:</span> <span class="no">white</span><span class="p">;</span>
+             <span class="nl">font-size</span><span class="p">:</span> <span class="m">0.9em</span><span class="p">;</span>
+             <span class="nl">font-weight</span><span class="p">:</span> <span class="m">400</span><span class="p">;</span>
+             <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
+             <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+             <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">6em</span> <span class="m">10em</span> <span class="m">6em</span><span class="p">;</span>
+             <span class="nl">box-sizing</span><span class="p">:</span> <span class="n">border-box</span><span class="p">;</span>      
+           <span class="p">}</span>
+                   <span class="nt">h1</span> <span class="p">{</span>
+         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+         <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">0.6em</span> <span class="m">2em</span> <span class="m">0.4em</span><span class="p">;</span>
+         <span class="nl">color</span><span class="p">:</span> <span class="m">#fff</span><span class="p">;</span>
+         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
+         <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
+         <span class="nl">font-size</span><span class="p">:</span> <span class="m">2em</span><span class="p">;</span>
+       <span class="p">}</span>
+       <span class="nt">h1</span> <span class="nt">strong</span> <span class="p">{</span>
+         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bolder</span><span class="p">;</span>
+         <span class="nl">font-family</span><span class="p">:</span> <span class="s2">'Montserrat'</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
+       <span class="p">}</span>
+       <span class="nt">h2</span> <span class="p">{</span>
+         <span class="nl">font-size</span><span class="p">:</span> <span class="m">1.5em</span><span class="p">;</span>
+         <span class="nl">font-weight</span><span class="p">:</span><span class="nb">bold</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nc">.title</span> <span class="p">{</span>
+         <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="no">black</span><span class="p">;</span>
+         <span class="nl">font-weight</span><span class="p">:</span> <span class="nb">bold</span><span class="p">;</span>
+         <span class="nl">position</span><span class="p">:</span> <span class="nb">relative</span><span class="p">;</span>
+         <span class="nl">float</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
+         <span class="nl">width</span><span class="p">:</span> <span class="m">150px</span><span class="p">;</span>
+         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span><span class="p">;</span>
+         <span class="nl">margin-top</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nc">.description</span> <span class="p">{</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">45px</span> <span class="m">10px</span> <span class="m">5px</span> <span class="m">10px</span><span class="p">;</span>
+         <span class="nl">clear</span><span class="p">:</span> <span class="nb">right</span><span class="p">;</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">15px</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nc">.section</span> <span class="p">{</span>
+         <span class="nl">padding-left</span><span class="p">:</span> <span class="m">3%</span><span class="p">;</span>
+        <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nt">img</span> <span class="p">{</span>
+               <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
+         <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
+       <span class="p">}</span>
+       <span class="nt">a</span><span class="nd">:hover</span> <span class="nt">img</span> <span class="p">{</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
+         <span class="nl">margin</span><span class="p">:</span> <span class="m">2px</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nd">:link</span> <span class="p">{</span>
+         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">199</span><span class="p">,</span> <span class="m">252</span><span class="p">,</span> <span class="m">77</span><span class="p">);</span>
+         <span class="nl">text-shadow</span><span class="p">:</span>
+       <span class="p">}</span>
+       <span class="nd">:visited</span> <span class="p">{</span>
+         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">122</span><span class="p">,</span> <span class="m">206</span><span class="p">,</span> <span class="m">255</span><span class="p">);</span>
+       <span class="p">}</span>
+       <span class="nt">a</span><span class="nd">:hover</span> <span class="p">{</span>
+         <span class="nl">color</span><span class="p">:</span> <span class="nb">rgb</span><span class="p">(</span><span class="m">16</span><span class="p">,</span> <span class="m">44</span><span class="p">,</span> <span class="m">122</span><span class="p">);</span>
+       <span class="p">}</span>
+       <span class="nc">.row</span> <span class="p">{</span>
+         <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+         <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="m">10px</span> <span class="m">0</span> <span class="m">10px</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nt">footer</span> <span class="p">{</span>
+         <span class="nl">padding-top</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
+         <span class="nl">margin-bottom</span><span class="p">:</span> <span class="m">6em</span><span class="p">;</span>
+         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+         <span class="nl">font-size</span><span class="p">:</span> <span class="nb">xx-small</span><span class="p">;</span>
+         <span class="nl">overflow</span><span class="p">:</span><span class="nb">hidden</span><span class="p">;</span>
+         <span class="nl">clear</span><span class="p">:</span> <span class="nb">both</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nc">.summary</span> <span class="p">{</span>
+         <span class="nl">font-size</span><span class="p">:</span> <span class="m">140%</span><span class="p">;</span>
+         <span class="nl">text-align</span><span class="p">:</span> <span class="nb">center</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nf">#rocky-poweredby</span> <span class="nt">img</span> <span class="p">{</span>
+         <span class="nl">margin-left</span><span class="p">:</span> <span class="m">-10px</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="nf">#logos</span> <span class="nt">img</span> <span class="p">{</span>
+         <span class="nl">vertical-align</span><span class="p">:</span> <span class="nb">top</span><span class="p">;</span>
+       <span class="p">}</span>
+             <span class="c">/* Desktop  View Options */</span>
+             <span class="k">@media</span> <span class="p">(</span><span class="n">min-width</span><span class="p">:</span> <span class="m">768px</span><span class="p">)</span>  <span class="p">{</span>
+               <span class="nt">body</span> <span class="p">{</span>
+           <span class="nl">padding</span><span class="p">:</span> <span class="m">10em</span> <span class="m">20%</span> <span class="cp">!important</span><span class="p">;</span>
+         <span class="p">}</span>
+               <span class="nc">.col-md-1</span><span class="o">,</span> <span class="nc">.col-md-2</span><span class="o">,</span> <span class="nc">.col-md-3</span><span class="o">,</span> <span class="nc">.col-md-4</span><span class="o">,</span> <span class="nc">.col-md-5</span><span class="o">,</span> <span class="nc">.col-md-6</span><span class="o">,</span>
+         <span class="nc">.col-md-7</span><span class="o">,</span> <span class="nc">.col-md-8</span><span class="o">,</span> <span class="nc">.col-md-9</span><span class="o">,</span> <span class="nc">.col-md-10</span><span class="o">,</span> <span class="nc">.col-md-11</span><span class="o">,</span> <span class="nc">.col-md-12</span> <span class="p">{</span>
+           <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
+         <span class="p">}</span>
+               <span class="nc">.col-md-1</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-2</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-3</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-4</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-5</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-6</span> <span class="p">{</span>
+           <span class="nl">border-left</span><span class="p">:</span><span class="m">3px</span> <span class="p">;</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
+                     <span class="p">}</span>
+         <span class="nc">.col-md-7</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-8</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-9</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-10</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-11</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-md-12</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+         <span class="p">}</span>
+       <span class="p">}</span>
+             <span class="c">/* Mobile View Options */</span>
+       <span class="k">@media</span> <span class="p">(</span><span class="n">max-width</span><span class="p">:</span> <span class="m">767px</span><span class="p">)</span> <span class="p">{</span>
+         <span class="nc">.col-sm-1</span><span class="o">,</span> <span class="nc">.col-sm-2</span><span class="o">,</span> <span class="nc">.col-sm-3</span><span class="o">,</span> <span class="nc">.col-sm-4</span><span class="o">,</span> <span class="nc">.col-sm-5</span><span class="o">,</span> <span class="nc">.col-sm-6</span><span class="o">,</span>
+         <span class="nc">.col-sm-7</span><span class="o">,</span> <span class="nc">.col-sm-8</span><span class="o">,</span> <span class="nc">.col-sm-9</span><span class="o">,</span> <span class="nc">.col-sm-10</span><span class="o">,</span> <span class="nc">.col-sm-11</span><span class="o">,</span> <span class="nc">.col-sm-12</span> <span class="p">{</span>
+           <span class="nl">float</span><span class="p">:</span> <span class="nb">left</span><span class="p">;</span>
+         <span class="p">}</span>
+               <span class="nc">.col-sm-1</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">8.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-2</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">16.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-3</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">25%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-4</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-5</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">41.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-6</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">50%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-7</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">58.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-8</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">66.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-9</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">74.99%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-10</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">83.33%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-11</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">91.66%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nc">.col-sm-12</span> <span class="p">{</span>
+           <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+         <span class="p">}</span>
+         <span class="nt">h1</span> <span class="p">{</span>
+           <span class="nl">padding</span><span class="p">:</span> <span class="m">0</span> <span class="cp">!important</span><span class="p">;</span>
+         <span class="p">}</span>
+       <span class="p">}</span>
+             <span class="nt">&lt;/style&gt;</span>
+       <span class="nt">&lt;/head&gt;</span>
+       <span class="nt">&lt;body&gt;</span>
+              <span class="nt">&lt;h1&gt;</span>¡Bienvenid@ a la web!<span class="nt">&lt;/h1&gt;</span>
+              <span class="nt">&lt;h2&gt;</span>Esta es una web de prueba en Rocky Linux <span class="nt">&lt;/h2&gt;</span>
+              <span class="nt">&lt;p&gt;</span>Podemos comprobar la información de este sitio web de forma más detallada en <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"info.php"</span><span class="nt">&gt;</span>info.php<span class="nt">&lt;/a&gt;</span>.<span class="nt">&lt;/p&gt;</span>
+       <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span></code></pre></figure>
+
+<p><strong>IMPORTANTE</strong></p>
+
+<p>Estamos ante un escenario con una máquina Rocky Linux 9, por lo que debemos hacer una modificación en el fichero <code class="language-plaintext highlighter-rouge">/etc/sysconfig/selinux</code> para que el servidor web funcione correctamente. Tras ello, reiniciamos la máquina.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">SELINUX</span><span class="o">=</span>diabled</code></pre></figure>
+
+<p><img src="/images/dns-escenario/11.png" alt="11" /></p>
+
+<p><img src="/images/dns-escenario/12.png" alt="12" /></p>
+
+<h2 id="servidor-de-base-de-datos">Servidor de Base de Datos</h2>
+
+<p>En <code class="language-plaintext highlighter-rouge">delta</code> vamos a instalar un servidor de base de datos mariajesusdb (<code class="language-plaintext highlighter-rouge">bd.mariajesus.gonzalonazareno.org</code>). A este seervidor de base de datos se debe permitir el acceso desde todas las máquinas del escenario.</p>
+
+<h3 id="instalación-y-configuración-remota-de-mariadb">Instalación y configuración remota de MariaDB</h3>
+
+<ul>
+  <li>Instalamos el servidor de base de datos, en este caso MariaDB.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>apt <span class="nb">install </span>mariadb-server</code></pre></figure>
+
+<ul>
+  <li>Configuramos MariaDB para conectarnos de forma remota.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+In order to log into MariaDB to secure it, we ll need the current password <span class="k">for </span>the root user. If you ve just installed MariaDB, and you haven t <span class="nb">set </span>the root password yet, the password will be blank, so you should just press enter here.
+Enter current password <span class="k">for </span>root <span class="o">(</span>enter <span class="k">for </span>none<span class="o">)</span>:<span class="k">********</span>
+OK, successfully used password, moving on...
+Setting the root password ensures that nobody can log into the MariaDB root user without the proper authorisation.
+You already have a root password <span class="nb">set</span>, so you can safely answer <span class="s1">'n'</span><span class="nb">.</span>
+Change the root password? <span class="o">[</span>Y/n] Y
+New password:<span class="k">********</span>
+Re-enter new password:<span class="k">********</span>
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+By default, a MariaDB installation has an anonymous user, allowing anyone to log into MariaDB without having to have a user account created <span class="k">for </span>them. This is intended only <span class="k">for </span>testing, and to make the installation go a bit smoother. You should remove them before moving into a production environment.
+Remove anonymous <span class="nb">users</span>? <span class="o">[</span>Y/n] Y
+ ... Success!
+Normally, root should only be allowed to connect from localhost. This ensures that someone cannot guess at the root password from the network.
+Disallow root login remotely? <span class="o">[</span>Y/n] Y
+ ... Success!
+By default, MariaDB comes with a database named <span class="nb">test </span>that anyone can access. This is also intended only <span class="k">for </span>testing, and should be removed before moving into a production environment.
+Remove <span class="nb">test </span>database and access to it? <span class="o">[</span>Y/n] Y
+ - Dropping <span class="nb">test </span>database...
+ ... Success!
+ - Removing privileges on <span class="nb">test </span>database...
+ ... Success!
+Reloading the privilege tables will ensure that all changes made so far will take effect immediately.
+Reload privilege tables now? <span class="o">[</span>Y/n] Y
+ ... Success!
+Cleaning up...
+All <span class="k">done</span><span class="o">!</span> If you ve completed all of the above steps, your MariaDB installation should now be secure.
+Thanks <span class="k">for </span>using MariaDB!</code></pre></figure>
+
+<ul>
+  <li>Creamos el usuario:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+<span class="nt">----</span>
+CREATE USER <span class="s1">'mariajesus'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
+GRANT ALL PRIVILEGES ON <span class="k">*</span>.<span class="k">*</span> TO <span class="s1">'mariajesus'</span>@<span class="s1">'%'</span><span class="p">;</span>
+FLUSH PRIVILEGES<span class="p">;</span>
+<span class="nb">exit</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/13.png" alt="13" /></p>
+
+<ul>
+  <li>Habilitamos el acceso remoto a la base de datos modificando el fichero <code class="language-plaintext highlighter-rouge">/etc/mysql/mariadb.conf.d/50-server.cnf</code> y lo modificamos de la siguiente manera:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">bind-address <span class="o">=</span> 0.0.0.0</code></pre></figure>
+
+<p><img src="/images/dns-escenario/14.png" alt="14" /></p>
+
+<ul>
+  <li>Reiniciamos el servicio de MariaDB y comprobamos su estado.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl restart mariadb
+systemctl status mariadb</code></pre></figure>
+
+<p><img src="/images/dns-escenario/15.png" alt="15" /></p>
+
+<h3 id="configuración-del-acceso-remoto-a-la-base-de-datos-desde-bravo">Configuración del acceso remoto a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code></h3>
+
+<ul>
+  <li>Instalamos el cliente de MariaDB en <code class="language-plaintext highlighter-rouge">bravo</code>.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">dnf <span class="nb">install </span>mariadb-server</code></pre></figure>
+
+<ul>
+  <li>Modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> donde pondremos la ip de <code class="language-plaintext highlighter-rouge">charlie</code> como servidor DNS.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nameserver 192.168.0.2</code></pre></figure>
+
+<ul>
+  <li>Comprobamos que podemos acceder a la base de datos desde <code class="language-plaintext highlighter-rouge">bravo</code>.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql - u mariajesus <span class="nt">-p</span> mariajesus <span class="nt">-h</span> bd <span class="nt">-p</span></code></pre></figure>
+
+<p><img src="/images/dns-escenario/16.png" alt="16" /></p>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#dns">&#35; dns</a>
+          
+          <a href="/tags#bind">&#35; bind</a>
+          
+          <a href="/tags#apache">&#35; apache</a>
+          
+          <a href="/tags#mysql">&#35; mysql</a>
+          
+          <a href="/tags#openstack">&#35; openstack</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>

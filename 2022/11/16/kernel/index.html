@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Compilación de un kernel a medida</title>
+  <meta name='description' content="¿Qué es un kernel?">
+  <link rel='canonical' href="flexton.netlify.com/2022/11/16/kernel/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/kernel.png )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Compilación de un kernel a medida</h1>
+        <div class="c-article__date">
+          <span>2022, Nov 16</span>
+        </div>
+      </header>
+      <h2 id="qué-es-un-kernel">¿Qué es un kernel?</h2>
+
+<p>Un kernel es el núcleo de un sistema operativo. Es el encargado de gestionar los recursos del sistema, como la memoria, los procesos, los dispositivos de entrada y salida, etc. Es el primer programa que se ejecuta cuando se enciende el ordenador.</p>
+
+<h2 id="por-qué-compilar-un-kernel">¿Por qué compilar un kernel?</h2>
+
+<p>La mayoría de los sistemas operativos modernos utilizan un kernel compilado por el fabricante del sistema. Esto es así porque el kernel es un programa muy complejo y que requiere de una gran cantidad de recursos para su compilación. Por ello, es más fácil que el fabricante del sistema lo compile y lo distribuya junto con el resto del sistema operativo.</p>
+
+<p>Sin embargo, hay algunas ventajas de compilar un kernel a medida:</p>
+
+<ul>
+  <li><strong>Personalización</strong>: se puede personalizar el kernel para que se adapte a las necesidades del usuario. Por ejemplo, se puede añadir soporte para un dispositivo que no está soportado por el kernel del sistema operativo.</li>
+  <li><strong>Optimización</strong>: se puede optimizar el kernel para que se adapte a las características del hardware del sistema. Por ejemplo, se puede añadir soporte para un procesador que no está soportado por el kernel del sistema operativo.</li>
+  <li><strong>Seguridad</strong>: se puede añadir soporte para cifrado de disco, cifrado de memoria, etc.</li>
+  <li><strong>Estabilidad</strong>: se puede añadir soporte para el uso de un sistema de ficheros de alto rendimiento, como Btrfs.</li>
+  <li><strong>Rendimiento</strong>: se puede añadir soporte para el uso de un sistema de ficheros de alto rendimiento, como Btrfs.</li>
+  <li><strong>Compatibilidad</strong>: se puede añadir soporte para el uso de un sistema de ficheros de alto rendimiento, como Btrfs.</li>
+  <li><strong>Rendimiento</strong>: se puede añadir soporte para el uso de un sistema de ficheros de alto rendimiento, como Btrfs.</li>
+</ul>
+
+<p>Por ello, en este artículo vamos a ver cómo compilar un kernel a medida.</p>
+
+<h2 id="qué-necesitamos">¿Qué necesitamos?</h2>
+
+<p>Para compilar un kernel a medida necesitamos:</p>
+
+<ul>
+  <li>Un sistema operativo. En este artículo vamos a utilizar Ubuntu Debian 11 Bullseye.</li>
+  <li>Un compilador de C. En este artículo vamos a utilizar qtbase5-dev.</li>
+  <li>Un sistema de ficheros de alto rendimiento (Btrfs).</li>
+</ul>
+
+<h2 id="preparando-el-escenario">Preparando el escenario</h2>
+
+<p>Lo primero de realizaremos será preparar la máquina en la que vamos a compilar el kernel. Para ello, crearemosun directorio donde gestionaremos todo el proceso de compilación del kernel. En este directorio descargaremos el código fuente del kernel.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">mkdir </span>kernel
+<span class="nb">cd </span>kernel</code></pre></figure>
+
+<p>Tras esto, descargaremos el código fuente del kernel. Para averiguar la versión del kernel que tenemos instalado en nuestro sistema, ejecutaremos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">uname</span> <span class="nt">-r</span>
+5.10.0-19-amd64</code></pre></figure>
+
+<p>Sabiendo nuestra versión, haremos uso del comando <em>wget</em> para descargarnoslo:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span>wget https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz</code></pre></figure>
+
+<p><img src="/images/kernel/1.png" alt="1" /></p>
+
+<p>Una vez descargado, comprobamos que efectivamente tenemos nuestro fichero descargado en el directorio:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-l</span>
+total 113876
+<span class="nt">-rw-r--r--</span> 1 maria maria 116606704 dic 14  2020 linux-5.10.tar.xz</code></pre></figure>
+
+<p>Y procedemos a descomprimirlo:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">tar</span> <span class="nt">-xvf</span> linux-5.10.tar.xz</code></pre></figure>
+
+<p>Ya descomprimido todo elcontenido, si realizamos un <em>du -sh</em> veremos que el tamaño del directorio es de 1,1 GB:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~linux-5.10<span class="nv">$ </span><span class="nb">du</span> <span class="nt">-sh</span>
+1,1G	.</code></pre></figure>
+
+<h2 id="comenzamos">¡Comenzamos!</h2>
+
+<p>Antes de comenzar, diremos que una vez finalizada la compilación, tenemos que teneren cuenta que el hardware básico incluirá como mínimo:</p>
+<ul>
+  <li>Teclado, ratón y monitor.</li>
+  <li>Interfaz de red, ya sea por cable o por wifi.</li>
+  <li>Consola gráfica de texto, para poder ver los mensajes de error.</li>
+</ul>
+
+<p>Una vez que tenemos todo preparado, vamos a comenzar con la compilación del kernel. Pero antes debemos tener en cuenta que la compilación del kernel es un proceso muy largo y que puede tardar varias horas. Por ello, es recomendable que no lo hagamos en una máquina que estemos utilizando para trabajar.</p>
+
+<p>Otro punto importante a tener en cuenta será que necesitaremos un fichero donde especificaremos tanto los modulos que enlazaremos de forma dinámica o estática, como los que no enlazaremos. Para ello, haremos uso del comando make para generar dicho fichero, que contendrá la configuración actual de nuestro kernel.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">make oldconfig</code></pre></figure>
+
+<p>Después de ello, miramos cuantos módulos enlazados tenemos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span>egrep <span class="s1">'=y'</span> .config | <span class="nb">wc</span> <span class="nt">-l</span>
+2187
+maria@maria-debian:~kernel<span class="nv">$ </span>egrep <span class="s1">'=m'</span> .config | <span class="nb">wc</span> <span class="nt">-l</span>
+4243</code></pre></figure>
+
+<p>Ejecutamos el comando <em>make menuconfig</em> para configurar el kernel, y esta vez vamos a descartar algunos módulos que no necesitamos. Una vez terminado, volvemos a mirar cuantos módulos enlazados tenemos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span>egrep <span class="s1">'=y'</span> .config | <span class="nb">wc</span> <span class="nt">-l</span>
+1487
+maria@maria-debian:~kernel<span class="nv">$ </span>egrep <span class="s1">'=m'</span> .config | <span class="nb">wc</span> <span class="nt">-l</span>
+100</code></pre></figure>
+
+<p><img src="/images/kernel/3.png" alt="3" /></p>
+
+<p>Antes de ejecutar la compilación, vamos a comprobar que tenemos instaladas las dependencias necesarias para compilar el kernel. Para ello, ejecutaremos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install </span>build-essential libncurses-dev bison flex libssl-dev libelf-dev libudev-dev libpci-dev libiberty-dev autoconf</code></pre></figure>
+
+<p>Efectivamente, faltaban dependecias, por lo que ya podemos ejecutar la compilación del kernel:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span>make <span class="nt">-j4</span> bindeb-pkg</code></pre></figure>
+
+<p>Tras varios minutos, (en mi caso, dado que tengo un procesador de 8 núcleos, he puesto -j4,), veremos que la compilación ha finalizado, pero nos salta el siguiente error:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">  MODPOST vmlinux.symvers
+  MODINFO modules.builtin.modinfo
+  GEN     modules.builtin
+BTF: .tmp_vmlinux.btf: pahole <span class="o">(</span>pahole<span class="o">)</span> is not available
+Failed to generate BTF <span class="k">for </span>vmlinux
+Try to disable CONFIG_DEBUG_INFO_BTF
+make[3]: <span class="k">***</span> <span class="o">[</span>Makefile:1170: vmlinux] Error 1
+make[2]: <span class="k">***</span> <span class="o">[</span>debian/rules:7: build-arch] Error 2
+dpkg-buildpackage: fallo: debian/rules binary subprocess returned <span class="nb">exit </span>status 2
+make[1]: <span class="k">***</span> <span class="o">[</span>scripts/Makefile.package:83: bindeb-pkg] Error 2
+make: <span class="k">***</span> <span class="o">[</span>Makefile:1533: bindeb-pkg] Error 2</code></pre></figure>
+
+<p>Para solucionarlo, deberemos modificar el fichero <em>.config</em> y desactivar la opción <em>CONFIG_DEBUG_INFO_BTF</em>:</p>
+
+<p><img src="/images/kernel/2.png" alt="2" /></p>
+
+<p>Tras finalizar la compilación, y quitar módulos innecesarios el tamaño del directorio ha bajado a GB:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">ls</span> <span class="nt">-lh</span> ..
+total 237M </code></pre></figure>
+
+<p><img src="/images/kernel/5.png" alt="4" /></p>
+
+<p>Como podemos ver en la siguiente imágen, el tamaño del fichero <em>.deb</em> es ahora de 5,6 MB, en lugar de los 1,1 GB que teníamos antes:</p>
+
+<h2 id="instalación-del-kernel">Instalación del kernel</h2>
+
+<ul>
+  <li>Instalamos el kernel:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">sudo </span>dpkg <span class="nt">-i</span> linux-headers-5.10.0_5.10.0-1_amd64.deb</code></pre></figure>
+
+<p><img src="/images/kernel/4.png" alt="5" /></p>
+
+<ul>
+  <li>Reiniciamos el sistema:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">sudo </span>reboot</code></pre></figure>
+
+<ul>
+  <li>Comprobamos que el kernel se ha instalado correctamente:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span><span class="nb">uname</span> <span class="nt">-r</span>
+5.10.0-1-amd64</code></pre></figure>
+
+<p><img src="/images/kernel/6.png" alt="6" /></p>
+
+<ul>
+  <li>Realizamos un ping al exterior para ver que la red funciona correctamente:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">maria@maria-debian:~kernel<span class="nv">$ </span>ping <span class="nt">-c</span> 5 8.8.8.8</code></pre></figure>
+
+<p><img src="/images/kernel/7.png" alt="7" /></p>
+
+<h2 id="errores-encontrados-y-solución">Errores encontrados y solución</h2>
+
+<p>Una vez compilado el kernel, al intentar instalarlo, nos salta el siguiente error:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"> 
+Warning: os-prober will be executed to detect other bootable partitions.
+Its output will be used to detect bootable binaries on them and create menu boot entries.</code></pre></figure>
+
+<p>Para solucionarlo, tendremos que:</p>
+<ul>
+  <li>
+    <p>Ignore la advertencia, es solo una advertencia, no un error.</p>
+  </li>
+  <li>
+    <p>Configuramos la variable <code class="language-plaintext highlighter-rouge">GRUB_DISABLE_OS_PROBER=false</code> en <code class="language-plaintext highlighter-rouge">/etc/default/grub</code>. La advertencia cambiará a <code class="language-plaintext highlighter-rouge">os-prober se ejecutará para detectar...</code>.</p>
+  </li>
+  <li>
+    <p>Eliminamos el bit ejecutable de <code class="language-plaintext highlighter-rouge">/etc/grub.d/30_os-prober</code>. Esto evitará la ejecución del script, por lo que no podrá recibir ninguna de estas advertencias. Podemos realizar:</p>
+  </li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo chmod</span> <span class="nt">-x</span> /etc/grub.d/30_os-prober</code></pre></figure>
+
+<ul>
+  <li>Por último, editamos el script <code class="language-plaintext highlighter-rouge">/etc/grub.d/30_os-prober</code>. Si comentamos las líneas con <code class="language-plaintext highlighter-rouge">grub_warn</code>, el script se ejecutará sin emitir estas advertencias.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">...
+<span class="k">if</span> <span class="o">[</span> <span class="s2">"x</span><span class="k">${</span><span class="nv">GRUB_DISABLE_OS_PROBER</span><span class="k">}</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"xtrue"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span>grub_warn <span class="s2">"</span><span class="si">$(</span>gettext_printf <span class="s2">"os-prober will not be executed to detect other &gt; bootable partitions. </span><span class="se">\n</span><span class="s2">Systems on them will not be added to the GRUB boot configuration.</span><span class="se">\n</span><span class="s2">Check GRUB_DISABLE_OS_PROBER documentation entry."</span><span class="si">)</span><span class="s2">"</span>
+  <span class="nb">exit </span>0
+<span class="k">fi
+
+</span>grub_warn <span class="s2">"</span><span class="si">$(</span>gettext_printf <span class="s2">"os-prober will be executed to detect other bootable partitions.</span><span class="se">\n</span><span class="s2">Its output will be used to detect bootable binaries on them and create new boot entries."</span><span class="si">)</span><span class="s2">"</span>
+...</code></pre></figure>
+
+<h2 id="conclusiones">Conclusiones</h2>
+
+<p>En este artículo hemos visto como compilar un kernel desde cero, y como instalarlo en nuestro sistema. También hemos visto como reducir el tamaño del kernel, y como comprobar que el kernel se ha instalado correctamente.</p>
+
+<p>También debo aclarar que realice una reducción mínima del kernel, pero por incompatibilidad con mi tarjeta gráfica, no pude hacerlo funcionar. Sin embargo en otra máquina virtual, con una tarjeta gráfica compatible, si que pude hacerlo funcionar.</p>
+
+<p><img src="/images/kernel/8.jpg" alt="8" /></p>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#kernel">&#35; kernel</a>
+          
+          <a href="/tags#compilacion">&#35; compilacion</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>

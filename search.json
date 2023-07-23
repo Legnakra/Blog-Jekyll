@@ -1,0 +1,699 @@
+[
+  
+    {
+      "title"    : "Bienvenid@s",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/2023/07/19/welcome-to-jekyll/",
+      "date"     : "2023-07-19 17:45:16 +0200"
+    } ,
+  
+    {
+      "title"    : "Cluster de Alta Disponibilidad ",
+      "category" : "",
+      "tags"     : "cluster and alta disponibilidad",
+      "url"      : "/2023/02/25/cluster/",
+      "date"     : "2023-02-25 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Escenario - Poblar un directorio LDAP empleando certificado x509",
+      "category" : "",
+      "tags"     : "ldap and ldaps",
+      "url"      : "/2023/02/21/ldaps/",
+      "date"     : "2023-02-21 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller: Corrector ortográfico de documentos markdown (test)",
+      "category" : "",
+      "tags"     : "jenkins and pipeline",
+      "url"      : "/2023/02/19/jenkins1/",
+      "date"     : "2023-02-19 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Introducción a los Pipelines de Jenkins",
+      "category" : "",
+      "tags"     : "jenkins and pipelines",
+      "url"      : "/2023/02/17/jenkins-pipelines/",
+      "date"     : "2023-02-17 18:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Instalación de Jenkins en Debian 11",
+      "category" : "",
+      "tags"     : "jenkins and debian",
+      "url"      : "/2023/02/17/jenkins-instalacion/",
+      "date"     : "2023-02-17 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Despliegue de una aplicación en Kubernetes",
+      "category" : "",
+      "tags"     : "kubernetes and despliegue",
+      "url"      : "/2023/02/12/kubernetes-p1/",
+      "date"     : "2023-02-12 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Instalación de un CMS con Helm ",
+      "category" : "",
+      "tags"     : "kubernetes, helm, and cms",
+      "url"      : "/2023/02/12/kubernetes-cms/",
+      "date"     : "2023-02-12 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Escenario - Poblar un directorio LDAP desde un fichero CSV",
+      "category" : "",
+      "tags"     : "ldap and python",
+      "url"      : "/2023/02/12/ldap2/",
+      "date"     : "2023-02-12 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Implantación de aplicaciones web Python en docker",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/2023/02/11/docker-python/",
+      "date"     : "2023-02-11 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Almacenamiento en Kubernetes",
+      "category" : "",
+      "tags"     : "kubernetes and almacenamiento",
+      "url"      : "/2023/02/10/kubernetes-almacenamiento/",
+      "date"     : "2023-02-10 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Implantación de aplicaciones web PHP en docker",
+      "category" : "",
+      "tags"     : "Docker, IAW, PHP, MariaDB, and nginx",
+      "url"      : "/2023/02/09/docker-bookmedik/",
+      "date"     : "2023-02-09 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Despliegues parametrizados",
+      "category" : "",
+      "tags"     : "kubernetes, despliegues, and parametrizados",
+      "url"      : "/2023/02/08/kubernetes-parametrizados/",
+      "date"     : "2023-02-08 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Copias de Seguridad y Restauración",
+      "category" : "",
+      "tags"     : "oracle, postgres, mysql, mongodb, backup, and restore",
+      "url"      : "/2023/02/07/copia-seguridad/",
+      "date"     : "2023-02-07 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Movimiento de Datos",
+      "category" : "",
+      "tags"     : "asgdb, movimientos, mongodb, mysql, postgresql, and oracle",
+      "url"      : "/2023/02/07/movimientos/",
+      "date"     : "2023-02-07 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Auditoría en bases de datos",
+      "category" : "",
+      "tags"     : "oracle, auditoria, sql, plsql, mongodb, mysql, and postgresql",
+      "url"      : "/2023/02/07/auditoria/",
+      "date"     : "2023-02-07 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Escenario - LDAPs",
+      "category" : "",
+      "tags"     : "ldap and ldaps",
+      "url"      : "/2023/02/07/LDAPs/",
+      "date"     : "2023-02-07 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Trabajando con Services",
+      "category" : "",
+      "tags"     : "kubernetes and services",
+      "url"      : "/2023/02/05/kubernetes-ingress/",
+      "date"     : "2023-02-05 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Trabajando con Deployments",
+      "category" : "",
+      "tags"     : "kubernetes and deployment",
+      "url"      : "/2023/02/04/kubernetes-deploy/",
+      "date"     : "2023-02-04 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Trabajando con ReplicaSet ",
+      "category" : "",
+      "tags"     : "kubernetes and replicaset",
+      "url"      : "/2023/02/03/kubernetes-replicaset/",
+      "date"     : "2023-02-03 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Kubernetes: Trabajando con Pods",
+      "category" : "",
+      "tags"     : "kubernetes and pods",
+      "url"      : "/2023/02/03/kubernetes-pods/",
+      "date"     : "2023-02-03 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Cortafuegos III: Perimetral sobre el escenario",
+      "category" : "",
+      "tags"     : "iptables, cortafuegos, and perimetral",
+      "url"      : "/2023/02/01/cortafuegos-3/",
+      "date"     : "2023-02-01 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Cortafuegos II: Perimetral con nftables",
+      "category" : "",
+      "tags"     : "iptables, nftables, cortafuegos, and firewall",
+      "url"      : "/2023/02/01/cortafuegos-2/",
+      "date"     : "2023-02-01 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Cortafuegos I: De nodo con iptables",
+      "category" : "",
+      "tags"     : "iptables, cortafuegos, and firewall",
+      "url"      : "/2023/02/01/cortafuegos-1/",
+      "date"     : "2023-02-01 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Kubernetes: Trabajando con un Pod multicontenedor",
+      "category" : "",
+      "tags"     : "kubernetes, pod, and multicontenedor",
+      "url"      : "/2023/02/01/kubernetes-multicontenedor/",
+      "date"     : "2023-02-01 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Kubernetes: Instalación y configuración de minikube y kubectl",
+      "category" : "",
+      "tags"     : "kubernetes, minikube, and kubectl",
+      "url"      : "/2023/02/01/kubernetes-instalacion/",
+      "date"     : "2023-02-01 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller de Almacenamiento - Creación de un cluster DRBD + OCFS2",
+      "category" : "",
+      "tags"     : "almacenamiento, drbd, and ocfs2",
+      "url"      : "/2023/01/29/DRBD+OCFS2/",
+      "date"     : "2023-01-29 17:47:32 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller de Almacenamiento - Introducción a iSCSI ",
+      "category" : "",
+      "tags"     : "almacenamiento and iscsi",
+      "url"      : "/2023/01/28/iscsi/",
+      "date"     : "2023-01-28 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Docker - Creación de imágenes Docker",
+      "category" : "",
+      "tags"     : "docker and imagenes",
+      "url"      : "/2023/01/27/docker-imagen/",
+      "date"     : "2023-01-27 16:11:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Docker - Escenarios multicontenedor en Docker",
+      "category" : "",
+      "tags"     : "docker and multicontenedor",
+      "url"      : "/2023/01/27/docker-multicontenedor/",
+      "date"     : "2023-01-27 16:11:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Escenario - Configuración de LDAP en Alfa",
+      "category" : "",
+      "tags"     : "ldap, openldap, and debian",
+      "url"      : "/2023/01/22/ldap1/",
+      "date"     : "2023-01-22 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller de Almacenamiento - Gestión de pool de almacenamiento lógico en KVM-libvirt",
+      "category" : "",
+      "tags"     : "almacenamiento, kvm, and libvirt",
+      "url"      : "/2023/01/21/almacenamiento/",
+      "date"     : "2023-01-21 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Configuración de un servidor de correo en un VPS",
+      "category" : "",
+      "tags"     : "correo and postfix",
+      "url"      : "/2023/01/15/servidor-correo/",
+      "date"     : "2023-01-15 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "VPN sitio a sitio con WireGuard",
+      "category" : "",
+      "tags"     : "VPN, OpenVPN, x509, site to site, and WireGuard",
+      "url"      : "/2023/01/13/vpn-d/",
+      "date"     : "2023-01-13 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Taller Docker - Almacenamiento y Redes",
+      "category" : "",
+      "tags"     : "docker, almacenamiento, and redes",
+      "url"      : "/2023/01/12/docker-almacenamiento/",
+      "date"     : "2023-01-12 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "VPN de acceso remoto con WireGuard (Windows, Linux, Android)",
+      "category" : "",
+      "tags"     : "VPN, OpenVPN, x509, wireguard, site to site, and acceso remoto",
+      "url"      : "/2023/01/12/vpn-c/",
+      "date"     : "2023-01-12 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "VPN site to site con OpenVPN y certificados x509",
+      "category" : "",
+      "tags"     : "VPN, OpenVPN, x509, and site to site",
+      "url"      : "/2023/01/11/vpn-b/",
+      "date"     : "2023-01-11 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Servidor de correo en los servidores de clase",
+      "category" : "",
+      "tags"     : "correo and postfix",
+      "url"      : "/2023/01/10/correo/",
+      "date"     : "2023-01-10 11:59:07 +0100"
+    } ,
+  
+    {
+      "title"    : "Despliegue de aplicaciones Java",
+      "category" : "",
+      "tags"     : "java and tomcat",
+      "url"      : "/2023/01/09/java-cms/",
+      "date"     : "2023-01-09 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Acceso remoto con OpenVPN y certificados x509",
+      "category" : "",
+      "tags"     : "VPN, OpenVPN, and x509",
+      "url"      : "/2023/01/09/vpn/",
+      "date"     : "2023-01-09 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Desarrollo y despliegue de una aplicación Java simple",
+      "category" : "",
+      "tags"     : "java, maven, and tomcat",
+      "url"      : "/2023/01/09/java-simple/",
+      "date"     : "2023-01-09 12:47:17 +0100"
+    } ,
+  
+    {
+      "title"    : "Recolección centralizada de logs de sistema, mediante journald",
+      "category" : "",
+      "tags"     : "journald and logs",
+      "url"      : "/2023/01/04/journald/",
+      "date"     : "2023-01-04 11:59:07 +0100"
+    } ,
+  
+    {
+      "title"    : "Servidores Web, Base de Datos y DNS en nuestros escenario de OpenStack",
+      "category" : "",
+      "tags"     : "dns, bind, apache, mysql, and openstack",
+      "url"      : "/2023/01/03/dns/",
+      "date"     : "2023-01-03 11:06:21 +0100"
+    } ,
+  
+    {
+      "title"    : "Certificados digitales. HTTPS",
+      "category" : "",
+      "tags"     : "Criptografía, Certificados, and HTTPS",
+      "url"      : "/2023/01/02/Criptograf%C3%ADa3/",
+      "date"     : "2023-01-02 16:45:16 +0100"
+    } ,
+  
+    {
+      "title"    : "Montaje NFS mediante systemd",
+      "category" : "",
+      "tags"     : "nfs and systemd",
+      "url"      : "/2022/12/28/nfs-systemd/",
+      "date"     : "2022-12-28 11:59:07 +0100"
+    } ,
+  
+    {
+      "title"    : "Despliegue de una aplicación Python",
+      "category" : "",
+      "tags"     : "python, django, and despliegue",
+      "url"      : "/2022/12/19/despliegue-python/",
+      "date"     : "2022-12-19 12:32:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Desplegando aplicaciones flask con apache2 + mod_wsgi ",
+      "category" : "",
+      "tags"     : "apache, flask, and wsgi",
+      "url"      : "/2022/12/17/wsgi/",
+      "date"     : "2022-12-17 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : " Integridad, firmas y autenticación ",
+      "category" : "",
+      "tags"     : "criptografia, gpg, thunderbird, evolution, apt, and ssh",
+      "url"      : "/2022/12/13/integridad/",
+      "date"     : "2022-12-13 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Talleres DNS",
+      "category" : "",
+      "tags"     : "dns and bind9",
+      "url"      : "/2022/12/12/talleres-dns/",
+      "date"     : "2022-12-12 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "SSH",
+      "category" : "",
+      "tags"     : "ssh and seguridad",
+      "url"      : "/2022/12/09/ssh/",
+      "date"     : "2022-12-09 12:42:19 +0100"
+    } ,
+  
+    {
+      "title"    : "Escenario en OpenStack",
+      "category" : "",
+      "tags"     : "openstack, cloud, and escenario",
+      "url"      : "/2022/12/05/escenario/",
+      "date"     : "2022-12-05 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Cifrado asimétrico con gpg y openssl ",
+      "category" : "",
+      "tags"     : "criptografia, gpg, and openssl",
+      "url"      : "/2022/12/02/cripto/",
+      "date"     : "2022-12-02 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Configuración de HTTPS en nuestro VPS",
+      "category" : "",
+      "tags"     : "https, certbot, and letsencrypt",
+      "url"      : "/2022/11/27/https/",
+      "date"     : "2022-11-27 10:25:52 +0100"
+    } ,
+  
+    {
+      "title"    : "Instalación y migración de una aplicación web PHP",
+      "category" : "",
+      "tags"     : "apache, php, mysql, nextcloud, owncloud, and migracion",
+      "url"      : "/2022/11/17/migracion/",
+      "date"     : "2022-11-17 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Cloud Computing IaaS. OpenStack",
+      "category" : "",
+      "tags"     : "openstack, cloud, and IaaS",
+      "url"      : "/2022/11/17/OpenStack/",
+      "date"     : "2022-11-17 08:17:50 +0100"
+    } ,
+  
+    {
+      "title"    : "Compilación de un kernel a medida",
+      "category" : "",
+      "tags"     : "kernel and compilacion",
+      "url"      : "/2022/11/16/kernel/",
+      "date"     : "2022-11-16 16:17:03 +0100"
+    } ,
+  
+    {
+      "title"    : "Instalación de nginx con PHP con vagrant y ansible",
+      "category" : "",
+      "tags"     : "ansible, vagrant, nginx, and php",
+      "url"      : "/2022/11/13/ansible-nginx/",
+      "date"     : "2022-11-13 16:17:03 +0100"
+    } ,
+  
+    {
+      "title"    : "Interconexiones de servidores",
+      "category" : "",
+      "tags"     : "oracle, postgresql, and interconexion",
+      "url"      : "/2022/11/08/interconexion/",
+      "date"     : "2022-11-08 13:11:32 +0100"
+    } ,
+  
+    {
+      "title"    : "Apache como proxy inverso",
+      "category" : "",
+      "tags"     : "apache and proxy",
+      "url"      : "/2022/11/08/proxy/",
+      "date"     : "2022-11-08 13:11:32 +0100"
+    } ,
+  
+    {
+      "title"    : "VIM",
+      "category" : "",
+      "tags"     : "vim, editor, and terminal",
+      "url"      : "/2022/10/17/vim/",
+      "date"     : "2022-10-17 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Trabajando con contenedores LXC",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, lxc, contenedores, and lxd",
+      "url"      : "/2022/10/17/lxc-lxd/",
+      "date"     : "2022-10-17 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Gestión de redes en QEMU/KVM + libvirt",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, and redes",
+      "url"      : "/2022/10/12/qemu-redes/",
+      "date"     : "2022-10-12 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Compilar dos2unix partiendo del código fuente",
+      "category" : "",
+      "tags"     : "makefile, dos2unix, and compilacion",
+      "url"      : "/2022/10/12/compilacion-paquete-makefile/",
+      "date"     : "2022-10-12 11:17:16 +0200"
+    } ,
+  
+    {
+      "title"    : "Prueba: Introducción a la implantación de aplicaciones web",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/2022/10/10/prueba/",
+      "date"     : "2022-10-10 13:11:16 +0200"
+    } ,
+  
+    {
+      "title"    : "¿Qué diferencia hay entre exploit, vulnerabilidad y payload?",
+      "category" : "",
+      "tags"     : "seguridad, hacking, exploit, vulnerabilidad, and payload",
+      "url"      : "/2022/10/10/payload/",
+      "date"     : "2022-10-10 10:40:32 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Clonación e instantáneas de máquinas virtuales",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, clonacion, and instantaneas",
+      "url"      : "/2022/10/05/qemu-clon-snapshot/",
+      "date"     : "2022-10-05 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Creación de un sistema automatizado de instalación",
+      "category" : "",
+      "tags"     : "ASO, Debian, preseed, desatendido, instalación, and automatizado",
+      "url"      : "/2022/10/04/preseed/",
+      "date"     : "2022-10-04 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller DHCP - Instalación y configuración del servidor DHCP",
+      "category" : "",
+      "tags"     : "vagrant, dhcp, linux, and ubuntu",
+      "url"      : "/2022/10/03/dhcp/",
+      "date"     : "2022-10-03 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Creación y configuración de un escenario router-nat",
+      "category" : "",
+      "tags"     : "vagrant, virtualizacion, yaml, ansible, and devops",
+      "url"      : "/2022/10/03/ansible-nat/",
+      "date"     : "2022-10-03 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Creación de máquinas virtuales con virt-manager",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, and virt-manager",
+      "url"      : "/2022/10/03/qemu-virtmanager/",
+      "date"     : "2022-10-03 00:29:35 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Vagrant - Creación de escenarios",
+      "category" : "",
+      "tags"     : "vagrant, virtualizacion, and yaml",
+      "url"      : "/2022/10/02/vagrant-escenario/",
+      "date"     : "2022-10-02 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Gestión del almacenamiento en QEMU/KVM + libvirt",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, and almacenamiento",
+      "url"      : "/2022/10/02/qemu-almacenamiento/",
+      "date"     : "2022-10-02 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Vagrant + Ansible",
+      "category" : "",
+      "tags"     : "vagrant, virtualizacion, yaml, ansible, and devops",
+      "url"      : "/2022/10/02/ansible+vagrant/",
+      "date"     : "2022-10-02 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Ansible - Playbook sencillo",
+      "category" : "",
+      "tags"     : "ansible, vagrant, and IaC",
+      "url"      : "/2022/09/29/infraestructura/",
+      "date"     : "2022-09-29 17:45:16 +0200"
+    } ,
+  
+    {
+      "title"    : "Crear un sitio web estático con Jekyll",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/2022/09/29/origen/",
+      "date"     : "2022-09-29 17:45:16 +0200"
+    } ,
+  
+    {
+      "title"    : "Introducción a la programación Python",
+      "category" : "",
+      "tags"     : "",
+      "url"      : "/2022/09/29/inicio-python/",
+      "date"     : "2022-09-29 17:45:16 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Creación de máquinas virtuales desde la línea de comandos",
+      "category" : "",
+      "tags"     : "qemu, kvm, libvirt, virtualizacion, and virt-install",
+      "url"      : "/2022/09/27/qemu-libvirt-comandos/",
+      "date"     : "2022-09-27 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller GitHub - ¿Cómo colaborar en un proyecto de software libre? ¿Qué es un Pull Request (PR)?",
+      "category" : "",
+      "tags"     : "git, github, and markdown",
+      "url"      : "/2022/09/26/taller-pullrequest/",
+      "date"     : "2022-09-26 23:12:40 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Vagrant - Creación de una máquina virtual",
+      "category" : "",
+      "tags"     : "vagrant, virtualizacion, and yaml",
+      "url"      : "/2022/09/26/vagrant/",
+      "date"     : "2022-09-26 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Ansible - Playbook con roles",
+      "category" : "",
+      "tags"     : "ansible, automatización, and devops",
+      "url"      : "/2022/09/26/ansible-roles/",
+      "date"     : "2022-09-26 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller GitHub - Introducción a Markdown",
+      "category" : "",
+      "tags"     : "git, github, and markdown",
+      "url"      : "/2022/09/23/taller-introduccion-markdown/",
+      "date"     : "2022-09-23 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller Virtualización - Instalación de QEMU/libvirt. Conexión local y remota",
+      "category" : "",
+      "tags"     : "virtualización and libvirt",
+      "url"      : "/2022/09/23/qemu-libvirt/",
+      "date"     : "2022-09-23 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller GitHub - Git. Trabajando con ramas y uniones",
+      "category" : "",
+      "tags"     : "git, github, markdown, ramas, uniones, and merge",
+      "url"      : "/2022/09/23/taller-ramas/",
+      "date"     : "2022-09-23 12:04:54 +0200"
+    } ,
+  
+    {
+      "title"    : "Instalación de Debian 11 en el equipo de trabajo",
+      "category" : "",
+      "tags"     : "ASO, Debian, LVM, and RAID",
+      "url"      : "/2022/09/20/lvm-debian/",
+      "date"     : "2022-09-20 13:42:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Taller GitHub - Introducción a Git y GitHub",
+      "category" : "",
+      "tags"     : "git, github, and markdown",
+      "url"      : "/2022/09/19/taller-introduccion-github/",
+      "date"     : "2022-09-19 20:29:19 +0200"
+    } ,
+  
+    {
+      "title"    : "Ejercicios de Python",
+      "category" : "",
+      "tags"     : "python, ejercicios, practica, and programación",
+      "url"      : "/2021/10/11/python2/",
+      "date"     : "2021-10-11 14:00:00 +0200"
+    } ,
+  
+    {
+      "title"    : "Ejercicios simples de Python",
+      "category" : "",
+      "tags"     : "vim, editor, and texto",
+      "url"      : "/2021/10/04/python1/",
+      "date"     : "2021-10-04 14:00:00 +0200"
+    } 
+  
+]

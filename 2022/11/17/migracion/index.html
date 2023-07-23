@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Instalación y migración de una aplicación web PHP</title>
+  <meta name='description' content="Instalación previa">
+  <link rel='canonical' href="flexton.netlify.com/2022/11/17/migracion/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/migracion.png )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Instalación y migración de una aplicación web PHP</h1>
+        <div class="c-article__date">
+          <span>2022, Nov 17</span>
+        </div>
+      </header>
+      <h2 id="instalación-previa">Instalación previa</h2>
+
+<p>Para poder realizar la instalación de la aplicación web, vamos a necesitar una serie de herramientas y servicios que vamos a instalar en el servidor. Pero primero lo realizaremos en un escenario local para poder realizar las pruebas necesarias.</p>
+
+<p>El escenario contará con dos máquinas:</p>
+<ul>
+  <li>Servidor web: conectada a una red pública.</li>
+  <li>Servidor de base de datos: conectado a una red privada, conectada a la máquina anterior.</li>
+</ul>
+
+<h3 id="creamos-el-lamp">Creamos el LAMP</h3>
+
+<p>Una pila LAMP es un conjunto de software libre que proporciona una plataforma de servidor web. Está formado por los siguientes componentes:</p>
+
+<ul>
+  <li>Debian-like Linux: sistema operativo.</li>
+  <li>Apache: servidor web.</li>
+  <li>MySQL: sistema de gestión de bases de datos.</li>
+  <li>PHP: lenguaje de programación.</li>
+</ul>
+
+<p>Para crear el LAMP, vamos a utilizar una máquina virtual con Debian 11 Bullseye. Para ello, vamos a utilizar vmware:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> apache2
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> mariadb-server
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> php</code></pre></figure>
+
+<h4 id="modulos-php">Modulos PHP</h4>
+<p>Para que las herramientas que instalaremos funcionen correctamente, vamos a instalar una serie de módulos PHP:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>apt <span class="nb">install </span>php-imagick php7.4-common php7.4-curl php7.4-gd php7.4-imap php7.4-intl php7.4-json php7.4-ldap php7.4-mbstring php7.4-mysql php7.4-xml php7.4-zip</code></pre></figure>
+
+<h4 id="configuración-mariadb">Configuración mariadb</h4>
+<p>En cuanto a mysql, se recomienda retirar ajustes predeterminados que son poco seguros y bloquearán el acceso a la base de datos. Para ello, vamos a ejecutar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>mysql_secure_installation</code></pre></figure>
+
+<p>Creamos la base de datos para Nextcloud:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+CREATE DATABASE owncloud<span class="p">;</span>
+CREATE USER <span class="s1">'maria1'</span>@<span class="s1">'10.0.100.1'</span><span class="p">;</span>
+GRANT ALL PRIVILEGES ON owncloud.<span class="k">*</span> TO <span class="s1">'maria1'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'admin'</span><span class="p">;</span>
+FLUSH PRIVILEGES<span class="p">;</span></code></pre></figure>
+
+<h3 id="owncloud">OWNCLOUD</h3>
+
+<p><img src="/images/migracion/owncloud.png" alt="owncloud" /></p>
+
+<p>Owncloud es un servidor de archivos que permite el <strong>almacenamiento</strong>, la colaboración y el uso compartido seguros. Es conveniente almacenar archivos en la nube, por lo que están disponibles en cualquier dispositivo y se pueden compartir con unos pocos clics.</p>
+
+<p>Ayuda a los usuarios a recuperar su soberanía digital. También proporciona muchas funciones convenientes, pero también almacena archivos de forma segura y eficiente. No hay puertas traseras, puedes comprobarlo. Los usuarios pueden instalar ownCloud ellos mismos o alquilar una instancia administrada.</p>
+
+<h4 id="descargamos-owncloud">Descargamos Owncloud</h4>
+
+<p>Descargamos la aplicación web desde la página oficial de Nextcloud:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">wget https://download.owncloud.com/server/stable/owncloud-complete-latest.zip</code></pre></figure>
+
+<p>Y la descomprimimos en el directorio <code class="language-plaintext highlighter-rouge">/var/www/</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>unzip owncloud-complete-latest.zip /var/www/</code></pre></figure>
+
+<h4 id="creamos-el-virtualhost-para-la-aplicación-web">Creamos el virtualhost para la aplicación web</h4>
+
+<p>Creamos el virtualhost en el fichero <code class="language-plaintext highlighter-rouge">/etc/apache2/sites-available/owncloud.conf</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">&lt;VirtualHost <span class="k">*</span>:80&gt;
+    ServerName www.maria.org
+    ServerAlias maria.org
+    DocumentRoot /var/www/owncloud
+    ErrorLog /var/log/apache2/cms-error.log
+    CustomLog /var/log/apache2/cms-access.log combined
+&lt;/VirtualHost&gt;</code></pre></figure>
+
+<p><img src="/images/migracion/1.png" alt="1" /></p>
+
+<p>Y lo activamos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>a2ensite owncloud.conf</code></pre></figure>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-owncloud">Modificamos el fichero de configuración de owncloud</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/owncloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocb5j2nyqboj'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'0+8FRHWahLRZ/Gv9OlXNLB8alnnPop'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'X/kjusk8xkH7PHSmSb+T9LjlfKZgeTvqVsHoJ3l56CmdbiLM'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.maria.org'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/data'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.maria.org'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'10.11.0.6'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'owncloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'allow_user_to_change_mail_address'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'logtimezone'</span> <span class="o">=&gt;</span> <span class="s1">'UTC'</span>,
+  <span class="s1">'apps_paths'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/apps'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">false</span>,
+    <span class="o">)</span>,
+    1 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/owncloud/apps-external'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps-external'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+    <span class="o">)</span>,
+  <span class="o">)</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span></code></pre></figure>
+
+<h4 id="reiniciamos-el-servicio-apache">Reiniciamos el servicio apache</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart apache2</code></pre></figure>
+
+<p>Y modificamos el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> para añadir la IP de la máquina y el nombre de dominio:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>nano /etc/hosts
+<span class="nt">---</span>
+<span class="o">[</span>IP de la máquina] maria.org  www.maria.org</code></pre></figure>
+
+<p><img src="/images/migracion/2.png" alt="2" /></p>
+
+<p>Comprobamos que la aplicación web funciona correctamente:</p>
+
+<p><img src="/images/migracion/3.png" alt="3" /></p>
+
+<p>Y en mi caso he instalado módulos de galería y música para poder probarlos:</p>
+
+<p><img src="/images/migracion/4.png" alt="4" /></p>
+
+<h3 id="nextcloud">NEXTCLOUD</h3>
+
+<p><img src="/images/migracion/nextcloud.png" alt="nextcloud" /></p>
+
+<p>Nextcloud es un software de código abierto, desarrollado por primera vez en 2016, que le permite ejecutar un servicio de almacenamiento en la nube personal. Tiene características que son comparables a otros servicios como Dropbox.</p>
+
+<p>El software del servidor Nextcloud se puede instalar de forma gratuita en Linux, y el software del cliente se puede instalar en computadoras con Windows, OS X o Linux. Las aplicaciones móviles también están disponibles para Android e iOS.</p>
+
+<h4 id="descargamos-nextcloud">Descargamos Nextcloud</h4>
+
+<p>Descargamos la aplicación web desde la página oficial de Nextcloud:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>wget https://download.nextcloud.com/server/releases/nextcloud-22.0.2.zip</code></pre></figure>
+
+<h4 id="creamos-el-virtualhost-para-la-aplicación-web-1">Creamos el virtualhost para la aplicación web</h4>
+
+<p>Creamos el virtualhost en el fichero <code class="language-plaintext highlighter-rouge">/etc/apache2/sites-available/owncloud.conf</code> con el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">&lt;VirtualHost <span class="k">*</span>:80&gt;
+    ServerName www.cloud.maria.org
+    ServerAlias cloud.maria.org
+    DocumentRoot /var/www/cms/nextcloud
+    ErrorLog /var/log/apache2/cms-error.log
+    CustomLog /var/log/apache2/cms-access.log combined
+&lt;/VirtualHost&gt;</code></pre></figure>
+
+<p><img src="/images/migracion/5.png" alt="5" /></p>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-nextcloud">Modificamos el fichero de configuración de Nextcloud</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/cms/nextcloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocg57xu3tev6'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'z3kK/NjSDcqfrEvfLi6PoZAbnL4gYk'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'OswK3Xxvl7YzGtVbtpf/brvT/niZD4NIziidcWtWG5nqd/ny'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span>
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.maria.org'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'cloud.maria.org'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/cms/nextcloud/data'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'20.0.2.2'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.maria.org'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'nextcloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbport'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span></code></pre></figure>
+
+<h4 id="reiniciamos-el-servicio-apache-1">Reiniciamos el servicio apache</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart apache2</code></pre></figure>
+
+<p>Ya no es necesario modificar el fichero <code class="language-plaintext highlighter-rouge">/etc/hosts</code> ya que lo hemos hecho en el anterior virtualhost.</p>
+
+<p>Comprobamos que la aplicación web funciona correctamente:</p>
+
+<p><img src="/images/migracion/6.png" alt="6" /></p>
+
+<h2 id="preparando-la-migración">Preparando la migración</h2>
+
+<ol>
+  <li>Realizamos una copia de seguridad de la base de datos.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#nextcloud</span>
+mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> maria <span class="nt">-p</span> nextcloud <span class="o">&gt;</span> db_backup_nextcloud<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+<span class="nt">---</span>
+<span class="c">#owncloud</span>
+mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> maria1 <span class="nt">-p</span> ouncloud <span class="o">&gt;</span> db_backup_owncloud<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql</code></pre></figure>
+
+<ol>
+  <li>Comprimimos el directorio de la copia de la base de datos.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">zip <span class="nt">-r</span> owncloud owncloud
+zip <span class="nt">-r</span> nextcloud nextcloud</code></pre></figure>
+
+<ol>
+  <li>Copiamos los ficheros de las aplicaciones web y las copias de seguridad de las bases de datos a la nueva máquina.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#aplicaciones web</span>
+scp <span class="nt">-r</span> owncloud.zip nextcloud.zip maria@asir.mariatec.es:/home/maria
+<span class="c">#copias de seguridad de las bases de datos</span>
+scp <span class="nt">-r</span> db_backup_nextcloud20221123_220950.sql maria@mariatec.es:/home/maria
+scp <span class="nt">-r</span> db_backup_owncloud20221123_220959.sql maria@mariatec.es:/home/maria</code></pre></figure>
+
+<ol>
+  <li>Creamos la base de datos en el nuevo servidor.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql <span class="nt">-u</span> root <span class="nt">-p</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">nextcloud</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'localhost'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">nextcloud</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria'</span><span class="o">@</span><span class="s1">'localhost'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'****'</span><span class="p">;</span>
+<span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span>
+<span class="c1">---</span>
+<span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">owncloud</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">USER</span> <span class="s1">'maria1'</span><span class="o">@</span><span class="s1">'localhost'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">ALL</span> <span class="k">PRIVILEGES</span> <span class="k">ON</span> <span class="n">owncloud</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">'maria1'</span><span class="o">@</span><span class="s1">'localhost'</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">'****'</span><span class="p">;</span>
+<span class="n">FLUSH</span> <span class="k">PRIVILEGES</span><span class="p">;</span></code></pre></figure>
+
+<ol>
+  <li>Realizamos la restauración de la base de datos.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql <span class="nt">-u</span> maria <span class="nt">--password</span><span class="o">=</span><span class="k">****</span> nextcloud &lt; db_backup_nextcloud20221123_220950.sql
+mysql <span class="nt">-u</span> maria1 <span class="nt">--password</span><span class="o">=</span><span class="k">****</span> owncloud &lt; db_backup_owncloud20221123_220959.sql</code></pre></figure>
+
+<ol>
+  <li>Descomprimimos los ficheros de las aplicaciones web.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">unzip owncloud.zip <span class="nt">-d</span> /var/www/
+unzip nextcloud.zip <span class="nt">-d</span> /var/www/</code></pre></figure>
+
+<h2 id="migración-de-ambas-aplicaciones-a-un-mismo-virtualhost">Migración de ambas aplicaciones a un mismo virtualhost</h2>
+
+<p>La migración es un proceso que consiste en pasar de un sistema a otro, en este caso, de un servidor a otro. Para ello, vamos a realizar una serie de pasos que nos permitirán realizar la migración de la aplicación web.</p>
+
+<p>En este caso, vamos a realizar la migración, pero vamos a realizarlo en un LEMP. Pero, ¿que es un LEMP? Para simplificar, es exactamente lo mismo que un LAMP, pero con Nginx en lugar de Apache.</p>
+
+<h3 id="preparando-el-nuevo-servidor">Preparando el nuevo servidor</h3>
+
+<p>Instalamos el LEMP:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>apt update
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> nginx
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> mariadb-server
+<span class="nv">$ </span><span class="nb">sudo </span>apt <span class="nb">install</span> <span class="nt">-y</span> php</code></pre></figure>
+
+<blockquote>
+  <p><strong>Nota:</strong> A veces, cuando instalamos php no debería de instalarse apache2, pero en ocasiones, si que lo hace. Si es así, lo desinstalamos o lo deshabilitamos.</p>
+</blockquote>
+
+<h3 id="nextcloud-1">Nextcloud</h3>
+
+<p><img src="/images/migracion/nextcloud.png" alt="nextcloud" /></p>
+
+<ul>
+  <li>Primero crearemos el fichero para configurar el virtualhost en el servidor web. Lo haremos de forma en la que podamos acceder a través de <code class="language-plaintext highlighter-rouge">www.maria.es/cloud</code>.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>nano /etc/nginx/sites-available/nextcloud.conf</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">server <span class="o">{</span>
+        listen 80<span class="p">;</span>
+        listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+        server_name www.mariatec.es<span class="p">;</span>
+
+        root /var/www<span class="p">;</span>
+
+        index index.html index.htm index.php<span class="p">;</span>
+
+        location <span class="o">=</span>/ <span class="o">{</span>
+                <span class="k">return </span>301 <span class="nv">$scheme</span>://www.mariatec.es/cloud<span class="p">;</span>
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+        location @rewrite <span class="o">{</span>
+                rewrite ^/<span class="o">(</span>.<span class="k">*</span><span class="o">)</span><span class="nv">$ </span>/index.php?q<span class="o">=</span><span class="nv">$1</span><span class="p">;</span>
+        <span class="o">}</span>
+
+        location ~ <span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
+                include snippets/fastcgi-php.conf<span class="p">;</span>
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+        <span class="o">}</span>
+
+	location <span class="o">=</span> /robots.txt <span class="o">{</span>
+                allow all<span class="p">;</span>
+                log_not_found off<span class="p">;</span>
+                access_log off<span class="p">;</span>
+        <span class="o">}</span>
+
+        location /.well-known <span class="o">{</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta<span class="se">\.</span>json  /cloud/public.php?service<span class="o">=</span>host-meta-json    last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta        /cloud/public.php?service<span class="o">=</span>host-meta         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/webfinger        /cloud/public.php?service<span class="o">=</span>webfinger         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/nodeinfo         /cloud/public.php?service<span class="o">=</span>nodeinfo          last<span class="p">;</span>
+
+                location <span class="o">=</span> /.well-known/carddav   <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+                location <span class="o">=</span> /.well-known/caldav    <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+<span class="c">#Nextcloud Configuration</span>
+
+        location ^~ /cloud <span class="o">{</span>
+                client_max_body_size 512M<span class="p">;</span>
+                fastcgi_buffers 64 4K<span class="p">;</span>
+
+                <span class="nb">gzip </span>on<span class="p">;</span>
+                gzip_vary on<span class="p">;</span>
+                gzip_comp_level 4<span class="p">;</span>
+                gzip_min_length 256<span class="p">;</span>
+                gzip_proxied expired no-cache no-store private no_last_modified no_etag auth<span class="p">;</span>
+                gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject a<span class="err">$</span>
+
+                add_header Referrer-Policy                      <span class="s2">"no-referrer"</span>   always<span class="p">;</span>
+                add_header X-Content-Type-Options               <span class="s2">"nosniff"</span>       always<span class="p">;</span>
+                add_header X-Download-Options                   <span class="s2">"noopen"</span>        always<span class="p">;</span>
+                add_header X-Frame-Options                      <span class="s2">"SAMEORIGIN"</span>    always<span class="p">;</span>
+                add_header X-Permitted-Cross-Domain-Policies    <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-Robots-Tag                         <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-XSS-Protection                     <span class="s2">"1; mode=block"</span> always<span class="p">;</span>
+
+                fastcgi_hide_header X-ed-By<span class="p">;</span>
+                index index.php index.html /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+
+                expires 1m<span class="p">;</span>
+
+        	location <span class="o">=</span> /cloud <span class="o">{</span>
+            		<span class="k">if</span> <span class="o">(</span> <span class="nv">$http_user_agent</span> ~ ^DavClnt <span class="o">)</span> <span class="o">{</span>
+                		<span class="k">return </span>302 /cloud/remote.php/webdav/<span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="o">}</span>
+        	<span class="o">}</span>
+
+        	location ~ ^/cloud/<span class="o">(</span>?:build|tests|config|lib|3rdparty|templates|data<span class="o">)(</span>?:<span class="nv">$|</span>/<span class="o">)</span>    <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+        	location ~ ^/cloud/<span class="o">(</span>?:<span class="se">\.</span>|autotest|occ|issue|indie|db_|console<span class="o">)</span>                <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>php<span class="o">(</span>?:<span class="nv">$|</span>/<span class="o">)</span> <span class="o">{</span>
+            		fastcgi_split_path_info ^<span class="o">(</span>.+?<span class="se">\.</span>php<span class="o">)(</span>/.<span class="k">*</span><span class="o">)</span><span class="nv">$;</span>
+           		<span class="nb">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		try_files <span class="nv">$fastcgi_script_name</span> <span class="o">=</span>404<span class="p">;</span>
+
+            		include fastcgi_params<span class="p">;</span>
+            		fastcgi_param SCRIPT_FILENAME <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		fastcgi_param PATH_INFO <span class="nv">$path_info</span><span class="p">;</span>
+
+            		fastcgi_param modHeadersAvailable <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_param front_controller_active <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+
+            		fastcgi_intercept_errors on<span class="p">;</span>
+            		fastcgi_request_buffering off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span><span class="o">(</span>?:css|js|svg|gif<span class="o">)</span><span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 6M<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>woff2?<span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 7d<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location /cloud <span class="o">{</span>
+            		try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="o">}</span>
+
+   	<span class="o">}</span>
+<span class="o">}</span></code></pre></figure>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-nextcloud-1">Modificamos el fichero de configuración de Nextcloud</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/cloud/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocg57xu3tev6'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'z3kK/NjSDcqfrEvfLi6PoZAbnL4gYk'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'OswK3Xxvl7YzGtVbtpf/brvT/niZD4NIziidcWtWG5nqd/ny'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span>
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'maria.es'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/cloud/data'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'20.0.2.2'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.mariatec.es/cloud'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'nextcloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'[IP de la máquina]'</span>,
+  <span class="s1">'dbport'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'[usuario de la base de datos]'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'[contraseña de la base de datos]'</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span></code></pre></figure>
+
+<ol>
+  <li>Realizamos el enlace simbólico para activar el virtualhost.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/nextcloud.conf /etc/apache2/sites-enabled/nextcloud.conf
+    </code></pre></figure>
+
+<ol>
+  <li>Reiniciamos el servicio de nginx.</li>
+</ol>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span><span class="nb">sudo </span>systemctl restart nginx
+    </code></pre></figure>
+
+<ol>
+  <li>
+    <p>Y comprobamos que todo funciona correctamente.</p>
+
+    <p><a href="www.mariatec.es/cloud">www.mariatec.es/cloud</a></p>
+
+    <p><img src="/images/migracion/7.png" alt="7" /></p>
+  </li>
+</ol>
+
+<h3 id="owncloud-1">Owncloud</h3>
+
+<p><img src="/images/migracion/owncloud.png" alt="nextcloud" /></p>
+<h4 id="configuramos-de-nuevo-el-virtualhost">Configuramos de nuevo el virtualhost</h4>
+
+<p>Esta vez lo vamos a configurar para que Owncloud esté disponible en la ruta <code class="language-plaintext highlighter-rouge">/portal</code>. Al acceder a <a href="www.mariatec.es">www.mariatec.es</a> nos redirigirá a <a href="www.mariatec.es/portal">www.mariatec.es/portal</a>.</p>
+
+<p>El fichero de configuración de nginx quedaría de la siguiente forma:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Default server configuration</span>
+<span class="c">#</span>
+server <span class="o">{</span>
+        listen 80<span class="p">;</span>
+        listen <span class="o">[</span>::]:80<span class="p">;</span>
+
+        server_name www.mariatec.es<span class="p">;</span>
+
+        root /var/www<span class="p">;</span>
+
+        index index.html index.htm index.php<span class="p">;</span>
+
+        location <span class="o">=</span>/ <span class="o">{</span>
+                <span class="k">return </span>301 <span class="nv">$scheme</span>://www.mariatec.es/portal<span class="p">;</span>
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+        location @rewrite <span class="o">{</span>
+                rewrite ^/<span class="o">(</span>.<span class="k">*</span><span class="o">)</span><span class="nv">$ </span>/index.php?q<span class="o">=</span><span class="nv">$1</span><span class="p">;</span>
+        <span class="o">}</span>
+
+        location ~ <span class="se">\.</span>php<span class="nv">$ </span><span class="o">{</span>
+                include snippets/fastcgi-php.conf<span class="p">;</span>
+                fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+        <span class="o">}</span>
+
+	location <span class="o">=</span> /robots.txt <span class="o">{</span>
+                allow all<span class="p">;</span>
+                log_not_found off<span class="p">;</span>
+                access_log off<span class="p">;</span>
+        <span class="o">}</span>
+
+        location /.well-known <span class="o">{</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta<span class="se">\.</span>json  /cloud/public.php?service<span class="o">=</span>host-meta-json    last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/host-meta        /cloud/public.php?service<span class="o">=</span>host-meta         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/webfinger        /cloud/public.php?service<span class="o">=</span>webfinger         last<span class="p">;</span>
+                rewrite ^/<span class="se">\.</span>well-known/nodeinfo         /cloud/public.php?service<span class="o">=</span>nodeinfo          last<span class="p">;</span>
+
+                location <span class="o">=</span> /.well-known/carddav   <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+                location <span class="o">=</span> /.well-known/caldav    <span class="o">{</span> <span class="k">return </span>301 /cloud/remote.php/dav/<span class="p">;</span> <span class="o">}</span>
+
+                try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ <span class="o">=</span>404<span class="p">;</span>
+        <span class="o">}</span>
+
+<span class="c">#Nextcloud Configuration</span>
+
+        location ^~ /cloud <span class="o">{</span>
+                client_max_body_size 512M<span class="p">;</span>
+                fastcgi_buffers 64 4K<span class="p">;</span>
+
+                <span class="nb">gzip </span>on<span class="p">;</span>
+                gzip_vary on<span class="p">;</span>
+                gzip_comp_level 4<span class="p">;</span>
+                gzip_min_length 256<span class="p">;</span>
+                gzip_proxied expired no-cache no-store private no_last_modified no_etag auth<span class="p">;</span>
+                gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject a<span class="err">$</span>
+
+                add_header Referrer-Policy                      <span class="s2">"no-referrer"</span>   always<span class="p">;</span>
+                add_header X-Content-Type-Options               <span class="s2">"nosniff"</span>       always<span class="p">;</span>
+                add_header X-Download-Options                   <span class="s2">"noopen"</span>        always<span class="p">;</span>
+                add_header X-Frame-Options                      <span class="s2">"SAMEORIGIN"</span>    always<span class="p">;</span>
+                add_header X-Permitted-Cross-Domain-Policies    <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-Robots-Tag                         <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-XSS-Protection                     <span class="s2">"1; mode=block"</span> always<span class="p">;</span>
+
+                fastcgi_hide_header X-ed-By<span class="p">;</span>
+                index index.php index.html /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+
+                expires 1m<span class="p">;</span>
+
+        	location <span class="o">=</span> /cloud <span class="o">{</span>
+            		<span class="k">if</span> <span class="o">(</span> <span class="nv">$http_user_agent</span> ~ ^DavClnt <span class="o">)</span> <span class="o">{</span>
+                		<span class="k">return </span>302 /cloud/remote.php/webdav/<span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="o">}</span>
+        	<span class="o">}</span>
+
+        	location ~ ^/cloud/<span class="o">(</span>?:build|tests|config|lib|3rdparty|templates|data<span class="o">)(</span>?:<span class="nv">$|</span>/<span class="o">)</span>    <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+        	location ~ ^/cloud/<span class="o">(</span>?:<span class="se">\.</span>|autotest|occ|issue|indie|db_|console<span class="o">)</span>                <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>php<span class="o">(</span>?:<span class="nv">$|</span>/<span class="o">)</span> <span class="o">{</span>
+            		fastcgi_split_path_info ^<span class="o">(</span>.+?<span class="se">\.</span>php<span class="o">)(</span>/.<span class="k">*</span><span class="o">)</span><span class="nv">$;</span>
+           		<span class="nb">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		try_files <span class="nv">$fastcgi_script_name</span> <span class="o">=</span>404<span class="p">;</span>
+
+            		include fastcgi_params<span class="p">;</span>
+            		fastcgi_param SCRIPT_FILENAME <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		fastcgi_param PATH_INFO <span class="nv">$path_info</span><span class="p">;</span>
+
+            		fastcgi_param modHeadersAvailable <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_param front_controller_active <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+
+            		fastcgi_intercept_errors on<span class="p">;</span>
+            		fastcgi_request_buffering off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span><span class="o">(</span>?:css|js|svg|gif<span class="o">)</span><span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 6M<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>woff2?<span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 7d<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location /cloud <span class="o">{</span>
+            		try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ /cloud/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="o">}</span>
+
+   	<span class="o">}</span>
+
+<span class="c">#OwnCloud Configuration</span>
+
+        location ^~ /portal <span class="o">{</span>
+                client_max_body_size 512M<span class="p">;</span>
+                fastcgi_buffers 64 4K<span class="p">;</span>
+
+                <span class="nb">gzip </span>on<span class="p">;</span>
+                gzip_vary on<span class="p">;</span>
+                gzip_comp_level 4<span class="p">;</span>
+                gzip_min_length 256<span class="p">;</span>
+                gzip_proxied expired no-cache no-store private no_last_modified no_etag auth<span class="p">;</span>
+                gzip_types application/atom+xml application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject a<span class="err">$</span>
+
+                add_header Referrer-Policy                      <span class="s2">"no-referrer"</span>   always<span class="p">;</span>
+                add_header X-Content-Type-Options               <span class="s2">"nosniff"</span>       always<span class="p">;</span>
+                add_header X-Download-Options                   <span class="s2">"noopen"</span>        always<span class="p">;</span>
+                add_header X-Frame-Options                      <span class="s2">"SAMEORIGIN"</span>    always<span class="p">;</span>
+                add_header X-Permitted-Cross-Domain-Policies    <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-Robots-Tag                         <span class="s2">"none"</span>          always<span class="p">;</span>
+                add_header X-XSS-Protection                     <span class="s2">"1; mode=block"</span> always<span class="p">;</span>
+
+                fastcgi_hide_header X-ed-By<span class="p">;</span>
+                index index.php index.html /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+
+                expires 1m<span class="p">;</span>
+
+        	location <span class="o">=</span> /portal <span class="o">{</span>
+            		<span class="k">if</span> <span class="o">(</span> <span class="nv">$http_user_agent</span> ~ ^DavClnt <span class="o">)</span> <span class="o">{</span>
+                		<span class="k">return </span>302 /portal/remote.php/webdav/<span class="nv">$is_args$args</span><span class="p">;</span>
+            		<span class="o">}</span>
+        	<span class="o">}</span>
+
+        	location ~ ^/portal/<span class="o">(</span>?:build|tests|config|lib|3rdparty|templates|data<span class="o">)(</span>?:<span class="nv">$|</span>/<span class="o">)</span>    <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+        	location ~ ^/portal/<span class="o">(</span>?:<span class="se">\.</span>|autotest|occ|issue|indie|db_|console<span class="o">)</span>                <span class="o">{</span> <span class="k">return </span>404<span class="p">;</span> <span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>php<span class="o">(</span>?:<span class="nv">$|</span>/<span class="o">)</span> <span class="o">{</span>
+            		fastcgi_split_path_info ^<span class="o">(</span>.+?<span class="se">\.</span>php<span class="o">)(</span>/.<span class="k">*</span><span class="o">)</span><span class="nv">$;</span>
+           		<span class="nb">set</span> <span class="nv">$path_info</span> <span class="nv">$fastcgi_path_info</span><span class="p">;</span>
+
+            		try_files <span class="nv">$fastcgi_script_name</span> <span class="o">=</span>404<span class="p">;</span>
+
+            		include fastcgi_params<span class="p">;</span>
+            		fastcgi_param SCRIPT_FILENAME <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+            		fastcgi_param PATH_INFO <span class="nv">$path_info</span><span class="p">;</span>
+
+            		fastcgi_param modHeadersAvailable <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_param front_controller_active <span class="nb">true</span><span class="p">;</span>
+            		fastcgi_pass unix:/run/php/php7.4-fpm.sock<span class="p">;</span>
+
+            		fastcgi_intercept_errors on<span class="p">;</span>
+            		fastcgi_request_buffering off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span><span class="o">(</span>?:css|js|svg|gif<span class="o">)</span><span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 6M<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location ~ <span class="se">\.</span>woff2?<span class="nv">$ </span><span class="o">{</span>
+            		try_files <span class="nv">$uri</span> /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+            		expires 7d<span class="p">;</span>
+            		access_log off<span class="p">;</span>
+        	<span class="o">}</span>
+
+        	location /portal <span class="o">{</span>
+            		try_files <span class="nv">$uri</span> <span class="nv">$uri</span>/ /portal/index.php<span class="nv">$request_uri</span><span class="p">;</span>
+        	<span class="o">}</span>
+
+   	<span class="o">}</span>
+
+
+<span class="o">}</span></code></pre></figure>
+
+<h4 id="modificamos-el-fichero-de-configuración-de-owncloud-1">Modificamos el fichero de configuración de Owncloud</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>nano /var/www/portal/config/config.php
+<span class="nt">---</span>
+&lt;?php
+<span class="nv">$CONFIG</span> <span class="o">=</span> array <span class="o">(</span>
+  <span class="s1">'instanceid'</span> <span class="o">=&gt;</span> <span class="s1">'ocb5j2nyqboj'</span>,
+  <span class="s1">'passwordsalt'</span> <span class="o">=&gt;</span> <span class="s1">'0+8FRHWahLRZ/Gv9OlXNLB8alnnPop'</span>,
+  <span class="s1">'secret'</span> <span class="o">=&gt;</span> <span class="s1">'X/kjusk8xkH7PHSmSb+T9LjlfKZgeTvqVsHoJ3l56CmdbiLM'</span>,
+  <span class="s1">'trusted_domains'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'0.0.0.0'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'mariatec.es/portal'</span>,
+    2 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es/portal'</span>,
+    3 <span class="o">=&gt;</span> <span class="s1">'mariatec.es'</span>,
+    4 <span class="o">=&gt;</span> <span class="s1">'www.mariatec.es'</span>,
+  <span class="o">)</span>,
+  <span class="s1">'datadirectory'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/data'</span>,
+  <span class="s1">'overwrite.cli.url'</span> <span class="o">=&gt;</span> <span class="s1">'http://www.mariatec.es/portal'</span>,
+  <span class="s1">'dbtype'</span> <span class="o">=&gt;</span> <span class="s1">'mysql'</span>,
+  <span class="s1">'version'</span> <span class="o">=&gt;</span> <span class="s1">'10.11.0.6'</span>,
+  <span class="s1">'dbname'</span> <span class="o">=&gt;</span> <span class="s1">'owncloud'</span>,
+  <span class="s1">'dbhost'</span> <span class="o">=&gt;</span> <span class="s1">'localhost'</span>,
+  <span class="s1">'dbtableprefix'</span> <span class="o">=&gt;</span> <span class="s1">'oc_'</span>,
+  <span class="s1">'mysql.utf8mb4'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+  <span class="s1">'dbuser'</span> <span class="o">=&gt;</span> <span class="s1">'maria1'</span>,
+  <span class="s1">'dbpassword'</span> <span class="o">=&gt;</span> <span class="s1">'admin'</span>,
+  <span class="s1">'allow_user_to_change_mail_address'</span> <span class="o">=&gt;</span> <span class="s1">''</span>,
+  <span class="s1">'logtimezone'</span> <span class="o">=&gt;</span> <span class="s1">'UTC'</span>,
+  <span class="s1">'apps_paths'</span> <span class="o">=&gt;</span> 
+  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/apps'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">false</span>,
+    <span class="o">)</span>,
+    1 <span class="o">=&gt;</span> 
+    array <span class="o">(</span>
+      <span class="s1">'path'</span> <span class="o">=&gt;</span> <span class="s1">'/var/www/portal/apps-external'</span>,
+      <span class="s1">'url'</span> <span class="o">=&gt;</span> <span class="s1">'/apps-external'</span>,
+      <span class="s1">'writable'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+    <span class="o">)</span>,
+  <span class="o">)</span>,
+  <span class="s1">'installed'</span> <span class="o">=&gt;</span> <span class="nb">true</span>,
+<span class="o">)</span><span class="p">;</span></code></pre></figure>
+
+<h4 id="reiniciamos-servicios">Reiniciamos servicios</h4>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span><span class="nb">sudo </span>systemctl restart nginx
+<span class="nv">$ </span><span class="nb">sudo </span>systemctl restart mariadb</code></pre></figure>
+
+<p>Y comprobamos que todo funciona correctamente.</p>
+
+<p><a href="www.mariatec.es/">www.mariatec.es/</a></p>
+
+<p><img src="/images/migracion/8.png" alt="8" /></p>
+
+<h2 id="instalación-de-cliente-nextcloud-en-otro-cliente">Instalación de cliente Nextcloud en otro cliente</h2>
+
+<p><img src="/images/migracion/9.png" alt="9" /></p>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#apache">&#35; apache</a>
+          
+          <a href="/tags#php">&#35; php</a>
+          
+          <a href="/tags#mysql">&#35; mysql</a>
+          
+          <a href="/tags#nextcloud">&#35; nextcloud</a>
+          
+          <a href="/tags#owncloud">&#35; owncloud</a>
+          
+          <a href="/tags#migracion">&#35; migracion</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>

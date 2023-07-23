@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Cluster de Alta Disponibilidad </title>
+  <meta name='description' content="Introducción">
+  <link rel='canonical' href="flexton.netlify.com/2023/02/25/cluster/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/cluster.jpg )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Cluster de Alta Disponibilidad </h1>
+        <div class="c-article__date">
+          <span>2023, Feb 25</span>
+        </div>
+      </header>
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver instalar una aplicacioń php, en nuestro caso <code class="language-plaintext highlighter-rouge">WordPress</code>, sobre dos cluster de alta disponibilidad, uno con <code class="language-plaintext highlighter-rouge">Keepalived</code> y otro con <code class="language-plaintext highlighter-rouge">Pacemaker</code>.</p>
+
+<p>Un cluster de alta disponibilidad es un conjunto de servidores que trabajan juntos para proporcionar un servicio de red, almacenamiento o aplicaciones. Los servidores de un cluster de alta disponibilidad se denominan nodos. Los nodos de un cluster de alta disponibilidad se configuran para que se comuniquen entre sí y para que trabajen juntos para proporcionar un servicio de red, almacenamiento o aplicaciones.</p>
+
+<p>El escenario lo podemos encontrar en el siguiente <a href="https://github.com/josedom24/escenarios-HA/tree/master/07-HA-IPFailover-Apache2%2BDRBD%2BGFS2">repositorio</a>, donde nos encontramos el vagrantfile necesario para crear las tres máquinas virtuales necesarias para el escenario y el playbook de ansible para instalar el cluster.</p>
+
+<h2 id="construimos-el-escenario">Construimos el escenario</h2>
+
+<p>Para construir el escenario, nos situamos en el directorio donde tenemos el vagrantfile y ejecutamos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant up</code></pre></figure>
+
+<p><img src="/images/cluster/1.png" alt="1" /></p>
+
+<p>Una vez terminado el proceso, podemos comprobar que tenemos las tres máquinas virtuales creadas:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant status</code></pre></figure>
+
+<p><img src="/images/cluster/2.png" alt="2" /></p>
+
+<p>Nos desplazamos al directorio donde tenemos el playbook de ansible y ejecutamos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ansible-playbook <span class="nt">-b</span> site.yaml</code></pre></figure>
+
+<p><img src="/images/cluster/3.png" alt="3" /></p>
+
+<h2 id="comenzamos">Comenzamos</h2>
+
+<h3 id="cluster-de-ha-activo-pasivo">Cluster de HA activo-pasivo</h3>
+
+<p>Tras levantar el escenario y aplicar la receta de ansible, podemos comprobar que se ha configurado correctamente el cluster y que los servicios se han instalado.</p>
+
+<p>Para ello, nos conectamos al <code class="language-plaintext highlighter-rouge">nodo1</code> y comprobamos el estado del cluster:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vagrant ssh nodo1
+<span class="nb">sudo </span>su
+pcs status</code></pre></figure>
+
+<p><img src="/images/cluster/4.png" alt="4" /></p>
+
+<p>El siguiente paso es comprobar que podemos acceder a la web a través del navegador, deberemos cambiar la configuración de nuestra máquina host para que emplee la IP del <code class="language-plaintext highlighter-rouge">nodo1</code> como servidor DNS, para ello, en el fichero <code class="language-plaintext highlighter-rouge">/etc/resolv.conf</code> añadimos la siguiente línea:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nameserver 192.168.121.48</code></pre></figure>
+
+<p><img src="/images/cluster/5.png" alt="5" /></p>
+
+<p>Si nos dirigimos a la url <a href="www.example.com/index.php">www.example.com/index.php</a>, podemos ver que podemos acceder a la web y en el <code class="language-plaintext highlighter-rouge">index.php</code> podemos ver que efectivamente, está funcionando con el nodo1.</p>
+
+<p><img src="/images/cluster/6.png" alt="6" /></p>
+
+<p>En caso que el nodo1 se apague, la web funcionará sobre el nodo2. Por ello, apagaremos de forma manual el nodo1.</p>
+
+<p><img src="/images/cluster/7.png" alt="7" /></p>
+
+<p>Y cuando accedamos al <code class="language-plaintext highlighter-rouge">index.php</code>, y como podemos comprobar en la siguiente imagen, el servidor web está activo gracias al <code class="language-plaintext highlighter-rouge">nodo2</code>.</p>
+
+<p><img src="/images/cluster/8.png" alt="8" /></p>
+
+<h4 id="mariadb-galera-cluster">MariaDB Galera Cluster</h4>
+
+<p>Ahora instalaremos en los dos nodos un <strong>Galera MariaDB</strong> para emplearlo como base de datos en alta disponibilidad y que usará nuestro Wordpress, para ello, ejecutamos en ambos nodos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt <span class="nb">install </span>mariadb-server</code></pre></figure>
+
+<p><img src="/images/cluster/9.png" alt="9" /></p>
+
+<p>Para tener una base de datos segura, vamos a securizar mariadb de la siguiente manera:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql_secure_installation</code></pre></figure>
+
+<p>Tras dejar a punto el gestor de base de datos, vamos a elegir un nodo, que en nuestro caso será el nodo 1, por lo que detenemos el servicio de mariadb:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl stop mariadb.service</code></pre></figure>
+
+<p><img src="/images/cluster/10.png" alt="10" /></p>
+
+<p>Y modificamos el fichero del cluster Galera de la siguiente manera:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nano /etc/mysql/mariadb.conf.d/60-galera.cnf</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> ON
+<span class="c">#Nombre del cluster                            </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera     </span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+<span class="c">#Formato de binlog</span>
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.101</code></pre></figure>
+
+<p><img src="/images/cluster/11.png" alt="11" /></p>
+
+<p>Creamos el cluster de la siguiente manera:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">galera_new_cluster</code></pre></figure>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl start mariadb.service</code></pre></figure>
+
+<p><img src="/images/cluster/12.png" alt="12" /></p>
+
+<p>Para comprobar que el cluster está funcionando correctamente, ejecutamos el siguiente comando dentro de la base de datos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mysql <span class="nt">-u</span> root <span class="nt">-p</span> <span class="nt">-e</span> <span class="s2">"SHOW STATUS LIKE 'wsrep_cluster_size'"</span></code></pre></figure>
+
+<p><img src="/images/cluster/13.png" alt="13" /></p>
+
+<p>Como podemos ver en la imagen anterior, el cluster está formado por un nodo, por lo que ahora vamos a añadir el nodo2 al cluster. Realizamos los mismos pasos que en el nodo1, pero en este caso, cambiamos la dirección IP del nodo2 en el fichero de configuración del cluster.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">[</span>galera]
+<span class="c">#Activa el cluster</span>
+wsrep_on                 <span class="o">=</span> 1
+<span class="c">#Nombre del cluster </span>
+wsrep_cluster_name       <span class="o">=</span> <span class="s2">"MariaDB Galera Cluster"</span>
+<span class="c">#Ruta al módulo de Galera</span>
+wsrep_provider           <span class="o">=</span> /usr/lib/galera/libgalera_smm.so
+<span class="c">#Dirección IP de los nodos participantes en el cluster </span>
+wsrep_cluster_address    <span class="o">=</span> gcomm://10.1.1.101,10.1.1.102
+binlog_format            <span class="o">=</span> row
+<span class="c">#Motor de almacenamiento</span>
+default_storage_engine   <span class="o">=</span> InnoDB
+<span class="c">#Tamaño del buffer de memoria</span>
+innodb_autoinc_lock_mode <span class="o">=</span> 2
+
+<span class="c"># Allow server to accept connections on all interfaces.</span>
+bind-address <span class="o">=</span> 0.0.0.0
+<span class="c">#Dirección IP del nodo cluster de la base de datos</span>
+<span class="nv">wsrep_node_address</span><span class="o">=</span>10.1.1.102</code></pre></figure>
+
+<p><img src="/images/cluster/14.png" alt="14" /></p>
+
+<p>Y arrancamos el servicio de mariadb:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl start mariadb.service</code></pre></figure>
+
+<p><img src="/images/cluster/15.png" alt="15" /></p>
+
+<p>Ahora, ejecutamos de nuevo el comando <code class="language-plaintext highlighter-rouge">mysql -u root -p -e "SHOW STATUS LIKE 'wsrep_cluster_size'"</code> para comprobar que el cluster está formado por dos nodos.</p>
+
+<p><img src="/images/cluster/16.png" alt="16" /></p>
+
+<p>Ya comprobado que nuestro cluster de mariadb Galera funciona correctamente, vamos a crear una base de datos y un usuario para que el wordpress pueda acceder a ella.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">CREATE DATABASE wordpress<span class="p">;</span>
+GRANT ALL ON wordpress.<span class="k">*</span> TO <span class="s1">'wordpress'</span>@<span class="s1">'%'</span> IDENTIFIED BY <span class="s1">'wordpress'</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/cluster/17.png" alt="17" /></p>
+
+<h4 id="wordpress">Wordpress</h4>
+
+<p>Ahora le toca el turno a wordpres, por lo que nos lo vamos a descargar en el nodo 1. Navegamos a la carpeta <code class="language-plaintext highlighter-rouge">/var/www/html</code> y ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">wget https://es.wordpress.org/latest-es_ES.tar.gz</code></pre></figure>
+
+<p><img src="/images/cluster/18.png" alt="18" /></p>
+
+<p>Lo descomprimimos, y le cambiamos el propietario a <code class="language-plaintext highlighter-rouge">www-data</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">tar</span> <span class="nt">-xvzf</span> latest-es_ES.tar.gz
+<span class="nb">chown</span> <span class="nt">-R</span> www-data: wordpress/</code></pre></figure>
+
+<p><img src="/images/cluster/19.png" alt="19" /></p>
+
+<p>Accedemos a <a href="https://www.example.com/wordress">https://www.example.com/wordress</a> e instalamos wordpress:</p>
+
+<p><img src="/images/cluster/20.png" alt="20" /></p>
+
+<p>Como podemos ver en la imagen anterior, está instalado y le hemos añadido una nueva entrada.</p>
+
+<h4 id="comprobar-alta-disponibilidad">Comprobar Alta disponibilidad</h4>
+
+<p>Si apagásemos el nodo1, todos los recursos de este nodo deberían de pasar al nodo2, y por ello vamos a comprobarlo:</p>
+
+<ul>
+  <li>
+    <p>Apagamos nodo1 y verificamos en el nodo2 el estado del cluster:</p>
+
+    <p><img src="/images/cluster/21.png" alt="21" /></p>
+  </li>
+</ul>
+
+<p>Como podemos ver, se hemos podido acceder a nuestra nueva entrada y por ello, podemos verificar, que la configuración de nuestra cluster en alta disponibilidad, con una aplicación php y una base de datos, funciona correctamente.</p>
+
+<p><img src="/images/cluster/22.png" alt="22" /></p>
+
+<h3 id="cluster-de-ha-activo-activo">Cluster de HA activo-activo</h3>
+
+<p>Siguiendo las instrucciones que encontraremos en el <a href="https://github.com/josedom24/escenarios-HA/tree/master/07-HA-IPFailover-Apache2+DRBD+GFS2">escenario 7</a>, convertiremos el clúster en activo-activo. Vamos a instalar el <a href="https://github.com/josedom24/escenarios-HA/blob/master/07-HA-IPFailover-Apache2%2BDRBD%2BGFS2/fencing.md">fencing</a> para que el clúster funcione de manera adecuada.</p>
+
+<p>Partiendo del ejercicio anterior, donde hemos configurado un cluster de <strong>IP Failover + Apache2 + DRBD</strong>, vamos a agregar un sistema de almacenamiento distribuido <strong>GFS2</strong>, por lo que podremos configurar nuestros sistema <strong>DRBD</strong> como Dual-primary, y la IP ClusterIP podrá estar asignado a cualquiera de los nodos, ya que los nodos podrán escribir o leer al mismo tiempo.</p>
+
+<p>En definitiva, vamos a convertir nuestro clúster en activo-activo.</p>
+
+<h4 id="instalación-de-gfs2">Instalación de GFS2</h4>
+
+<p>En este apartado vamos a configurar GFS2 como sistema de almacenamiento distribuido para conseguir el cluster de alta disponibilidad activo-activo.</p>
+
+<p>Además vamos a instalar el programa DLM (Distributed Lock Manager) que será el encargado de gestionar el acceso del clúster al almacenamiento distribuido.</p>
+
+<p>En los dos nodos, instalamos el paquete <code class="language-plaintext highlighter-rouge">gfs2-utils</code> y <code class="language-plaintext highlighter-rouge">dlm</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt-get <span class="nb">install </span>gfs2-utils dlm-controld</code></pre></figure>
+
+<p><img src="/images/cluster/23.png" alt="23" /></p>
+
+<p>El DLM se tiene que ejecutar en los dos nodos, vamos a crear un recurso <strong>ocf:pacemaker:controld</strong> y lo vamos a clonar. Para ello, nos dirigimos a la consola del nodo1 y ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs cluster cib dlm_cfg
+pcs <span class="nt">-f</span> dlm_cfg resource create dlm ocf:pacemaker:controld op monitor <span class="nv">interval</span><span class="o">=</span>60s
+pcs <span class="nt">-f</span> dlm_cfg resource clone dlm clone-max<span class="o">=</span>2 clone-node-max<span class="o">=</span>1
+pcs cluster cib-push dlm_cfg <span class="nt">--config</span></code></pre></figure>
+
+<p><img src="/images/cluster/24.png" alt="24" /></p>
+
+<p>Comrpobamos que el recurso se ha creado correctamente:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs status</code></pre></figure>
+
+<p><img src="/images/cluster/25.png" alt="25" /></p>
+
+<h4 id="creamos-el-sistema-de-archivos-gfs2">Creamos el sistema de archivos GFS2</h4>
+
+<p>Antes de continuar, vamos a deshabilitar el recurso que controlaba el sistema de archivo del ejercicio anterior:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs resource disable WebFS</code></pre></figure>
+
+<p>Y veremos como los recursos <code class="language-plaintext highlighter-rouge">WebFS</code> y <code class="language-plaintext highlighter-rouge">WebSite</code> se han detenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs status</code></pre></figure>
+
+<p><img src="/images/cluster/26.png" alt="26" /></p>
+
+<p>El siguiente paso será formatear el dispositivo de bloques del nodo1 con el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mkfs.gfs2 <span class="nt">-p</span> lock_dlm <span class="nt">-j</span> 2 <span class="nt">-t</span> mycluster:web /dev/drbd1</code></pre></figure>
+
+<p><img src="/images/cluster/27.png" alt="27" /></p>
+
+<p>Las opciones que hemos utilizado son:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">-p lock_dlm</code>: Indica que vamos a usar el programa DLM (Distributed Lock Manager) para gestionar los cambiso del sistema de archivo.</li>
+  <li><code class="language-plaintext highlighter-rouge">-j 2</code>: Se va a reservar espacio para 2 journals (registro donde se almacena información necesaria para recuperar los datos afectados por una transición en caso de que falle) uno para cada nodo.</li>
+  <li><code class="language-plaintext highlighter-rouge">-t mycluster:web</code>: El nombre de la tabla de bloqueo (lock) (<code class="language-plaintext highlighter-rouge">web</code>) en el cluster <code class="language-plaintext highlighter-rouge">mycluster</code> (nombre del cluster que indicamos al crearlo con corosync y que lo podemos encontrar en <code class="language-plaintext highlighter-rouge">/etc/corosync/corosync.conf</code>).</li>
+</ul>
+
+<p>A continuación, vamos a guardar la información en el dispositivo de bloques. Creamos el fichero <code class="language-plaintext highlighter-rouge">index.html</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mount /dev/drbd1 /mnt
+<span class="nb">cd</span> /mnt
+<span class="nb">echo</span> <span class="s2">"&lt;h1&gt;Prueba con GFS2&lt;/h1&gt;"</span> <span class="o">&gt;&gt;</span> index.html
+<span class="nb">cd
+</span>umount /mnt</code></pre></figure>
+
+<p><img src="/images/cluster/28.png" alt="28" /></p>
+
+<p>Una vez terminado esto, vamos a reconfigurar el recurso <code class="language-plaintext highlighter-rouge">WebFS</code> del cluster con el nuevo sistema de fichero que hemos configurado:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs resource update WebFS <span class="nv">fstype</span><span class="o">=</span>gfs2</code></pre></figure>
+
+<p>Y como va a necesitr que DLM esté activado, tenemos que añadir dos restricciones: la primera es para que el recurso <code class="language-plaintext highlighter-rouge">WebFS</code> se ejecute en el mismo nodo que el recurso <code class="language-plaintext highlighter-rouge">dlm-clone</code>, y la segunda es para que el recurso <code class="language-plaintext highlighter-rouge">dlm-clone</code> se ejecute antes que el recurso <code class="language-plaintext highlighter-rouge">WebFS</code>.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs constraint colocation add WebFS with dlm-clone INFINITY
+pcs constraint order dlm-clone <span class="k">then </span>WebFS</code></pre></figure>
+
+<p><img src="/images/cluster/29.png" alt="29" /></p>
+
+<p>El último paso que nos queda para terminar de configurar el sistema de archivos GFS2, es montar el sistema de archivos en los dos nodos y reconfigurar el recurso <code class="language-plaintext highlighter-rouge">WebData-clone</code> indicando que se ejecuten como primario en el DRBD.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs cluster cib active_cfg
+pcs <span class="nt">-f</span> active_cfg resource clone WebFS
+pcs <span class="nt">-f</span> active_cfg constraint
+pcs <span class="nt">-f</span> active_cfg resource update WebData-clone promoted-max<span class="o">=</span>2
+pcs cluster cib-push active_cfg <span class="nt">--config</span>
+pcs resource <span class="nb">enable </span>WebFS</code></pre></figure>
+
+<p><img src="/images/cluster/30.png" alt="30" /></p>
+
+<p>En este momento tenemos el DRBD como dual-primary y el sistema de ficheros GFS2 montado en los dos nodos. Cualquiera de los servidores web pueden escribir ficheros en <code class="language-plaintext highlighter-rouge">/var/www/html</code>, por lo que podemos clonar el recurso WebSite y quitar la restricción de colocación que hacía que el servidor web se activa en el nodo que tenía asignada la VirtualIP. Para ello:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs cluster cib active_cfg
+pcs <span class="nt">-f</span> active_cfg resource clone WebSite
+pcs cluster cib-push active_cfg <span class="nt">--config</span>
+pcs constraint colocation delete WebSite-clone VirtualIP</code></pre></figure>
+
+<p><img src="/images/cluster/31.png" alt="31" /></p>
+
+<p>Si realizamos un <code class="language-plaintext highlighter-rouge">pcs status</code> veremos que el recurso <code class="language-plaintext highlighter-rouge">WebSite</code> se ha clonado y que la IP ClusterIP se ha asignado a ambos nodos, y podemos ver que está activo:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs status
+lsblk <span class="nt">-f</span></code></pre></figure>
+
+<p><img src="/images/cluster/32.png" alt="32" /></p>
+
+<p><img src="/images/cluster/33.png" alt="33" /></p>
+
+<p>Ahora, solo queda configurar el <code class="language-plaintext highlighter-rouge">Fencing</code> para que en caso de fallo de un nodo, se pueda recuperar el servicio, y el <code class="language-plaintext highlighter-rouge">STONITH</code> para que en caso de fallo de un nodo, se pueda recuperar el servicio y que el nodo que ha fallado se pueda recuperar. Para ver los agentes que tenemos disponibles, ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs stonith list</code></pre></figure>
+
+<p><img src="/images/cluster/34.png" alt="34" /></p>
+
+<p>Al estar usando <em>KVM</em> como hipervisor, vamos a hacer uso del <code class="language-plaintext highlighter-rouge">external/libvirt</code> para el <code class="language-plaintext highlighter-rouge">STONITH</code>. Para ello, vamos a instalar el paquete <code class="language-plaintext highlighter-rouge">libvirt-clients</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt-get <span class="nb">install </span>libvirt-clients</code></pre></figure>
+
+<p><img src="/images/cluster/35.png" alt="35" /></p>
+
+<p>Ambos nodos deberán de ser capaces de acceder al host a través de SSH, generaremos el par de claves en ambos nodos y las añadimos al fichero de authorized_keys del host:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ssh-keygen <span class="nt">-t</span> rsa
+ssh-copy-id 192.168.121.1</code></pre></figure>
+
+<p><img src="/images/cluster/36.png" alt="36" /></p>
+
+<p>Comprobamos que los parámetros que necesitamos para configurar el <code class="language-plaintext highlighter-rouge">STONITH</code> están bien:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs stonith describe external/libvirt</code></pre></figure>
+
+<p>Como vemos en la siguiente imagen, hemos de indicar dos parámetros de forma obligatoria:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hostlist</code>: Lista de nodos que se van a utilizar para el <code class="language-plaintext highlighter-rouge">STONITH</code>.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">hostlist</span><span class="o">=</span><span class="s2">"nodo1:06-HA-IPFailover-Apache2DRBDGFS2_nodo1,nodo2:06-HA-IPFailover-Apache2DRBDGFS2_nodo2"</span>
+    </code></pre></figure>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">hypervisor_uri</code>: URI del servidor KVM.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">hypervisor_uri</span><span class="o">=</span><span class="s2">"qemu+ssh://192.168.121.1/system"</span>
+    </code></pre></figure>
+
+<p>Ya tenemos todo configurado para poder hacer uso del <code class="language-plaintext highlighter-rouge">STONITH</code>. Solo nos resta habilitar el <code class="language-plaintext highlighter-rouge">Fencing</code> en el cluster:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">pcs cluster cib stonith_cfg
+pcs <span class="nt">-f</span> stonith_cfg stonith create fencing-libvirt external/libvirt <span class="se">\</span>
+ <span class="nv">hostlist</span><span class="o">=</span><span class="s2">"nodo1:06-HA-IPFailover-Apache2DRBDGFS2_nodo1,nodo2:06-HA-IPFailover-Apache2DRBDGFS2_nodo2"</span> <span class="se">\</span>
+ <span class="nv">hypervisor_uri</span><span class="o">=</span><span class="s2">"qemu+ssh://192.168.121.1/system"</span>
+pcs <span class="nt">-f</span> stonith_cfg property <span class="nb">set </span>stonith-enabled<span class="o">=</span><span class="nb">true
+</span>pcs cluster cib-push stonith_cfg <span class="nt">--config</span></code></pre></figure>
+
+<p><img src="/images/cluster/37.png" alt="37" /></p>
+
+<h4 id="prueba-de-funcionamiento">Prueba de funcionamiento</h4>
+
+<p>Para poder realizar las pruebas de funcionamiento del cluster, vamos a volver a instalar Wordpress, dado que al formatear el dispositivo de bloques hemos perdido toda la información que teníamos en el sistema de ficheros. Sólo debemos realizar los pasos que hemos realizado en el apartado <a href="####Wordpress">Instalación de Wordpress</a>. La información no es necesario recuperarla porque está guardada en la base de datos, por lo que solo debemos configurar de nuevo las variables de la base de datos que ya teníamos de antemano.</p>
+
+<p>Una vez instalado Wordpress, accederemos a la página y veremos que el post sigue existiendo. La imagen he tenido que añadirla de nuevo, dado que no se había guardado en la base de datos, pero el post existía.</p>
+
+<p><img src="/images/cluster/38.png" alt="38" /></p>
+
+<h4 id="balanceador-de-carga">Balanceador de carga</h4>
+
+<p>Para que el balanceador de carga, vamos a instalar un <em>HAproxy</em> en el nodo dns y lo configuraremos de la siguiente forma:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt <span class="nb">install </span>haproxy</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nano /etc/haproxy/haproxy.cfg</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">frontend servidores_web
+        <span class="nb">bind</span> <span class="k">*</span>:80
+        mode http
+        stats <span class="nb">enable
+        </span>stats uri /ha_stats
+        stats auth  cda:cda
+        default_backend servidores_web_backend
+
+backend servidores_web_backend
+        mode http
+        balance roundrobin
+        server backend1 10.1.1.101:80 check
+        server backend2 10.1.1.102:80 check</code></pre></figure>
+
+<p><img src="/images/cluster/39.png" alt="39" /></p>
+
+<p>Realizado esto, también modificaremos las zonas dns, y para ello, debemos modificar los siguientes ficheros de configuración de las zonas dns:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nano /var/cache/bind/db.10.1.1
+
+<span class="c">###</span>
+
+103     PTR     www.example.com</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nano /var/cache/bind/db.example.com
+
+<span class="c">###</span>
+
+www     PTR     10.1.1.103</code></pre></figure>
+
+<p>Tras estas modificaciones, deberemos reiniciar el servicio <code class="language-plaintext highlighter-rouge">bind9</code> para que se apliquen los cambios:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl restart bind9</code></pre></figure>
+
+<p>Solo nos queda comprobar que podemos acceder a la web:</p>
+
+<p><img src="/images/cluster/40.png" alt="40" /></p>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#cluster">&#35; cluster</a>
+          
+          <a href="/tags#alta disponibilidad">&#35; alta disponibilidad</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>

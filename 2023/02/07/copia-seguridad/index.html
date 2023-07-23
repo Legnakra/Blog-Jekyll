@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Copias de Seguridad y Restauración</title>
+  <meta name='description' content="Introducción">
+  <link rel='canonical' href="flexton.netlify.com/2023/02/07/copia-seguridad/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/pack.png )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Copias de Seguridad y Restauración</h1>
+        <div class="c-article__date">
+          <span>2023, Feb 07</span>
+        </div>
+      </header>
+      <h2 id="introducción">Introducción</h2>
+
+<p>En este post vamos a ver como hacer copias de seguridad y restauraciones de bases de datos, tanto en Orable, Postgres, MySQL y MongoDB.</p>
+
+<p>Cuando hablamos de copias de seguridad, nos referimos a la copia de los datos de una base de datos, para poder restaurarlos en caso de que se produzca algún fallo en la base de datos, es decir, una recuperación de los datos ante cualquier situación de desastres.</p>
+
+<p>Las copias de seguridad las podemos realizar de dos formas:</p>
+
+<ul>
+  <li>
+    <p>En frio: Se realiza cuando la base de datos está apagada, y se realiza una copia de los ficheros de datos y de control de la base de datos. El inconveniente de este tipo de copias de seguridad, es que no se puede hacer uso del servicio mientras se realiza la copia de seguridad.</p>
+  </li>
+  <li>
+    <p>En caliente: Se realiza cuando la base de datos está en funcionamiento, y se realiza una copia de los ficheros de datos y de control de la base de datos.</p>
+  </li>
+</ul>
+
+<h2 id="ejercicios-prácticos">Ejercicios prácticos</h2>
+
+<p><img src="/images/interconexion/oracle.png" alt="oracle" /></p>
+
+<h3 id="ejercicio-1">Ejercicio 1</h3>
+
+<p><strong>Realiza una copia de seguridad lógica de tu base de datos completa, teniendo en cuenta los siguientes requisitos:</strong></p>
+<ul>
+  <li>La copia debe estar encriptada y comprimida.</li>
+  <li>Debe realizarse en un conjunto de ficheros con un tamaño máximo de 60 MB.</li>
+  <li>Programa la operación para que se repita cada día a una hora determinada.</li>
+</ul>
+
+<p>Para realizar la copia de seguridad lógica, vamos a utilizar la herramienta RMAN, que es la herramienta de copia de seguridad y restauración de Oracle.</p>
+
+<p>Para ello, primero vamos a crear un directorio para almacenar los backups, y vamos a darle permisos al usuario oracle para que pueda escribir en el directorio.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">mkdir</span> /opt/oracle/backup
+<span class="nb">chown </span>oracle:oinstall /opt/oracle/backup</code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-1.png" alt="1-1" /></p>
+
+<p>Nos conectamos a la base de datos y creamos un directorio en el que se almacenarán los archivos de exportación, al que le asignaremos los permisos necesarios para que el usuario scott pueda acceder a él.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">CREATE</span> <span class="n">DIRECTORY</span> <span class="n">EXPORT_DIR</span> <span class="k">AS</span> <span class="s1">'/opt/oracle/backup'</span><span class="p">;</span>
+<span class="k">GRANT</span> <span class="k">READ</span><span class="p">,</span> <span class="k">WRITE</span> <span class="k">ON</span> <span class="n">DIRECTORY</span> <span class="n">EXPORT_DIR</span> <span class="k">TO</span> <span class="n">scott</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-2.png" alt="1-2" /></p>
+
+<p>Le adjudicamos también permisos para que pueda exportar los datos.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">GRANT</span> <span class="n">DATAPUMP_EXP_FULL_DATABASE</span> <span class="k">TO</span> <span class="n">scott</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-3.png" alt="1-3" /></p>
+
+<p>Ahora vamos a crear un script que realice la copia de seguridad lógica de la base de datos.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">expdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">LOGFILE</span><span class="o">=</span>backup<span class="sb">`</span><span class="nb">date</span> +%Y%m%d<span class="sb">`</span>.log <span class="nv">COMPRESSION</span><span class="o">=</span>ALL <span class="nv">DUMPFILE</span><span class="o">=</span>compress.dmp <span class="nv">FILESIZE</span><span class="o">=</span>60M <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger</code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-4.png" alt="1-4" /></p>
+
+<p>Los parámetros que hemos utilizado son los siguientes:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parámetro</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>scott</td>
+      <td>Usuario que realiza la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>tigger</td>
+      <td>Contraseña del usuario</td>
+    </tr>
+    <tr>
+      <td>DIRECTORY=EXPORT_DIR</td>
+      <td>Directorio donde se almacenará la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>DUMPFILE=backup<code class="language-plaintext highlighter-rouge">date +%Y%m%d</code>.dmp</td>
+      <td>Fichero donde se almacenará la copia de seguridad junto con su fecha</td>
+    </tr>
+    <tr>
+      <td>FULL=YES</td>
+      <td>Indica que se realiza una copia de seguridad completa</td>
+    </tr>
+    <tr>
+      <td>LOGFILE=backup<code class="language-plaintext highlighter-rouge">date +%Y%m%d</code>.log</td>
+      <td>Fichero donde se almacenará el log de la copia de seguridad junto con su fecha</td>
+    </tr>
+    <tr>
+      <td>COMPRESSION=ALL</td>
+      <td>Indica que se comprime la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>DUMPFILE=compress.dmp</td>
+      <td>Fichero donde se almacenará la copia de seguridad comprimida</td>
+    </tr>
+    <tr>
+      <td>FILESIZE=60M</td>
+      <td>Tamaño máximo de los ficheros de la copia de seguridad</td>
+    </tr>
+    <tr>
+      <td>ENCRYPTION_PASSWORD=tigger</td>
+      <td>Contraseña para encriptar la copia de seguridad</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Como podemos ver en la imagen, se han creado 3 ficheros:</p>
+
+<p><img src="/images/asgdb/backup/1-5.png" alt="1-5" /></p>
+
+<h3 id="ejercicio-2">Ejercicio 2</h3>
+
+<p><strong>Restaura la copia de seguridad lógica creada en el punto anterior.</strong></p>
+
+<p>Para probar la eficacia de la copia de seguridad, vamos a eliminar dos tablas de dos bases de datos diferentes.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">maria2</span><span class="p">.</span><span class="n">dept</span><span class="p">;</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">maria</span><span class="p">.</span><span class="n">salgrade</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-6.png" alt="1-6" /></p>
+
+<p>Una vez que hemos hecho la eliminación de ambas tablas, vamos a realizar una restauración de la copia de seguridad. <strong>NOTA</strong>: No nos olvidemos de poner la contraseña de encriptación, ya que en caso contrario, no nos dejará restaurar la copia de seguridad.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">impdp scott/tigger <span class="nv">DIRECTORY</span><span class="o">=</span>EXPORT_DIR <span class="nv">DUMPFILE</span><span class="o">=</span>backup20230306.dmp <span class="nv">FULL</span><span class="o">=</span>YES <span class="nv">ENCRYPTION_PASSWORD</span><span class="o">=</span>tigger</code></pre></figure>
+
+<p><img src="/images/asgdb/backup/1-7.png" alt="1-7" /></p>
+
+<p>Y como podemos ver, se han restaurado las tablas que habíamos eliminado.</p>
+
+<p><img src="/images/asgdb/backup/1-8.png" alt="1-8" /></p>
+
+<h3 id="ejercicio-3">Ejercicio 3</h3>
+
+<p><strong>Pon tu base de datos en modo ArchiveLog y realiza con RMAN una copia de seguridad física en caliente.</strong></p>
+
+<p>Como podemos recordar, en el ejercicio anterior, hemos realizado una copia de seguridad lógica de la base de datos, y ahora vamos a restaurarla.</p>
+
+<p><img src="/images/asgdb/backup/1-4.png" alt="1-4" /></p>
+
+<p>Para restaurar la base de datos, debemos hacerlo en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>, pero ¿qué es el modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>?</p>
+
+<p>El modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code> es un modo de operación de Oracle que permite que la base de datos pueda recuperarse de un fallo, ya sea por un fallo del sistema o por un fallo del usuario. Para ello, Oracle guarda los cambios que se realizan en la base de datos en un fichero de log, que se llama <code class="language-plaintext highlighter-rouge">Archivelog</code>. Cuando se produce un fallo, Oracle puede recuperar la base de datos a partir de los ficheros de log.</p>
+
+<p>Para activar el modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>, debemos realizar una serie de pasos:</p>
+
+<ul>
+  <li>Paramos la base de datos.</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">sqlplus / as sysdba
+shutdown immediate<span class="p">;</span></code></pre></figure>
+
+<ul>
+  <li>Iniciamos la base de datos:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">Startup</span> <span class="n">mount</span><span class="p">;</span></code></pre></figure>
+
+<ul>
+  <li>Modificamos la base de datos para que se ejecute en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">ALTER</span> <span class="k">DATABASE</span> <span class="n">ARCHIVELOG</span><span class="p">;</span></code></pre></figure>
+
+<ul>
+  <li>Y por último, iniciamos la base de datos en modo <code class="language-plaintext highlighter-rouge">ArchiveLog</code>:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="k">ALTER</span> <span class="k">DATABASE</span> <span class="k">OPEN</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/3-1.png" alt="3-1" /></p>
+
+<p>En la imagen podemos ver que los comandos han funcionado correctamente, pero la verdadera prueba de fuego es ejecutando en el cliente de Oracle el comando <code class="language-plaintext highlighter-rouge">select log_mode from v$database;</code> y comprobar que nos devuelve <code class="language-plaintext highlighter-rouge">ARCHIVELOG</code>.</p>
+
+<p><img src="/images/asgdb/backup/3-2.png" alt="3-2" /></p>
+
+<p>Y efectivamente, nos devuelve <code class="language-plaintext highlighter-rouge">ARCHIVELOG</code>, por lo que ya podríamos realizar la copia de seguridad.</p>
+
+<p>La copia de seguridad la vamos a realizar con el comando <code class="language-plaintext highlighter-rouge">RMAN</code>, que es el comando de Oracle para realizar copias de seguridad.</p>
+
+<p><strong>RMAN</strong> (Recovery Manager) es una herramienta de Oracle que nos permite realizar copias de seguridad de la base de datos, restaurar la base de datos, realizar copias de seguridad de los ficheros de log, etc. Una estrategia completa de alta disponibilidad y recuperación ante desastres requiere procedimientos confiables de copia de seguridad, restauración y recuperación de datos. Oracle Recovery Manager (RMAN) proporciona una base integral para realizar copias de seguridad y recuperar de manera eficiente la base de datos de Oracle. Está diseñado para trabajar íntimamente con el servidor, proporcionando detección de corrupción a nivel de bloque durante la copia de seguridad y la restauración. RMAN optimiza el rendimiento y el consumo de espacio durante el respaldo con multiplexación de archivos y compresión de conjuntos de respaldo, y se integra con Oracle Secure Backup, así como con productos de administración de medios de terceros, para respaldo en cinta.</p>
+
+<p>RMAN se ocupa de todos los procedimientos de base de datos subyacentes antes y después de la copia de seguridad o la restauración, lo que libera la dependencia del sistema operativo y los scripts SQL*Plus. Proporciona una interfaz común, a través de la línea de comandos y Enterprise Manager, para tareas de copia de seguridad en diferentes sistemas operativos host y ofrece funciones que no están disponibles a través de métodos administrados por el usuario, como la paralelización de flujos de datos de copia de seguridad/restauración, política de retención de archivos de copia de seguridad e historial detallado. de todas las copias de seguridad.</p>
+
+<p>Y tras esta mediana introducción, vamos a realizar la copia de seguridad. Para ello, iniciaremos rman y nos conectaremos a la base de datos.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">rman
+connect target</code></pre></figure>
+
+<p><img src="/images/asgdb/backup/3-3.png" alt="3-3" /></p>
+
+<p>Una vez conectados, nos vamos a configurar la ruta a la que vamos a guardar la copia de seguridad. Para ello, ejecutamos el comando <code class="language-plaintext highlighter-rouge">configure</code>.</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">configure</span> <span class="n">channel</span> <span class="n">device</span> <span class="k">type</span> <span class="n">disk</span> <span class="n">format</span> <span class="s1">'/opt/oracle/rman'</span><span class="p">;</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/3-4.png" alt="3-4" /></p>
+
+<p>Tras ello, lo que nos queda realizar el backup de la base de datos ejecutando el siguiente comando dentro de rman:</p>
+
+<figure class="highlight"><pre><code class="language-sql" data-lang="sql"><span class="n">bakcup</span> <span class="k">database</span><span class="p">;</span> </code></pre></figure>
+
+<h3 id="ejercicio-4">Ejercicio 4</h3>
+
+<p><strong>Borra un fichero de datos de un tablespace e intenta recuperar la instancia de la base de datos a partir de la copia de seguridad creada en el punto anterior.</strong></p>
+
+<h3 id="ejercicio-5">Ejercicio 5</h3>
+
+<p><strong>Borra un fichero de control e intenta recuperar la base de datos a partir de la copia de seguridad creada en el punto anterior.</strong></p>
+
+<p><img src="/images/interconexion/postgresql.png" alt="postgres" /></p>
+
+<h3 id="ejercicio-6">Ejercicio 6</h3>
+
+<p><strong>Documenta el empleo de las herramientas de copia de seguridad y restauración de Postgres.</strong></p>
+
+<p>En Postgres, podemos realizar dos tipos de backups:</p>
+
+<p>El primero del que vamos a hablar es el <strong>bakcup lógico</strong>. Estos utilizan el procedimiento <strong>SQL Dump</strong>, Que consiste en recorrer de forma ordenada los objetos de ka base de datos y realizar el volcado de las sentencias SQL necesarias para su recreación. Un factor a favor de este tipo de backups es que se restaurar sobre cualquier instancia, es decir, no es necesario que el sistema operativo sea el mismo, ni la arquitectura o la versión de PostgresSQL.</p>
+
+<p>Los ficheros son legibles, por lo que se pueden editar y modificar, cosa que puede ser una ventaja o una desventaja, dependiendo de lo que se quiera hacer. Tampoco será necesario parar la instancia, dado que el servicio no se verá interrumpido.</p>
+
+<p>Hemos hablado de las ventajas, pero no siempre todo es así. La principal de ellas es que no se permite la recuperación de la misma hasta un punto determinado en el tiempo, sino que se realiza hasta el último punto de backup. Esto puede ser un problema, ya que si se ha realizado un backup cada hora, y se ha producido un fallo en la base de datos, se perderán las últimas 23 horas de trabajo.</p>
+
+<p>Para realizar backups lógicos, podemos utilizar dos herramientas:</p>
+
+<ul>
+  <li>
+    <p><em>pg_dumpall</em>: Esta herramienta nos permite hacer backups de un cluster completo, es decir, de todas las bases de datos que se encuentren en el cluster. Por lo que este tipo no es un backup de una base de datos en concreto, sino de todas las que se encuentren en el cluster. La recuperación tampoco sería selectiva, sino que se restauraría todo el cluster. Y como el fichero es un script SQL, podemos utilizar la consola de comandos de Postgres para ejecutarlo.</p>
+
+    <p>Es una utilidad para escribir (“volcar”) todas las bases de datos PostgreSQL de un clúster en un archivo de script. El archivo de script contiene comandos SQL que se pueden usar como entrada para psql para restaurar las bases de datos. Lo hace llamando a pg_dump para cada base de datos en el clúster. pg_dumpall también vuelca objetos globales que son comunes a todas las bases de datos, a saber, roles de base de datos, espacios de tablas y concesiones de privilegios para parámetros de configuración. (pg_dump no guarda estos objetos).</p>
+
+    <p>Dado que pg_dumpall lee tablas de todas las bases de datos, lo más probable es que tenga que conectarse como superusuario de la base de datos para producir un volcado completo. También necesitará privilegios de superusuario para ejecutar el script guardado para poder agregar roles y crear bases de datos.</p>
+
+    <p>El script SQL se escribirá en la salida estándar. <em>pg_dumpall</em> necesita conectarse varias veces al servidor PostgreSQL (una vez por base de datos). Si utiliza la autenticación de contraseña, le pedirá una contraseña cada vez. Es conveniente tener un archivo ~/.pgpass en tales casos. Si no se especifica ningún nombre de archivo, pg_dumpall escribirá en la salida estándar.</p>
+
+    <p>Algunas de las opciones que podemos utilizar son:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Opción</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>-a, –data-only</td>
+          <td>No volcar los esquemas, solo los datos.</td>
+        </tr>
+        <tr>
+          <td>-c, –clean</td>
+          <td>Agregar comandos para eliminar objetos antes de crearlos.</td>
+        </tr>
+        <tr>
+          <td>-C, –create</td>
+          <td>Agregar comandos para crear la base de datos y los roles de base de datos.</td>
+        </tr>
+        <tr>
+          <td>-d, –dbname=DATABASE</td>
+          <td>Nombre de la base de datos a volcar.</td>
+        </tr>
+        <tr>
+          <td>-f, –file=FILENAME</td>
+          <td>Escribir el volcado a un archivo en lugar de la salida estándar.</td>
+        </tr>
+        <tr>
+          <td>-h, –host=HOSTNAME</td>
+          <td>Nombre del host del servidor de base de datos.</td>
+        </tr>
+        <tr>
+          <td>-n, –schema=SCHEMA</td>
+          <td>Esquema a volcar.</td>
+        </tr>
+        <tr>
+          <td>-N, –exclude-schema=SCHEMA</td>
+          <td>Esquema a excluir.</td>
+        </tr>
+        <tr>
+          <td>-o, –oids</td>
+          <td>Incluir OID de objetos en el volcado.</td>
+        </tr>
+        <tr>
+          <td>-O, –no-owner</td>
+          <td>No incluir el comando ALTER OWNER en el volcado.</td>
+        </tr>
+        <tr>
+          <td>-p, –port=PORT</td>
+          <td>Número de puerto del servidor de base de datos.</td>
+        </tr>
+        <tr>
+          <td>-s, –schema-only</td>
+          <td>No volcar los datos, solo los esquemas.</td>
+        </tr>
+        <tr>
+          <td>-S, –superuser=NAME</td>
+          <td>Nombre del superusuario de la base de datos.</td>
+        </tr>
+        <tr>
+          <td>-t, –table=TABLE</td>
+          <td>Tabla a volcar.</td>
+        </tr>
+        <tr>
+          <td>-T, –exclude-table=TABLE</td>
+          <td>Tabla a excluir.</td>
+        </tr>
+        <tr>
+          <td>-U, –username=NAME</td>
+          <td>Nombre de usuario para la conexión.</td>
+        </tr>
+        <tr>
+          <td>-v, –verbose</td>
+          <td>Mostrar información de progreso.</td>
+        </tr>
+        <tr>
+          <td>-x, –no-privileges</td>
+          <td>No incluir los comandos GRANT/REVOKE en el volcado.</td>
+        </tr>
+        <tr>
+          <td>-Z, –compress=0-9</td>
+          <td>Comprimir el volcado con gzip.</td>
+        </tr>
+        <tr>
+          <td>-?, –help</td>
+          <td>Mostrar ayuda para esta opción.</td>
+        </tr>
+        <tr>
+          <td>–version</td>
+          <td>Mostrar información de versión.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Para volcar todas las bases de datos:</p>
+  </li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    pg_dumpall <span class="o">&gt;</span> backup.sql
+    </code></pre></figure>
+
+<p>Para restaurar la(s) base(s) de datos desde este archivo, puede usar:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    psql <span class="nt">-f</span> db.out postgres
+    </code></pre></figure>
+
+<p>No es importante a qué base de datos se conecte aquí, ya que el archivo de script creado por pg_dumpall contendrá los comandos apropiados para crear y conectarse a las bases de datos guardadas. Una excepción es que si especificó –clean, debe conectarse inicialmente a la base de datos de postgres; la secuencia de comandos intentará eliminar otras bases de datos inmediatamente, y eso fallará para la base de datos a la que está conectado.</p>
+
+<ul>
+  <li><em>pg_dump</em>: Esta herramienta extrae una base de datos PostgreSQL en un archivo de script u otro archivo de almacenamiento. Su sintaxis es:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    pg_dump <span class="o">[</span>opciones de conexión][OPCIONES] NOMBRE_BASE_DE_DATOS
+    </code></pre></figure>
+
+<p>Es una utilidad para realizar copias de seguridad de una base de datos PostgreSQL. Realiza copias de seguridad coherentes incluso si la base de datos se utiliza al mismo tiempo. pg_dump no bloquea el acceso de otros usuarios a la base de datos (lectores o escritores).</p>
+
+<p>Los volcados se pueden generar en formato de script o archivo de archivo. Los volcados de secuencias de comandos son archivos de texto sin formato que contienen los comandos SQL necesarios para reconstruir la base de datos al estado en el que se encontraba en el momento en que se guardó. Para restaurar desde un script de este tipo, lo introducimos en psql. Los archivos de script se pueden usar para reconstruir la base de datos incluso en otras máquinas y otras arquitecturas; con algunas modificaciones, incluso en otros productos de bases de datos SQL.</p>
+
+<p>Los formatos de archivo de almacenamiento alternativos deben usarse con <em>pg_restore</em> para reconstruir la base de datos. Permiten que <em>pg_restore</em> sea selectivo sobre lo que se restaura, o incluso reordenar los elementos antes de restaurarlos. Los formatos de archivo de almacenamiento están diseñados para ser portátiles entre arquitecturas.</p>
+
+<p>Cuando se usa con uno de los formatos de archivo de almacenamiento y se combina con <em>pg_restore</em>, <em>pg_dump</em> proporciona un mecanismo flexible de archivo y transferencia. <em>pg_dump</em> se puede usar para hacer una copia de seguridad de una base de datos completa, luego pg_restore se puede usar para examinar el archivo y/o seleccionar qué partes de la base de datos se restaurarán. Los formatos de archivo de salida más flexibles son el formato “personalizado” (-Fc) y el formato de “directorio” (-Fd). Permiten la selección y el reordenamiento de todos los elementos archivados, admiten la restauración paralela y están comprimidos de forma predeterminada. El formato de “directorio” es el único formato que admite volcados paralelos.</p>
+
+<p>Las opciones de conexión son las mismas que para <em>psql</em>. Las opciones de volcado son:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Opción</th>
+      <th>Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-a, –data-only</td>
+      <td>No volcar los esquemas, solo los datos.</td>
+    </tr>
+    <tr>
+      <td>-b, –blobs</td>
+      <td>Incluir datos de tipo BLOB en el volcado.</td>
+    </tr>
+    <tr>
+      <td>-B, –no-blobs</td>
+      <td>No incluir datos de tipo BLOB en el volcado.</td>
+    </tr>
+    <tr>
+      <td>-c, –clean</td>
+      <td>Agregar comandos para eliminar objetos antes de crearlos.</td>
+    </tr>
+    <tr>
+      <td>-C, –create</td>
+      <td>Agregar comandos para crear la base de datos y los roles de base de datos.</td>
+    </tr>
+    <tr>
+      <td>-E, –encoding=ENCODING</td>
+      <td>Codificación de caracteres para el volcado.</td>
+    </tr>
+    <tr>
+      <td>-f, –file=file</td>
+      <td>Escribir el volcado a un archivo en lugar de la salida estándar.</td>
+    </tr>
+    <tr>
+      <td>-F</td>
+      <td>Formato de archivo de salida. Los valores válidos son: c (por defecto), t, p, d, o, a, h, custom, directory.</td>
+    </tr>
+    <tr>
+      <td>-j njobs, –jobs=njobs</td>
+      <td>Número de volcados paralelos a ejecutar.</td>
+    </tr>
+    <tr>
+      <td>-n, –schema=SCHEMA</td>
+      <td>Esquema a volcar.</td>
+    </tr>
+    <tr>
+      <td>-N, –exclude-schema=SCHEMA</td>
+      <td>Esquema a excluir.</td>
+    </tr>
+    <tr>
+      <td>-O, –no-owner</td>
+      <td>No incluir el comando ALTER OWNER en el volcado.</td>
+    </tr>
+    <tr>
+      <td>-s, –schema-only</td>
+      <td>No volcar los datos, solo los esquemas.</td>
+    </tr>
+    <tr>
+      <td>-S, –superuser=NAME</td>
+      <td>Nombre del superusuario de la base de datos.</td>
+    </tr>
+    <tr>
+      <td>-t, –table=TABLE</td>
+      <td>Tabla a volcar.</td>
+    </tr>
+    <tr>
+      <td>-T, –exclude-table=TABLE</td>
+      <td>Tabla a excluir.</td>
+    </tr>
+    <tr>
+      <td>-v, –verbose</td>
+      <td>Mostrar información de progreso.</td>
+    </tr>
+    <tr>
+      <td>-x, –no-privileges</td>
+      <td>No incluir los comandos GRANT/REVOKE en el volcado.</td>
+    </tr>
+    <tr>
+      <td>-Z, –compress=0-9</td>
+      <td>Comprimir el volcado con gzip.</td>
+    </tr>
+    <tr>
+      <td>-?, –help</td>
+      <td>Mostrar ayuda para esta opción.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Para volcar una base de datos llamada mydb en un archivo de script SQL:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Para volver a cargar un script de este tipo en una base de datos (recién creada) llamada newdb:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>psql <span class="nt">-d</span> newdb <span class="nt">-f</span> db.sql
+    </code></pre></figure>
+
+<p>Para volcar una base de datos en un archivo de almacenamiento de formato personalizado:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-Fc</span> mydb <span class="o">&gt;</span> db.dump
+    </code></pre></figure>
+
+<p>Para volcar una base de datos en un archivo con formato de directorio:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-Fd</span> mydb <span class="nt">-f</span> dumpdir
+    </code></pre></figure>
+
+<p>Para volcar una base de datos en un archivo de formato de directorio en paralelo con 5 trabajos de trabajo:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-Fd</span> mydb <span class="nt">-j</span> 5 <span class="nt">-f</span> dumpdir
+    </code></pre></figure>
+
+<p>Para recargar un archivo comprimido en una base de datos (recién creada) llamada newdb:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_restore <span class="nt">-d</span> newdb db.dump
+    </code></pre></figure>
+
+<p>Para volver a cargar un archivo comprimido en la misma base de datos de la que se descargó, descartando el contenido actual de esa base de datos:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_restore <span class="nt">-d</span> postgres <span class="nt">--clean</span> <span class="nt">--create</span> db.dump
+    </code></pre></figure>
+
+<p>Para volcar una sola tabla llamada mytab:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-t</span> mytab mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Para volcar todas las tablas cuyos nombres comienzan con emp en el esquema de Detroit, excepto la tabla llamada employee_log:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-t</span> <span class="s1">'detroit.emp*'</span> <span class="nt">-T</span> detroit.employee_log mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Para volcar todos los esquemas cuyos nombres comiencen con este u oeste y terminen en gsm, excluyendo cualquier esquema cuyos nombres contengan la palabra prueba:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-n</span> <span class="s1">'east*gsm'</span> <span class="nt">-n</span> <span class="s1">'west*gsm'</span> <span class="nt">-N</span> <span class="s1">'*test*'</span> mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Lo mismo, usando la notación de expresiones regulares para consolidar los interruptores:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-n</span> <span class="s1">'(east|west)*gsm'</span> <span class="nt">-N</span> <span class="s1">'*test*'</span> mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Para volcar todos los objetos de la base de datos excepto las tablas cuyos nombres comienzan con ts_:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-T</span> <span class="s1">'ts_*'</span> mydb <span class="o">&gt;</span> db.sql
+    </code></pre></figure>
+
+<p>Para especificar un nombre en mayúsculas o en mayúsculas y minúsculas en -t y los modificadores relacionados, debe poner el nombre entre comillas dobles; de lo contrario, se doblará en minúsculas (ver patrones a continuación). Pero las comillas dobles son especiales para el shell, por lo que a su vez deben estar entre comillas. Por lo tanto, para volcar una sola tabla con un nombre de mayúsculas y minúsculas, necesita algo como</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>pg_dump <span class="nt">-t</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">MixedCaseName</span><span class="se">\"</span><span class="s2">"</span> mydb <span class="o">&gt;</span> mytab.sql
+    </code></pre></figure>
+
+<p>El segundo tipo es el <strong>backup físico</strong>. La principal carcterística de este tipo de backup es que consiste en copiar los ficheros que pertenecen al cluster de PostgreSQL. Por lo tanto, si se produce un fallo en el sistema, se puede restaurar el cluster a partir de los ficheros de backup. Este tipo de backup es el más rápido y el más sencillo de realizar. Para realizar un backup físico de un cluster de PostgreSQL, se debe copiar el directorio de datos de PostgreSQL, que por defecto se encuentra en /var/lib/pgsql/data.</p>
+
+<p>Los ficheros, al contrario que en los de backup lógico, no se encuentran en un formato legible por el usuario. Por lo tanto, no será posible restaurar la instancia en otro sistema operativo, arquitectura o versión de PostgreSQL. Dependiendo del método de backup que se utilice, la posibilidad de hacer un backup físico puede variar. También cabe destacar que no permitenn backups ni recuperaciones selectivas.</p>
+
+<p>Existen dos técnicas para realizar un backup físico:</p>
+
+<ul>
+  <li><em>Filesystem</em>: consiste en copiar el directorio de datos de PostgreSQL. Es la técnica más sencilla y rápida de realizar. Sin embargo, para poder realizar este método, el servicio depe estar detenido. Pero de todas las técnicas que hemos visto, es la única que requiere que el servicio se pare para garantizar la copia consistente de los ficheros físicos.</li>
+</ul>
+
+<p>Uno de sus inconvenientes es que necesitamos tener constancia de la forma en la que está distribuido el disco, es decir, saber las rutas físicas de los tablespaces. Así que lo primero que debemos hacer es consultar la ruta de los tablespaces con el comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nv">$ </span>psql <span class="nt">-c</span> <span class="s2">"SELECT spcname, pg_tablespace_location(oid) FROM pg_tablespace;"</span>
+    </code></pre></figure>
+
+<p>Y una vez sabidas las rutas, podríamos realizar el backup. También debemos tener en cuenta es que este método no permite las recuperaciones hasta un punto en el tiempo.</p>
+
+<p>Podemos emplear dos métdos:</p>
+
+<ul>
+  <li>
+    <p><em>scp/cp</em>: copiar el directorio de datos de PostgreSQL a un directorio de backup en otro servidor. Este método es el más sencillo de realizar, pero requiere que el servicio de PostgreSQL esté detenido. No debemos olvidar que, tras realizar la copia, debemos iniciar el servicio de PostgreSQL. Este método estaría totalmente descartado para bases de datos que requieren un alto nivel de disponibilidad o para aquellas que tengan un peso de datos muy elevado.</p>
+  </li>
+  <li>
+    <p><em>rsync</em>: este método mejora el anterior, ya que no requiere que el servicio de PostgreSQL esté detenido. Para realizar el backup, se ejecuta el comando rsync con el parámetro -a, que realiza una copia recursiva y conserva los permisos, propietarios y fechas de los ficheros. Además, se añade el parámetro -z, que comprime los ficheros durante la copia. Por último, se añade el parámetro -v, que muestra el progreso de la copia. El comando quedaría de la siguiente forma:</p>
+  </li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    rsync <span class="nt">-avz</span> /var/lib/pgsql/data/ backupserver:/var/lib/pgsql/backup/
+    </code></pre></figure>
+
+<ul>
+  <li><em>Archivado Continuado</em>: esta es la única técnica que permite que se pueda recuperar hasta un punto en el tiempo. Para realizar este tipo de backup, se debe configurar el parámetro archive_mode en on. Este parámetro permite que se creen ficheros de backup cada vez que se realiza un checkpoint. Por defecto, se crean en el directorio pg_xlog, que se encuentra en el directorio de datos de PostgreSQL.</li>
+</ul>
+
+<p>Para realizar una prueba de las herramientas de copia de seguridad, vamos a realizar la copia con <em>pg_dump</em> de la base de datos <em>SCOTT</em>. Para ello, nos logueamos en la base de datos <em>SCOTT</em> y ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="nb">mkdir</span> /etc/postgresql-backups
+    </code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    pg_dump scott <span class="o">&gt;</span> /etc/postgresql-backups/scott<span class="sb">`</span><span class="nb">date</span> +<span class="s2">"%Y%m%d_%H%M%S"</span><span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/6-1.png" alt="6-1" /></p>
+
+<p><img src="/images/asgdb/backup/6-2.png" alt="6-2" /></p>
+
+<p>Una vez finalizada la copia, podemos comprobar que se ha creado el fichero <em>scott.sql</em> en el directorio de trabajo. Para restaurar la base de datos, debemos crear una nueva base de datos con el mismo nombre.</p>
+
+<p><img src="/images/asgdb/backup/6-3.png" alt="6-3" /></p>
+
+<p>Como podemos ver, la base de datos <em>BACKUP</em> no existe. Por lo tanto, la creamos, y verificamos que está completamente vacía:</p>
+
+<p><img src="/images/asgdb/backup/6-4.png" alt="6-4" /></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    psql <span class="nt">-f</span> /etc/postgresql-backup/scott.sql backup
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/6-5.png" alt="6-5" /></p>
+
+<p>Una vez finalizada la restauración, podemos comprobar que la base de datos <em>SCOTT</em> se ha restaurado correctamente.</p>
+
+<p><img src="/images/asgdb/backup/6-6.png" alt="6-6" /></p>
+
+<p><img src="/images/asgdb/backup/6-7.png" alt="6-7" /></p>
+
+<p><img src="/images/interconexion/mysql.png" alt="mysql" /></p>
+
+<h3 id="ejercicio-7">Ejercicio 7</h3>
+
+<p><strong>Documenta el empleo de las herramientas de copia de seguridad y restauración de MySQL.</strong></p>
+
+<p>Existen varias formas de realizar una copia de seguridad de una base de datos MySQL o MarriaDB,auque el más común y recomendado es el uso de mysqldump. Como podéis ver en la entrada de <a href="https://sysmaria.netlify.app/asgdb/2023/02/07/movimientos.html#h-ejercicio-4">movimientos de datos</a>, hicimos uso de mysqldump para realizar los movimientos de datos entre bases de datos. Puede ser tanto una exportación <strong>parcial</strong> como una <strong>total</strong>.</p>
+
+<p>Gracias a su multitud de parámetros, que lo hacen muy configurable:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Parámetro</th>
+      <th style="text-align: left">Descripción</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">–bind-address</td>
+      <td style="text-align: left">Dirección IP del servidor MySQL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–compress</td>
+      <td style="text-align: left">Comprime el fichero de salida</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–login-path</td>
+      <td style="text-align: left">Nombre del fichero de configuración de MySQL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–pipe, -W</td>
+      <td style="text-align: left">Conexión con el servidor usando el nombre de pipe</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–port</td>
+      <td style="text-align: left">Puerto de conexión con el servidor MySQL</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–no-create-db</td>
+      <td style="text-align: left">No crea la base de datos</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">–no-create-info</td>
+      <td style="text-align: left">No crea la información de las tablas</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>En su documentación <a href="https://dev.mysql.com/doc/refman/5.7/en/mysqldump.html#option_mysqldump_compress">oficial</a> podemos encontrar más información sobre los parámetros que podemos usar.</p>
+
+<p>Vale pero, ¿qué tipos de backups podemos realizar con mysqldump?:</p>
+
+<ul>
+  <li><strong>Backup total</strong>: Esta opción es muy oportuna en el caso de tener un servidor con varias bases de datos pero solo queremos realizar la copia de seguridad de una de ellas. Para ello, deberemos hacer la ecportación completa de todos los datos de la base de datos, incluyendo datos, triggers, procedimientos, vistas, estructura… Con el siguiente comando realizaríamos un backup total de la base de datos, siendo el nombre del fichero resultante el nombre de la base de datos y la fecha de la copia de seguridad:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name <span class="o">&gt;</span> db_backup_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/esquema.png" alt="esquema" /></p>
+
+<p>Para darle pas seguridad a la copia de seguridad, podemos incluir después del nombre de la base de datos la opción <code class="language-plaintext highlighter-rouge">-c | --compress</code> para comprimir el fichero de salida.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">--password</span><span class="o">=</span>your_password your_db_name | <span class="nb">gzip</span> <span class="nt">-c</span> <span class="o">&gt;</span> db_backup_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql.gz
+    </code></pre></figure>
+
+<p>En caso de que solo querramos exportar la estructura de la base de datos, podemos usar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--no-data</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name <span class="o">&gt;</span> db_structure_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p>Pero en el caso de que solo querramos el contenido de datos que contienen las tablas,es decir, solo los datos que se han generado con las sentencias <code class="language-plaintext highlighter-rouge">insert</code>, podemos usar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--no-create-info</span> <span class="nt">--skip-triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name <span class="o">&gt;</span> db_data_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<ul>
+  <li><strong>Backup parcial</strong>: Esta opción, como su nombre indica, se realiza si solo nos interesa hacer una copia de un conjunto de tablas y lo podemos hacer de dos maneras: o especificamos una por una las tablas de las que queremos realizar la copia de seguridad, o realizamos una copia completa usando el parámetro <code class="language-plaintext highlighter-rouge">--ignore-table</code> para que, como suguiere el parámetro, se realiza la copia completa ignorando las tablas mencionadas.</li>
+</ul>
+
+<p>Si lo que queremos es realizar soloun subconjunto de tablas, podríamos emplear el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name table1 table2 table3 <span class="o">&gt;</span> db_tables_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p>Si lo que queremos es realizar una copia de seguridad de todas las tablas excepto de unas cuantas, podríamos emplear el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> <span class="nt">--ignore-table</span><span class="o">=</span>table1 <span class="nt">--ignore-table</span><span class="o">=</span>table2 <span class="nt">--ignore-table</span><span class="o">=</span>table3 your_db_name <span class="o">&gt;</span> db_tables_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p>Este último caso es muy útil cuando las tablas que nos interesan son más de las que no nos interesan.</p>
+
+<ul>
+  <li><strong>Backup remoto</strong>: Como su nombre indica, lo podemos realizar accediendo al servidor MySQL desde otro servidor. Para ello, deberemos tener instalado el cliente MySQL en el servidor desde el que queremos realizar la copia de seguridad.</li>
+</ul>
+
+<p>Para realizar la copia de seguridad, deberemos usar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">   mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">-h</span> mysql.example.com <span class="nt">-P</span> 3306 <span class="nt">--compress</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> your_username <span class="nt">-p</span> your_db_name <span class="o">&gt;</span> db_backup_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql 
+    </code></pre></figure>
+
+<p>Otra forma sería conectándonos al servidor a traves de ssh:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    ssh ssh_username@server <span class="s2">"mysqldump -v --opt --events --routines --triggers --default-character-set=utf8 -u your_username --password=your_password your_db_name | gzip -c"</span> <span class="o">&gt;</span> db_backup_your_db_name_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql.gz
+    </code></pre></figure>
+
+<p>Para realizar una prueba de restauración, vamos a utilizar la base de datos de scott que tenemos en nuestro servidor MySQL. Para ello, vamos a crear una base de datos de prueba y vamos a importar la base de datos de scott en ella.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysql <span class="nt">-u</span> root <span class="nt">-p</span>
+    mysql&gt; create database scott_full<span class="p">;</span>
+    mysql&gt; create database scott_partial<span class="p">;</span>
+    mysql&gt; create database scott_structure<span class="p">;</span>
+    mysql&gt; <span class="nb">exit</span>
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/7-1.png" alt="7-1" /></p>
+
+<p>Ahora vamos a realizar la copia de seguridad de la base de datos de scott completa.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--events</span> <span class="nt">--routines</span> <span class="nt">--triggers</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> root <span class="nt">-p</span> scott <span class="o">&gt;</span> full_scott_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/7-2.png" alt="7-2" /></p>
+
+<p>Ahora vamos a realizar la copia de seguridad de la base de datos de scott, pero solo de las tabla emp:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> root <span class="nt">-p</span> scott emp <span class="o">&gt;</span> emp_backup_scott_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/7-3.png" alt="7-3" /></p>
+
+<p>Y ahora vamos a realizar la copia de seguridad de la estructura de la base de datos de scott:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    mysqldump <span class="nt">-v</span> <span class="nt">--opt</span> <span class="nt">--no-data</span> <span class="nt">--default-character-set</span><span class="o">=</span>utf8 <span class="nt">-u</span> root <span class="nt">-p</span> scott <span class="o">&gt;</span> structure_scott_<span class="sb">`</span><span class="nb">date</span> +%Y%m%d_%H%M%S<span class="sb">`</span>.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/7-4.png" alt="7-4" /></p>
+
+<p>Como podemos ver, los 3 ficheros se han creado correctamente. Ahora, para comprobar que las copias de seguridad se han realizado correctamente, vamos a restaurar las copias de seguridad en su correspondiente base de datos para las pruebas pertinentes.</p>
+
+<p><img src="/images/asgdb/backup/7-5.png" alt="7-5" /></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">    <span class="c"># Restauramos la copia de seguridad completa</span>
+    <span class="nv">$ </span>mysql <span class="nt">-u</span> root <span class="nt">-p</span> scott_full &lt; full_scott_20230305_231358.sql
+
+    <span class="c"># Restauramos la copia de seguridad de la tabla emp</span>
+    <span class="nv">$ </span>mysql <span class="nt">-u</span> root <span class="nt">-p</span> scott_partial &lt; emp_backup_scott_20230305_231222.sql
+
+    <span class="c"># Restauramos la copia de seguridad de la estructura de la base de datos</span>
+    <span class="nv">$ </span>mysql <span class="nt">-u</span> root <span class="nt">-p</span> scott_structure &lt; structure_scott_0230305_231343.sql
+    </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/7-6.png" alt="7-6" /></p>
+
+<p>Y como podemos ver en la siguiente imagen, se han restaurado correctamente las copias de seguridad.</p>
+
+<ul>
+  <li>
+    <p>Mostramos que las bases de datos se encuentran creadas.</p>
+
+    <p><img src="/images/asgdb/backup/7-7.png" alt="7-7" /></p>
+  </li>
+  <li>
+    <p>Scott_full</p>
+
+    <p><img src="/images/asgdb/backup/7-8.png" alt="7-8" /></p>
+  </li>
+  <li>
+    <p>Scott_partial</p>
+
+    <p><img src="/images/asgdb/backup/7-9.png" alt="7-9" /></p>
+  </li>
+  <li>
+    <p>Scott_structure</p>
+
+    <p><img src="/images/asgdb/backup/7-10.png" alt="7-10" /></p>
+  </li>
+</ul>
+
+<p><img src="/images/interconexion/mongo.png" alt="mongo" /></p>
+
+<h3 id="ejercicio-8">Ejercicio 8</h3>
+
+<p><strong>Documenta el empleo de las herramientas de copia de seguridad y restauración de MongoDB.</strong></p>
+
+<p>Para realizar copias de seguridad de MongoDB, podemos usar la herramienta <code class="language-plaintext highlighter-rouge">mongodump</code> que nos permite realizar copias de seguridad de la base de datos completa o de una colección en concreto.</p>
+
+<p>EL primer paso es crear un directorio donde se almacenarán las copias de seguridad que realizaremos de las bases de datos. Si estamos gestionando varias bases de datos, deberemos crear un directorio para cada una de ellas, para de esta forma poder diferenciar las copias de seguridad de cada una de ellas.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">mkdir</span> <span class="nt">-p</span> /var/backups/mongodb</code></pre></figure>
+
+<p>Lo idóneo será que el nombre del fichero de la copia de seguridad sea el nombre de la base de datos que estamos copiando, junto con la fecha en la que se ha realizado la copia de seguridad.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">mongodump <span class="nt">-h</span> ip_base_server <span class="nt">-d</span> your_db_name <span class="nt">-o</span> /var/backups/mongodb/your_db_name_<span class="sb">`</span><span class="nb">date</span> +<span class="s2">"%Y%m%d_%H%M%S"</span><span class="sb">`</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/8-1.png" alt="8-1" /></p>
+
+<p>Para que la copia de seguridad se realice de forma automática, lo realizaremos mediante un script que se ejecutará cada cierto tiempo, que progararemos en el crontab del sistema. Por ello, lo primero que haremos será crear el script que se encargará de realizar la copia de seguridad y le damos permisos de ejecución.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>nano /opt/scripts/mongodb_backup.sh
+<span class="nb">sudo chmod</span> +x /opt/scripts/mongodb_backup.sh</code></pre></figure>
+
+<p>Si lo que queremos es un scritp que nos permita elegir el directorio de destino de la copia de seguridad, podemos usar el siguiente script:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="c">#Autori: María Jesús Alloza Rodríguez</span>
+<span class="c">#Versión: 1.0</span>
+<span class="c">#Descripción: Script para realizar copias de seguridad de MongoDB</span>
+<span class="c">#Fecha de creación: 02/03/2023</span>
+
+<span class="nb">echo</span> <span class="s2">"Starting MongoDB Backup"</span>
+<span class="nb">echo</span> <span class="s2">"------------------------"</span>
+
+<span class="c">##Función para elegir el directorio de destino de la copia de seguridad</span>
+<span class="nb">read</span> <span class="nt">-p</span> <span class="s2">"Introduce el directorio de destino de la copia de seguridad: "</span> DEST
+
+<span class="c">#Variable </span>
+<span class="nv">DESTINO</span><span class="o">=</span><span class="s2">"/var/backups/mongodb/"</span><span class="nv">$DEST</span>
+
+<span class="c">#Comprobación de que el directorio de destino existe</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-d</span> <span class="nv">$DESTINO</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"El directorio </span><span class="nv">$DESTINO</span><span class="s2"> existe"</span>
+<span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"El directorio </span><span class="nv">$DESTINO</span><span class="s2"> no existe"</span>
+    <span class="nb">echo</span> <span class="s2">"Creando directorio </span><span class="nv">$DESTINO</span><span class="s2">"</span>
+    <span class="nb">mkdir</span> <span class="nt">-p</span> <span class="nv">$DESTINO</span>
+<span class="k">fi</span>
+
+<span class="c">#Elección de la base de datos a copiar</span>
+<span class="nb">read</span> <span class="nt">-p</span> <span class="s2">"Introduce el nombre de la base de datos a copiar: "</span> DB
+
+<span class="c">#Comprobación de que la base de datos existe</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-d</span> /var/lib/mongodb/<span class="nv">$DB</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"La base de datos </span><span class="nv">$DB</span><span class="s2"> existe"</span>
+<span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"La base de datos </span><span class="nv">$DB</span><span class="s2"> no existe"</span>
+    <span class="nb">exit </span>1
+<span class="k">fi</span>
+
+<span class="c">#Realización de la copia de seguridad</span>
+<span class="nb">echo</span> <span class="s2">"Realizando copia de seguridad de la base de datos </span><span class="nv">$DB</span><span class="s2">"</span>
+mongodump <span class="nt">-h</span> localhost <span class="nt">-d</span> <span class="nv">$DB</span> <span class="nt">-o</span> <span class="nv">$DESTINO</span>/<span class="nv">$DB_</span><span class="sb">`</span><span class="nb">date</span> +<span class="s2">"%Y%m%d_%H%M%S"</span>.json<span class="sb">`</span>
+
+<span class="nb">echo</span> <span class="s2">"Copia de seguridad realizada con éxito"</span>
+<span class="nb">echo</span> <span class="s2">"--------------------------------------"</span></code></pre></figure>
+
+<p>Visto este script, vamos a realizar uno, que realice una copia de seguridad de la base de datos asir cada día a las 00:00 horas.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">nano /opt/scripts/asir_backup.sh</code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="c">#Autora: María Jesús Alloza Rodríguez</span>
+<span class="c">#Versión: 1.0</span>
+<span class="c">#Descripción: Script para realizar copias de seguridad de la base de datos Asir</span>
+
+<span class="nb">echo</span> <span class="s2">"Starting MongoDB Backup"</span>
+<span class="nb">echo</span> <span class="s2">"------------------------"</span>
+
+mongodump <span class="nt">-h</span> localhost <span class="nt">-d</span> asir <span class="nt">-o</span> /var/backups/mongodb/asir_<span class="sb">`</span><span class="nb">date</span> +<span class="s2">"%Y%m%d_%H%M%S"</span><span class="sb">`</span></code></pre></figure>
+
+<p><img src="/images/asgdb/backup/8-2.png" alt="8-2" /></p>
+
+<p>Una vez creado el script, lo programamos en el crontab del sistema para que se ejecute cada día a las 00:00 horas.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>crontab <span class="nt">-e</span>
+0 0 <span class="k">*</span> <span class="k">*</span> <span class="k">*</span> /opt/scripts/asir_backup.sh</code></pre></figure>
+
+<p>Para restaurar una copia de seguridad de MongoDB, podemos usar la herramienta <code class="language-plaintext highlighter-rouge">mongorestore</code> que nos permite restaurar una base de datos completa o una colección en concreto.</p>
+
+<p>Para restaurar una base de datos completa, lo que haremos será ejecutar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>mongorestore <span class="nt">--db</span> asir_copia <span class="nt">--verbose</span> /var/backups/mongodb/asir_20230305_234235/asir/</code></pre></figure>
+
+<p><img src="/images/asgdb/backup/8-3.png" alt="8-3" /></p>
+
+<p>Como podemos observar, la base de datos asir_copia se ha restaurado correctamente.</p>
+
+<p><img src="/images/asgdb/backup/8-4.png" alt="8-4" /></p>
+
+<p>Para restaurar una colección en concreto, lo que haremos será ejecutar el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">$ </span>mongorestore <span class="nt">--db</span> asir_collection <span class="nt">--collection</span> Primero /var/backups/mongodb/asir_20230305_234235/asir/Primero.bson </code></pre></figure>
+
+<p><img src="/images/asgdb/backup/8-5.png" alt="8-5" /></p>
+
+<p>Como podemos observar, la colección Primero de la base de datos asir_collection se ha restaurado correctamente, pero no se ha restaurado la colección Segundo.</p>
+
+<p><img src="/images/asgdb/backup/8-6.png" alt="8-6" /></p>
+
+<p>Como podemos ver en esta imagen final, ambas bases de datos, asir_copia y asir_collection, se han restaurado correctamente.</p>
+
+<p>Pero si lo que queremos es realizar una restauración de una copia de seguridad en concreta de una base de datos concreta (en este caso la base de datos asir), podemos usar el siguiente script:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="c">#Autora: María Jesús Alloza Rodríguez</span>
+<span class="c">#Versión: 1.0</span>
+<span class="c">#Descripción: Script para realizar copias de seguridad de la base de datos Asir</span>
+
+<span class="nb">echo</span> <span class="s2">"Las copias de seguridad de la base de datos asir son: "</span>
+<span class="nb">echo</span> <span class="s2">"----------------------------------------------------"</span>
+
+<span class="nv">DIRECTORIO</span><span class="o">=</span><span class="s2">"/var/backups/mongodb/asir"</span>
+
+<span class="c">#Listado de las copias de seguridad de la base de datos asir</span>
+<span class="nb">ls</span> <span class="nv">$DIRECTORIO</span>
+
+<span class="nb">echo</span> <span class="s2">"----------------------------------------------------"</span>
+
+<span class="nb">read</span> <span class="nt">-p</span> <span class="s2">"Introduce el nombre de la copia de seguridad que quieres restaurar: "</span> COPIA
+
+mongoimport <span class="nt">-u</span> admin <span class="nt">--db</span> asir <span class="nt">--file</span> <span class="nv">$DIRECTORIO$COPIA</span>
+
+<span class="nb">echo</span> <span class="s2">"Restauración realizada con éxito"</span></code></pre></figure>
+
+<h2 id="bibliografía">Bibliografía</h2>
+
+<ul>
+  <li>
+    <p><a href="https://www.ajpdsoft.com/modules.php?name=News&amp;file=print&amp;sid=560#copiaseguridadlogicaoracle">Copias de seguridad en Oracle, copia export, copia física RMAN</a></p>
+  </li>
+  <li>
+    <p><a href="https://dev.mysql.com/doc/refman/5.7/en/mysqldump.html#option_mysqldump_compress">MySQL DUMP</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.postgresql.org/docs/9.1/app-pgdump.html">Pg_dump</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.postgresql.org/docs/9.1/backup.html">PostgreSQL Backup and Recovery</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.postgresql.org/docs/9.1/app-pgdumpall.html">Pg_dumpall</a></p>
+  </li>
+  <li>
+    <p><a href="https://dbasinapuros.com/tecnicas-y-herramientas-de-backup-y-recovery-en-postgresql/">Copias de seguridad y restauración de PostgreSQL</a></p>
+  </li>
+  <li>
+    <p><a href="https://josejuansanchez.org/bd/unidad-13-teoria/index.html">Gestión de la seguridad de los datos.</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.mongodb.com/docs/manual/tutorial/backup-and-restore-tools/">Backup y Restore de MongoDB</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.digitalocean.com/community/tutorials/how-to-back-up-restore-and-migrate-a-mongodb-database-on-ubuntu-20-04-es">Backup y Restore de MongoDB</a></p>
+  </li>
+  <li>
+    <p><a href="https://www.oracle.com/es/database/technologies/high-availability/rman.html">RMAN</a></p>
+  </li>
+</ul>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#oracle">&#35; oracle</a>
+          
+          <a href="/tags#postgres">&#35; postgres</a>
+          
+          <a href="/tags#mysql">&#35; mysql</a>
+          
+          <a href="/tags#mongodb">&#35; mongodb</a>
+          
+          <a href="/tags#backup">&#35; backup</a>
+          
+          <a href="/tags#restore">&#35; restore</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>

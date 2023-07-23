@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+
+  <title>Escenario - Poblar un directorio LDAP desde un fichero CSV</title>
+  <meta name='description' content="IntroducciónEn nuestro escenario vamos a realizar la instalación y configuración de OpenLDAP en la máquina Alfa. Lo haremos utilizando como base el nombre DN...">
+  <link rel='canonical' href="flexton.netlify.com/2023/02/12/ldap2/">
+  <link rel='alternate' type='application/rss+xml' title='Welcome to MariaTec' href="flexton.netlify.com/feed.xml">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Volkhov:400,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+
+  <style>
+    
+    /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */html{line-height:1.15;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0}article,aside,footer,header,nav,section{display:block}h1{font-size:2em;margin:.67em 0}figcaption,figure,main{display:block}figure{margin:1em 40px}hr{box-sizing:content-box;height:0;overflow:visible}pre{font-family:monospace,monospace;font-size:1em}a{background-color:rgba(0,0,0,0);-webkit-text-decoration-skip:objects}abbr[title]{border-bottom:none;text-decoration:underline;text-decoration:underline dotted}b,strong{font-weight:inherit}b,strong{font-weight:bolder}code,kbd,samp{font-family:monospace,monospace;font-size:1em}dfn{font-style:italic}mark{background-color:#ff0;color:#000}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-0.25em}sup{top:-0.5em}audio,video{display:inline-block}audio:not([controls]){display:none;height:0}img{border-style:none}svg:not(:root){overflow:hidden}button,input,optgroup,select,textarea{font-family:sans-serif;font-size:100%;line-height:1.15;margin:0}button,input{overflow:visible}button,select{text-transform:none}button,html [type=button],[type=reset],[type=submit]{-webkit-appearance:button}button::-moz-focus-inner,[type=button]::-moz-focus-inner,[type=reset]::-moz-focus-inner,[type=submit]::-moz-focus-inner{border-style:none;padding:0}button:-moz-focusring,[type=button]:-moz-focusring,[type=reset]:-moz-focusring,[type=submit]:-moz-focusring{outline:1px dotted ButtonText}fieldset{padding:.35em .75em .625em}legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal}progress{display:inline-block;vertical-align:baseline}textarea{overflow:auto}[type=checkbox],[type=radio]{box-sizing:border-box;padding:0}[type=number]::-webkit-inner-spin-button,[type=number]::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}[type=search]::-webkit-search-cancel-button,[type=search]::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}details,menu{display:block}summary{display:list-item}canvas{display:inline-block}template{display:none}[hidden]{display:none}body,h1,h2,h3,h4,h5,h6,p,blockquote,pre,dl,dd,ol,ul,fieldset,legend,figure,hr{margin:0;padding:0}li>ul,li>ol{margin-bottom:0}table{border-collapse:collapse;border-spacing:0}@-webkit-keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes spin{100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.icon{position:relative;display:inline-block;width:25px;height:25px;overflow:hidden;fill:currentColor}.icon__cnt{width:100%;height:100%;background:inherit;fill:inherit;pointer-events:none;transform:translateX(0);-ms-transform:translate(0.5px, -0.3px)}.icon--m{width:50px;height:50px}.icon--l{width:100px;height:100px}.icon--xl{width:150px;height:150px}.icon--xxl{width:200px;height:200px}.icon__spinner{position:absolute;top:0;left:0;width:100%;height:100%}.icon--ei-spinner .icon__spinner,.icon--ei-spinner-2 .icon__spinner{-webkit-animation:spin 1s steps(12) infinite;animation:spin 1s steps(12) infinite}.icon--ei-spinner-3 .icon__spinner{-webkit-animation:spin 1.5s linear infinite;animation:spin 1.5s linear infinite}.icon--ei-sc-facebook{fill:#3b5998}.icon--ei-sc-github{fill:#333}.icon--ei-sc-google-plus{fill:#dd4b39}.icon--ei-sc-instagram{fill:#3f729b}.icon--ei-sc-linkedin{fill:#0976b4}.icon--ei-sc-odnoklassniki{fill:#ed812b}.icon--ei-sc-skype{fill:#00aff0}.icon--ei-sc-soundcloud{fill:#f80}.icon--ei-sc-tumblr{fill:#35465c}.icon--ei-sc-twitter{fill:#55acee}.icon--ei-sc-vimeo{fill:#1ab7ea}.icon--ei-sc-vk{fill:#45668e}.icon--ei-sc-youtube{fill:#e52d27}.icon--ei-sc-pinterest{fill:#bd081c}.icon--ei-sc-telegram{fill:#08c}*,*::after,*::before{box-sizing:border-box}h1,h2,h3,h4,h5,h6,ul,ol,dl,blockquote,p,address,hr,table,fieldset,figure,pre{margin-bottom:15px}ul,ol,dd{margin-left:15px}.highlight{background:#f7f7f7}.highlighter-rouge .highlight{background:#eef}.highlight .c{color:#998;font-style:italic}.highlight .err{color:#a61717;background-color:#e3d2d2}.highlight .k{font-weight:bold}.highlight .o{font-weight:bold}.highlight .cm{color:#998;font-style:italic}.highlight .cp{color:#999;font-weight:bold}.highlight .c1{color:#998;font-style:italic}.highlight .cs{color:#999;font-weight:bold;font-style:italic}.highlight .gd{color:#000;background-color:#fdd}.highlight .gd .x{color:#000;background-color:#faa}.highlight .ge{font-style:italic}.highlight .gr{color:#a00}.highlight .gh{color:#999}.highlight .gi{color:#000;background-color:#dfd}.highlight .gi .x{color:#000;background-color:#afa}.highlight .go{color:#888}.highlight .gp{color:#555}.highlight .gs{font-weight:bold}.highlight .gu{color:#aaa}.highlight .gt{color:#a00}.highlight .kc{font-weight:bold}.highlight .kd{font-weight:bold}.highlight .kp{font-weight:bold}.highlight .kr{font-weight:bold}.highlight .kt{color:#458;font-weight:bold}.highlight .m{color:#099}.highlight .s{color:#d14}.highlight .na{color:teal}.highlight .nb{color:#0086b3}.highlight .nc{color:#458;font-weight:bold}.highlight .no{color:teal}.highlight .ni{color:purple}.highlight .ne{color:#900;font-weight:bold}.highlight .nf{color:#900;font-weight:bold}.highlight .nn{color:#555}.highlight .nt{color:navy}.highlight .nv{color:teal}.highlight .ow{font-weight:bold}.highlight .w{color:#bbb}.highlight .mf{color:#099}.highlight .mh{color:#099}.highlight .mi{color:#099}.highlight .mo{color:#099}.highlight .sb{color:#d14}.highlight .sc{color:#d14}.highlight .sd{color:#d14}.highlight .s2{color:#d14}.highlight .se{color:#d14}.highlight .sh{color:#d14}.highlight .si{color:#d14}.highlight .sx{color:#d14}.highlight .sr{color:#009926}.highlight .s1{color:#d14}.highlight .ss{color:#990073}.highlight .bp{color:#999}.highlight .vc{color:teal}.highlight .vg{color:teal}.highlight .vi{color:teal}.highlight .il{color:#099}body{font-family:"Open Sans",Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:28px;color:#404040;background-color:#fbfbfb;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}*::selection{color:#fff;background-color:#3af}h1,h2,h3,h4,h5,h6{font-family:"Volkhov","Times New Roman",Times,serif;font-weight:400;line-height:initial}h1{font-size:32px}h2{font-size:28px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}img{max-width:100%;height:auto;vertical-align:middle}a{text-decoration:none;color:#3af;transition:.35s}a:hover{color:#0086e6}blockquote{padding-left:15px;border-left:3px solid #3af;font-family:"Volkhov","Times New Roman",Times,serif;font-style:normal;font-size:18px;background-color:rgba(220,235,245,.2)}blockquote p{padding:10px}hr{height:1px;margin:30px 0;border:0;background-color:#f0f0f0}pre{overflow:auto;padding:25px;font-size:14px;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace}code{overflow:auto;white-space:pre-wrap;word-wrap:break-word;word-break:break-all;font-family:Courier,monospace;font-size:14px;background-color:#f7f7f7}p code,li code{padding:3px 5px}.o-wrapper{max-width:1440px;position:relative}.o-opacity{animation-duration:.7s;animation-delay:.2s;animation-fill-mode:both;animation-name:opacity}@keyframes opacity{from{opacity:0}to{opacity:1}}.c-btn{display:inline-block;white-space:nowrap;vertical-align:middle;font-family:"Volkhov",serif;font-size:12px;text-align:center;padding:8px 15px;cursor:pointer;transition:.35s}.c-btn--primary{color:#fff;background-color:#3af;background:linear-gradient(135deg, #33aaff 0%, #62d5ff 100%)}.c-btn--secondary{color:#fff;background-color:#cfcfdd;background:linear-gradient(135deg, #a2a2bd 0%, #cfcfdd 100%)}.c-btn--round{border-radius:30px}.c-btn--shadow{box-shadow:8px 10px 20px 0 rgba(46,61,73,.15)}.c-btn--shadow:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-btn--middle{display:block;width:300px;max-width:100%}.c-btn--big{display:block;width:100%}.c-btn:hover{color:#fff;transition:.35s}.c-btn:active{transform:translateY(2px)}.c-sidebar{display:flex;flex-direction:column;justify-content:space-between;position:fixed;top:0;left:0;bottom:0;width:360px;padding:40px 20px 20px;text-align:center;box-shadow:1px 1px 0 rgba(31,35,46,.15);background-color:#fff}.c-sidebar-author .c-author__cover{width:100px;height:100px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background-color:#cfcfdd}.c-sidebar-author .c-author__cover img{width:100%;height:100%;border-radius:50%;transition:.35s}.c-sidebar-author .c-author__cover img:hover{transform:scale3d(0.9, 0.9, 1)}.c-sidebar-author .c-contact-menu .c-btn{min-width:110px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:18px;height:18px;vertical-align:text-bottom;fill:#fff}.c-sidebar-author .c-author__info{font-family:"Volkhov",serif}.c-sidebar-author .c-author__name{font-size:18px;font-weight:700;line-height:21px}.c-sidebar-author .c-author__job{font-size:12px;color:#a0a0a0;margin:5px 0 0}.c-sidebar-author .c-contact-menu{margin:30px 0}.c-sidebar-author .c-contact-menu .c-btn--secondary{margin-right:10px}.c-sidebar-author .c-author__about{max-width:400px;margin:0 auto 15px;font-size:13px}.c-sidebar-footer .c-social__title{position:relative;font-family:"Volkhov",serif;font-size:15px;font-weight:700;color:#444}.c-sidebar-footer .c-social__title::before{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;left:0;background-color:#444}.c-sidebar-footer .c-social__title::after{content:"";display:block;height:2px;width:calc(50% - 40px);transform:translateY(-50%);position:absolute;top:50%;right:0;background-color:#444}.c-sidebar-footer .c-social__list{list-style-type:none;padding:0;margin:15px 0}.c-sidebar-footer .c-social__list .c-social__item{display:inline-block;width:27px;height:27px}.c-sidebar-footer .c-social__list .icon{width:27px;height:27px;fill:#444;vertical-align:middle;transition:.35s}.c-sidebar-footer .c-social__list .icon:hover{fill:#3af;transform:scale(1.2);transition:.35s}.c-sidebar-footer .c-copyright p{font-size:13px;margin:0}@media only screen and (max-width: 900px){.c-sidebar{position:relative;width:100%;padding:20px}.c-sidebar .c-contact-menu{margin:20px 0}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}@media only screen and (max-width: 480px){.c-sidebar-author .c-author__cover{width:80px;height:80px}.c-sidebar-author .c-author__cover img{width:100%;height:100%}.c-sidebar-author .c-contact-menu{margin:15px 0}.c-sidebar-author .c-contact-menu .c-btn{min-width:80px;font-size:10px;padding:4px 15px;margin-right:5px}.c-sidebar-author .c-contact-menu .c-btn .icon{width:16px;height:16px}.c-sidebar-footer .c-social .c-social__title{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}.c-sidebar-footer .c-social__list{margin:0}.c-sidebar-footer .c-social__list .icon{width:25px;height:25px}.c-sidebar-footer .c-copyright{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}}.c-content{position:relative;display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;padding:0 20px 0;margin-left:360px}@media only screen and (max-width: 900px){.c-content{position:static;padding:0 15px 0;margin-left:0}}.c-posts{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-post{width:100%;max-width:100%;margin-bottom:20px;display:flex;flex-direction:row;align-items:stretch;min-height:180px;border-radius:10px;overflow:hidden;transition:.35s;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15)}.c-post:hover{transform:translate(0px, -2px);box-shadow:0 15px 45px -10px rgba(10,16,34,.2)}.c-post .c-post-thumbnail{display:block;width:30%;max-width:100%;min-height:180px;border-radius:10px 0 0 10px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:50% 50%}.c-post .c-post-content{padding:15px;width:70%}.c-post .c-post-content .c-post-title{font-size:30px;font-weight:400;margin:0 0 15px}.c-post .c-post-content .c-post-title a{text-decoration:none;color:#263959}.c-post .c-post-content .c-post-date,.c-post .c-post-content .c-post-words{font-size:12px}.c-load-more{padding:20px;margin:20px auto 40px;font-size:13px;color:#fff;border:none;background-color:#3af;outline:none}.c-load-more:hover{background-color:#0086e6}@media only screen and (max-width: 1200px){.c-post{width:48%;max-width:100%;margin:0 1% 20px;flex-direction:column}.c-post .c-post-thumbnail{width:100%;border-radius:10px 10px 0 0}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}@media only screen and (max-width: 480px){.c-post{width:100%;max-width:100%;margin:0 0 20px}.c-post .c-post-content{width:100%}.c-post .c-post-content .c-post-title{font-size:21px;margin:15px 0}}.c-article{width:100%;margin:20px 0}.c-wrap-content{padding:20px;background-color:#fff}.c-article__image{position:relative;background-color:rgba(220,235,245,.2);background-position:center;background-size:cover;background-repeat:no-repeat}.c-article__image:after{content:"";display:block;padding-top:56%}.c-article__header{margin-bottom:20px;text-align:center}.c-article__header .c-article__title{margin-bottom:10px}.c-article__date span{font-size:13px;text-transform:uppercase;color:#a0a0a0}.c-article__footer{margin:30px 0 0;padding-bottom:30px;text-align:center;border-bottom:1px solid #f0f0f0}.c-article__footer .c-article__share{transition:.35s}.c-article__footer .c-article__share a .icon{vertical-align:middle;transition:.35s}.c-article__footer .c-article__share a .icon:hover{opacity:.7;transition:.35s}.c-article__footer .c-article__tag{margin-bottom:5px}.c-article__footer .c-article__tag a{display:inline-block;vertical-align:middle;padding:5px 10px;font-family:"Volkhov","Times New Roman",Times,serif;font-size:10px;line-height:10px;text-transform:uppercase;background-color:rgba(115,138,160,.6);color:#fff}.c-article__footer .c-article__tag a:hover{background-color:rgba(80,100,118,.6)}.c-article__footer .c-article__tag a:last-child{margin-right:0}.c-recent-post{padding:30px 0}.c-recent-post .c-recent__title{font-size:14px;text-align:center;text-transform:uppercase;margin-bottom:30px}.c-recent-post .c-recent__box{display:flex;flex-direction:row;flex-wrap:wrap}.c-recent-post .c-recent__item{max-width:23%;flex-basis:23%;margin:0 1% 20px;border-radius:10px;overflow:hidden;text-align:center;background-color:#fff;box-shadow:0 1px 1px 0 rgba(31,35,46,.15);transition:.35s}.c-recent-post .c-recent__item h4{margin-bottom:5px;font-size:12px;text-transform:uppercase}.c-recent-post .c-recent__item h4 a{color:#444}.c-recent-post .c-recent__item:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-recent-post .c-recent__footer{padding:15px}.c-recent-post .c-recent__image{display:block;width:100%;min-height:180px;background-color:rgba(220,235,245,.2);background-size:cover;background-position:center;background-repeat:no-repeat}.c-recent-post .c-recent__date{color:#a0a0a0;font-size:12px}@media only screen and (max-width: 1200px){.c-recent-post .c-recent__item{max-width:48%;flex-basis:48%}}@media only screen and (max-width: 900px){.c-article{margin:15px 0}}@media only screen and (max-width: 480px){.c-wrap-content{padding:15px}.c-article__header{margin-bottom:5px}.c-article__header .c-article__title{font-size:24px;margin-bottom:5px}.c-recent-post .c-recent__item{max-width:100%;flex-basis:100%;margin:0 0 20px}}.c-blog-tags{width:100%;padding:20px;margin:20px 0 40px;background-color:#fff}.c-blog-tags h1{text-align:center;margin-bottom:0}.c-blog-tags h2{font-size:18px;text-transform:uppercase;margin:30px 0;color:#757575}.c-tag__list{list-style:none;padding:0 0 40px;margin:40px 0 0;border-bottom:1px solid #f0f0f0}.c-tag__list li{display:inline-block;margin-right:15px}.c-tag__list li a{color:#404040;text-transform:uppercase;font-size:12px}.c-tag__list li a:hover{color:#000}.c-tag__item{margin-bottom:15px}.c-tag__image{width:50px;height:50px;border-radius:50%;margin-right:5px}@media only screen and (max-width: 480px){.c-blog-tags{padding:15px}.c-blog-tags h1{font-size:27px}.c-blog-tags h2{font-size:16px;margin:15px 0}.c-tag__list{padding:0 0 30px;margin:30px 0 0}.c-tag__item{margin-bottom:5px}.c-tag__image{display:none}}.c-header{position:relative;width:100%;margin:20px 0}.c-header__box{position:relative;display:flex;flex-direction:row;justify-content:space-between;align-items:center}.c-header__box .icon--ei-search{position:absolute;top:7px;left:15px;fill:#ccc}.c-search{width:80%}.c-search .c-search__box{display:flex;align-items:center}.c-search .c-search__text{position:relative;width:100%;padding:10px 10px 10px 40px;border:1px solid #dce4ea;border-radius:30px;outline:none;color:#a0a0a0}.c-search .c-search__text::placeholder{color:#ccc}.c-search .c-search__text:hover{box-shadow:0 1px 0px rgba(132,135,138,.1);transition:.35s}.c-search .c-search-results-list{position:absolute;width:100%;margin:10px 0 0;list-style-type:none;background-color:#fff;z-index:1}.c-search .c-search-results-list li{display:flex;flex-wrap:wrap;align-items:center;margin:0;padding:20px 25px 0;background-color:#fff;line-height:1.4;border-left:solid 1px #edeeee;border-right:solid 1px #edeeee}.c-search .c-search-results-list li:first-child{border-top-left-radius:5px;border-top-right-radius:5px;border-top:solid 1px #edeeee}.c-search .c-search-results-list li:last-child{border-bottom-left-radius:5px;border-bottom-right-radius:5px;padding-bottom:25px;border-bottom:solid 1px #edeeee}.c-search .c-search-results-list li a{font-size:16px}.c-nav{flex-grow:1;padding-left:20px}.c-nav .c-nav__list{display:flex;justify-content:flex-end}.c-nav .c-nav__list .c-nav__item{display:flex;align-items:center;float:left;padding:4px 10px;font-size:10px;text-transform:uppercase;white-space:nowrap;border:1px solid #dce4ea;box-shadow:0 1px 0px rgba(132,135,138,.4);will-change:transform;transform:translateY(0px);cursor:pointer}.c-nav .c-nav__list .c-nav__item:hover{color:#222;background-color:#fff}.c-nav .c-nav__list .c-nav__item.is-active{box-shadow:0 0 0 rgba(132,135,138,.5);transform:translateY(1px);color:#cfcfdd}.c-nav .c-nav__list .c-nav__item.is-active:hover{background-color:#fbfbfb}.c-nav .c-nav__list .c-nav__item:first-child{border-radius:10px 0 0 10px}.c-nav .c-nav__list .c-nav__item:last-child{border-radius:0 10px 10px 0}.c-nav .c-nav__list .c-nav__item .icon{width:18px;height:18px;margin-right:3px}@media only screen and (max-width: 900px){.c-header{margin:15px 0}}@media only screen and (max-width: 480px){.c-header .c-header__box{flex-direction:column}.c-header .c-search{width:100%}.c-header .c-search .c-search__text{padding:8px 8px 8px 40px}.c-header .c-nav{margin-top:15px}.c-header .c-nav .c-nav__list{justify-content:center}.c-header .c-nav .c-nav__item{padding:4px 8px}}.c-categories{width:100%}.c-categories__list{width:100%;display:flex;flex-direction:row;flex-wrap:wrap}.c-categories__item{max-width:25%;flex-basis:25%;padding:0 10px 20px}.c-categories__link{height:100%;display:flex;flex-direction:column;align-items:center;padding:20px 10px;border-radius:5px;box-shadow:5px 5px 25px rgba(46,61,73,.15);background-color:#fff;transition:.35s}.c-categories__link:hover{box-shadow:2px 4px 8px 0px rgba(46,61,73,.2)}.c-categories__link:hover .c-categories__img .c-categories__more{opacity:1;transition:.35s}.c-categories__link .c-categories__container{width:100%;word-wrap:break-word}.c-categories__link .c-categories__container.c-empty-figure{display:flex;flex-direction:column;justify-content:center;flex-grow:1}.c-categories__img{position:relative;max-width:100%}.c-categories__img figure{position:relative;width:200px;max-width:100%;margin-bottom:20px;overflow:hidden;background-size:cover;background-repeat:no-repeat;background-position:center;border-radius:50%;box-shadow:inset 0 1px 3px rgba(141,165,185,.3)}.c-categories__img figure:after{content:"";display:block;padding-top:100%}.c-categories__img figure:before{content:"";position:absolute;top:0;bottom:0;left:0;right:0;background-color:rgba(0,0,0,.15)}.c-categories__img .c-categories__more{display:inline-block;position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);font-weight:700;color:#fff;text-transform:uppercase;text-shadow:0 1px 0 rgba(104,172,191,.3);opacity:0;transition:.35s}.c-categories__container{text-align:center}.c-categories__container .c-categories__header{font-size:13px;margin-bottom:10px;font-weight:normal;text-transform:uppercase;color:#404040}.c-categories__container .c-categories__count{font-family:"Volkhov",serif;font-size:12px;color:#404040;margin-bottom:0}.c-categories__container .c-categories__count span{display:inline-block;width:20px;height:20px;line-height:20px;vertical-align:baseline;margin-right:5px;border-radius:50%;color:#fff;background-color:#ee6c6c}@media only screen and (max-width: 1200px){.c-categories .c-categories__item{max-width:33.333%;flex-basis:33.333%}}@media only screen and (max-width: 1050px){.c-categories .c-categories__item{max-width:50%;flex-basis:50%}}@media only screen and (max-width: 480px){.c-categories .c-categories__item{max-width:100%;flex-basis:100%;padding:0 0 20px}}.c-form-box{position:absolute;top:0;width:calc(100% - 40px);min-height:100vh;padding:0 20px;background-color:#fff;z-index:1}.c-form-bnt__close{position:absolute;top:0px;left:0;width:30px;height:30px;cursor:pointer;transition:.35s}.c-form-bnt__close:hover{transform:scale(0.8);opacity:.8}.c-form{position:relative;width:750px;max-width:100%;margin:40px auto}.c-form .c-form__title{margin:0 0 40px;min-width:0;border:0;padding:0;font-family:"Volkhov","Times New Roman",Times,serif;text-transform:uppercase;text-align:center}.c-form a{color:#404040}.c-form__group{margin-bottom:20px}.c-form__group label{display:block;text-transform:uppercase;font-size:10px}.c-form__group input,.c-form__group textarea{width:100%;padding:10px 15px;color:#404040;border:1px solid #dce4ea;outline:none;transition:.35s}.c-form__group input:focus,.c-form__group textarea:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-form__group button{padding:20px;text-transform:uppercase;outline:none;border:none}.c-thank-you p{position:relative;padding:20px 40px;width:750px;max-width:100%;text-transform:uppercase;font-size:12px;line-height:18px;font-weight:700;margin:40px auto 0;text-align:center;color:#fff;background:linear-gradient(135deg, #55b5ad 0%, #5ec9c5 100%)}.c-thank-you p .c-form-bnt__close{width:25px;height:25px;background:rgba(0,0,0,0)}.c-thank-you p a{color:#fff}@media only screen and (max-width: 900px){.c-form-box{width:100%;left:0;right:0}}@media only screen and (max-width: 480px){.c-form-bnt__close{width:25px;height:25px}}.c-newsletter{padding:30px 0 60px;margin:0 auto;border-bottom:1px solid #f0f0f0}.c-newsletter__header{text-align:center}.c-newsletter__header .c-newsletter__title{font-size:14px;text-transform:uppercase;text-align:center}.c-newsletter__header .c-newsletter__subtitle{margin-bottom:15px}.c-newsletter-form{width:100%;max-width:750px;margin:0 auto}.c-newsletter-form .c-newsletter-form__group{display:flex}.c-newsletter__email{width:70%;height:40px;padding:10px 15px;border:1px solid #ddd;border-right-color:rgba(0,0,0,0);outline:none;transition:.35s}.c-newsletter__email:focus{box-shadow:0 4px 25px rgba(132,135,138,.1)}.c-newsletter__button{width:30%;height:40px;color:#fff;background-color:#3af;transition:.35s;border:none;outline:none;cursor:pointer}.c-newsletter__button:hover{background-color:#0086e6}@media only screen and (max-width: 480px){.c-newsletter__button{font-size:13px}}.c-comments{padding:30px 0;border-top:1px solid #f0f0f0}.c-top{position:fixed;width:40px;height:40px;bottom:20px;color:#757575;cursor:pointer;transition:.35s;right:-100px;z-index:10;opacity:.5}.c-top--active{right:15px}.c-top:hover{color:#757575;opacity:1}.u-text-left{text-align:left}.u-text-right{text-align:right}.u-text-center{text-align:center}.u-text-justify{text-align:justify}.u-block{display:block}.u-inline-block{display:inline-block}.u-inline{display:inline}.u-full-width{display:block;width:100%}.u-vertical-center{display:flex;align-items:center;justify-content:center}.u-responsive-image{max-width:100%;height:auto;vertical-align:middle}.u-show{display:block !important}.u-hide{display:none !important}.u-invisible{visibility:hidden}.u-float-left{float:left}.u-float-right{float:right}.u-no-padding-top{padding-top:0}.u-no-padding-bottom{padding-bottom:0}.u-no-padding-left{padding-left:0}.u-no-padding-right{padding-right:0}.u-no-padding{padding:0}.u-no-margin-top{margin-top:0}.u-no-margin-bottom{margin-bottom:0}.u-no-margin-left{margin-left:0}.u-no-margin-right{margin-right:0}.u-no-margin{margin:0}.u-lists-reset{list-style-type:none;margin:0;padding:0}.u-clearfix::before,.u-clearfix::after{content:"";display:table;clear:both}.u-screen-reader-text{clip:rect(1px, 1px, 1px, 1px);height:1px;overflow:hidden;position:absolute !important;width:1px;word-wrap:normal !important}
+  </style>
+</head>
+
+<body>
+  
+  <div class="o-wrapper">
+    <aside class="c-sidebar">
+  <div class="c-sidebar-author">
+    <div class="c-author__cover">
+      <a href="/">
+        <img src="/images/1.jpg" alt="María Alloza">
+      </a>
+    </div>
+    <div class="c-author__info">
+      <div class="c-author__name">María Alloza</div>
+      <span class="c-author__job">DevOps Engineer</span>
+    </div>
+    <div class="c-contact-menu">
+      
+      <a href="/contact" class="c-contact-btn c-btn c-btn--secondary c-btn--round c-btn--shadow"><span data-icon='ei-envelope' data-size='s'></span> Send me</a>
+      
+      
+      <a href="https://twitter.com/intent/user?screen_name=marixusa" class="c-btn c-btn--primary c-btn--round c-btn--shadow"><span data-icon='ei-sc-twitter' data-size='s'></span> Sígueme</a>
+      
+    </div>
+    <p class="c-author__about">Soy Administradora de Sistemas en camino a convertirme en DevOps Engineer. Siempre con ganas de aprender y compartir.</p>
+  </div>
+
+  <div class="c-sidebar-footer">
+    <div class="c-social">
+      <div class="c-social__title">Social</div>
+      <ul class="c-social__list u-lists-reset">
+        
+          <li class="c-social__item"><a href="https://twitter.com/marixusa" target="_blank"><div data-icon='ei-sc-twitter' data-size='s'></div></a></li>
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://github.com/Legnakra" target="_blank"><div data-icon='ei-sc-github' data-size='s'></div></a></li>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+          <li class="c-social__item"><a href="https://in.linkedin.com/in/www.linkedin.com/in/mariajesusalloza" target="_blank"><div data-icon='ei-sc-linkedin' data-size='s'></div></a></li>
+        
+      </ul>
+    </div>
+    <div class="c-copyright">
+      <p>2023 &copy; María Alloza</p>
+    </div>
+  </div>
+</aside> <!-- /.c-sidebar -->
+
+<main class="c-content">
+  <article class="c-article">
+  <div class="c-article__content">
+    <header class="c-header u-hide u-no-margin-top">
+      <div class="c-header__box">
+        <div class="c-search u-full-width">
+          <div class="c-search__box">
+            <label for="js-search-input" class="u-screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="c-search__text" autocomplete="off" placeholder="Type to search...">
+            <div data-icon='ei-search' data-size='s'></div>
+          </div>
+          <ul id="js-results-container" class="c-search-results-list"></ul>
+        </div>
+      </div>
+    </header>
+    
+    <div class="c-article__image o-opacity" style="background-image: url( /images/ldap1.png )"></div>
+    
+    <div class="c-wrap-content">
+      <header class="c-article__header">
+        <h1 class="c-article__title">Escenario - Poblar un directorio LDAP desde un fichero CSV</h1>
+        <div class="c-article__date">
+          <span>2023, Feb 12</span>
+        </div>
+      </header>
+      <h2 id="introducción">Introducción</h2>
+
+<p>En nuestro <a href="https://sysmaria.netlify.app/hlc+sri/2022/12/05/escenario.html">escenario</a> vamos a realizar la instalación y configuración de OpenLDAP en la máquina <code class="language-plaintext highlighter-rouge">Alfa</code>. Lo haremos utilizando como base el nombre DNS asignado a la máquina, <code class="language-plaintext highlighter-rouge">alfa.mariajesus.gonzalonazareno.org</code>.</p>
+
+<p>En esta ocasión, vamos a crear entre todos los alumnos de la clase, los que vayamos a hacer dicha práctica, un fichero CSV que incluya la siguiente información:</p>
+
+<ul>
+  <li>Nombre del alumno</li>
+  <li>Apellidos del alumno</li>
+  <li>Dirección de correo electrónico</li>
+  <li>Nombre del equipo</li>
+  <li>Dirección IP del equipo</li>
+  <li>Clave pública SSH del equipo</li>
+</ul>
+
+<p>El mío quedaría así:</p>
+
+<figure class="highlight"><pre><code class="language-csv" data-lang="csv">Maria Jesus,Alloza,Rodriguez,mariajesus.allozarodriguez@gmail.com,maria,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDofL1X9E8awIaBBO3RO4fsgi1MgqRSSbx8eJIVjdEJMgIA0ZMlYGppxUADGCdKTZdTLOZwPkwnD53ydWKU+zmu806hGHpdKQD8UkmCvRTO1tNcDdWYeGU9kNbsuxezzdMBpumjx6XQ/IobvXSfG6NVFQmU1GbtVtAHPNKRSO5ql0irL/dUOK/aoNvat0HD182ShRUWCrkzio7iNXD2yFuNyu3KCcdi06bcUQOXj3nfTlzBRPcEawXxOCOaKMm5Za/huGfM9DNrS58vB+j+0Q5qLDPMWV72c9tXHhHw+/ESU8EKh3v7jpBdDt7i6PpEy9Y4p1RUEOfBkJ9pcstLsz6od5AFcs0fqptBuDR1kPwMlT4wSSqSo7K7F19PlywjUTPNEPlzjc2/meNDGBJNMQXjx5FJjivtkPueL5fR/yN0ubGgOQmDRZ2tkl8LZ5UPXSHbxJ6e4RjPYXzMX9Nc7vFbdkZbMudRy40fvxqL+OSnvZ1Y/3OQqf7NQdoNJdfLHrM= maria@delta.mariajesus.gonzalonazareno.org
+Ivan,Pina Castillo,ivanpicas88@gmail.com,ivan,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCfYm123AV12rRYM+tPkrd0Hrzc9Py32Ov8JVZCnH5zVBj3I/IxE08LUhccSSx9aD0DrW+RdfpmLCSBTgGnbdM9eYlq3jxoBqqye4DQeXLSPyXcp/qRPGPsNO+eGypVhRB+Oq9B+ktrHgzAXQSP1yjmjN57H7GVBnMEJhpCEVXk5vWgMhVNxsDSF6lHrbiaYLtunTtt+fNgrprzXuUqhUwEDRt6/ktwad420J7kmqkB4dQuex3hV+16l1GyNH8AJzNzoinTiLr/jW8Ja0udgIknsxFvZ5Df+ACCrXfIFwvdPTm6Nya0jCm9vFx5yc5O1E07qlbAAn3FiIfS5Udjs6rNZjfFH5GmlpodhcGy4nkCYZvylnEayIa/ak4wA7oDft60hlHBMCHMoyY3ZcIkWGmVkwnTB3xfxfykPeD14zQAlIuMol9RNmPUbDYtbfY64npLPmagUIHSpwwbs1byEBbzzqzG8qcCAPUk3mK6oB5+OKUNJDv+4MM+suj+Y/PnWM8= debian@delta
+Juan Jesus,Alejo Sillero,juanjesusalejosillero@gmail.com,juanje,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDzLgcT2qKvflOcKWjUGX0ecoVWN+phHx7dEws3b/rY/xAichGJ6oP8ucD4lVJ8XVrEOaUgqQ1laPK33+u9MmzARx4g17/jKcwepUWdkKVA2++RWG3bsNgxCCkR1Gi7XMAAjwq8/17OjCj+4bvfTPlW5FSjDqaLhfqqeDtKpFJ3wjGG5sjNPC0GU4cRKzggZaR40ld7siaOiMteQ8X6bIggeXw+ULGiUhB4/uoLu0z69AzGgDfoPJuJEx4pPlcnOip/TAuL/pUjTjdUUDTsrZSJegWoLmRwylKvwtX8WojqI2TnTOyLT0IG1oStq4gC4AKOiCqfiBOm25bFfX0lW0uUaR1RjEuGz3jV0vkH3pCiuarNk5KnEQQqUO0x6ZvdCvOlsWYoiDQ6MclGKfUkUzC1uST5khs4xB1zQAZ5795on4SV8STASTwjpxuTuk7v4lTxrm8bTAF4bWiezgOQ0aFr7P0APygX0rbCR1aXoGfSyrrvqOUtkUzpiWwZwOpj0K0= juanjesus@delta.juanjesus.gonzalonazareno.org
+Alejandro,Montes Delgado,aaleemd11@gmail.com,alemd,ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCvd5Lg3K1k1WeHYHE3T5aPSEx/duCM87J2LFhgFODU3Z0+1mE5bjDUzvrUTVoHdMu1phOd8IS2vPCL2Ei8PjooLdLrsqHtFN9JYvtBRRhTs5tV3JSGaaFrljYtiITbulVTHBTqssrr4VfJ1jxMF9aSVcPjfVxsNMo01AhK8PAnCiSVBru9BUYgoG+7rCVMeB78qTXyuKNLoFqsuIPmQeV8D0JGKGozS2cikflyEOgYC+UwILUliV0dVtlpPltOOMLKngWF1fyjnfsJykiULI+l20Iid5QtDx5SK6nLRTtrr9MYCZbSJqAKVsxxKIYY5I+qSNsikgNrTnWJVq6z4zr5u4AqazjiDqX+266cDBf7rEq9GA9OZuul4/Kzy+PB9+w5rCgneSP7iL38ehQSjWzfpD1ny8mxCFmwuEwFBpGYhYHNywBYg8f1iMayjBeatFIU8WUCrCct0y1Zlf/Hn+Lzd5xb4aJgWd+mMyMmhZPcTAC6UN03tM2b0s6wjP8DzJc= ubuntu@delta</code></pre></figure>
+
+<h3 id="esquema-openssh-lpk">Esquema openssh-lpk</h3>
+
+<p>Tras haber creado los ficheros, vamos a añadir el esquema openssh-lpk al servidor LDAP. Para ello, vamos a crear un fichero llamado openssh-lpk.ldif:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vi /etc/ldap/schema/openssh-lpk.ldif</code></pre></figure>
+
+<p>Y añadimos el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">dn: <span class="nv">cn</span><span class="o">=</span>openssh-lpk,cn<span class="o">=</span>schema,cn<span class="o">=</span>config
+objectClass: olcSchemaConfig
+cn: openssh-lpk
+olcAttributeTypes: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.1.13 NAME <span class="s1">'sshPublicKey'</span>
+  DESC <span class="s1">'MANDATORY: OpenSSH Public key'</span>
+  EQUALITY octetStringMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 <span class="o">)</span>
+olcObjectClasses: <span class="o">(</span> 1.3.6.1.4.1.24552.500.1.1.2.0 NAME <span class="s1">'ldapPublicKey'</span> SUP top AUXILIARY
+  DESC <span class="s1">'MANDATORY: OpenSSH LPK objectclass'</span>
+  MAY <span class="o">(</span> sshPublicKey <span class="nv">$ </span>uid <span class="o">)</span>
+  <span class="o">)</span></code></pre></figure>
+
+<p>Lo siguiente será añadir el esquema al directorio que utilizamos para el servidor LDAP ejecutando el siguiente comando en nuestra terminal en la máquina <code class="language-plaintext highlighter-rouge">alfa</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ldapadd <span class="nt">-Y</span> EXTERNAL <span class="nt">-H</span> ldapi:/// <span class="nt">-f</span> /etc/ldap/schema/openssh-lpk.ldif</code></pre></figure>
+
+<p><img src="/images/LDAP/ldap2/1.png" alt="1" /></p>
+
+<h3 id="script-en-python-">Script en Python 🐍</h3>
+
+<p>Para realizar el script, primero deberemos crear un entorno virtual. Para ello, ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">python3 <span class="nt">-m</span> venv ldap</code></pre></figure>
+
+<p>El fin del entorno virtual es instalar el módulo <code class="language-plaintext highlighter-rouge">python-ldap</code> que nos permitirá conectarnos al servidor LDAP. Para ello, activamos el entorno virtual y ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">source </span>ldap/bin/activate
+pip <span class="nb">install </span>python3-ldap
+pip <span class="nb">install </span><span class="nv">ldap3</span><span class="o">==</span>2.6</code></pre></figure>
+
+<p>Una vez instalado el módulo, vamos a crear el script. Para ello, creamos un fichero llamado <code class="language-plaintext highlighter-rouge">ldap.py</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vi ldap.py</code></pre></figure>
+
+<p>Y añadimos el siguiente contenido:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/usr/bin/env python
+</span>
+
+import ldap3
+from ldap3 import Connection, ALL
+from getpass import getpass
+from sys import <span class="nb">exit</span>
+
+<span class="c">### VARIABLES
+</span>
+
+<span class="c"># Shell que se le asigna a los usuarios
+</span>
+shell <span class="o">=</span> <span class="s1">'/bin/bash'</span>
+
+<span class="c"># Ruta absoluta del directorio que contiene los directorios personales de los usuarios. Terminado en "/"
+</span>
+home_dir <span class="o">=</span> <span class="s1">'/home/ldap'</span>
+
+<span class="c"># El valor inicial para los UID que se asignan al insertar usuarios. 
+</span>
+uid_number <span class="o">=</span> 5000
+
+<span class="c"># El GID que se le asigna a los usuarios. Si no se manda al anadir el usuario da error.
+</span>
+gid <span class="o">=</span> 5000
+
+<span class="c">### VARIABLES
+</span>
+
+<span class="c"># Leemos el fichero .csv de los usuarios y guardamos cada linea en una lista.
+</span>
+with open<span class="o">(</span><span class="s1">'usuarios.csv'</span>, <span class="s1">'r'</span><span class="o">)</span> as usuarios:
+  usuarios <span class="o">=</span> usuarios.readlines<span class="o">()</span>
+
+
+<span class="c">### Parametros para la conexion
+</span>
+ldap_ip <span class="o">=</span> <span class="s1">'ldap://alfa.mariajesus.gonzalonazareno.org:636'</span>
+dominio_base <span class="o">=</span> <span class="s1">'dc=mariajesus,dc=gonzalonazareno,dc=org'</span>
+user_admin <span class="o">=</span> <span class="s1">'admin'</span> 
+contrasena <span class="o">=</span> getpass<span class="o">(</span><span class="s1">'Contrasena: '</span><span class="o">)</span>
+
+<span class="c"># Intenta realizar la conexion.
+</span>
+conn <span class="o">=</span> Connection<span class="o">(</span>ldap_ip, <span class="s1">'cn={},{}'</span>.format<span class="o">(</span>user_admin, dominio_base<span class="o">)</span>,contrasena<span class="o">)</span>
+
+<span class="c"># conn.bind() devuelve "True" si se ha establecido la conexion y "False" en caso contrario.
+</span>
+
+<span class="c"># Si no se establece la conexion imprime por pantalla un error de conexion.
+</span>
+<span class="k">if </span>not conn.bind<span class="o">()</span>:
+  print<span class="o">(</span><span class="s1">'No se ha podido conectar con ldap'</span><span class="o">)</span> 
+  <span class="k">if </span>conn.result[<span class="s1">'description'</span><span class="o">]</span> <span class="o">==</span> <span class="s1">'invalidCredentials'</span>:
+    print<span class="o">(</span><span class="s1">'Credenciales no validas.'</span><span class="o">)</span>
+  <span class="c"># Termina el script.
+</span>
+  <span class="nb">exit</span><span class="o">(</span>0<span class="o">)</span>
+
+<span class="c"># Recorre la lista de usuarios
+</span>
+<span class="k">for </span>user <span class="k">in </span>usuarios:
+  <span class="c"># Separa los valores del usuario usando como delimitador ",", y asigna cada valor a la variable correspondiente.
+</span>
+  user <span class="o">=</span> user.split<span class="o">(</span><span class="s1">','</span><span class="o">)</span>
+  cn <span class="o">=</span> user[0]
+  sn <span class="o">=</span> user[1]
+  mail <span class="o">=</span> user[2]
+  uid <span class="o">=</span> user[3]
+  ssh <span class="o">=</span> user[4]
+
+  <span class="c">#Anade el usuario.
+</span>
+  conn.add<span class="o">(</span>
+    <span class="s1">'uid={},ou=Personas,{}'</span>.format<span class="o">(</span>uid, dominio_base<span class="o">)</span>,
+    object_class <span class="o">=</span> 
+      <span class="o">[</span>
+      <span class="s1">'inetOrgPerson'</span>,
+      <span class="s1">'posixAccount'</span>, 
+      <span class="s1">'ldapPublicKey'</span>
+      <span class="o">]</span>,
+    attributes <span class="o">=</span>
+      <span class="o">{</span>
+      <span class="s1">'cn'</span>: cn,
+      <span class="s1">'sn'</span>: sn,
+      <span class="s1">'mail'</span>: mail,
+      <span class="s1">'uid'</span>: uid,
+      <span class="s1">'uidNumber'</span>: str<span class="o">(</span>uid_number<span class="o">)</span>,
+      <span class="s1">'gidNumber'</span>: str<span class="o">(</span>gid<span class="o">)</span>,
+      <span class="s1">'homeDirectory'</span>: <span class="s1">'{}{}'</span>.format<span class="o">(</span>home_dir,uid<span class="o">)</span>,
+      <span class="s1">'loginShell'</span>: shell,
+      <span class="s1">'sshPublicKey'</span>: str<span class="o">(</span>ssh<span class="o">)</span>
+      <span class="o">})</span>
+
+  <span class="k">if </span>conn.result[<span class="s1">'description'</span><span class="o">]</span> <span class="o">==</span> <span class="s1">'entryAlreadyExists'</span>:
+    print<span class="o">(</span><span class="s1">'El usuario {} ya existe.'</span>.format<span class="o">(</span>uid<span class="o">))</span>
+
+  <span class="c"># Aumenta el contador para asignar un UID diferente a cada usuario (cada vez que ejecutemos el script debemos asegurarnos de ante mano que no existe dicho uid en el directorio ldap, o se solaparian los datos)
+</span>
+  uid_number +<span class="o">=</span> 1
+
+<span class="c">#Cierra la conexion.
+</span>
+conn.unbind<span class="o">()</span></code></pre></figure>
+
+<p>Lo siguiente serña comprobar que el script funciona correctamente. Para ello, ejecutamos el siguiente comando:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">python3 ldap.py</code></pre></figure>
+
+<p>Comprobamos que se han añadido los usuarios correctamente en el directorio LDAP:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ldapsearch <span class="nt">-x</span> <span class="nt">-LLL</span> <span class="nt">-b</span> <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org <span class="nt">-D</span> <span class="s2">"cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org"</span> <span class="nt">-W</span></code></pre></figure>
+
+<p><img src="/images/LDAP/ldap2/2.png" alt="2" /></p>
+
+<h3 id="configuramos-el-sistema-para-que-los-usuarios-sean-autenticados-por-ldap">Configuramos el sistema para que los usuarios sean autenticados por LDAP</h3>
+
+<p>Para que los usuarios sean autenticados por LDAP, debemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/ldap/ldap.conf</code> y añadir las siguientes líneas:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">BASE <span class="nv">dc</span><span class="o">=</span>mariajesus,dc<span class="o">=</span>gonzalonazareno,dc<span class="o">=</span>org
+URI ldap://alfa.mariajesus.gonzalonazareno.org</code></pre></figure>
+
+<p>También deberemos modificar el archivo <code class="language-plaintext highlighter-rouge">/etc/nsswitch.conf</code> y añadir la siguiente línea:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">passwd:         files systemd ldap
+group:          files systemd ldap
+shadow:         files ldap</code></pre></figure>
+
+<p>Instalamos el paquete <code class="language-plaintext highlighter-rouge">libpam-ldap</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">apt <span class="nb">install </span>libpam-ldap</code></pre></figure>
+
+<p>Y lo configuramos:</p>
+
+<ul>
+  <li>LDAP server URI: `ldap://127.0.0.1</li>
+  <li>Distinguished name of search base: <code class="language-plaintext highlighter-rouge">dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
+  <li>LDAP version: <code class="language-plaintext highlighter-rouge">3</code></li>
+  <li>LDAP acount for root DN: <code class="language-plaintext highlighter-rouge">cn=admin,dc=mariajesus,dc=gonzalonazareno,dc=org</code></li>
+</ul>
+
+<h3 id="configuramos-el-sistema-para-que-los-usuarios-puedan-acceder-por-ssh">Configuramos el sistema para que los usuarios puedan acceder por SSH</h3>
+
+<p>Ante todo, vamos aconfigurarlo para que dichos usuarios tengan su propia <code class="language-plaintext highlighter-rouge">/home</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">echo</span> <span class="s2">"session   requiered    pam_mkhomedir.so"</span> <span class="o">&gt;&gt;</span> /etc/pam.d/common-session</code></pre></figure>
+
+<p>Ahora, le toca el turno a la configuración del sistema, para que los usuarios puedan acceder por SSH. Para ello, crearemos un script que se encargará de buscar las claves. Lo añadiremos aldirectorio <code class="language-plaintext highlighter-rouge">/opt</code> para que tenga los permisos necesarios, estando en un dorectorio perteneciente a <code class="language-plaintext highlighter-rouge">root</code>:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">vi /opt/search.sh
+
+<span class="c">#!/bin/bash
+</span>
+
+<span class="c"># Busca la clave publica del usuario en el directorio LDAP.
+</span>
+
+ldapsearch <span class="nt">-x</span> <span class="nt">-u</span> <span class="nt">-LLL</span> <span class="nt">-o</span> ldif-wrap<span class="o">=</span>no <span class="s1">'(&amp;(objectClass=posixAccount)(uid='</span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span><span class="s1">'))'</span> <span class="s1">'sshPublicKey'</span> | <span class="nb">sed</span> <span class="nt">-n</span> <span class="s1">'s/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</span> | <span class="nb">base64</span> <span class="nt">-d</span></code></pre></figure>
+
+<p>Este comando es bastante complejo, así que vamos a explicarlo:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ldapsearch</code>: comando para buscar en el directorio LDAP.</li>
+  <li><code class="language-plaintext highlighter-rouge">-x</code>: autenticación simple.</li>
+  <li><code class="language-plaintext highlighter-rouge">-u</code>: no mostrar el prompt.</li>
+  <li><code class="language-plaintext highlighter-rouge">-LLL</code>: no mostrar los mensajes de error.</li>
+  <li><code class="language-plaintext highlighter-rouge">-o ldif-wrap=no</code>: no mostrar los mensajes de error.</li>
+  <li><code class="language-plaintext highlighter-rouge">(&amp;(objectClass=posixAccount)(uid='"$1"'))'</code>: busca el usuario que se le pasa como parámetro.</li>
+  <li><code class="language-plaintext highlighter-rouge">sshPublicKey'</code>: busca la clave pública del usuario.</li>
+  <li><code class="language-plaintext highlighter-rouge">sed -n 's/^[ \t]*sshPublicKey::[ \t]*\(.*\)/\1/p'</code>: elimina la parte de la clave pública que no nos interesa.</li>
+  <li><code class="language-plaintext highlighter-rouge">base64 -d</code>: decodifica la clave pública.</li>
+</ul>
+
+<p>Una vez creado, le damos permisos de ejecución:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">chmod </span>755 /opt/search.sh</code></pre></figure>
+
+<p>Para hacer una prueba, ejecutamos el script:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">source</span> /opt/search.sh maria</code></pre></figure>
+
+<p><img src="/images/LDAP/ldap2/3.png" alt="3" /></p>
+
+<p>Tras esta comprobación, nos dirigimos al fichero <code class="language-plaintext highlighter-rouge">/etc/ssh/sshd_config</code> y añadimos las siguientes líneas:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">AuthorizedKeysCommand /opt/search.sh
+AuthorizedKeysCommandUser nobody</code></pre></figure>
+
+<p>Reiniciamos el servicio SSH:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">systemctl restart sshd</code></pre></figure>
+
+<p>Y comprabamos que funciona correctamente:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">ssh maria@alfa</code></pre></figure>
+
+<p><img src="/images/LDAP/ldap2/4.png" alt="4" /></p>
+
+<p>Para comprobar el funcionamiento completo, he añadido una nueva clave, la de mi compañero Antonio. He comprobado que se ha añadido correctamente en el directorio LDAP, pero al realizar la conexion, no le esposible dado que le pide una contraseña.</p>
+
+<p><img src="/images/LDAP/ldap2/5.png" alt="5" /></p>
+
+<p><img src="/images/LDAP/ldap2/6.png" alt="6" /></p>
+
+      <div class="c-article__footer u-clearfix">
+        <div class="c-article__tag">
+          
+          <a href="/tags#ldap">&#35; ldap</a>
+          
+          <a href="/tags#python">&#35; python</a>
+          
+        </div>
+      </div>
+      </div> <!-- /.c-recent-post -->
+    </div> <!-- /.c-wrap-content -->
+  </div> <!-- /.c-article__content -->
+</article> <!-- /.c-article-page -->
+</main> <!-- /.c-content -->
+
+  </div> <!-- /.o-wrapper -->
+  <div class="c-top" data-icon='ei-chevron-up' data-size='s' title="Scroll To Top"></div> <!-- /.c-top -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+<script src="/js/evil-icons.min.js"></script>
+<script src="/js/jquery.fitvids.js"></script>
+<script src="/js/simple-jekyll-search.min.js"></script>
+<script src="/js/main.js"></script>
+<!-- /javascripts -->
+</body>
+</html>
